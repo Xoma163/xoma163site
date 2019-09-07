@@ -1,0 +1,13 @@
+[Unit]
+Description=xoma163.site django
+
+[Service]
+User=server
+Nice=1
+SuccessExitStatus=0 1
+WorkingDirectory=/var/www/xoma163.site/
+ExecStart=/var/www/xoma163.site/venv/bin/uwsgi --ini /var/www/xoma163.site/uWSGI_nginx/uwsgi.ini
+ExecStop=/bin/kill -s QUIT $MAINPID
+
+[Install]
+WantedBy=multi-user.target

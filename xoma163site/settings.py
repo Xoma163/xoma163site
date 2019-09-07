@@ -65,7 +65,6 @@ TEMPLATES = [
         },
     },
 ]
-
 WSGI_APPLICATION = 'xoma163site.wsgi.application'
 
 # Database
