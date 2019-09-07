@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from apps.API.telegrambot import TBot
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
@@ -70,17 +72,20 @@ WSGI_APPLICATION = 'xoma163site.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+f = open(BASE_DIR + "/secrets/db.txt", "r")
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'xoma163site',
-        'USER': 'xoma163',
-        'PASSWORD': 'dzBgJnrq:<8UmMk7H$3YSh*hvm(W`*',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': f.readline().replace('\r', '').replace('\n', ''),
+        'USER': f.readline().replace('\r', '').replace('\n', ''),
+        'PASSWORD': f.readline().replace('\r', '').replace('\n', ''),
+        'HOST': f.readline().replace('\r', '').replace('\n', ''),
+        'PORT': f.readline().replace('\r', '').replace('\n', ''),
     }
-
 }
+
+f.close()
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -124,3 +129,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Правильные права для загружаемых файлов
 FILE_UPLOAD_PERMISSIONS = 0o644
+
+# New TBot
+tBot = TBot()
