@@ -1,5 +1,5 @@
 # TELEGRAM_BOT_API
-
+# ToDo: Сделать вебхуки и меню в телеграмме, чтобы можно было общаться с ботом
 class TBot:
 
     def __init__(self):
@@ -12,12 +12,12 @@ class TBot:
 
         proxy_url = 'socks5h://192.169.215.114:44598'
         api_token = f.readline().replace('\r', '').replace('\n', '')
-        self.XOMA163_CHAT_ID = int(f.readline())
-        self.LANA_CHAT_ID = int(f.readline())
+        # self.XOMA163_CHAT_ID = int(f.readline())
+        # self.LANA_CHAT_ID = int(f.readline())
 
         f.close()
 
         apihelper.proxy = {'https': proxy_url}
 
         self.bot = telebot.TeleBot(api_token)
-        # bot.polling()
+        # self.bot.polling()

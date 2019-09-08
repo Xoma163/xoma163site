@@ -4,6 +4,6 @@ from . import views
 
 
 urlpatterns = [
-    url(r'^whereisme/$', views.whereisme, name='whereisme'),
+    url(r'^whereisme/$', views.where_is_me, name='where_is_me'),
 
 ]
