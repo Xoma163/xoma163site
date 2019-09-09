@@ -1,5 +1,8 @@
 # TELEGRAM_BOT_API
 # ToDo: Сделать вебхуки и меню в телеграмме, чтобы можно было общаться с ботом
+import threading
+
+
 class TBot:
 
     def __init__(self):
@@ -18,6 +21,19 @@ class TBot:
         f.close()
 
         apihelper.proxy = {'https': proxy_url}
+        # ToDo: меню бота
+        # @self.bot.message_handler(commands=['start', 'help'])
+        # def send_welcome(message):
+        #     self.bot.reply_to(message, "Howdy, how are you doing?")
+        #
+        # @self.bot.message_handler(func=lambda message: True)
+        # def echo_all(message):
+        #     self.bot.reply_to(message, message.text)
 
         self.bot = telebot.TeleBot(api_token)
-        # self.bot.polling()
+        # threading.Thread(target=self.bot.polling, args=(), daemon=True).join()
+
+
+
+
+        #
