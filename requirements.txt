@@ -3,3 +3,4 @@ psycopg2
 uwsgi
 pyTelegramBotAPI
 pysocks
+uwsgi

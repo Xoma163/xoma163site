@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class TelegramTrustIMEI(models.Model):
+class TrustIMEI(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
     imei = models.CharField(verbose_name='IMEI', max_length=20)
     name = models.CharField(verbose_name='Владелец', max_length=20)
@@ -15,7 +15,7 @@ class TelegramTrustIMEI(models.Model):
         return str(self.name)
 
 
-class TelegramChatId(models.Model):
+class VkChatId(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
     chat_id = models.CharField(verbose_name='ID чата', max_length=20)
     name = models.CharField(verbose_name='Владелец', max_length=20)
@@ -34,7 +34,7 @@ class Log(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
     date = models.DateTimeField(verbose_name="Дата", auto_now_add=True, blank=True)
     imei = models.CharField(verbose_name='IMEI', max_length=20, null=True)
-    author = models.ForeignKey(TelegramTrustIMEI, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
+    author = models.ForeignKey(TrustIMEI, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
     event = models.CharField(verbose_name='Событие', choices=(('home', 'дома'), ('work', 'на работе')), max_length=20, null=True)
     msg = models.CharField(verbose_name='Сообщение', max_length=2000)
     success = models.BooleanField(verbose_name='Отправлено', default=False)
