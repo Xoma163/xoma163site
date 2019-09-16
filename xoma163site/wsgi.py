@@ -18,7 +18,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'xoma163site.settings')
 django.setup()
 from apps.API_VK.vkbot import VkBot
 vkbot = VkBot()
-vkbot.start()
-
+if not os.path.exists('thread.lock'):
+    vkbot.start()
 
 application = get_wsgi_application()

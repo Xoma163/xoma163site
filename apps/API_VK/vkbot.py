@@ -52,6 +52,9 @@ def parse_msg(msg):
     return msg_dict
 
 
+THREAD_IS_ACTIVE = False
+
+
 class VkBot(threading.Thread):
 
     def send_message(self, id, msg, attachments=None):
@@ -127,20 +130,20 @@ class VkBot(threading.Thread):
             vkuser.username = "%s %s" % (str(info['first_name']), str(info['last_name']))
             vkuser.save()
             self.send_message(chat_id, "Регистрация прошла успешно")
-        elif command == "петрович дня":
+        elif command == "петрович дня" or command == "петрович":
             if is_lk:
                 self.send_message(chat_id, "Команда работает только в беседах.")
                 return
             today = datetime.datetime.now()
             winner_today = Winners.objects.filter(date__year=today.year,
                                                   date__month=today.month,
-                                                  date__day=today.day).last()
+                                                  date__day=today.day,
+                                                  chat_id=chat_id).last()
             if winner_today is not None:
                 self.send_message(chat_id, "Петрович дня - %s" % winner_today)
                 return
 
             users = VkUser.objects.filter(chat_id=chat_id)
-            print(users)
             random_int = random.randint(0, len(users) - 1)
             winner = users[random_int]
 
@@ -187,8 +190,7 @@ class VkBot(threading.Thread):
             rand_int = random.randint(int1, int2)
             self.send_message(chat_id, rand_int)
         elif command == "test":
-            print(chat_id)
-            self.vk.messages.editChat(chat_id=chat_id-2000000000, title='test')
+            self.vk.messages.editChat(chat_id=chat_id - 2000000000, title='test')
         else:
             self.send_message(chat_id, "Игорь Петрович не понял команды \"%s\"" % command)
 
@@ -224,6 +226,8 @@ class VkBot(threading.Thread):
                 print('ОШИБКА ВЫПОЛНЕНИЯ ЛОНГПОЛА 1:', e)
 
     def run(self):
+        f = open('thread.lock', 'w')
+        f.close()
         self.listen_longpoll()
 
 
