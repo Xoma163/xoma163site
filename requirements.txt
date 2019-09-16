@@ -4,3 +4,4 @@ uwsgi
 pyTelegramBotAPI
 pysocks
 uwsgi
+django-hosts

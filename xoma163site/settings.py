@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import threading
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,9 +24,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '=0%d%yf7si#45g0ieg75&-dg#2@)f@0#gf#u*+u2r2t(-0$sg*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.10', 'xoma163.site', '85.113.60.5']
+ALLOWED_HOSTS = ['192.168.1.10', 'xoma163.site', '85.113.60.5', 'api.xoma163.site', 'www.xoma163.site',
+                 'birds.xoma163.site']
 
 # Application definition
 
@@ -40,9 +40,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apps.API',
     'apps.API_VK',
+    'django_hosts',
+    'apps.birds',
 ]
 
 MIDDLEWARE = [
+    'django_hosts.middleware.HostsRequestMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -50,8 +53,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_hosts.middleware.HostsResponseMiddleware',
 ]
-
+DEFAULT_HOST = 'www'
+ROOT_HOSTCONF = 'xoma163site.hosts'
 ROOT_URLCONF = 'xoma163site.urls'
 
 TEMPLATES = [
@@ -135,6 +140,3 @@ FILE_UPLOAD_PERMISSIONS = 0o644
 # New TBot
 # tBot = TBot()
 
-from apps.API_VK.vkbot import VkBot
-vkbot = VkBot()
-vkbot.start()
