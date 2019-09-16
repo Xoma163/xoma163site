@@ -9,4 +9,4 @@ admin.site.register(VkChatId)
 
 @admin.register(Log)
 class LogAdmin(admin.ModelAdmin):
-    list_display = ('date', 'imei', 'author', 'event', 'msg', 'success')
+    list_display = ('id','date', 'imei', 'author', 'event', 'msg', 'success')
