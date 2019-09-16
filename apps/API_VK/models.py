@@ -20,6 +20,7 @@ class VkChatId(models.Model):
     chat_id = models.CharField(verbose_name='ID чата', max_length=20)
     name = models.CharField(verbose_name='Владелец', max_length=20)
     is_active = models.BooleanField(verbose_name='Активность', default=False)
+    is_admin = models.BooleanField(verbose_name='Админ', default=False)
 
     class Meta:
         verbose_name = "доверенный чат"
@@ -35,7 +36,8 @@ class Log(models.Model):
     date = models.DateTimeField(verbose_name="Дата", auto_now_add=True, blank=True)
     imei = models.CharField(verbose_name='IMEI', max_length=20, null=True)
     author = models.ForeignKey(TrustIMEI, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
-    event = models.CharField(verbose_name='Событие', choices=(('home', 'дома'), ('work', 'на работе')), max_length=20, null=True)
+    event = models.CharField(verbose_name='Событие', choices=(('home', 'дома'), ('work', 'на работе')), max_length=20,
+                             null=True)
     msg = models.CharField(verbose_name='Сообщение', max_length=2000)
     success = models.BooleanField(verbose_name='Отправлено', default=False)
 
@@ -51,3 +53,42 @@ class Log(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+
+class Stream(models.Model):
+    id = models.AutoField(primary_key=True, verbose_name='ID')
+    link = models.URLField(verbose_name='Ссылка на стрим')
+
+    class Meta:
+        verbose_name = "стрим"
+        verbose_name_plural = "Стрим"
+
+    def __str__(self):
+        return str(self.link)
+
+
+class VkUser(models.Model):
+    id = models.AutoField(primary_key=True, verbose_name='ID')
+    user_id = models.CharField(verbose_name='ID пользователя', max_length=20)
+    chat_id = models.CharField(verbose_name='ID чата', max_length=20)
+    username = models.CharField(verbose_name='Имя пользователя', max_length=40)
+
+    class Meta:
+        verbose_name = "пользователь"
+        verbose_name_plural = "Пользователи"
+
+    def __str__(self):
+        return str(self.username)
+
+
+class Winners(models.Model):
+    winner = models.ForeignKey(VkUser, verbose_name="Победитель", on_delete=models.SET_NULL, null=True)
+    date = models.DateTimeField(verbose_name="Дата", auto_now_add=True)
+    chat_id = models.CharField(verbose_name='ID чата', max_length=20, default=0)
+
+    class Meta:
+        verbose_name = "победитель"
+        verbose_name_plural = "Победители"
+
+    def __str__(self):
+        return str(self.winner)

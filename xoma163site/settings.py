@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '=0%d%yf7si#45g0ieg75&-dg#2@)f@0#gf#u*+u2r2t(-0$sg*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['192.168.1.10', 'xoma163.site', '85.113.60.5', 'api.xoma163.site', 'www.xoma163.site',
                  'birds.xoma163.site']
