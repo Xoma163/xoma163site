@@ -20,5 +20,8 @@ from apps.API_VK.vkbot import VkBot
 vkbot = VkBot()
 if not os.path.exists('thread.lock'):
     vkbot.start()
+    print("BOT STARTED")
+else:
+    print("BOT WILL BE NOT STARTED")
 
 application = get_wsgi_application()

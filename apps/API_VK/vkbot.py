@@ -230,6 +230,9 @@ class VkBot(threading.Thread):
         f.close()
         self.listen_longpoll()
 
+    def get_chat_title(self, chat_id):
+        return self.vk.messages.getConversationsById(peer_ids=2000000000+chat_id)['items'][0]['chat_settings']['title']
+
 
 class MyVkBotLongPoll(VkBotLongPoll):
     def listen(self):
