@@ -21,12 +21,13 @@ def change_title_on_default():
     vkbot = VkBot()
     vk_current_title = vkbot.get_chat_title(CHAT_ID)
     if vk_title != vk_current_title:
-        vkbot.vk.messages.editChat(chat_id=CHAT_ID, title=vk_title)
+        vkbot.set_chat_title(CHAT_ID, vk_title)
         print("name changed")
     else:
         print('EQUALS')
 
 
+# ToDo: сделать чтобы в начале дня выводилась первая пара
 class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
@@ -72,8 +73,8 @@ class Command(BaseCommand):
                 vkbot = VkBot()
                 vk_current_title = vkbot.get_chat_title(CHAT_ID)
                 if vk_title != vk_current_title:
-                    vkbot.vk.messages.editChat(chat_id=CHAT_ID, title=vk_title)
-                    print("name changed to default")
+                    vkbot.set_chat_title(CHAT_ID, vk_title)
+                    print("name changed to new")
                 else:
                     print('EQUALS')
 

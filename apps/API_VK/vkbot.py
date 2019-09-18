@@ -12,8 +12,6 @@ from apps.birds.views import snapshot
 from xoma163site.settings import BASE_DIR
 
 
-# ToDo: Логгирование в txt ещё
-
 def user_is_admin(chat_id):
     trusted_chats = VkChatId.objects.filter(is_admin=True)
     for chat in trusted_chats:
@@ -22,12 +20,10 @@ def user_is_admin(chat_id):
     return False
 
 
-def parse_msg_to_me(msg, mention):
-    return msg.replace(mention + ' ', '') \
-        .replace(mention + ', ', '') \
-        .replace(mention + ',', '') \
-        .replace('\r', '').replace('\n', '') \
-        .lower()
+def parse_msg_to_me(msg, mentions):
+    for mention in mentions:
+        msg = msg.replace(mention, ' ')
+    return msg.lstrip().lstrip(',').lstrip().lstrip(' ').lstrip().lower()
 
 
 commands_list = ['стрим', 'поток', 'где', 'синичка', 'рег', 'регистрация', 'петрович дня', 'стата', 'статистика',
@@ -35,6 +31,7 @@ commands_list = ['стрим', 'поток', 'где', 'синичка', 'рег
 special_commands_list = ['петрович дня']
 
 
+# ToDo: переписать всё это нахрен по-человечески
 # ToDo: Продумать множественные аргументы
 def parse_msg(msg):
     msg_dict = {'COMMAND': None, 'ARG': None}
@@ -55,6 +52,13 @@ def parse_msg(msg):
 THREAD_IS_ACTIVE = False
 
 
+def message_for_me(message, mentions):
+    for mention in mentions:
+        if message.find(mention) > -1:
+            return True
+    return False
+
+
 class VkBot(threading.Thread):
 
     def send_message(self, id, msg, attachments=None):
@@ -67,7 +71,6 @@ class VkBot(threading.Thread):
                               attachment=','.join(attachments),
                               )
 
-    # ToDo: возможно в будущем переписать на архитектуру if is None: sendMsg, return;
     # ToDo: Сделать у бота меню
     def menu(self, chat_id, user_id, command, arg, is_lk):
         attachments = []
@@ -189,21 +192,24 @@ class VkBot(threading.Thread):
 
             rand_int = random.randint(int1, int2)
             self.send_message(chat_id, rand_int)
-        elif command == "test":
-            self.vk.messages.editChat(chat_id=chat_id - 2000000000, title='test')
+        #     ToDo: допилить полноценный манул
+        elif command == "помощь" or command == "хелп" or command == "ман" or command == "команды":
+            self.send_message(chat_id, "стрим,где N, синички, рег, петрович дня, стата, данет, рандом N,M, помощь")
         else:
             self.send_message(chat_id, "Игорь Петрович не понял команды \"%s\"" % command)
 
     def __init__(self):
         super().__init__()
         f = open(BASE_DIR + "/secrets/vk.txt", "r")
-        self._TOKEN = f.readline().replace('\r', '').replace('\n', '')
-        group_id = int(f.readline().replace('\r', '').replace('\n', ''))
+        self._TOKEN = f.readline().strip()
+        group_id = int(f.readline().strip())
         vk_session = vk_api.VkApi(token=self._TOKEN)
         self.longpoll = MyVkBotLongPoll(vk_session, group_id=group_id)
         self.upload = VkUpload(vk_session)
         self.vk = vk_session.get_api()
-        self.mention = f.readline().replace('\r', '').replace('\n', '')
+        self.mentions = []
+        for i in range(3):
+            self.mentions.append(f.readline().strip())
         f.close()
 
     def listen_longpoll(self):
@@ -212,12 +218,15 @@ class VkBot(threading.Thread):
                 # Если пришло новое сообщение
                 if event.type == VkBotEventType.MESSAGE_NEW:
                     message = event.object.text
-
+                    print(message)
                     # Сообщение либо мне в лс, либо упоминание меня
-                    if event.object.peer_id == event.object.from_id or message.find(self.mention) > -1:
-                        message = parse_msg_to_me(message, self.mention)
+                    if message_for_me(message, self.mentions) or event.object.peer_id == event.object.from_id:
+                        message = parse_msg_to_me(message, self.mentions)
                         message = parse_msg(message)
-                        self.menu(event.object.peer_id, event.object.from_id, message['COMMAND'], message['ARG'],
+                        self.menu(event.object.peer_id,
+                                  event.object.from_id,
+                                  message['COMMAND'],
+                                  message['ARG'],
                                   event.object.peer_id == event.object.from_id)
                     else:
                         print('Сообщение не для меня :(')
@@ -231,7 +240,12 @@ class VkBot(threading.Thread):
         self.listen_longpoll()
 
     def get_chat_title(self, chat_id):
-        return self.vk.messages.getConversationsById(peer_ids=2000000000+chat_id)['items'][0]['chat_settings']['title']
+        return self.vk.messages.getConversationsById(peer_ids=2000000000 + chat_id)['items'][0]['chat_settings'][
+            'title']
+
+    def set_chat_title(self, chat_id, title):
+        self.vk.messages.editChat(chat_id=chat_id, title=title)
+        pass
 
 
 class MyVkBotLongPoll(VkBotLongPoll):

@@ -16,4 +16,5 @@ class WinnersAdmin(admin.ModelAdmin):
 
 @admin.register(Log)
 class LogAdmin(admin.ModelAdmin):
+    readonly_fields = ('date',)
     list_display = ('id', 'date', 'imei', 'author', 'event', 'msg', 'success')

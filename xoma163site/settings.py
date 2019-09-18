@@ -123,7 +123,8 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+# Чтобы в базе время хранилось со смещением таймзоны
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
