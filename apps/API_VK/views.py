@@ -4,7 +4,6 @@ import json
 from django.http import HttpResponse
 
 from apps.API_VK.models import VkChatId, TrustIMEI, Log
-# ToDo: попытаться отправить даже если не получилось
 from xoma163site.wsgi import vkbot
 
 

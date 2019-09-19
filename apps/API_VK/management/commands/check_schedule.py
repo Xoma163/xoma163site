@@ -16,6 +16,22 @@ BEFORE_MIN = 20
 CHAT_ID = 3
 
 
+def check_first_discipline(schedule, week, day, current_discipline):
+    if current_discipline is None:
+        current_discipline=6
+    first_discipline = None
+    for i in range(6):
+        if str(i) in schedule[week][day]:
+            print(str(i), schedule[week][day])
+            print(first_discipline)
+            first_discipline = i
+            break
+    if first_discipline < int(current_discipline):
+        return str(first_discipline)
+    else:
+        return None
+
+
 def change_title_on_default():
     vk_title = '6221'
     vkbot = VkBot()
@@ -55,14 +71,26 @@ class Command(BaseCommand):
             new_min -= 60
             new_hour += 1
         now_1900 = datetime.datetime.strptime("%s:%s" % (new_hour, new_min), '%H:%M')
+        print(now_1900)
         timetable_item = None
         for item in timetable:
             item_date_start = datetime.datetime.strptime(timetable[item]['START'], '%H:%M')
             item_date_end = datetime.datetime.strptime(timetable[item]['END'], '%H:%M')
             if item_date_start <= now_1900 <= item_date_end:
                 timetable_item = str(item)
-        if timetable_item is not None:
+        new_timetable_item = check_first_discipline(schedule, now_weeknumber, now_weekday, timetable_item)
+        if new_timetable_item is not None:
+            print(new_timetable_item)
+            # write_title
+            vk_title = "6221 | %s - %s - %s" % (
+                timetable[new_timetable_item]['START'],
+                schedule[now_weeknumber][now_weekday][new_timetable_item]['CABINET'],
+                schedule[now_weeknumber][now_weekday][new_timetable_item]['TEACHER'])
+            vkbot = VkBot()
+            vkbot.set_chat_title(CHAT_ID, vk_title)
+            return
 
+        if timetable_item is not None:
             if timetable_item in schedule[now_weeknumber][now_weekday]:
                 print(schedule[now_weeknumber][now_weekday][timetable_item])
 
@@ -77,7 +105,6 @@ class Command(BaseCommand):
                     print("name changed to new")
                 else:
                     print('EQUALS')
-
 
             else:
                 change_title_on_default()

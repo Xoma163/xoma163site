@@ -7,7 +7,6 @@ from apps.API.models import TelegramChatId, TelegramTrustIMEI, Log
 from xoma163site.settings import tBot
 
 
-# ToDo: Если сканируем одну и ту же метку, то меняем сообщение
 def where_is_me(request):
     log = Log.objects.create()
     try:

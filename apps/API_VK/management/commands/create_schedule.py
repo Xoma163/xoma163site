@@ -5,7 +5,6 @@ class Command(BaseCommand):
     # help = 'Displays current time'
 
     # python manage.py check_rasp
-    # ToDo: Намутить создание
     def handle(self, *args, **kwargs):
         # неделя, день недели, время
         # schedule['1']['3']['1']
