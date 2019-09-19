@@ -43,7 +43,6 @@ def change_title_on_default():
         print('EQUALS')
 
 
-# ToDo: сделать чтобы в начале дня выводилась первая пара
 class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
@@ -87,7 +86,12 @@ class Command(BaseCommand):
                 schedule[now_weeknumber][now_weekday][new_timetable_item]['CABINET'],
                 schedule[now_weeknumber][now_weekday][new_timetable_item]['TEACHER'])
             vkbot = VkBot()
-            vkbot.set_chat_title(CHAT_ID, vk_title)
+            vk_current_title = vkbot.get_chat_title(CHAT_ID)
+            if vk_title != vk_current_title:
+                vkbot.set_chat_title(CHAT_ID, vk_title)
+                print("name changed to new")
+            else:
+                print('EQUALS')
             return
 
         if timetable_item is not None:

@@ -8,7 +8,7 @@ from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.utils import get_random_id
 
 from apps.API_VK.models import Log, VkChatId, Stream, TrustIMEI, VkUser, Winners
-from apps.birds.views import snapshot
+from apps.birds.views import snapshot, gif
 from xoma163site.settings import BASE_DIR
 
 
@@ -72,14 +72,17 @@ class VkBot(threading.Thread):
                               )
 
     # ToDo: Сделать у бота меню
-    def menu(self, chat_id, user_id, command, arg, is_lk):
+    def menu(self, chat_id, user_id, command, arg, is_lk, full_message):
         attachments = []
         # Выбор команды
-        if command == "стрим" or command == "поток":
+        if command in ["стрим", "поток"]:
             # Если нет аргументов
             if arg is None:
                 stream = Stream.objects.first()
-                self.send_message(chat_id, str(stream))
+                if len(str(stream)) < 5:
+                    self.send_message(chat_id, "Стрим пока не идёт")
+                else:
+                    self.send_message(chat_id, str(stream))
             else:
                 if is_lk:
                     # Если есть права на выполнение команды
@@ -92,7 +95,7 @@ class VkBot(threading.Thread):
                         self.send_message(chat_id, "Недостаточно прав на изменение ссылки стрима")
                 else:
                     self.send_message(chat_id, "Управление ботом производится только в ЛК")
-        elif command == "где":
+        elif command in ["где"]:
             if arg is None:
                 msg = "Нет аргумента у команды 'Где'"
             else:
@@ -111,12 +114,26 @@ class VkBot(threading.Thread):
                 else:
                     msg = "%s\n%s" % (vk_event.date.strftime("%H:%M:%S"), vk_event.msg)
             self.send_message(chat_id, str(msg))
-        elif command == "синички":
+        elif command in ["синички", "кормушка"]:
             path = snapshot()
+            frames = 20
+            if arg:
+                try:
+                    frames = int(arg)
+                    if frames > 100:
+                        self.send_message(chat_id, "Ты совсем поехавший? До 100 кадров давай")
+                        return
+                except:
+                    self.send_message(chat_id, "Введите количество кадров в gif")
+                    return
+            path2 = gif(frames)
             photo = self.upload.photo_messages(path)[0]
+            gifka = self.upload.document_message(path2, title='Синички', peer_id=chat_id)['doc']
+            print(gifka)
             attachments.append('photo{}_{}'.format(photo['owner_id'], photo['id']))
+            attachments.append('doc{}_{}'.format(gifka['owner_id'], gifka['id']))
             self.send_message(chat_id, "http://birds.xoma163.site", attachments=attachments)
-        elif command == "рег" or command == "регистрация":
+        elif command in ["рег", "регистрация"]:
             if is_lk:
                 self.send_message(chat_id, "Команда работает только в беседах.")
                 return
@@ -133,7 +150,7 @@ class VkBot(threading.Thread):
             vkuser.username = "%s %s" % (str(info['first_name']), str(info['last_name']))
             vkuser.save()
             self.send_message(chat_id, "Регистрация прошла успешно")
-        elif command == "петрович дня" or command == "петрович":
+        elif command in ["петрович дня", "петрович"]:
             if is_lk:
                 self.send_message(chat_id, "Команда работает только в беседах.")
                 return
@@ -157,7 +174,7 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, "Такс такс такс, кто тут у нас")
             self.send_message(chat_id, "Наш сегодняшний Петрович дня - %s" % winner)
         #     ToDo: Сортировать по победам
-        elif command == "стата" or command == "статистика":
+        elif command in ["стата", "статистика"]:
             players = VkUser.objects.filter(chat_id=chat_id)
             result_list = {}
             for player in players:
@@ -172,29 +189,52 @@ class VkBot(threading.Thread):
             for player in players:
                 msg += "%s - %s\n" % (player.username, result_list[player.username]['RESULT'])
             self.send_message(chat_id, msg)
-        elif command == "данет":
-            rand_int = random.randint(0, 1)
-            msg = "Да" if rand_int == 1 else "Нет"
+        elif command in ["данет"] or full_message[-1] == '?':
+            rand_int = random.randint(1, 100)
+            if rand_int < 50:
+                msg = "Да"
+            elif rand_int < 99:
+                msg = "Нет"
+            else:
+                msg = "Ну тут даже я хз"
             self.send_message(chat_id, msg)
-        elif command == "рандом":
+        elif command in ["рандом", "ранд"]:
             args = arg.split(',')
-            if len(args) < 2:
-                self.send_message(chat_id, "Для команды рандом должно быть 2 аргумента")
-                return
-            try:
-                int1 = int(args[0])
-                int2 = int(args[1])
-            except:
-                self.send_message(chat_id, "Аргументы должны быть целочисленными")
-                return
+            # ToDo: читать в любом случае
+            # except если оба хрень
+            if len(args) == 2:
+                print('len2')
+                try:
+                    int1 = int(args[0])
+                    int2 = int(args[1])
+                except:
+                    self.send_message(chat_id, "Аргументы должны быть целочисленными")
+                    return
+            else:
+                print(args)
+                int1 = 1
+                try:
+                    int2 = int(args[0])
+                except:
+                    self.send_message(chat_id, "Аргументы должны быть целочисленными")
+                    return
+
             if int1 > int2:
                 int1, int2 = int2, int1
 
             rand_int = random.randint(int1, int2)
             self.send_message(chat_id, rand_int)
-        #     ToDo: допилить полноценный манул
-        elif command == "помощь" or command == "хелп" or command == "ман" or command == "команды":
-            self.send_message(chat_id, "стрим,где N, синички, рег, петрович дня, стата, данет, рандом N,M, помощь")
+        elif command in ["помощь", "хелп", "ман", "команды", "помоги", "памаги"]:
+            self.send_message(chat_id,
+                              "̲С̲т̲р̲и̲м - ссылка на стрим, (ToDo: если он идёт) \n"
+                              "̲Г̲д̲е N(N - имя человека) - информация о чекточках\n"
+                              "̲С̲и̲н̲и̲ч̲к̲и [N](N - количество кадров в гифке, 20 дефолт) - ссылка, снапшот и гифка\n"
+                              "̲Р̲е̲г - регистрация для участия в петровиче дня\n"
+                              "̲П̲е̲т̲р̲о̲в̲и̲ч̲ ̲д̲н̲я - мини-игра, определяющая кто Петрович Дня\n"
+                              "̲С̲т̲а̲т̲а - статистика по Петровичам\n"
+                              "̲Д̲а̲н̲е̲т - бот вернёт да или нет. Можно просто \"?\" или в конце указать \"?\"\n"
+                              "̲Р̲а̲н̲д̲о̲м N[,M] (N,M - от и до) - рандомное число в заданном диапазоне\n"
+                              "̲П̲о̲м̲о̲щ̲ь - помощь")
         else:
             self.send_message(chat_id, "Игорь Петрович не понял команды \"%s\"" % command)
 
@@ -202,9 +242,9 @@ class VkBot(threading.Thread):
         super().__init__()
         f = open(BASE_DIR + "/secrets/vk.txt", "r")
         self._TOKEN = f.readline().strip()
-        group_id = int(f.readline().strip())
+        self._group_id = int(f.readline().strip())
         vk_session = vk_api.VkApi(token=self._TOKEN)
-        self.longpoll = MyVkBotLongPoll(vk_session, group_id=group_id)
+        self.longpoll = MyVkBotLongPoll(vk_session, group_id=self._group_id)
         self.upload = VkUpload(vk_session)
         self.vk = vk_session.get_api()
         self.mentions = []
@@ -221,13 +261,15 @@ class VkBot(threading.Thread):
                     print(message)
                     # Сообщение либо мне в лс, либо упоминание меня
                     if message_for_me(message, self.mentions) or event.object.peer_id == event.object.from_id:
+                        full_message = message
                         message = parse_msg_to_me(message, self.mentions)
                         message = parse_msg(message)
                         self.menu(event.object.peer_id,
                                   event.object.from_id,
                                   message['COMMAND'],
                                   message['ARG'],
-                                  event.object.peer_id == event.object.from_id)
+                                  event.object.peer_id == event.object.from_id,
+                                  full_message)
                     else:
                         print('Сообщение не для меня :(')
 

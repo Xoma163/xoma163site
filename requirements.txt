@@ -6,3 +6,4 @@ pysocks
 uwsgi
 django-hosts
 opencv-python
+imageio
