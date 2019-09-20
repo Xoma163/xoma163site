@@ -35,6 +35,7 @@ def gif(frames=20):
     while capture.isOpened() and i < frames:
         ret, frame = capture.read()
         frame = cv2.resize(frame, (0, 0), fx=720 / 1600, fy=720 / 1600)
+        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         cv2.imwrite(temp_filename, frame, [int(cv2.IMWRITE_JPEG_QUALITY), 75])
         images.append(cv2.imread(temp_filename))
         i += 1

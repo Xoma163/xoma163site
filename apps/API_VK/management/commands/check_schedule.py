@@ -18,15 +18,18 @@ CHAT_ID = 3
 
 def check_first_discipline(schedule, week, day, current_discipline):
     if current_discipline is None:
-        current_discipline=6
+        current_discipline=0
     first_discipline = None
     for i in range(6):
         if str(i) in schedule[week][day]:
-            print(str(i), schedule[week][day])
-            print(first_discipline)
+            # print(str(i), schedule[week][day])
+            # print(first_discipline)
             first_discipline = i
             break
-    if first_discipline < int(current_discipline):
+    print('fd',first_discipline)
+    print('cd',current_discipline)
+    # mb >=
+    if first_discipline > int(current_discipline):
         return str(first_discipline)
     else:
         return None
@@ -78,8 +81,8 @@ class Command(BaseCommand):
             if item_date_start <= now_1900 <= item_date_end:
                 timetable_item = str(item)
         new_timetable_item = check_first_discipline(schedule, now_weeknumber, now_weekday, timetable_item)
+        print('new_timetable_item', new_timetable_item)
         if new_timetable_item is not None:
-            print(new_timetable_item)
             # write_title
             vk_title = "6221 | %s - %s - %s" % (
                 timetable[new_timetable_item]['START'],
