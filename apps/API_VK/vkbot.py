@@ -322,6 +322,14 @@ class VkBot(threading.Thread):
         self.vk.messages.editChat(chat_id=chat_id, title=title)
         pass
 
+    def set_chat_title_if_not_equals(self, chat_id, title):
+        if title != self.vk.messages.getConversationsById(peer_ids=2000000000 + chat_id)['items'][0]['chat_settings']['title']:
+            self.vk.messages.editChat(chat_id=chat_id, title=title)
+            print('set title to', title)
+        else:
+            print('dont set title')
+
+
 
 class MyVkBotLongPoll(VkBotLongPoll):
     def listen(self):
