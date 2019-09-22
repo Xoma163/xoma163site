@@ -17,43 +17,44 @@ CHAT_ID = 3
 
 #ToDo: узнать когда первая пара, а когда последняя. До первой пары можно спокойно показывать инфу об этой паре, в междупарье режим показа пар, после пар ничего
 
-def check_first_discipline(schedule, week, day, current_discipline, is_day):
 
-    if not is_day:
-        return
-
-    if current_discipline is None:
-        current_discipline = 0
-    first_discipline = None
-    for i in range(6):
-        if str(i) in schedule[week][day]:
-            # print(str(i), schedule[week][day])
-            # print(first_discipline)
-            first_discipline = i
-            break
-    print('fd', first_discipline)
-    print('cd', current_discipline)
-    # mb >=
-    if first_discipline > int(current_discipline):
-        return str(first_discipline)
-    else:
-        return None
-
-
-def change_title_on_default():
-    vk_title = '6221'
-    vkbot = VkBot()
-    vk_current_title = vkbot.get_chat_title(CHAT_ID)
-    if vk_title != vk_current_title:
-        vkbot.set_chat_title(CHAT_ID, vk_title)
-        print("name changed")
-    else:
-        print('EQUALS')
 
 
 class Command(BaseCommand):
 
+    def check_first_discipline(self,schedule, week, day, current_discipline, is_day):
+
+        if not is_day:
+            return
+
+        if current_discipline is None:
+            current_discipline = 0
+        first_discipline = None
+        for i in range(6):
+            if str(i) in schedule[week][day]:
+                first_discipline = i
+                break
+        print('fd', first_discipline)
+        print('cd', current_discipline)
+        # mb >=
+        if first_discipline > int(current_discipline):
+            return str(first_discipline)
+        else:
+            return None
+
+    def change_title_on_default(self):
+        vk_title = '6221'
+
+        vk_current_title = self.vkbot.get_chat_title(CHAT_ID)
+        if vk_title != vk_current_title:
+            self.vkbot.set_chat_title(CHAT_ID, vk_title)
+            print("name changed")
+        else:
+            print('EQUALS')
+
     def handle(self, *args, **kwargs):
+        self.vkbot = VkBot()
+
         from xoma163site.settings import BASE_DIR
         with open(BASE_DIR + '/schedule.json') as json_file:
             schedule = json.load(json_file)
@@ -66,10 +67,10 @@ class Command(BaseCommand):
             if now_weekday in schedule[now_weeknumber]:
                 print('Сегодня учебный день')
             else:
-                change_title_on_default()
+                self.change_title_on_default()
                 return
         else:
-            change_title_on_default()
+            self.change_title_on_default()
             return
 
         new_min = now.minute + BEFORE_MIN
@@ -93,7 +94,7 @@ class Command(BaseCommand):
         else:
             day = None
 
-        new_timetable_item = check_first_discipline(schedule, now_weeknumber, now_weekday, timetable_item, day)
+        new_timetable_item = self.check_first_discipline(schedule, now_weeknumber, now_weekday, timetable_item, day)
         print('new_timetable_item', new_timetable_item)
         if new_timetable_item is not None:
             print("is not none")
@@ -129,8 +130,8 @@ class Command(BaseCommand):
                     print('EQUALS(default method)')
 
             else:
-                change_title_on_default()
+                self.change_title_on_default()
                 return
         else:
-            change_title_on_default()
+            self.change_title_on_default()
             return

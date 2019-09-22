@@ -44,10 +44,13 @@ def parse_msg(msg):
     message = [None, None]
     # Парс команды с пробелами
     first_space = msg.find(' ')
+    first_space = first_space if first_space > 1 else len(msg)
     message[0] = msg[0:first_space]
-    message[1] = msg[first_space+1:len(msg)]
+    message[1] = msg[first_space + 1:len(msg)]
 
-    print(message)
+    if message[1] in ['', ' ']:
+        message[1] = None
+    # print(message)
 
     msg_dict['COMMAND'] = message[0]
     try:
@@ -92,17 +95,17 @@ class VkBot(threading.Thread):
                 else:
                     self.send_message(chat_id, str(stream))
             else:
-                if is_lk:
-                    # Если есть права на выполнение команды
-                    if user_is_admin(user_id):
-                        stream = Stream.objects.first()
-                        stream.link = arg
-                        stream.save()
-                        self.send_message(chat_id, "Ссылка изменена на " + arg)
-                    else:
-                        self.send_message(chat_id, "Недостаточно прав на изменение ссылки стрима")
-                else:
+                if not is_lk:
                     self.send_message(chat_id, "Управление ботом производится только в ЛК")
+                    # Если есть права на выполнение команды
+                if not (user_is_admin(user_id)):
+                    self.send_message(chat_id, "Недостаточно прав на изменение ссылки стрима")
+                stream = Stream.objects.first()
+                stream.link = arg
+                stream.save()
+                self.send_message(chat_id, "Ссылка изменена на " + arg)
+
+
         elif command in ["где"]:
             if arg is None:
                 msg = "Нет аргумента у команды 'Где'"
@@ -137,7 +140,6 @@ class VkBot(threading.Thread):
             path2 = gif(frames)
             photo = self.upload.photo_messages(path)[0]
             gifka = self.upload.document_message(path2, title='Синички', peer_id=chat_id)['doc']
-            print(gifka)
             attachments.append('photo{}_{}'.format(photo['owner_id'], photo['id']))
             attachments.append('doc{}_{}'.format(gifka['owner_id'], gifka['id']))
             self.send_message(chat_id, "http://birds.xoma163.site", attachments=attachments)
@@ -211,7 +213,6 @@ class VkBot(threading.Thread):
             # ToDo: читать в любом случае
             # except если оба хрень
             if len(args) == 2:
-                print('len2')
                 try:
                     int1 = int(args[0])
                     int2 = int(args[1])
@@ -219,7 +220,6 @@ class VkBot(threading.Thread):
                     self.send_message(chat_id, "Аргументы должны быть целочисленными")
                     return
             else:
-                print(args)
                 int1 = 1
                 try:
                     int2 = int(args[0])
@@ -232,9 +232,11 @@ class VkBot(threading.Thread):
 
             rand_int = random.randint(int1, int2)
             self.send_message(chat_id, rand_int)
+        elif command in ["спасибо", "спасибо!", "спс"]:
+            self.send_message(chat_id, "Всегда пожалуйста!")
         elif command in ["помощь", "хелп", "ман", "команды", "помоги", "памаги"]:
             self.send_message(chat_id,
-                              "̲С̲т̲р̲и̲м - ссылка на стрим, (ToDo: если он идёт) \n"
+                              "̲С̲т̲р̲и̲м [N] - ссылка на стрим. [Только для администраторов] При указании ссылки она меняется \n"
                               "̲Г̲д̲е N(N - имя человека) - информация о чекточках\n"
                               "̲С̲и̲н̲и̲ч̲к̲и [N](N - количество кадров в гифке, 20 дефолт) - ссылка, снапшот и гифка\n"
                               "̲Р̲е̲г - регистрация для участия в петровиче дня\n"
@@ -242,16 +244,30 @@ class VkBot(threading.Thread):
                               "̲С̲т̲а̲т̲а - статистика по Петровичам\n"
                               "̲Д̲а̲н̲е̲т - бот вернёт да или нет. Можно просто \"?\" или в конце указать \"?\"\n"
                               "̲Р̲а̲н̲д̲о̲м N[,M] (N,M - от и до) - рандомное число в заданном диапазоне\n"
+                              "̲П̲о̲г̲о̲д̲а [N] (N - название города(Самара, Питер, Сызрань, Прибой)) - погода в городе\n"
+                              "̲У̲п̲р̲а̲в̲л̲е̲н̲и̲е (N,M) - N - chat_id, M - сообщение [Только для администраторов]\n"
                               "̲П̲о̲м̲о̲щ̲ь - помощь")
         elif command in ["управление", "сообщение"]:
+            if not is_lk:
+                self.send_message(chat_id, "Управление ботом производится только в ЛК")
             if arg is None:
                 self.send_message(chat_id, "Отсутствуют аргументы chat_id и сообщение")
-            print(arg)
             args = arg.split(',')
             msg_chat_id = int(args[0])
             msg = args[1]
             if user_is_admin(user_id):
                 self.send_message(2000000000 + msg_chat_id, msg)
+        elif command in ["погода"]:
+            if arg is None:
+                city = 'самара'
+            else:
+                city = arg
+            from apps.API_VK.yandex_weather import get_weather
+
+            weather = get_weather(city)
+
+            self.send_message(chat_id, weather)
+
         else:
             self.send_message(chat_id, "Игорь Петрович не понял команды \"%s\"" % command)
 
