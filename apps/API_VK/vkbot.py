@@ -82,7 +82,6 @@ class VkBot(threading.Thread):
                               attachment=','.join(attachments),
                               )
 
-    # ToDo: Сделать у бота меню
     def menu(self, chat_id, user_id, command, arg, is_lk, full_message):
         attachments = []
         # Выбор команды
