@@ -12,13 +12,18 @@ timetable = {'1': {'START': '8:00', 'END': '9:35'},
              '5': {'START': '15:15', 'END': '16:50'},
              '6': {'START': '17:00', 'END': '18:35'},
              }
-BEFORE_MIN = 20
+BEFORE_MIN = 10
 CHAT_ID = 3
 
+#ToDo: узнать когда первая пара, а когда последняя. До первой пары можно спокойно показывать инфу об этой паре, в междупарье режим показа пар, после пар ничего
 
-def check_first_discipline(schedule, week, day, current_discipline):
+def check_first_discipline(schedule, week, day, current_discipline, is_day):
+
+    if not is_day:
+        return
+
     if current_discipline is None:
-        current_discipline=0
+        current_discipline = 0
     first_discipline = None
     for i in range(6):
         if str(i) in schedule[week][day]:
@@ -26,8 +31,8 @@ def check_first_discipline(schedule, week, day, current_discipline):
             # print(first_discipline)
             first_discipline = i
             break
-    print('fd',first_discipline)
-    print('cd',current_discipline)
+    print('fd', first_discipline)
+    print('cd', current_discipline)
     # mb >=
     if first_discipline > int(current_discipline):
         return str(first_discipline)
@@ -72,7 +77,7 @@ class Command(BaseCommand):
         if new_min >= 60:
             new_min -= 60
             new_hour += 1
-        now_1900 = datetime.datetime.strptime("%s:%s" % (new_hour, new_min), '%H:%M')
+        now_1900 = datetime.datetime.strptime("%s:%s" % (new_hour , new_min), '%H:%M')
         print(now_1900)
         timetable_item = None
         for item in timetable:
@@ -80,9 +85,18 @@ class Command(BaseCommand):
             item_date_end = datetime.datetime.strptime(timetable[item]['END'], '%H:%M')
             if item_date_start <= now_1900 <= item_date_end:
                 timetable_item = str(item)
-        new_timetable_item = check_first_discipline(schedule, now_weeknumber, now_weekday, timetable_item)
+
+        if now_1900 <= datetime.datetime.strptime(timetable['1']['START'], '%H:%M'):
+            day = True
+        elif now_1900 >= datetime.datetime.strptime(timetable['6']['END'], '%H:%M'):
+            day = False
+        else:
+            day = None
+
+        new_timetable_item = check_first_discipline(schedule, now_weeknumber, now_weekday, timetable_item, day)
         print('new_timetable_item', new_timetable_item)
         if new_timetable_item is not None:
+            print("is not none")
             # write_title
             vk_title = "6221 | %s - %s - %s" % (
                 timetable[new_timetable_item]['START'],
@@ -94,10 +108,11 @@ class Command(BaseCommand):
                 vkbot.set_chat_title(CHAT_ID, vk_title)
                 print("name changed to new")
             else:
-                print('EQUALS')
+                print('EQUALS(new default method)')
             return
 
         if timetable_item is not None:
+            print('timetable_item',timetable_item)
             if timetable_item in schedule[now_weeknumber][now_weekday]:
                 print(schedule[now_weeknumber][now_weekday][timetable_item])
 
@@ -109,9 +124,9 @@ class Command(BaseCommand):
                 vk_current_title = vkbot.get_chat_title(CHAT_ID)
                 if vk_title != vk_current_title:
                     vkbot.set_chat_title(CHAT_ID, vk_title)
-                    print("name changed to new")
+                    print("name changed to new (default method)")
                 else:
-                    print('EQUALS')
+                    print('EQUALS(default method)')
 
             else:
                 change_title_on_default()

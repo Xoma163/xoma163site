@@ -35,12 +35,20 @@ special_commands_list = ['петрович дня']
 # ToDo: Продумать множественные аргументы
 def parse_msg(msg):
     msg_dict = {'COMMAND': None, 'ARG': None}
+
     for item in special_commands_list:
         if msg == item:
             msg_dict['COMMAND'] = msg
             return msg_dict
 
-    message = msg.split(' ')
+    message = [None, None]
+    # Парс команды с пробелами
+    first_space = msg.find(' ')
+    message[0] = msg[0:first_space]
+    message[1] = msg[first_space+1:len(msg)]
+
+    print(message)
+
     msg_dict['COMMAND'] = message[0]
     try:
         msg_dict['ARG'] = message[1]
@@ -191,9 +199,9 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, msg)
         elif command in ["данет"] or full_message[-1] == '?':
             rand_int = random.randint(1, 100)
-            if rand_int < 50:
+            if rand_int <= 48:
                 msg = "Да"
-            elif rand_int < 99:
+            elif rand_int <= 95:
                 msg = "Нет"
             else:
                 msg = "Ну тут даже я хз"
@@ -235,6 +243,15 @@ class VkBot(threading.Thread):
                               "̲Д̲а̲н̲е̲т - бот вернёт да или нет. Можно просто \"?\" или в конце указать \"?\"\n"
                               "̲Р̲а̲н̲д̲о̲м N[,M] (N,M - от и до) - рандомное число в заданном диапазоне\n"
                               "̲П̲о̲м̲о̲щ̲ь - помощь")
+        elif command in ["управление", "сообщение"]:
+            if arg is None:
+                self.send_message(chat_id, "Отсутствуют аргументы chat_id и сообщение")
+            print(arg)
+            args = arg.split(',')
+            msg_chat_id = int(args[0])
+            msg = args[1]
+            if user_is_admin(user_id):
+                self.send_message(2000000000 + msg_chat_id, msg)
         else:
             self.send_message(chat_id, "Игорь Петрович не понял команды \"%s\"" % command)
 
