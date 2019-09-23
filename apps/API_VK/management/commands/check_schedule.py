@@ -21,7 +21,7 @@ class Command(BaseCommand):
     def __init__(self):
         super().__init__()
         self.vkbot = VkBot()
-        self.chat_id = 2
+        self.chat_id = 3
         self.first_discipline = None
         self.last_discipline = None
 
@@ -56,8 +56,8 @@ class Command(BaseCommand):
                     self.first_discipline = str(i)
                 self.last_discipline = str(i)
 
-        new_min = now.minute + BEFORE_MIN + 56
-        new_hour = now.hour + 8
+        new_min = now.minute + BEFORE_MIN
+        new_hour = now.hour
         if new_min >= 60:
             new_min -= 60
             new_hour += 1
@@ -80,19 +80,22 @@ class Command(BaseCommand):
 
         # Установка первой по расписанию пары
         if int(current_discipline) < int(self.first_discipline):
-            vk_title = "6221 | %s - %s - %s" % (
+            vk_title = "6221|{} {} {}({})".format(
                 timetable[self.first_discipline]['START'],
                 schedule[now_weeknumber][now_weekday][self.first_discipline]['CABINET'],
-                schedule[now_weeknumber][now_weekday][self.first_discipline]['TEACHER'])
+                schedule[now_weeknumber][now_weekday][self.first_discipline]['TEACHER'],
+                schedule[now_weeknumber][now_weekday][self.first_discipline]['TYPE'],
+            )
             self.vkbot.set_chat_title_if_not_equals(self.chat_id, vk_title)
             return
         # Текущая пара
         elif int(self.first_discipline) <= int(current_discipline) <= int(self.last_discipline):
             if current_discipline in schedule[now_weeknumber][now_weekday]:
-                vk_title = "6221 | %s - %s - %s" % (
+                vk_title = "6221|{} {} {}({})".format(
                     timetable[current_discipline]['START'],
                     schedule[now_weeknumber][now_weekday][current_discipline]['CABINET'],
-                    schedule[now_weeknumber][now_weekday][current_discipline]['TEACHER'])
+                    schedule[now_weeknumber][now_weekday][current_discipline]['TEACHER'],
+                    schedule[now_weeknumber][now_weekday][current_discipline]['TYPE'])
                 self.vkbot.set_chat_title_if_not_equals(self.chat_id, vk_title)
                 return
         # После пар

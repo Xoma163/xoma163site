@@ -18,6 +18,10 @@ def get_weather(city="самара"):
         city_name = "Прибое"
         lat = 52.8689435
         lon = 49.6516931
+    elif city in ['купчино']:
+        city_name = "Купчино"
+        lat = 59.872380
+        lon = 30.370291
     else:
         return 'Я не знаю координат города {}. Сообщите их разработчику'.format(city)
 
@@ -29,8 +33,10 @@ def get_weather(city="самара"):
     URL = "https://api.weather.yandex.ru/v1/informers?lat={}&lon={}&lang=ru_RU".format(lat, lon)
     HEADERS = {'X-Yandex-API-Key': TOKEN}
     result = requests.get(URL, headers=HEADERS).json()
-    if result['status'] == 403:
-        return "На сегодня я исчерпал все запросы к Yandex Weather :("
+    print(result)
+    if 'status' in result:
+        if result['status'] == 403:
+            return "На сегодня я исчерпал все запросы к Yandex Weather :("
     WEATHER_TRANSLATE = {
         'clear': 'Ясно ☀',
         'partly-cloudy': 'Малооблачно ⛅',

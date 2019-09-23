@@ -1,6 +1,5 @@
 # TELEGRAM_BOT_API
 # ToDo: Сделать вебхуки и меню в телеграмме, чтобы можно было общаться с ботом
-import threading
 
 
 class TBot:
