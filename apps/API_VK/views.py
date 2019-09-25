@@ -25,32 +25,27 @@ def where_is_me(request):
                 return HttpResponse(json.dumps({'success': True, 'error': 'Wrong IMEI'}, ensure_ascii=False),
                                     content_type="application/json")
 
-            dictionary_on = {'home': 'дома', 'work': 'на работе'}
-            dictionary_from = {'home': 'из дома', 'work': 'с работы'}
+            positions = {
+                "home": {"on": "дома", "from": "из дома", "count": 0},
+                "work": {"on": "на работе", "from": "с работы", "count": 0},
+                "university": {"on": "в универе", "from": "из универа", "count": 0},
+            }
 
             today = datetime.datetime.now()
             today_logs = Log.objects.filter(date__year=today.year, date__month=today.month, date__day=today.day,
                                             author=author)
-            count_work = 0
-            count_home = 0
+
             # ToDo: Тяжелая операция для базы
             for today_log in today_logs:
-                if today_log.event == 'work':
-                    count_work += 1
-                if today_log.event == 'home':
-                    count_home += 1
+                if today_log.event in positions:
+                    positions[today_log.event]['count'] += 1
 
             msg = None
-            if event == 'work':
-                if count_work % 2 == 0:
-                    msg = "Я %s." % (dictionary_on[event])
-                else:
-                    msg = "Выдвигаюсь %s." % (dictionary_from[event])
-            elif event == 'home':
-                if count_home % 2 == 0:
-                    msg = "Выдвигаюсь %s." % (dictionary_from[event])
-                else:
-                    msg = "Я %s." % (dictionary_on[event])
+            if positions[event]['count'] % 2 == 0:
+                msg = "Выдвигаюсь {}.".format(positions[event]['from'])
+            elif positions[event]['count'] % 2 == 1:
+                msg = "Я {}.".format(positions[event]['on'])
+
             if msg is None:
                 log.msg = "Wrong event(?)"
                 log.save()

@@ -15,7 +15,7 @@ timetable = {'1': {'START': '9:00', 'END': '9:35'},
              }
 BEFORE_MIN = 10
 
-
+# ToDo: сделать расписание на каждую неделю и читать в нужную неделю нужное расписание (OMFG)
 class Command(BaseCommand):
 
     def __init__(self):

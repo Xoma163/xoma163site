@@ -32,7 +32,6 @@ special_commands_list = ['петрович дня']
 
 
 # ToDo: переписать всё это нахрен по-человечески
-# ToDo: Продумать множественные аргументы
 def parse_msg(msg):
     msg_dict = {'COMMAND': None, 'ARG': None}
 

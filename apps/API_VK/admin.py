@@ -4,10 +4,17 @@ from django.contrib import admin
 from apps.API_VK.models import TrustIMEI, VkChatId, Log, Stream, VkUser, Winners
 
 admin.site.register(TrustIMEI)
-admin.site.register(VkChatId)
-admin.site.register(Stream)
-admin.site.register(VkUser)
 
+@admin.register(VkChatId)
+class VkChatIdAdmin(admin.ModelAdmin):
+    list_display = ('name', 'chat_id', 'is_active','is_admin')
+
+admin.site.register(Stream)
+
+
+@admin.register(VkUser)
+class VkUserAdmin(admin.ModelAdmin):
+    list_display = ('username', 'chat_id', 'user_id')
 
 @admin.register(Winners)
 class WinnersAdmin(admin.ModelAdmin):
