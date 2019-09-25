@@ -21,6 +21,7 @@ class Command(BaseCommand):
     def __init__(self):
         super().__init__()
         self.vkbot = VkBot()
+        # 6221 - 3, my - 2
         self.chat_id = 3
         self.first_discipline = None
         self.last_discipline = None
@@ -31,7 +32,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
 
-        with open(BASE_DIR + '/schedule.json') as json_file:
+        with open('static/schedules/schedule.json') as json_file:
             schedule = json.load(json_file)
 
         now = datetime.datetime.now()
@@ -49,20 +50,20 @@ class Command(BaseCommand):
         print(schedule[now_weeknumber][now_weekday])
 
         # Узнаём какая пара первая, а какая последняя
-
         for i in range(len(timetable)):
-            if str(i) in schedule[now_weeknumber][now_weekday]:
+            if str(i + 1) in schedule[now_weeknumber][now_weekday]:
                 if self.first_discipline is None:
-                    self.first_discipline = str(i)
-                self.last_discipline = str(i)
+                    self.first_discipline = str(i + 1)
+                self.last_discipline = str(i + 1)
 
-        new_min = now.minute + BEFORE_MIN
+        new_min = now.minute
         new_hour = now.hour
         if new_min >= 60:
             new_min -= 60
             new_hour += 1
         if new_hour >= 24:
             new_hour -= 24
+
         now_1900 = datetime.datetime.strptime("%s:%s" % (new_hour, new_min), '%H:%M')
         print(now_1900)
         current_discipline = None
@@ -70,7 +71,7 @@ class Command(BaseCommand):
             item_date_start = datetime.datetime.strptime(timetable[item]['START'], '%H:%M')
             item_date_end = datetime.datetime.strptime(timetable[item]['END'], '%H:%M')
             if item_date_start <= now_1900 <= item_date_end or \
-                    datetime.timedelta(0) < item_date_start - now_1900 < datetime.timedelta(minutes=BEFORE_MIN):
+                    datetime.timedelta(0) < item_date_start - now_1900 <= datetime.timedelta(minutes=BEFORE_MIN):
                 # if item_date_start <= now_1900 <= item_date_end:
                 current_discipline = str(item)
         if now_1900 <= datetime.datetime.strptime(timetable['1']['START'], '%H:%M'):
@@ -101,3 +102,5 @@ class Command(BaseCommand):
         # После пар
         elif int(current_discipline) > int(self.last_discipline):
             self.change_title_on_default()
+        else:
+            self.vkbot.set_chat_title_if_not_equals(self.chat_id, 'втф я сломался, АНДРЕЙ ЧИНИ')

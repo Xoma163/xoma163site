@@ -72,16 +72,16 @@ class Command(BaseCommand):
         schedule['2']['4']['3']['TEACHER'] = "Прохоров С.А."
         schedule['2']['4']['3']['DISCIPLINE'] = "ПАСНИ"
         schedule['2']['4']['3']['CABINET'] = "Логово"
-        schedule['2']['4']['3']['TYPE'] = "🍏 Лаба"
+        schedule['2']['4']['3']['TYPE'] = "🍋 Лаба"
         schedule['2']['4']['4'] = {}
         schedule['2']['4']['4']['TEACHER'] = "Солдатова О.П."
         schedule['2']['4']['4']['DISCIPLINE'] = "ИС"
         schedule['2']['4']['4']['CABINET'] = "434"
-        schedule['2']['4']['4']['TYPE'] = "🍏 Лаба"
+        schedule['2']['4']['4']['TYPE'] = "🍏 Лекция"
         schedule['2']['4']['5'] = {}
         schedule['2']['4']['5']['TEACHER'] = "Солдатова О.П."
         schedule['2']['4']['5']['DISCIPLINE'] = "ИС"
-        schedule['2']['4']['5']['CABINET'] = "511'"
+        schedule['2']['4']['5']['CABINET'] = "511"
         schedule['2']['4']['5']['TYPE'] = "🍋 Лаба"
         schedule['2']['4']['6'] = {}
         schedule['2']['4']['6']['TEACHER'] = "Солдатова О.П."
@@ -101,7 +101,7 @@ class Command(BaseCommand):
         schedule['2']['3']['6']['TYPE'] = "🍋 Лаба"
         print(schedule)
 
-        with open('schedule.json', 'w') as outfile:
+        with open('static/schedules/schedule.json', 'w') as outfile:
             import json
             json.dump(schedule, outfile)
 

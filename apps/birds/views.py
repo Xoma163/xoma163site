@@ -12,7 +12,7 @@ def index(request):
 
 def snapshot():
     import cv2, os
-    filename = "snapshot.jpg"
+    filename = "static/vkapi/snapshot.jpg"
 
     capture = cv2.VideoCapture("http://xoma163.site:20000/mjpg/video.mjpg")
     frame = None
@@ -27,7 +27,7 @@ def gif(frames=20):
     import cv2, os
     import imageio as io
 
-    filename = "test.gif"
+    filename = "static/vkapi/birds.gif"
     temp_filename = "temp.jpg"
     capture = cv2.VideoCapture("http://xoma163.site:20000/mjpg/video.mjpg")
     i = 0
