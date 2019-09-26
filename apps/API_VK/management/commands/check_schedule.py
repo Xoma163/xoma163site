@@ -31,10 +31,8 @@ class Command(BaseCommand):
         self.vkbot.set_chat_title_if_not_equals(self.chat_id, vk_title)
 
     def handle(self, *args, **kwargs):
-
-        with open('static/schedules/schedule.json') as json_file:
+        with open(BASE_DIR+'/static/schedules/schedule.json') as json_file:
             schedule = json.load(json_file)
-
         now = datetime.datetime.now()
         now_weeknumber = str((now.isocalendar()[1]) % 2 + 1)
         now_weekday = str(now.weekday() + 1)

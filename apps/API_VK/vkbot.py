@@ -1,3 +1,8 @@
+# ToDo: Yandex translate
+# https://translate.yandex.net/api/v1.5/tr.json/translate?lang=ru-en &key=trnsl.1.1.20190926T183128Z.8452015e2670796c.b68628c3dc7cd243cfacdbc62da980a41435cb43&text=Привет, как дела?
+# Разобраться с ответками.
+
+
 import datetime
 import random
 import threading
@@ -203,7 +208,8 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, msg)
         elif command in ["данет"] or full_message[-1] == '?':
             bad_words = ['еб', 'ёб', 'пидор', 'пидар', "пидр", 'гандон', 'годнон', 'хуй', 'пизд', 'бля', 'шлюха',
-                         'мудак', 'говно', 'моча', 'залупа', 'гей', 'сука', 'дурак', 'говно', 'жопа', 'ублюдок']
+                         'мудак', 'говно', 'моча', 'залупа', 'гей', 'сука', 'дурак', 'говно', 'жопа', 'ублюдок',
+                         'мудак']
 
             min_index_bad = len(full_message)
             max_index_bad = -1
@@ -217,10 +223,22 @@ class VkBot(threading.Thread):
                     if ind > max_index_bad:
                         max_index_bad = ind
 
+            min_index_bad = full_message.rfind(' ', 0, min_index_bad)
+            if min_index_bad == -1:
+                min_index_bad = full_message.rfind(',', 0, min_index_bad)
+                if min_index_bad == -1:
+                    min_index_bad = full_message.rfind('.', 0, min_index_bad)
+                    if min_index_bad == -1:
+                        min_index_bad = full_message.find('/')
+            min_index_bad += 1
+
             if max_index_bad != -1:
-                len_bad = full_message.find(' ', max_index_bad)
+                len_bad = full_message.find(',', max_index_bad)
                 if len_bad == -1:
-                    len_bad = full_message.find('?', max_index_bad)
+                    len_bad = full_message.find(' ', max_index_bad)
+                    if len_bad == -1:
+                        len_bad = full_message.find('?', max_index_bad)
+
                 print('len_bad', len_bad)
                 bad_answers = ['как же вы меня затрахали...', 'ты обижаешь бота?', 'тебе заняться нечем?', '...',
                                'о боже']

@@ -26,7 +26,7 @@ def get_weather(city="самара"):
         return 'Я не знаю координат города {}. Сообщите их разработчику'.format(city)
 
     import requests
-    f = open(BASE_DIR + "/secrets/yandex.txt", "r")
+    f = open(BASE_DIR + "/secrets/yandex_weather.txt", "r")
     TOKEN = f.readline().strip()
     f.close()
 
@@ -100,7 +100,7 @@ def get_weather(city="самара"):
         WEATHER['forecast']['pressure'][i] = result['forecast']['parts'][i]['pressure_mm']
         WEATHER['forecast']['humidity'][i] = result['forecast']['parts'][i]['humidity']
         WEATHER['forecast']['prec_mm'][i] = result['forecast']['parts'][i]['prec_mm']
-        WEATHER['forecast']['prec_period'][i] = int(result['forecast']['parts'][i]['prec_period']) / 60
+        WEATHER['forecast']['prec_period'][i] = int(int(result['forecast']['parts'][i]['prec_period']) / 60)
         WEATHER['forecast']['prec_prob'][i] = result['forecast']['parts'][i]['prec_prob']
 
     now = 'Погода в {} сейчас:\n' \

@@ -4,6 +4,7 @@ import json
 from django.http import HttpResponse
 
 from apps.API_VK.models import VkChatId, TrustIMEI, Log
+from apps.API_VK.yandex_geo import get_address
 from xoma163site.wsgi import vkbot
 
 
@@ -25,32 +26,43 @@ def where_is_me(request):
                 return HttpResponse(json.dumps({'success': True, 'error': 'Wrong IMEI'}, ensure_ascii=False),
                                     content_type="application/json")
 
-            positions = {
-                "home": {"on": "дома", "from": "из дома", "count": 0},
-                "work": {"on": "на работе", "from": "с работы", "count": 0},
-                "university": {"on": "в универе", "from": "из универа", "count": 0},
-            }
+            if event == 'somewhere':
+                lat = request.GET.get('lat', None)
+                lon = request.GET.get('lon', None)
 
-            today = datetime.datetime.now()
-            today_logs = Log.objects.filter(date__year=today.year, date__month=today.month, date__day=today.day,
-                                            author=author)
+                address = get_address(lat, lon)
+                if address is not None:
+                    msg1 = "Я нахожусь примерно тут:\n" \
+                           "{}\n".format(address)
+                else:
+                    msg1 = ""
+                msg2 = "Позиция на карте:\n" \
+                       "https://yandex.ru/maps/?ll={1}%2C{0}&mode=search&text={0}%2C%20{1}&z=16\n".format(lat, lon)
 
-            # ToDo: Тяжелая операция для базы
-            for today_log in today_logs:
-                if today_log.event in positions:
-                    positions[today_log.event]['count'] += 1
+                msg = msg1 + msg2
+            else:
+                positions = {
+                    "home": {0: "Выхожу из дома", 1: "Я дома", "count": 0},
+                    "work": {0: "Я на работе", 1: "Выхожу с работы", "count": 0},
+                    "university": {0: "Я в универе", 1: "Выхожу из универа", "count": 0},
+                }
 
-            msg = None
-            if positions[event]['count'] % 2 == 0:
-                msg = "Выдвигаюсь {}.".format(positions[event]['from'])
-            elif positions[event]['count'] % 2 == 1:
-                msg = "Я {}.".format(positions[event]['on'])
+                today = datetime.datetime.now()
+                today_logs = Log.objects.filter(date__year=today.year, date__month=today.month, date__day=today.day,
+                                                author=author)
 
-            if msg is None:
-                log.msg = "Wrong event(?)"
-                log.save()
-                return HttpResponse(json.dumps({'success': True, 'error': 'Wrong IMEI'}, ensure_ascii=False),
-                                    content_type="application/json")
+                # ToDo: Тяжелая операция для базы
+                for today_log in today_logs:
+                    if today_log.event in positions:
+                        positions[today_log.event]['count'] += 1
+
+                msg = positions[event][positions[event]['count'] % 2]
+
+                if msg is None:
+                    log.msg = "Wrong event(?)"
+                    log.save()
+                    return HttpResponse(json.dumps({'success': True, 'error': 'Wrong IMEI'}, ensure_ascii=False),
+                                        content_type="application/json")
 
             log.msg = msg
             msg += "\n%s" % author
