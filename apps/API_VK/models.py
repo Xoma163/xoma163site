@@ -8,7 +8,7 @@ class TrustIMEI(models.Model):
     is_active = models.BooleanField(verbose_name='Активность', default=False)
 
     class Meta:
-        verbose_name = "устройство"
+        verbose_name = "Устройство"
         verbose_name_plural = "Устройства"
 
     def __str__(self):
@@ -23,7 +23,7 @@ class VkChatId(models.Model):
     is_admin = models.BooleanField(verbose_name='Админ', default=False)
 
     class Meta:
-        verbose_name = "доверенный чат"
+        verbose_name = "Доверенный чат"
         verbose_name_plural = "Доверенные чаты"
 
     def __str__(self):
@@ -37,7 +37,7 @@ class Log(models.Model):
     imei = models.CharField(verbose_name='IMEI', max_length=20, null=True)
     author = models.ForeignKey(TrustIMEI, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
     event = models.CharField(verbose_name='Событие', choices=(
-    ('home', 'дома'), ('work', 'работа'), ('university', 'университет'), ('somewhere', 'где-то')), max_length=20,
+        ('home', 'дома'), ('work', 'работа'), ('university', 'университет'), ('somewhere', 'где-то')), max_length=20,
                              null=True)
     msg = models.CharField(verbose_name='Сообщение', max_length=2000)
     success = models.BooleanField(verbose_name='Отправлено', default=False)
@@ -49,7 +49,7 @@ class Log(models.Model):
         return log
 
     class Meta:
-        verbose_name = "событие"
+        verbose_name = "Событие"
         verbose_name_plural = "Журнал событий"
 
     def __str__(self):
@@ -61,8 +61,8 @@ class Stream(models.Model):
     link = models.URLField(verbose_name='Ссылка на стрим')
 
     class Meta:
-        verbose_name = "стрим"
-        verbose_name_plural = "Стрим"
+        verbose_name = "Стрим"
+        verbose_name_plural = "Стримы"
 
     def __str__(self):
         return str(self.link)
@@ -75,7 +75,7 @@ class VkUser(models.Model):
     username = models.CharField(verbose_name='Имя пользователя', max_length=40)
 
     class Meta:
-        verbose_name = "пользователь"
+        verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
 
     def __str__(self):
@@ -88,8 +88,23 @@ class Winners(models.Model):
     chat_id = models.CharField(verbose_name='ID чата', max_length=20, default=0)
 
     class Meta:
-        verbose_name = "победитель"
+        verbose_name = "Победитель"
         verbose_name_plural = "Победители"
 
     def __str__(self):
         return str(self.winner)
+
+
+class QuoteBook(models.Model):
+    text = models.CharField(verbose_name="Текст", max_length=10000)
+    date = models.DateTimeField(verbose_name="Дата", auto_now_add=True, blank=True)
+    username = models.CharField(verbose_name='Имя пользователя', max_length=40, default="")
+    user_id = models.CharField(verbose_name='ID автора', max_length=20, default=0)
+    peer_id = models.CharField(verbose_name='ID чата', max_length=20, default=0)
+
+    class Meta:
+        verbose_name = "Цитата"
+        verbose_name_plural = "Цитатник"
+
+    def __str__(self):
+        return str(self.text)

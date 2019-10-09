@@ -1,3 +1,4 @@
+import os
 import time
 
 from django.shortcuts import render
@@ -13,6 +14,8 @@ def index(request):
 
 
 def snapshot():
+    if not _lock_thread():
+        raise RuntimeError("Падажжи, я уже делаю гифку")
     import cv2, os
     filename = "static/vkapi/snapshot.jpg"
 
@@ -21,11 +24,14 @@ def snapshot():
     if capture.isOpened():
         ret, frame = capture.read()
     cv2.imwrite(filename, frame, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
-
+    _unlock_thread()
     return os.path.abspath(filename)
 
-# Настроить более оптимальное сжатие кадров
+
+# ToDo: Настроить более оптимальное сжатие кадров
 def gif(frames=20):
+    if not _lock_thread():
+        raise RuntimeError("Падажжи, я уже делаю гифку")
     import cv2, os
     import imageio as io
 
@@ -44,7 +50,23 @@ def gif(frames=20):
         i += 1
     time_2 = time.time()
 
-    time_for_frame = (time_2-time_1)/frames
+    time_for_frame = (time_2 - time_1) / frames
     io.mimsave(filename, images, duration=time_for_frame)
 
+    _unlock_thread()
     return os.path.abspath(filename)
+
+
+filename = "static/vkapi/thread_birds.lock"
+
+
+def _lock_thread():
+    if not os.path.exists(filename):
+        open(filename, "w")
+        return True
+    else:
+        return False
+
+
+def _unlock_thread():
+    os.remove(filename)

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from apps.API_VK.models import TrustIMEI, VkChatId, Log, Stream, VkUser, Winners
+from apps.API_VK.models import TrustIMEI, VkChatId, Log, Stream, VkUser, Winners, QuoteBook
 
 admin.site.register(TrustIMEI)
 
@@ -25,3 +25,7 @@ class WinnersAdmin(admin.ModelAdmin):
 class LogAdmin(admin.ModelAdmin):
     readonly_fields = ('date',)
     list_display = ('id', 'date', 'imei', 'author', 'event', 'msg', 'success')
+
+@admin.register(QuoteBook)
+class QuoteBookAdmin(admin.ModelAdmin):
+    readonly_fields = ('text','date','username','user_id','peer_id')
