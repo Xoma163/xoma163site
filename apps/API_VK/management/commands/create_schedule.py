@@ -32,7 +32,7 @@ class Command(BaseCommand):
         schedule['1']['3']['2']['TEACHER'] = "Прохоров С.А."
         schedule['1']['3']['2']['DISCIPLINE'] = "СПИВТ"
         schedule['1']['3']['2']['CABINET'] = "430"
-        schedule['1']['3']['2']['TYPE'] = "🍏 Лаба"
+        schedule['1']['3']['2']['TYPE'] = "🍏 Лекция"
         schedule['1']['3']['3'] = {}
         schedule['1']['3']['3']['TEACHER'] = "Лёзина И.В."
         schedule['1']['3']['3']['DISCIPLINE'] = "ПРПО"
@@ -44,11 +44,6 @@ class Command(BaseCommand):
         schedule['1']['5']['2']['DISCIPLINE'] = "ТРПО"
         schedule['1']['5']['2']['CABINET'] = "505"
         schedule['1']['5']['2']['TYPE'] = "🍏 Лаба"
-        schedule['1']['5']['3'] = {}
-        schedule['1']['5']['3']['TEACHER'] = "Лёзина И.В."  # удалить потом
-        schedule['1']['5']['3']['DISCIPLINE'] = "ПРПО"  # удалить потом
-        schedule['1']['5']['3']['CABINET'] = "505"  # удалить потом
-        schedule['1']['5']['3']['TYPE'] = "🍏 Лаба"  # удалить потом
         schedule['2'] = {}
         schedule['2']['1'] = {}
         schedule['2']['1']['1'] = {}
@@ -98,12 +93,12 @@ class Command(BaseCommand):
         schedule['2']['5']['5']['TEACHER'] = "Прохоров С.А."
         schedule['2']['5']['5']['DISCIPLINE'] = "ПАСНИ"
         schedule['2']['5']['5']['CABINET'] = "Логово"
-        schedule['2']['3']['5']['TYPE'] = "🍋 Лаба"
+        schedule['2']['5']['5']['TYPE'] = "🍋 Лаба"
         schedule['2']['5']['6'] = {}
         schedule['2']['5']['6']['TEACHER'] = "Прохоров С.А."
         schedule['2']['5']['6']['DISCIPLINE'] = "ПАСНИ"
         schedule['2']['5']['6']['CABINET'] = "Логово"
-        schedule['2']['3']['6']['TYPE'] = "🍋 Лаба"
+        schedule['2']['5']['6']['TYPE'] = "🍋 Лаба"
         print(schedule)
 
         with open('static/schedules/schedule.json', 'w') as outfile:
