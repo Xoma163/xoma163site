@@ -12,18 +12,16 @@ import vk_api
 from django.core.paginator import Paginator
 from vk_api import VkUpload
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
-from vk_api.keyboard import VkKeyboard
 from vk_api.utils import get_random_id
 
-from apps.API_VK.models import Log, VkChatId, Stream, TrustIMEI, VkUser, Winners, QuoteBook
+from apps.API_VK.models import Log, VkChatId, Stream, TrustIMEI, VkUser, Winners, QuoteBook, UsersCache
 from apps.birds.views import snapshot, gif
 from xoma163site.settings import BASE_DIR
 
-
-def user_is_admin(chat_id):
+def user_is_admin(user_id):
     trusted_chats = VkChatId.objects.filter(is_admin=True)
     for chat in trusted_chats:
-        if chat.chat_id == str(chat_id):
+        if chat.chat_id == str(user_id):
             return True
     return False
 
@@ -105,6 +103,22 @@ class VkBot(threading.Thread):
             chat_id = peer_id
 
         print(vk_event)
+
+        # Проверяем не остановлен ли бот, если так, то проверяем вводимая команда = старт?
+        if not self.BOT_CAN_WORK:
+            if user_is_admin(user_id):
+                if command in ['старт']:
+                    self.BOT_CAN_WORK = True
+                    self.send_message(chat_id,"Стартуем!")
+                    return
+                else:
+                    return
+            else:
+                self.send_message(chat_id, "Недостаточно прав на возобновление бота")
+            return
+
+
+
         attachments = []
         # Выбор команды
         if command in ["стрим", "поток"]:
@@ -177,7 +191,7 @@ class VkBot(threading.Thread):
                 gifka = self.upload.document_message(path2, title='Синички', peer_id=chat_id)['doc']
                 attachments.append('doc{}_{}'.format(gifka['owner_id'], gifka['id']))
 
-            self.send_message(chat_id, "http://birds.xoma163.site", attachments=attachments)
+            self.send_message(chat_id, "http://birds.xoma163.xyz", attachments=attachments)
         elif command in ["рег", "регистрация"]:
             if is_lk:
                 self.send_message(chat_id, "Команда работает только в беседах.")
@@ -195,7 +209,7 @@ class VkBot(threading.Thread):
             vkuser.username = "%s %s" % (str(info['first_name']), str(info['last_name']))
             vkuser.save()
             self.send_message(chat_id, "Регистрация прошла успешно")
-        elif command in ["петрович дня", "петрович","петр"]:
+        elif command in ["петрович дня", "петрович", "петр"]:
             if is_lk:
                 self.send_message(chat_id, "Команда работает только в беседах.")
                 return
@@ -270,7 +284,7 @@ class VkBot(threading.Thread):
                                'о боже']
                 rand_int = random.randint(0, len(bad_answers) - 1)
                 self.send_message(chat_id, bad_answers[rand_int])
-                user = self.vk.users.get(user_id=user_id, lang='ru', fields='sex')[0]
+                user = self.get_user_by_id(user_id)
                 first_name = user['first_name']
                 if user['sex'] == 1:
                     msg_self = "сама"
@@ -315,7 +329,7 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, rand_int)
         elif command in ["спасибо", "спасибо!", "спс"]:
             self.send_message(chat_id, "Всегда пожалуйста! :)")
-        elif command in ["помощь", "хелп", "ман", "команды", "помоги", "памаги","спаси","хелб"]:
+        elif command in ["помощь", "хелп", "ман", "команды", "помоги", "памаги", "спаси", "хелб"]:
             self.send_message(chat_id,
                               "̲С̲т̲р̲и̲м - ссылка на стрим\n"
                               "̲Г̲д̲е N(N - имя человека) - информация о чекточках\n"
@@ -340,21 +354,6 @@ class VkBot(threading.Thread):
 
 
                               "\n")
-        elif command in ["управление", "сообщение"]:
-            if not is_lk:
-                self.send_message(chat_id, "Управление ботом производится только в ЛК")
-                return
-            if arg is None:
-                self.send_message(chat_id, "Отсутствуют аргументы chat_id и сообщение")
-                return
-            args = arg.split(',')
-            msg_chat_id = int(args[0])
-            msg = args[1]
-            if not user_is_admin(user_id):
-                self.send_message(chat_id, "Недостаточно прав на изменение ссылки стрима")
-                return
-
-            self.send_message(2000000000 + msg_chat_id, msg)
         elif command in ["погода"]:
             if arg is None:
                 city = 'самара'
@@ -367,7 +366,7 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, weather)
         #     ToDo: Похвалить
         # ToDo: возможно сделать привязку к гуглтаблам
-        elif command in ["обосрать","обосри"]:
+        elif command in ["обосрать", "обосри"]:
             insults = ["Алик", "Алкаш", "алконавт", "Аллаяр", "Альтернативно одаренный", "Амаус", "Аморал",
                        "аморальный", "Антихрист", "Аптряй", "Архаровец", "Аспид", "Ащеул", "Баба", "Баба ветрогонка",
                        "Бабашкин", "Бабинский", "Бабуин", "Баклан", "Балабол", "Баламошка", "Баламут", "Балахвостъ",
@@ -453,7 +452,7 @@ class VkBot(threading.Thread):
                 self.send_message(chat_id, "{}, ты {}".format(arg.capitalize(), insults[rand_int].lower()))
             else:
                 self.send_message(chat_id, insults[rand_int])
-        elif command in ["цитата","(c)","(с)"]:
+        elif command in ["цитата", "(c)", "(с)"]:
             if not 'reply' in vk_event and not 'fwd' in vk_event:
                 self.send_message(chat_id, "Перешлите сообщения для сохранения цитаты")
                 return
@@ -481,7 +480,8 @@ class VkBot(threading.Thread):
                 quote.text = msg['text']
 
                 if msg['from_id'] > 0:
-                    quote.username = self.get_username_by_id(msg['from_id'])
+                    user = self.get_user_by_id(msg['from_id'])
+                    quote.username = user['first_name'] + " " + user['last_name']
                 else:
                     quote.username = self.get_groupname_by_id(int(msg['from_id']) * -1)
             # Много
@@ -492,7 +492,8 @@ class VkBot(threading.Thread):
                 for msg in msgs:
                     text = msg['text']
                     if msg['from_id'] > 0:
-                        username = self.get_username_by_id(msg['from_id'])
+                        user = self.get_user_by_id(msg['from_id'])
+                        username = user['first_name'] + " " + user['last_name']
                     else:
                         username = self.get_groupname_by_id(int(msg['from_id']) * -1)
                     quote_text += "{}\n{}\n\n".format(username, text)
@@ -509,10 +510,16 @@ class VkBot(threading.Thread):
                     except:
                         self.send_message(chat_id, "Номер страницы должен быть целочисленным")
                         return
+                    if page<=0:
+                        self.send_message(chat_id, "Номер страницы должен быть положительным")
+                        return
                     text_filter = args[0]
                 elif len(args) == 1:
                     try:
                         page = int(arg)
+                        if page <= 0:
+                            self.send_message(chat_id, "Номер страницы должен быть положительным")
+                            return
                     except:
                         page = 1
                         text_filter = arg
@@ -527,6 +534,7 @@ class VkBot(threading.Thread):
             else:
                 objs = QuoteBook.objects.all()
                 page = 1
+            objs = objs.filter(peer_id=peer_id).order_by('-date')
             p = Paginator(objs, 5)
 
             if page > p.num_pages:
@@ -537,12 +545,13 @@ class VkBot(threading.Thread):
             msg = "Страница {}/{}\n\n".format(page, p.num_pages)
             for obj_on_page in objs_on_page:
                 msg += "{}\n" \
-                       "(c) {}\n" \
+                       "(c) {} {}\n" \
                        "------------------------------------------------------------\n".format(obj_on_page.text,
-                                                                                               obj_on_page.username)
+                                                                                               obj_on_page.username,
+                                                                                               obj_on_page.date.strftime("%d.%m.%Y %H:%M:%S"))
 
             self.send_message(chat_id, msg)
-        elif command in ["клава","клавиатура"]:
+        elif command in ["клава", "клавиатура"]:
             # ToDo: когда устаканится, сделать в json и отправлять по запросу
             keyboard = {
                 "one_time": False,
@@ -625,8 +634,14 @@ class VkBot(threading.Thread):
                     ]
                 ]
             }
+            self.send_message(chat_id, 'Лови', keyboard=json.dumps(keyboard))
+        elif command in ["убери"]:
+            keyboard = {
+                "one_time": False,
+                "buttons": []
+            }
+            self.send_message(chat_id, 'Убрал', keyboard=json.dumps(keyboard))
 
-            self.send_message(chat_id,'Лови',keyboard=json.dumps(keyboard))
 
         #     -----------------------------------------
         elif command in ["расписание", "расп"]:
@@ -639,8 +654,34 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, "https://drive.google.com/open?id=1AJPnT2XXYNc39-2CSr_MzHnv4hs6Use6")
         elif command in ["лекции"]:
             self.send_message(chat_id, "https://drive.google.com/open?id=19QVRRbj6ePEFTxS2bHOjjaKljkJwZxNB")
+
+        #     -----------------------------------------
+
+        elif command in ["управление", "сообщение"]:
+            if not is_lk:
+                self.send_message(chat_id, "Управление ботом производится только в ЛК")
+                return
+            if arg is None:
+                self.send_message(chat_id, "Отсутствуют аргументы chat_id и сообщение")
+                return
+            args = arg.split(',')
+            msg_chat_id = int(args[0])
+            msg = args[1]
+            if not user_is_admin(user_id):
+                self.send_message(chat_id, "Недостаточно прав на изменение ссылки стрима")
+                return
+
+            self.send_message(2000000000 + msg_chat_id, msg)
+        elif command in ["стоп"]:
+            if not user_is_admin(user_id):
+                self.send_message(chat_id, "Недостаточно прав на остановку бота")
+                return
+            self.BOT_CAN_WORK=False
+            self.send_message(chat_id, "Финишируем")
         else:
             self.send_message(chat_id, "Я не понял команды \"%s\"" % command)
+
+
 
     def __init__(self):
         super().__init__()
@@ -652,15 +693,18 @@ class VkBot(threading.Thread):
         self.upload = VkUpload(vk_session)
         self.vk = vk_session.get_api()
         self.mentions = []
+        self.BOT_CAN_WORK=True
         for i in range(3):
             self.mentions.append(f.readline().strip())
         f.close()
 
     def listen_longpoll(self):
         for event in self.longpoll.listen():
+
             try:
                 # Если пришло новое сообщение
                 if event.type == VkBotEventType.MESSAGE_NEW:
+
 
                     vk_event = {}
                     vk_event['from_chat'] = event.from_chat
@@ -681,6 +725,8 @@ class VkBot(threading.Thread):
 
                     # Сообщение либо мне в лс, либо упоминание меня
                     if message_for_me(vk_event['message']['text'], self.mentions) or vk_event['from_user']:
+
+
                         # Обрезаем палку
                         if vk_event['message']['text'][0] == '/':
                             vk_event['message']['text'] = vk_event['message']['text'][1:]
@@ -720,9 +766,27 @@ class VkBot(threading.Thread):
         else:
             print('dont set title')
 
-    def get_username_by_id(self, user_id):
-        user = self.vk.users.get(user_id=user_id, lang='ru')[0]
-        return user['first_name'] + " " + user['last_name']
+    def get_user_by_id(self, user_id):
+        obj = UsersCache.objects.filter(user_id=user_id)
+        if len(obj) > 0:
+            print("OLD USER_ID")
+            obj = obj.first()
+            user = {}
+            user['first_name'] = obj.name
+            user['last_name'] = obj.surname
+            user['sex'] = obj.gender
+            return user
+        else:
+            print("NEW USER_ID")
+            user = self.vk.users.get(user_id=user_id, lang='ru', fields='sex')[0]
+            new_user = UsersCache()
+            new_user.user_id = user_id
+            new_user.name = user['first_name']
+            new_user.surname = user['last_name']
+            new_user.gender = user['sex']
+            new_user.save()
+
+            return user
 
     def get_groupname_by_id(self, group_id):
         group = self.vk.groups.getById(group_id=group_id)[0]

@@ -74,10 +74,15 @@ class Command(BaseCommand):
         schedule['2']['4']['3']['CABINET'] = "Логово"
         schedule['2']['4']['3']['TYPE'] = "🍋 Лаба"
         schedule['2']['4']['4'] = {}
+        schedule['2']['4']['4']['TEACHER'] = "Лёзина И.В."
+        schedule['2']['4']['4']['DISCIPLINE'] = "ПРПО"
+        schedule['2']['4']['4']['CABINET'] = "510"
+        schedule['2']['4']['4']['TYPE'] = "🍎 Практика"
+        schedule['2']['4']['4'] = {}
         schedule['2']['4']['4']['TEACHER'] = "Солдатова О.П."
         schedule['2']['4']['4']['DISCIPLINE'] = "ИС"
-        schedule['2']['4']['4']['CABINET'] = "434"
-        schedule['2']['4']['4']['TYPE'] = "🍏 Лекция"
+        schedule['2']['4']['4']['CABINET'] = "511"
+        schedule['2']['4']['4']['TYPE'] = "🍋 Лаба"
         schedule['2']['4']['5'] = {}
         schedule['2']['4']['5']['TEACHER'] = "Солдатова О.П."
         schedule['2']['4']['5']['DISCIPLINE'] = "ИС"

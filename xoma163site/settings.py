@@ -25,9 +25,10 @@ SECRET_KEY = '=0%d%yf7si#45g0ieg75&-dg#2@)f@0#gf#u*+u2r2t(-0$sg*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-
-ALLOWED_HOSTS = ['192.168.1.10', 'xoma163.site', '85.113.60.5', 'api.xoma163.site', 'www.xoma163.site',
-                 'birds.xoma163.site']
+# MAIN_DOMAIN = "xoma163.xyz"
+ALLOWED_HOSTS = ['192.168.1.10', '85.113.60.5',
+                 'xoma163.site', 'api.xoma163.site', 'www.xoma163.site', 'birds.xoma163.site',
+                 'xoma163.xyz', 'api.xoma163.xyz', 'www.xoma163.xyz', 'birds.xoma163.xyz']
 
 # Application definition
 
@@ -38,9 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django_hosts',
+
     'apps.API',
     'apps.API_VK',
-    'django_hosts',
     'apps.birds',
 ]
 
@@ -75,9 +78,6 @@ TEMPLATES = [
     },
 ]
 WSGI_APPLICATION = 'xoma163site.wsgi.application'
-
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 f = open(BASE_DIR + "/secrets/db.txt", "r")
 
