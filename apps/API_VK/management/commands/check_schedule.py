@@ -3,8 +3,10 @@ import json
 
 from django.core.management.base import BaseCommand
 
-from apps.API_VK.vkbot import VkBot
 from xoma163site.settings import BASE_DIR
+# from apps.API_VK.vkbot import VkBot
+# from apps.API_VK.vkbot import VkBot
+from xoma163site.wsgi import vkbot
 
 timetable = {'1': {'START': '9:00', 'END': '9:35'},
              '2': {'START': '9:45', 'END': '11:20'},
@@ -15,12 +17,12 @@ timetable = {'1': {'START': '9:00', 'END': '9:35'},
              }
 BEFORE_MIN = 10
 
+
 # ToDo: сделать расписание на каждую неделю и читать в нужную неделю нужное расписание (OMFG)
 class Command(BaseCommand):
 
     def __init__(self):
         super().__init__()
-        self.vkbot = VkBot()
         # 6221 - 3, my - 2
         self.chat_id = 3
         self.first_discipline = None
@@ -28,10 +30,10 @@ class Command(BaseCommand):
 
     def change_title_on_default(self):
         vk_title = '6221'
-        self.vkbot.set_chat_title_if_not_equals(self.chat_id, vk_title)
+        vkbot.set_chat_title_if_not_equals(self.chat_id, vk_title)
 
     def handle(self, *args, **kwargs):
-        with open(BASE_DIR+'/static/schedules/schedule.json') as json_file:
+        with open(BASE_DIR + '/static/schedules/schedule.json') as json_file:
             schedule = json.load(json_file)
         now = datetime.datetime.now()
         now_weeknumber = str((now.isocalendar()[1]) % 2 + 1)
@@ -85,7 +87,7 @@ class Command(BaseCommand):
                 schedule[now_weeknumber][now_weekday][self.first_discipline]['TEACHER'],
                 schedule[now_weeknumber][now_weekday][self.first_discipline]['TYPE'],
             )
-            self.vkbot.set_chat_title_if_not_equals(self.chat_id, vk_title)
+            vkbot.set_chat_title_if_not_equals(self.chat_id, vk_title)
             return
         # Текущая пара
         elif int(self.first_discipline) <= int(current_discipline) <= int(self.last_discipline):
@@ -95,10 +97,10 @@ class Command(BaseCommand):
                     schedule[now_weeknumber][now_weekday][current_discipline]['CABINET'],
                     schedule[now_weeknumber][now_weekday][current_discipline]['TEACHER'],
                     schedule[now_weeknumber][now_weekday][current_discipline]['TYPE'])
-                self.vkbot.set_chat_title_if_not_equals(self.chat_id, vk_title)
+                vkbot.set_chat_title_if_not_equals(self.chat_id, vk_title)
                 return
         # После пар
         elif int(current_discipline) > int(self.last_discipline):
             self.change_title_on_default()
         else:
-            self.vkbot.set_chat_title_if_not_equals(self.chat_id, 'втф я сломался, АНДРЕЙ ЧИНИ')
+            vkbot.set_chat_title_if_not_equals(self.chat_id, 'втф я сломался, АНДРЕЙ ЧИНИ')

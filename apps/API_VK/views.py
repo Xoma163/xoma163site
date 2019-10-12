@@ -51,7 +51,6 @@ def where_is_me(request):
                 today_logs = Log.objects.filter(date__year=today.year, date__month=today.month, date__day=today.day,
                                                 author=author)
 
-                # ToDo: Тяжелая операция для базы
                 for today_log in today_logs:
                     if today_log.event in positions:
                         positions[today_log.event]['count'] += 1

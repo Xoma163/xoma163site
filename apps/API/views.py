@@ -30,7 +30,6 @@ def where_is_me(request):
 
         count_work = 0
         count_home = 0
-        # ToDo: Тяжелая операция для базы
         for today_log in today_logs:
             if today_log.event == 'work':
                 count_work += 1

@@ -15,8 +15,10 @@ from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.utils import get_random_id
 
 from apps.API_VK.models import Log, VkChatId, Stream, TrustIMEI, VkUser, Winners, QuoteBook, UsersCache
-from apps.birds.views import snapshot, gif
+from apps.birds.views import gif
 from xoma163site.settings import BASE_DIR
+from xoma163site.wsgi import cameraHandler
+
 
 def user_is_admin(user_id):
     trusted_chats = VkChatId.objects.filter(is_admin=True)
@@ -75,6 +77,162 @@ def message_for_me(message, mentions):
     return False
 
 
+def get_keyboard(admin):
+    if admin:
+        keyboard = {
+            "one_time": False,
+            "buttons": [
+                [
+                    {
+                        "action": {
+                            "type": "text",
+                            # "payload": "{\"button\": \"1\"}",
+                            "label": "Погода"
+                        },
+                        "color": "primary"
+                    },
+                    {
+                        "action": {
+                            "type": "text",
+                            # "payload": "{\"button\": \"2\"}",
+                            "label": "Помощь"
+                        },
+                        "color": "primary"
+                    }
+                ],
+                [
+                    {
+                        "action": {
+                            "type": "text",
+                            # "payload": "{\"button\": \"2\"}",
+                            "label": "Синички 0"
+                        },
+                        "color": "primary"
+                    },
+                    {
+                        "action": {
+                            "type": "text",
+                            # "payload": "{\"button\": \"2\"}",
+                            "label": "Синички 20"
+                        },
+                        "color": "primary"
+                    },
+                    {
+                        "action": {
+                            "type": "text",
+                            # "payload": "{\"button\": \"2\"}",
+                            "label": "Синички 100"
+                        },
+                        "color": "primary"
+                    }
+                ],
+                [
+                    {
+                        "action": {
+                            "type": "text",
+                            # "payload": "{\"button\": \"2\"}",
+                            "label": "Старт"
+                        },
+                        "color": "positive"
+                    },
+                    {
+                        "action": {
+                            "type": "text",
+                            # "payload": "{\"button\": \"2\"}",
+                            "label": "Стоп"
+                        },
+                        "color": "negative"
+                    },
+                    {
+                        "action": {
+                            "type": "text",
+                            # "payload": "{\"button\": \"2\"}",
+                            "label": "Старт синички"
+                        },
+                        "color": "positive"
+                    },
+                    {
+                        "action": {
+                            "type": "text",
+                            # "payload": "{\"button\": \"2\"}",
+                            "label": "Стоп синички"
+                        },
+                        "color": "negative"
+                    }
+                ],
+                [
+                    {
+                        "action": {
+                            "type": "text",
+                            "label": "Скрыть"
+                        },
+                        "color": "secondary"
+                    }
+                ],
+            ]
+        }
+    else:
+        keyboard = {
+            "one_time": False,
+            "buttons": [
+                [
+                    {
+                        "action": {
+                            "type": "text",
+                            # "payload": "{\"button\": \"1\"}",
+                            "label": "Погода"
+                        },
+                        "color": "primary"
+                    },
+                    {
+                        "action": {
+                            "type": "text",
+                            # "payload": "{\"button\": \"2\"}",
+                            "label": "Помощь"
+                        },
+                        "color": "primary"
+                    }
+                ],
+                [
+                    {
+                        "action": {
+                            "type": "text",
+                            # "payload": "{\"button\": \"1\"}",
+                            "label": "Синички 0"
+                        },
+                        "color": "primary"
+                    },
+                    {
+                        "action": {
+                            "type": "text",
+                            # "payload": "{\"button\": \"2\"}",
+                            "label": "Синички 20"
+                        },
+                        "color": "primary"
+                    },
+                    {
+                        "action": {
+                            "type": "text",
+                            # "payload": "{\"button\": \"2\"}",
+                            "label": "Синички 100"
+                        },
+                        "color": "primary"
+                    }
+                ],
+                [
+                    {
+                        "action": {
+                            "type": "text",
+                            "label": "Скрыть"
+                        },
+                        "color": "secondary"
+                    }
+                ],
+            ]
+        }
+    return keyboard
+
+
 class VkBot(threading.Thread):
 
     def send_message(self, id, msg, attachments=None, keyboard=None):
@@ -109,15 +267,14 @@ class VkBot(threading.Thread):
             if user_is_admin(user_id):
                 if command in ['старт']:
                     self.BOT_CAN_WORK = True
-                    self.send_message(chat_id,"Стартуем!")
+                    cameraHandler.resume()
+                    self.send_message(chat_id, "Стартуем!")
                     return
                 else:
                     return
             else:
                 self.send_message(chat_id, "Недостаточно прав на возобновление бота")
             return
-
-
 
         attachments = []
         # Выбор команды
@@ -162,21 +319,38 @@ class VkBot(threading.Thread):
                 else:
                     msg = "%s\n%s" % (vk_event.date.strftime("%H:%M:%S"), vk_event.msg)
             self.send_message(chat_id, str(msg))
-        elif command in ["c", "с", "синички", "кормушка"]:
+        elif command in ["c", "с", "синички"]:
             try:
-                path = snapshot()
+                # path = snapshot()
+                path = cameraHandler.get_img()
             except RuntimeError as e:
                 self.send_message(chat_id, e)
                 return
             frames = 20
+            args=arg.split(',')
             if arg:
                 try:
-                    frames = int(arg)
-                    # ToDo: ограниченное число запросов
-                    if frames > 100:
-                        self.send_message(chat_id, "Ты совсем поехавший? До 100 кадров давай")
+                    frames = int(args[0])
+                    if frames > cameraHandler.MAX_FRAMES:
+                        self.send_message(chat_id,
+                                          "Ты совсем поехавший? До {} кадров давай".format(cameraHandler.MAX_FRAMES))
                         return
                 except:
+                    # ToDo: подумай об этом
+                    # if not args[0]=='ширина':
+                    #     self.send_message(chat_id, "Может ширина?")
+                    #     return
+                    # try:
+                    #     new_width=int(args[1])
+                    #     if new_width>cameraHandler._MAX_WIDTH:
+                    #         self.send_message(chat_id,"Ты совсем поехавший? До {} пикселей давай".format(cameraHandler._MAX_WIDTH))
+                    #         return
+                    #     cameraHandler.SCALED_WIDTH=new_width
+                    #     self.send_message(chat_id,  "Новое значение установлено")
+                    #     return
+                    # except:
+                    #     self.send_message(chat_id, "Введите ширину gif")
+
                     self.send_message(chat_id, "Введите количество кадров в gif")
                     return
             photo = self.upload.photo_messages(path)[0]
@@ -184,7 +358,10 @@ class VkBot(threading.Thread):
 
             if frames != 0:
                 try:
-                    path2 = gif(frames)
+                    if cameraHandler.is_active():
+                        path2 = cameraHandler.get_gif(frames)
+                    else:
+                        path2 = cameraHandler.get_gif(frames,True)
                 except RuntimeError as e:
                     self.send_message(chat_id, e)
                     return
@@ -279,7 +456,6 @@ class VkBot(threading.Thread):
                     if len_bad == -1:
                         len_bad = full_message.find('?', max_index_bad)
 
-                print('len_bad', len_bad)
                 bad_answers = ['как же вы меня затрахали...', 'ты обижаешь бота?', 'тебе заняться нечем?', '...',
                                'о боже']
                 rand_int = random.randint(0, len(bad_answers) - 1)
@@ -290,7 +466,6 @@ class VkBot(threading.Thread):
                     msg_self = "сама"
                 else:
                     msg_self = "сам"
-                print(user['sex'])
                 msg = "{}, {} {} {}?".format(first_name, "может ты", msg_self, full_message[min_index_bad: len_bad])
                 self.send_message(chat_id, msg)
                 return
@@ -305,7 +480,6 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, msg)
         elif command in ["рандом", "ранд"]:
             args = arg.split(',')
-            # ToDo: читать в любом случае
             # except если оба хрень
             if len(args) == 2:
                 try:
@@ -330,30 +504,30 @@ class VkBot(threading.Thread):
         elif command in ["спасибо", "спасибо!", "спс"]:
             self.send_message(chat_id, "Всегда пожалуйста! :)")
         elif command in ["помощь", "хелп", "ман", "команды", "помоги", "памаги", "спаси", "хелб"]:
-            self.send_message(chat_id,
-                              "̲С̲т̲р̲и̲м - ссылка на стрим\n"
-                              "̲Г̲д̲е N(N - имя человека) - информация о чекточках\n"
-                              "̲С̲и̲н̲и̲ч̲к̲и [N](N - количество кадров в гифке, 20 дефолт) - ссылка, снапшот и гифка\n"
-                              "̲Р̲е̲г - регистрация для участия в петровиче дня\n"
-                              "̲П̲е̲т̲р̲о̲в̲и̲ч̲ ̲д̲н̲я - мини-игра, определяющая кто Петрович Дня\n"
-                              "̲С̲т̲а̲т̲а - статистика по Петровичам\n"
-                              "̲Д̲а̲н̲е̲т - бот вернёт да или нет. Можно просто \"?\" или в конце указать \"?\"\n"
-                              "̲Р̲а̲н̲д̲о̲м N[,M] (N,M - от и до) - рандомное число в заданном диапазоне\n"
-                              "̲П̲о̲г̲о̲д̲а [N] (N - название города(Самара, Питер, Сызрань, Прибой)) - погода в городе\n"
-                              "̲О̲б̲о̲с̲р̲а̲т̲ь [N] - рандомное оскорбление. N - что/кто либо\n"
-                              "̲Ц̲и̲т̲а̲т̲а + пересылаемое сообщение - сохраняет в цитатник сообщение(я)\n"
-                              "̲Ц̲и̲т̲а̲т̲ы [N[,M]]- просмотр сохранённых цитат. Возможные комбинации - N - номер страницы, N - фраза для поиска, N - фраза для поиска, M - номер страницы\n"
-                              "̲П̲о̲м̲о̲щ̲ь - помощь\n"
-                              "\n-- команды для группы 6221 --\n"
-                              "̲Р̲а̲с̲п̲и̲с̲а̲н̲и̲е - картинка с расписанием\n"
-                              "̲У̲ч̲е̲б̲н̲о̲е - ссылка на папку с учебным материалом\n"
-                              "̲Л̲е̲к̲ц̲и̲и - ссылка на папку с моими лекциями\n"
-                              "\n--для администраторов--\n"
-                              "̲У̲п̲р̲а̲в̲л̲е̲н̲и̲е (N,M) - N - chat_id, M - сообщение [Только для администраторов]\n"
-                              "̲С̲т̲р̲и̲м [N] (N - ссылка на стрим) \n"
-
-
-                              "\n")
+            self.send_message(
+                chat_id,
+                "̲С̲т̲р̲и̲м - ссылка на стрим\n"
+                "̲Г̲д̲е N(N - имя человека) - информация о чекточках\n"
+                "̲С̲и̲н̲и̲ч̲к̲и [N](N - количество кадров в гифке, 20 дефолт) - ссылка, снапшот и гифка\n"
+                "̲Р̲е̲г - регистрация для участия в петровиче дня\n"
+                "̲П̲е̲т̲р̲о̲в̲и̲ч̲ ̲д̲н̲я - мини-игра, определяющая кто Петрович Дня\n"
+                "̲С̲т̲а̲т̲а - статистика по Петровичам\n"
+                "̲Д̲а̲н̲е̲т - бот вернёт да или нет. Можно просто \"?\" или в конце указать \"?\"\n"
+                "̲Р̲а̲н̲д̲о̲м N[,M] (N,M - от и до) - рандомное число в заданном диапазоне\n"
+                "̲П̲о̲г̲о̲д̲а [N] (N - название города(Самара, Питер, Сызрань, Прибой)) - погода в городе\n"
+                "̲О̲б̲о̲с̲р̲а̲т̲ь [N] - рандомное оскорбление. N - что/кто либо\n"
+                "̲Ц̲и̲т̲а̲т̲а + пересылаемое сообщение - сохраняет в цитатник сообщение(я)\n"
+                "̲Ц̲и̲т̲а̲т̲ы [N[,M]]- просмотр сохранённых цитат. Возможные комбинации - N - номер страницы, N - фраза для поиска, N - фраза для поиска, M - номер страницы\n"
+                "Клава/скрыть - показывает/убирает клавиатуру\n"
+                "̲П̲о̲м̲о̲щ̲ь - помощь\n"
+                "\n-- команды для группы 6221 --\n"
+                "̲Р̲а̲с̲п̲и̲с̲а̲н̲и̲е - картинка с расписанием\n"
+                "̲У̲ч̲е̲б̲н̲о̲е - ссылка на папку с учебным материалом\n"
+                "̲Л̲е̲к̲ц̲и̲и - ссылка на папку с моими лекциями\n"
+                "\n--для администраторов--\n"
+                "̲У̲п̲р̲а̲в̲л̲е̲н̲и̲е (N,M) - N - chat_id, M - сообщение [Только для администраторов]\n"
+                "̲С̲т̲р̲и̲м [N] (N - ссылка на стрим) \n"
+                "̲С̲т̲а̲р̲т/̲С̲т̲о̲п [N]- возобновляет/продолжает работу бота. С параметром можно отключить нужный модуль\n")
         elif command in ["погода"]:
             if arg is None:
                 city = 'самара'
@@ -510,7 +684,7 @@ class VkBot(threading.Thread):
                     except:
                         self.send_message(chat_id, "Номер страницы должен быть целочисленным")
                         return
-                    if page<=0:
+                    if page <= 0:
                         self.send_message(chat_id, "Номер страницы должен быть положительным")
                         return
                     text_filter = args[0]
@@ -548,94 +722,15 @@ class VkBot(threading.Thread):
                        "(c) {} {}\n" \
                        "------------------------------------------------------------\n".format(obj_on_page.text,
                                                                                                obj_on_page.username,
-                                                                                               obj_on_page.date.strftime("%d.%m.%Y %H:%M:%S"))
+                                                                                               obj_on_page.date.strftime(
+                                                                                                   "%d.%m.%Y %H:%M:%S"))
 
             self.send_message(chat_id, msg)
         elif command in ["клава", "клавиатура"]:
             # ToDo: когда устаканится, сделать в json и отправлять по запросу
-            keyboard = {
-                "one_time": False,
-                "buttons": [
-                    # [
-                    #     {
-                    #         "action": {
-                    #             "type": "text",
-                    #             "label": "Это тестовая кнопка, не жмакай плиз(("
-                    #         }
-                    #     }
-                    # ],
-                    [
-                        {
-                            "action": {
-                                "type": "text",
-                                # "payload": "{\"button\": \"1\"}",
-                                "label": "Погода"
-                            },
-                            "color": "negative"
-                        },
-                        {
-                            "action": {
-                                "type": "text",
-                                # "payload": "{\"button\": \"2\"}",
-                                "label": "Обосрать"
-                            },
-                            "color": "positive"
-                        },
-                        {
-                            "action": {
-                                "type": "text",
-                                # "payload": "{\"button\": \"2\"}",
-                                "label": "?"
-                            },
-                            "color": "primary"
-                        },
-                        {
-                            "action": {
-                                "type": "text",
-                                # "payload": "{\"button\": \"2\"}",
-                                "label": "Помощь"
-                            },
-                            "color": "secondary"
-                        }
-                    ],
-                    [
-                        {
-                            "action": {
-                                "type": "text",
-                                # "payload": "{\"button\": \"1\"}",
-                                "label": "Синички 0"
-                            },
-                            "color": "secondary"
-                        },
-                        {
-                            "action": {
-                                "type": "text",
-                                # "payload": "{\"button\": \"2\"}",
-                                "label": "Синички 20"
-                            },
-                            "color": "secondary"
-                        },
-                        {
-                            "action": {
-                                "type": "text",
-                                # "payload": "{\"button\": \"2\"}",
-                                "label": "Синички 50"
-                            },
-                            "color": "secondary"
-                        },
-                        {
-                            "action": {
-                                "type": "text",
-                                # "payload": "{\"button\": \"2\"}",
-                                "label": "Синички 100"
-                            },
-                            "color": "secondary"
-                        }
-                    ]
-                ]
-            }
-            self.send_message(chat_id, 'Лови', keyboard=json.dumps(keyboard))
-        elif command in ["убери"]:
+
+            self.send_message(chat_id, 'Лови', keyboard=json.dumps(get_keyboard(user_is_admin(user_id))))
+        elif command in ["убери", "скрыть"]:
             keyboard = {
                 "one_time": False,
                 "buttons": []
@@ -646,7 +741,6 @@ class VkBot(threading.Thread):
         #     -----------------------------------------
         elif command in ["расписание", "расп"]:
             RASP_PATH = BASE_DIR + "/static/vkapi/rasp.jpg"
-            print(RASP_PATH)
             photo = self.upload.photo_messages(RASP_PATH)[0]
             attachments.append('photo{}_{}'.format(photo['owner_id'], photo['id']))
             self.send_message(chat_id, "", attachments=attachments)
@@ -674,14 +768,28 @@ class VkBot(threading.Thread):
             self.send_message(2000000000 + msg_chat_id, msg)
         elif command in ["стоп"]:
             if not user_is_admin(user_id):
-                self.send_message(chat_id, "Недостаточно прав на остановку бота")
+                text = "бота"
+                if arg == "синички":
+                    text = "синичек"
+                self.send_message(chat_id, "Недостаточно прав на остановку {}".format(text))
                 return
-            self.BOT_CAN_WORK=False
+            if arg == "синички":
+                cameraHandler.terminate()
+                self.send_message(chat_id, "Финишируем синичек")
+                return
+            self.BOT_CAN_WORK = False
+            cameraHandler.terminate()
             self.send_message(chat_id, "Финишируем")
+        elif command in ["старт"]:
+            if not user_is_admin(user_id):
+                self.send_message(chat_id, "Недостаточно прав на старт синичек")
+                return
+            if arg == "синички":
+                cameraHandler.resume()
+                self.send_message(chat_id, "Стартуем синичек!")
+                return
         else:
             self.send_message(chat_id, "Я не понял команды \"%s\"" % command)
-
-
 
     def __init__(self):
         super().__init__()
@@ -693,18 +801,16 @@ class VkBot(threading.Thread):
         self.upload = VkUpload(vk_session)
         self.vk = vk_session.get_api()
         self.mentions = []
-        self.BOT_CAN_WORK=True
+        self.BOT_CAN_WORK = True
         for i in range(3):
             self.mentions.append(f.readline().strip())
         f.close()
 
     def listen_longpoll(self):
         for event in self.longpoll.listen():
-
             try:
                 # Если пришло новое сообщение
                 if event.type == VkBotEventType.MESSAGE_NEW:
-
 
                     vk_event = {}
                     vk_event['from_chat'] = event.from_chat
@@ -726,7 +832,6 @@ class VkBot(threading.Thread):
                     # Сообщение либо мне в лс, либо упоминание меня
                     if message_for_me(vk_event['message']['text'], self.mentions) or vk_event['from_user']:
 
-
                         # Обрезаем палку
                         if vk_event['message']['text'][0] == '/':
                             vk_event['message']['text'] = vk_event['message']['text'][1:]
@@ -745,9 +850,7 @@ class VkBot(threading.Thread):
                 print('ОШИБКА ВЫПОЛНЕНИЯ ЛОНГПОЛА 1:', e)
 
     def run(self):
-        # ToDo: может можно просто open и всё? Проверь
-        f = open('thread.lock', 'w')
-        f.close()
+        open('thread.lock', 'w')
         self.listen_longpoll()
 
     def get_chat_title(self, chat_id):
@@ -769,7 +872,6 @@ class VkBot(threading.Thread):
     def get_user_by_id(self, user_id):
         obj = UsersCache.objects.filter(user_id=user_id)
         if len(obj) > 0:
-            print("OLD USER_ID")
             obj = obj.first()
             user = {}
             user['first_name'] = obj.name
@@ -777,7 +879,6 @@ class VkBot(threading.Thread):
             user['sex'] = obj.gender
             return user
         else:
-            print("NEW USER_ID")
             user = self.vk.users.get(user_id=user_id, lang='ru', fields='sex')[0]
             new_user = UsersCache()
             new_user.user_id = user_id
