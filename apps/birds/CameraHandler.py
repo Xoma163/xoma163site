@@ -4,6 +4,8 @@ import threading
 import time
 
 import cv2
+import imageio
+from PIL import Image
 
 
 class CameraHandler(threading.Thread):
@@ -19,7 +21,7 @@ class CameraHandler(threading.Thread):
         self._MAX_WIDTH = 1600
         self._running = True
         self.gif = None
-        self.SCALED_WIDTH = 480
+        self.SCALED_WIDTH = 720
         self._init_my_lists()
 
     def run(self):
@@ -29,17 +31,18 @@ class CameraHandler(threading.Thread):
         while capture.isOpened():
             while self._running:
                 delta_time = time.time() - time1
-                # print(delta_time)
                 self.time_on_frame.push(delta_time * 1000)  # мс
                 fps = round(1 / delta_time, 1)
                 time1 = time.time()
 
                 ret, frame = capture.read()
-                frame = cv2.resize(frame, (0, 0), fx=self.SCALED_WIDTH/self._MAX_WIDTH, fy=self.SCALED_WIDTH/self._MAX_WIDTH)
+                frame = cv2.resize(frame, (0, 0), fx=self.SCALED_WIDTH / self._MAX_WIDTH,
+                                   fy=self.SCALED_WIDTH / self._MAX_WIDTH)
                 frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
                 frame = self.draw_text_on_image(frame, datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S"), (10, 20))
                 frame = self.draw_text_on_image(frame, str(fps) + " FPS", (frame.shape[1] - 80, 20))
+
                 self.images.push(frame)
             else:
                 self.wait()
@@ -59,38 +62,45 @@ class CameraHandler(threading.Thread):
     def wait():
         time.sleep(1)
 
-    def get_gif(self, frames=20, offline_mode=False):
-        if offline_mode:
+    def get_gif(self, frames=20, quality=False):
+        if not self._running:
             self.resume()
-            self._init_my_lists()
             while self.time_on_frame.get_list_size(frames)[0] == 0:
                 self.wait()
             self.terminate()
 
         filename = "static/vkapi/birds.gif"
         images = self.images.get_list_size(frames)
-        frametimes = self.time_on_frame.get_list_size(frames)
-        # Второй способ
-        # duration = sum(self.time_on_frame.get_list_size(frames)) / frames
-        # imageio.mimsave(filename, images, duration=duration)
-        from PIL import Image
 
-        pil_images = []
-        for i in range(len(images)):
-            pil_image = Image.fromarray(images[i])
-            # Делаю это потому что в Pillow есть баг, который не позволяет указать list duration в .save
-            pil_image.info['duration']=frametimes[i]
-            pil_images.append(pil_image)
+        # Высокое качество
+        duration = sum(self.time_on_frame.get_list_size(frames)) / frames
+        if quality:
+            duration /= 1000
+            imageio.mimsave(filename, images, duration=duration)
+        #     Обычное качество
+        elif not quality:
+            # frametimes = self.time_on_frame.get_list_size(frames)
+            pil_images = []
+            for i in range(len(images)):
+                pil_image = Image.fromarray(images[i])
+                pil_image.info['duration'] = duration
+                pil_images.append(pil_image)
 
-        pil_images[0].save(filename,
-                           save_all=True,
-                           append_images=pil_images[1:],
-                           loop=0,
-                           # optimize=True,
-                           )
+            pil_images[0].save(filename,
+                               format="GIF",
+                               save_all=True,
+                               append_images=pil_images[1:],
+                               loop=0,
+                               )
         return os.path.abspath(filename)
 
     def get_img(self):
+        if not self._running:
+            self.resume()
+            while self.time_on_frame.get_last() == 0:
+                self.wait()
+            self.terminate()
+
         filename = "static/vkapi/snapshot.jpg"
         frame = self.images.get_last()
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
@@ -133,3 +143,9 @@ class MaxSizeList(object):
 
     def get_last(self):
         return self.ls[self.max_length - 1]
+
+    def get_size(self):
+        return self.max_length
+
+    def del_list(self):
+        self.ls = []

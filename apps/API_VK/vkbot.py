@@ -15,7 +15,6 @@ from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.utils import get_random_id
 
 from apps.API_VK.models import Log, VkChatId, Stream, TrustIMEI, VkUser, Winners, QuoteBook, UsersCache
-from apps.birds.views import gif
 from xoma163site.settings import BASE_DIR
 from xoma163site.wsgi import cameraHandler
 
@@ -327,41 +326,40 @@ class VkBot(threading.Thread):
                 self.send_message(chat_id, e)
                 return
             frames = 20
-            args=arg.split(',')
-            if arg:
-                try:
-                    frames = int(args[0])
-                    if frames > cameraHandler.MAX_FRAMES:
-                        self.send_message(chat_id,
-                                          "Ты совсем поехавший? До {} кадров давай".format(cameraHandler.MAX_FRAMES))
-                        return
-                except:
-                    # ToDo: подумай об этом
-                    # if not args[0]=='ширина':
-                    #     self.send_message(chat_id, "Может ширина?")
-                    #     return
-                    # try:
-                    #     new_width=int(args[1])
-                    #     if new_width>cameraHandler._MAX_WIDTH:
-                    #         self.send_message(chat_id,"Ты совсем поехавший? До {} пикселей давай".format(cameraHandler._MAX_WIDTH))
-                    #         return
-                    #     cameraHandler.SCALED_WIDTH=new_width
-                    #     self.send_message(chat_id,  "Новое значение установлено")
-                    #     return
-                    # except:
-                    #     self.send_message(chat_id, "Введите ширину gif")
+            quality = 0
 
-                    self.send_message(chat_id, "Введите количество кадров в gif")
-                    return
+            try:
+                args = arg.split(',')
+                if arg:
+                    try:
+                        frames = int(args[0])
+                        if frames > cameraHandler.MAX_FRAMES:
+                            self.send_message(chat_id,
+                                              "Ты совсем поехавший? До {} кадров давай".format(
+                                                  cameraHandler.MAX_FRAMES))
+                            return
+                    except:
+                        self.send_message(chat_id, "Введите количество кадров в gif")
+                        return
+                    if len(args) > 1:
+                        try:
+                            quality = int(args[1])
+                            print(quality)
+                            if not 0 <= quality <= 1:
+                                self.send_message(chat_id, "Качество может быть в диапазоне [0,1]")
+                                return
+                        except:
+                            self.send_message(chat_id, "Качество может быть в диапазоне [0,1]")
+                            return
+            except:
+                pass
+
             photo = self.upload.photo_messages(path)[0]
             attachments.append('photo{}_{}'.format(photo['owner_id'], photo['id']))
 
             if frames != 0:
                 try:
-                    if cameraHandler.is_active():
-                        path2 = cameraHandler.get_gif(frames)
-                    else:
-                        path2 = cameraHandler.get_gif(frames,True)
+                    path2 = cameraHandler.get_gif(frames, quality == 1)
                 except RuntimeError as e:
                     self.send_message(chat_id, e)
                     return
@@ -508,7 +506,7 @@ class VkBot(threading.Thread):
                 chat_id,
                 "̲С̲т̲р̲и̲м - ссылка на стрим\n"
                 "̲Г̲д̲е N(N - имя человека) - информация о чекточках\n"
-                "̲С̲и̲н̲и̲ч̲к̲и [N](N - количество кадров в гифке, 20 дефолт) - ссылка, снапшот и гифка\n"
+                "̲С̲и̲н̲и̲ч̲к̲и [N[,M]](N - количество кадров в гифке, 20 дефолт, M - качество(0 или 1), 0 дефолт) - ссылка, снапшот и гифка\n"
                 "̲Р̲е̲г - регистрация для участия в петровиче дня\n"
                 "̲П̲е̲т̲р̲о̲в̲и̲ч̲ ̲д̲н̲я - мини-игра, определяющая кто Петрович Дня\n"
                 "̲С̲т̲а̲т̲а - статистика по Петровичам\n"
@@ -774,19 +772,24 @@ class VkBot(threading.Thread):
                 self.send_message(chat_id, "Недостаточно прав на остановку {}".format(text))
                 return
             if arg == "синички":
-                cameraHandler.terminate()
-                self.send_message(chat_id, "Финишируем синичек")
+                if cameraHandler._running:
+                    cameraHandler.terminate()
+                    self.send_message(chat_id, "Финишируем синичек")
+                else:
+                    self.send_message(chat_id, "Синички уже финишировали")
                 return
             self.BOT_CAN_WORK = False
-            cameraHandler.terminate()
             self.send_message(chat_id, "Финишируем")
         elif command in ["старт"]:
             if not user_is_admin(user_id):
                 self.send_message(chat_id, "Недостаточно прав на старт синичек")
                 return
             if arg == "синички":
-                cameraHandler.resume()
-                self.send_message(chat_id, "Стартуем синичек!")
+                if not cameraHandler._running:
+                    cameraHandler.resume()
+                    self.send_message(chat_id, "Стартуем синичек!")
+                else:
+                    self.send_message(chat_id, "Синички уже стартовали!")
                 return
         else:
             self.send_message(chat_id, "Я не понял команды \"%s\"" % command)
