@@ -7,6 +7,8 @@ import cv2
 import imageio
 from PIL import Image
 
+from xoma163site.settings import BASE_DIR
+
 
 class CameraHandler(threading.Thread):
     def _init_my_lists(self):
@@ -22,9 +24,9 @@ class CameraHandler(threading.Thread):
         self._running = True
         self.gif = None
         self.SCALED_WIDTH = 720
-        self._init_my_lists()
 
     def run(self):
+        self._init_my_lists()
         capture = cv2.VideoCapture("http://192.168.1.44/mjpg/video.mjpg")
 
         time1 = time.time()
@@ -69,7 +71,7 @@ class CameraHandler(threading.Thread):
                 self.wait()
             self.terminate()
 
-        filename = "static/vkapi/birds.gif"
+        filename = BASE_DIR + "/static/vkapi/birds.gif"
         images = self.images.get_list_size(frames)
 
         # Высокое качество
@@ -101,7 +103,7 @@ class CameraHandler(threading.Thread):
                 self.wait()
             self.terminate()
 
-        filename = "static/vkapi/snapshot.jpg"
+        filename = BASE_DIR + "/static/vkapi/snapshot.jpg"
         frame = self.images.get_last()
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         cv2.imwrite(filename, frame, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
@@ -121,7 +123,7 @@ class MaxSizeList(object):
         self.ls = []
 
     def init_frames(self):
-        filename = "static/vkapi/snapshot.jpg"
+        filename = BASE_DIR + "/static/vkapi/snapshot.jpg"
         frame = cv2.imread(filename)
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         # Frame convert to ndarray

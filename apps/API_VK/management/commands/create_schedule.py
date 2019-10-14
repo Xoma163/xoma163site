@@ -1,5 +1,7 @@
 from django.core.management.base import BaseCommand
 
+from xoma163site.settings import BASE_DIR
+
 
 class Command(BaseCommand):
     # help = 'Displays current time'
@@ -106,7 +108,7 @@ class Command(BaseCommand):
         schedule['2']['5']['6']['TYPE'] = "🍋 Лаба"
         print(schedule)
 
-        with open('static/schedules/schedule.json', 'w') as outfile:
+        with open(BASE_DIR + '/static/schedules/schedule.json', 'w') as outfile:
             import json
             json.dump(schedule, outfile)
 

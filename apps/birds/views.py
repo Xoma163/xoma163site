@@ -5,6 +5,9 @@ from django.shortcuts import render
 
 
 # Create your views here.
+from xoma163site.settings import BASE_DIR
+
+
 def index(request):
     return render(
         request,
@@ -17,7 +20,7 @@ def snapshot():
     if not _lock_thread():
         raise RuntimeError("Падажжи, я уже делаю гифку")
     import cv2, os
-    filename = "static/vkapi/snapshot.jpg"
+    filename = BASE_DIR + "/static/vkapi/snapshot.jpg"
 
     capture = cv2.VideoCapture("http://xoma163.site:20000/mjpg/video.mjpg")
     frame = None
@@ -35,7 +38,7 @@ def gif(frames=20):
     import cv2, os
     import imageio as io
 
-    filename = "static/vkapi/birds.gif"
+    filename = BASE_DIR + "/static/vkapi/birds.gif"
     temp_filename = "temp.jpg"
     capture = cv2.VideoCapture("http://192.168.1.44/mjpg/video.mjpg")
     i = 0
@@ -57,7 +60,7 @@ def gif(frames=20):
     return os.path.abspath(filename)
 
 
-filename = "static/vkapi/thread_birds.lock"
+filename = BASE_DIR + "/static/vkapi/thread_birds.lock"
 
 
 def _lock_thread():
