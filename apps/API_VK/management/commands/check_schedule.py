@@ -40,10 +40,10 @@ class Command(BaseCommand):
         now_weekday = str(now.weekday() + 1)
 
         # Проверяем есть ли сегодня пары
-        if not now_weeknumber in schedule:
+        if now_weeknumber not in schedule:
             self.change_title_on_default()
             return
-        if not now_weekday in schedule[now_weeknumber]:
+        if now_weekday not in schedule[now_weeknumber]:
             self.change_title_on_default()
             return
 

@@ -79,7 +79,7 @@ TEMPLATES = [
 ]
 WSGI_APPLICATION = 'xoma163site.wsgi.application'
 
-f = open(BASE_DIR + "/secrets/db.txt", "r")
+f = open(BASE_DIR + "/secrets/db.txt")
 
 DATABASES = {
     'default': {
@@ -140,4 +140,3 @@ FILE_UPLOAD_PERMISSIONS = 0o644
 
 # New TBot
 # tBot = TBot()
-

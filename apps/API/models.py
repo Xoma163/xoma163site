@@ -35,7 +35,8 @@ class Log(models.Model):
     date = models.DateTimeField(verbose_name="Дата", auto_now_add=True, blank=True)
     imei = models.CharField(verbose_name='IMEI', max_length=20, null=True)
     author = models.ForeignKey(TelegramTrustIMEI, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
-    event = models.CharField(verbose_name='Событие', choices=(('home', 'дома'), ('work', 'на работе')), max_length=20, null=True)
+    event = models.CharField(verbose_name='Событие', choices=(('home', 'дома'), ('work', 'на работе')), max_length=20,
+                             null=True)
     msg = models.CharField(verbose_name='Сообщение', max_length=2000)
     success = models.BooleanField(verbose_name='Отправлено', default=False)
 

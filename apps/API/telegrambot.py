@@ -10,7 +10,7 @@ class TBot:
 
         from xoma163site.settings import BASE_DIR
 
-        f = open(BASE_DIR + "/secrets/telegram_bot.txt", "r")
+        f = open(BASE_DIR + "/secrets/telegram_bot.txt")
 
         proxy_url = 'socks5h://192.169.215.114:44598'
         api_token = f.readline().replace('\r', '').replace('\n', '')
@@ -20,8 +20,5 @@ class TBot:
         apihelper.proxy = {'https': proxy_url}
 
         self.bot = telebot.TeleBot(api_token)
-
-
-
 
         #

@@ -87,10 +87,10 @@ def get_keyboard(admin):
 
 class VkBot(threading.Thread):
 
-    def send_message(self, id, msg, attachments=None, keyboard=None):
+    def send_message(self, peer_id, msg, attachments=None, keyboard=None):
         if attachments is None:
             attachments = []
-        self.vk.messages.send(peer_id=id,
+        self.vk.messages.send(peer_id=peer_id,
                               message=msg,
                               access_token=self._TOKEN,
                               random_id=get_random_id(),
@@ -151,10 +151,62 @@ class VkBot(threading.Thread):
                 stream.link = arg
                 stream.save()
                 self.send_message(chat_id, "Ссылка изменена на " + arg)
+        elif command in ["данет"] or full_message[-1] == '?':
+            bad_words = ['еба', 'ёба', 'пидор', 'пидар', "пидр", 'гандон', 'годнон', 'хуй', 'пизд', 'бля', 'шлюха',
+                         'мудак', 'говно', 'моча', 'залупа', 'гей', 'сука', 'дурак', 'говно', 'жопа', 'ублюдок',
+                         'мудак']
+
+            min_index_bad = len(full_message)
+            max_index_bad = -1
+            for word in bad_words:
+                ind = full_message.lower().find(word)
+                if ind != -1:
+                    if ind < min_index_bad:
+                        min_index_bad = ind
+                    if ind > max_index_bad:
+                        max_index_bad = ind
+
+            min_index_bad = full_message.rfind(' ', 0, min_index_bad)
+            if min_index_bad == -1:
+                min_index_bad = full_message.rfind(',', 0, min_index_bad)
+                if min_index_bad == -1:
+                    min_index_bad = full_message.rfind('.', 0, min_index_bad)
+                    if min_index_bad == -1:
+                        min_index_bad = full_message.find('/')
+            min_index_bad += 1
+
+            if max_index_bad != -1:
+                len_bad = full_message.find(',', max_index_bad)
+                if len_bad == -1:
+                    len_bad = full_message.find(' ', max_index_bad)
+                    if len_bad == -1:
+                        len_bad = full_message.find('?', max_index_bad)
+
+                bad_answers = ['как же вы меня затрахали...', 'ты обижаешь бота?', 'тебе заняться нечем?', '...',
+                               'о боже', 'тебе не стыдно?', 'зачем ты так?']
+                rand_int = random.randint(0, len(bad_answers) - 1)
+                self.send_message(chat_id, bad_answers[rand_int])
+                user = self.get_user_by_id(user_id)
+                first_name = user['first_name']
+                if user['sex'] == 1:
+                    msg_self = "сама"
+                else:
+                    msg_self = "сам"
+                msg = "{}, {} {} {}?".format(first_name, "может ты", msg_self, full_message[min_index_bad: len_bad])
+                self.send_message(chat_id, msg)
+                return
+
+            rand_int = random.randint(1, 100)
+            if rand_int <= 48:
+                msg = "Да"
+            elif rand_int <= 96:
+                msg = "Нет"
+            else:
+                msg = "Ну тут даже я хз"
+            self.send_message(chat_id, msg)
         elif command in ["где"]:
             if arg is None:
                 msg = "Нет аргумента у команды 'Где'"
-                return
             else:
                 user = TrustIMEI.objects.filter(name=arg.capitalize()).first()
 
@@ -276,59 +328,6 @@ class VkBot(threading.Thread):
             for player in players:
                 msg += "%s - %s\n" % (player.username, result_list[player.username]['RESULT'])
             self.send_message(chat_id, msg)
-        elif command in ["данет"] or full_message[-1] == '?':
-            bad_words = ['еба', 'ёба', 'пидор', 'пидар', "пидр", 'гандон', 'годнон', 'хуй', 'пизд', 'бля', 'шлюха',
-                         'мудак', 'говно', 'моча', 'залупа', 'гей', 'сука', 'дурак', 'говно', 'жопа', 'ублюдок',
-                         'мудак']
-
-            min_index_bad = len(full_message)
-            max_index_bad = -1
-            for word in bad_words:
-                ind = full_message.lower().find(word)
-                if ind != -1:
-                    if ind < min_index_bad:
-                        min_index_bad = ind
-                    if ind > max_index_bad:
-                        max_index_bad = ind
-
-            min_index_bad = full_message.rfind(' ', 0, min_index_bad)
-            if min_index_bad == -1:
-                min_index_bad = full_message.rfind(',', 0, min_index_bad)
-                if min_index_bad == -1:
-                    min_index_bad = full_message.rfind('.', 0, min_index_bad)
-                    if min_index_bad == -1:
-                        min_index_bad = full_message.find('/')
-            min_index_bad += 1
-
-            if max_index_bad != -1:
-                len_bad = full_message.find(',', max_index_bad)
-                if len_bad == -1:
-                    len_bad = full_message.find(' ', max_index_bad)
-                    if len_bad == -1:
-                        len_bad = full_message.find('?', max_index_bad)
-
-                bad_answers = ['как же вы меня затрахали...', 'ты обижаешь бота?', 'тебе заняться нечем?', '...',
-                               'о боже', 'тебе не стыдно?', 'зачем ты так?']
-                rand_int = random.randint(0, len(bad_answers) - 1)
-                self.send_message(chat_id, bad_answers[rand_int])
-                user = self.get_user_by_id(user_id)
-                first_name = user['first_name']
-                if user['sex'] == 1:
-                    msg_self = "сама"
-                else:
-                    msg_self = "сам"
-                msg = "{}, {} {} {}?".format(first_name, "может ты", msg_self, full_message[min_index_bad: len_bad])
-                self.send_message(chat_id, msg)
-                return
-
-            rand_int = random.randint(1, 100)
-            if rand_int <= 48:
-                msg = "Да"
-            elif rand_int <= 96:
-                msg = "Нет"
-            else:
-                msg = "Ну тут даже я хз"
-            self.send_message(chat_id, msg)
         elif command in ["рандом", "ранд"]:
             args = arg.split(',')
             # except если оба хрень
@@ -362,6 +361,7 @@ class VkBot(threading.Thread):
             self.send_message(
                 chat_id,
                 get_help_text())
+        # ToDo: кэширование запросов, раз в 3 часа
         elif command in ["погода"]:
             if arg is None:
                 city = 'самара'
@@ -372,7 +372,7 @@ class VkBot(threading.Thread):
             weather = get_weather(city)
 
             self.send_message(chat_id, weather)
-        #     ToDo: Похвалить
+        # ToDo: Похвалить
         # ToDo: возможно сделать привязку к гуглтаблам
         elif command in ["обосрать", "обосри"]:
             insults = get_insults()
@@ -510,14 +510,11 @@ class VkBot(threading.Thread):
                 else:
                     msg = msgs
                 # Много
-                new_msg = msg['text'].replace(',', ' бля,')
-
-                if new_msg[-1] == '.':
-                    new_msg = new_msg[:len(new_msg) - 1] + " бля."
-                else:
-                    new_msg += " бля"
-
-                new_msg = new_msg.replace('.', 'бля.').replace('?', 'бля?').replace('!', 'бля!')
+                new_msg = msg['text']
+                new_msg = new_msg.replace('.', ' бля.').replace('?', ' бля?').replace('!', ' бля!').replace(',',
+                                                                                                            ' бля,').replace(
+                    ':', ' бля:').replace('—', ' бля —').replace('-', ' бля -')
+                new_msg = new_msg.replace('блябля', 'бля').replace('бля бля', 'бля')
 
                 self.send_message(chat_id, new_msg)
             else:
@@ -525,14 +522,17 @@ class VkBot(threading.Thread):
 
         #     -----------------------------------------
         elif command in ["расписание", "расп"]:
-            RASP_PATH = BASE_DIR + "/static/vkapi/rasp.jpg"
+            RASP_PATH = BASE_DIR + "/static/vkapi/rasp.png"
             photo = self.upload.photo_messages(RASP_PATH)[0]
             attachments.append('photo{}_{}'.format(photo['owner_id'], photo['id']))
-            self.send_message(chat_id, "", attachments=attachments)
+            self.send_message(chat_id, str((datetime.datetime.now().isocalendar()[1] - 35)) + " неделя",
+                              attachments=attachments)
         elif command in ["гугл", "ссылка", "учебное"]:
             self.send_message(chat_id, "https://drive.google.com/open?id=1AJPnT2XXYNc39-2CSr_MzHnv4hs6Use6")
         elif command in ["лекции"]:
             self.send_message(chat_id, "https://drive.google.com/open?id=19QVRRbj6ePEFTxS2bHOjjaKljkJwZxNB")
+        elif command in ["неделя"]:
+            self.send_message(chat_id, str((datetime.datetime.now().isocalendar()[1] - 35)) + " неделя")
 
         #     -----------------------------------------
 
@@ -583,7 +583,7 @@ class VkBot(threading.Thread):
 
     def __init__(self):
         super().__init__()
-        f = open(BASE_DIR + "/secrets/vk.txt", "r")
+        f = open(BASE_DIR + "/secrets/vk.txt")
         self._TOKEN = f.readline().strip()
         self._group_id = int(f.readline().strip())
         vk_session = vk_api.VkApi(token=self._TOKEN)
@@ -602,17 +602,16 @@ class VkBot(threading.Thread):
                 # Если пришло новое сообщение
                 if event.type == VkBotEventType.MESSAGE_NEW:
 
-                    vk_event = {}
-                    vk_event['from_chat'] = event.from_chat
-                    vk_event['from_group'] = event.from_group
-                    vk_event['from_user'] = event.from_user
-                    vk_event['chat_id'] = event.chat_id
-
-                    vk_event['message'] = {}
-                    vk_event['message']['text'] = event.object.text
-                    vk_event['message']['full_text'] = event.object.text
-                    vk_event['message']['user_id'] = event.object.from_id
-                    vk_event['message']['peer_id'] = event.object.peer_id
+                    vk_event = {'from_chat': event.from_chat,
+                                'from_group': event.from_group,
+                                'from_user': event.from_user,
+                                'chat_id': event.chat_id,
+                                'message': {
+                                    'text': event.object.text,
+                                    'full_text': event.object.text,
+                                    'user_id': event.object.from_id,
+                                    'peer_id': event.object.peer_id,
+                                }}
 
                     if 'reply_message' in event.object:
                         vk_event['reply'] = event.object['reply_message']
@@ -663,10 +662,7 @@ class VkBot(threading.Thread):
         obj = UsersCache.objects.filter(user_id=user_id)
         if len(obj) > 0:
             obj = obj.first()
-            user = {}
-            user['first_name'] = obj.name
-            user['last_name'] = obj.surname
-            user['sex'] = obj.gender
+            user = {'first_name': obj.name, 'last_name': obj.surname, 'sex': obj.gender}
             return user
         else:
             user = self.vk.users.get(user_id=user_id, lang='ru', fields='sex')[0]

@@ -26,7 +26,8 @@ def where_is_me(request):
         dictionary_from = {'home': 'из дома', 'work': 'с работы'}
 
         today = datetime.datetime.now()
-        today_logs = Log.objects.filter(date__year=today.year, date__month=today.month, date__day=today.day, author=author)
+        today_logs = Log.objects.filter(date__year=today.year, date__month=today.month, date__day=today.day,
+                                        author=author)
 
         count_work = 0
         count_home = 0

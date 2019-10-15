@@ -3,7 +3,6 @@ import time
 
 from django.shortcuts import render
 
-
 # Create your views here.
 from xoma163site.settings import BASE_DIR
 
@@ -20,7 +19,7 @@ def snapshot():
     if not _lock_thread():
         raise RuntimeError("Падажжи, я уже делаю гифку")
     import cv2, os
-    filename = BASE_DIR + "/static/vkapi/snapshot.jpg"
+    filename_snapshot = BASE_DIR + "/static/vkapi/snapshot.jpg"
 
     capture = cv2.VideoCapture("http://xoma163.site:20000/mjpg/video.mjpg")
     frame = None
@@ -28,7 +27,7 @@ def snapshot():
         ret, frame = capture.read()
     cv2.imwrite(filename, frame, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
     _unlock_thread()
-    return os.path.abspath(filename)
+    return os.path.abspath(filename_snapshot)
 
 
 # ToDo: Настроить более оптимальное сжатие кадров
@@ -38,7 +37,7 @@ def gif(frames=20):
     import cv2, os
     import imageio as io
 
-    filename = BASE_DIR + "/static/vkapi/birds.gif"
+    filename_gif = BASE_DIR + "/static/vkapi/birds.gif"
     temp_filename = "temp.jpg"
     capture = cv2.VideoCapture("http://192.168.1.44/mjpg/video.mjpg")
     i = 0
@@ -54,10 +53,10 @@ def gif(frames=20):
     time_2 = time.time()
 
     time_for_frame = (time_2 - time_1) / frames
-    io.mimsave(filename, images, duration=time_for_frame)
+    io.mimsave(filename_gif, images, duration=time_for_frame)
 
     _unlock_thread()
-    return os.path.abspath(filename)
+    return os.path.abspath(filename_gif)
 
 
 filename = BASE_DIR + "/static/vkapi/thread_birds.lock"

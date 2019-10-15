@@ -114,7 +114,7 @@ class UsersCache(models.Model):
     user_id = models.CharField(verbose_name='ID', max_length=20, default=0)
     name = models.CharField(verbose_name='Имя', max_length=40, default="")
     surname = models.CharField(verbose_name='Фамилия', max_length=40, default="")
-    gender = models.CharField(verbose_name='Пол', max_length=1, default="0") # 1 тян, 2 - кун, 0 - хз по-моему
+    gender = models.CharField(verbose_name='Пол', max_length=1, default="0")  # 1 тян, 2 - кун, 0 - хз по-моему
 
     class Meta:
         verbose_name = "Кэшированный пользователь"
