@@ -40,6 +40,11 @@ class Command(BaseCommand):
         schedule['1']['3']['3']['DISCIPLINE'] = "ПРПО"
         schedule['1']['3']['3']['CABINET'] = "421"
         schedule['1']['3']['3']['TYPE'] = "🍎 Практика"
+        schedule['1']['4']['5'] = {}
+        schedule['1']['4']['5']['TEACHER'] = "Лёзина И.В."
+        schedule['1']['4']['5']['DISCIPLINE'] = "ПРПО"
+        schedule['1']['4']['5']['CABINET'] = "421"
+        schedule['1']['4']['5']['TYPE'] = "🍎 Практика"
         # ВРЕМЕННАЯ ПАРА
         schedule['1']['5'] = {}
         schedule['1']['5']['1'] = {}

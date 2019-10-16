@@ -15,7 +15,7 @@ from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.utils import get_random_id
 
 from apps.API_VK.models import Log, VkChatId, Stream, TrustIMEI, VkUser, Winners, QuoteBook, UsersCache
-from apps.API_VK.static_texts import get_default_keyboard, get_admin_keyboard, get_help_text, get_insults
+from apps.API_VK.static_texts import get_default_keyboard, get_admin_keyboard, get_help_text, get_insults, get_praises
 from xoma163site.settings import BASE_DIR
 from xoma163site.wsgi import cameraHandler
 
@@ -83,6 +83,15 @@ def get_keyboard(admin):
     else:
         keyboard = get_admin_keyboard()
     return keyboard
+
+
+def get_random_item_from_list(list, arg):
+    rand_int = random.randint(0, len(list) - 1)
+    if arg:
+        msg = "{}, ты {}".format(arg.capitalize(), list[rand_int].lower())
+    else:
+        msg = list[rand_int]
+    return msg
 
 
 class VkBot(threading.Thread):
@@ -372,61 +381,40 @@ class VkBot(threading.Thread):
             weather = get_weather(city)
 
             self.send_message(chat_id, weather)
-        # ToDo: Похвалить
         # ToDo: возможно сделать привязку к гуглтаблам
+        elif command in ["похвалить", "похвали", "хвалить"]:
+            msg = get_random_item_from_list(get_praises(), arg)
+            self.send_message(chat_id, msg)
         elif command in ["обосрать", "обосри"]:
-            insults = get_insults()
-            rand_int = random.randint(0, len(insults) - 1)
-            if arg:
-                self.send_message(chat_id, "{}, ты {}".format(arg.capitalize(), insults[rand_int].lower()))
-            else:
-                self.send_message(chat_id, insults[rand_int])
+            msg = get_random_item_from_list(get_insults(), arg)
+            self.send_message(chat_id, msg)
         elif command in ["цитата", "(c)", "(с)"]:
-            if not 'reply' in vk_event and not 'fwd' in vk_event:
+            if not 'fwd' in vk_event:
                 self.send_message(chat_id, "Перешлите сообщения для сохранения цитаты")
                 return
-
-            if 'reply' in vk_event:
-                msgs = vk_event['reply']
-            elif 'fwd' in vk_event:
-                msgs = vk_event['fwd']
-            else:
-                self.send_message(chat_id, "WTF")
-                return
+            msgs = vk_event['fwd']
 
             quote = QuoteBook()
             quote.peer_id = peer_id
-
-            # Одно сообщение
-            # Мутки если fwd или reply
-            if isinstance(msgs, dict) or len(msgs) == 1:
-                if isinstance(msgs, list):
-                    msg = msgs[0]
-                else:
-                    msg = msgs
-
-                quote.user_id = msg['from_id']
-                quote.text = msg['text']
-
-                if msg['from_id'] > 0:
-                    user = self.get_user_by_id(msg['from_id'])
+            quote.user_id = 0
+            if len(msgs) == 1:
+                if msgs[0]['from_id'] > 0:
+                    user = self.get_user_by_id(msgs[0]['from_id'])
                     quote.username = user['first_name'] + " " + user['last_name']
                 else:
-                    quote.username = self.get_groupname_by_id(int(msg['from_id']) * -1)
-            # Много
+                    quote.username = self.get_groupname_by_id(int(msgs[0]['from_id']) * -1)
             else:
-                quote.user_id = 0
-                quote_text = ""
                 quote.username = ""
-                for msg in msgs:
-                    text = msg['text']
-                    if msg['from_id'] > 0:
-                        user = self.get_user_by_id(msg['from_id'])
-                        username = user['first_name'] + " " + user['last_name']
-                    else:
-                        username = self.get_groupname_by_id(int(msg['from_id']) * -1)
-                    quote_text += "{}\n{}\n\n".format(username, text)
-                quote.text = quote_text
+            quote_text = ""
+            for msg in msgs:
+                text = msg['text']
+                if msg['from_id'] > 0:
+                    user = self.get_user_by_id(msg['from_id'])
+                    username = user['first_name'] + " " + user['last_name']
+                else:
+                    username = self.get_groupname_by_id(int(msg['from_id']) * -1)
+                quote_text += "{}\n{}\n\n".format(username, text)
+            quote.text = quote_text
             quote.save()
             self.send_message(chat_id, "Цитата сохранена")
         elif command in ["цитаты"]:
@@ -614,8 +602,8 @@ class VkBot(threading.Thread):
                                 }}
 
                     if 'reply_message' in event.object:
-                        vk_event['reply'] = event.object['reply_message']
-                    if 'fwd_messages' in event.object:
+                        vk_event['fwd'] = [event.object['reply_message']]
+                    elif 'fwd_messages' in event.object:
                         vk_event['fwd'] = event.object['fwd_messages']
 
                     # Сообщение либо мне в лс, либо упоминание меня
