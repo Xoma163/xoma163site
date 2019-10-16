@@ -74,21 +74,7 @@ def get_weather(city="самара"):
             'pressure': result['fact']['pressure_mm'],
             'humidity': result['fact']['humidity'],
         },
-        'forecast': {
-            'part_name': {},
-            'temp_min': {},
-            'temp_avg': {},
-            'temp_max': {},
-            'temp_feels_like': {},
-            'condition': {},
-            'wind_speed': {},
-            'wind_gust': {},
-            'pressure': {},
-            'humidity': {},
-            'prec_mm': {},
-            'prec_period': {},
-            'prec_prob': {},
-        }}
+        'forecast': {}}
 
     for i in range(len(result['forecast']['parts'])):
         WEATHER['forecast'][i] = {
