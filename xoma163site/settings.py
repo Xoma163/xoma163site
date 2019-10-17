@@ -42,7 +42,6 @@ INSTALLED_APPS = [
 
     'django_hosts',
 
-    'apps.API',
     'apps.API_VK',
     'apps.birds',
 ]
