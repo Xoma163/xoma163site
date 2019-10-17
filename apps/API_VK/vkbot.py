@@ -364,7 +364,7 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, "Всегда пожалуйста! :)")
         elif command in ['сори', 'прости', 'извини']:
             phrases = ["лан", "нет", "окей", "ничего страшного", "Бот любит тебя", "я подумаю", "ой всё",
-                       "ну а чё ты :(", "всё хорошо", "каво"]
+                       "ну а чё ты :(", "всё хорошо", "каво", "сь"]
             self.send_message(chat_id, phrases[random.randint(0, len(phrases) - 1)])
         elif command in ["помощь", "хелп", "ман", "команды", "помоги", "памаги", "спаси", "хелб"]:
             self.send_message(
@@ -480,38 +480,29 @@ class VkBot(threading.Thread):
             }
             self.send_message(chat_id, 'Убрал', keyboard=json.dumps(keyboard))
         elif command in ["уъу", "бля"]:
-            if not 'reply' in vk_event and not 'fwd' in vk_event:
+
+            if not 'fwd' in vk_event:
                 self.send_message(chat_id, "Перешлите сообщения для сохранения цитаты")
                 return
 
-            if 'reply' in vk_event:
-                msgs = vk_event['reply']
-            elif 'fwd' in vk_event:
-                msgs = vk_event['fwd']
-            else:
-                self.send_message(chat_id, 'WTF')
-                return
+            msgs = vk_event['fwd']
 
-            if isinstance(msgs, dict) or len(msgs) == 1:
-                if isinstance(msgs, list):
-                    msg = msgs[0]
-                else:
-                    msg = msgs
-                # Много
-                new_msg = msg['text']
-                new_msg = new_msg.replace('.', ' бля.').replace('?', ' бля?').replace('!', ' бля!').replace(',',
-                                                                                                            ' бля,').replace(
-                    ':', ' бля:').replace('—', ' бля —').replace('-', ' бля -')
-                new_msg = new_msg.replace('блябля', 'бля').replace('бля бля', 'бля')
-
-                self.send_message(chat_id, new_msg)
+            if len(msgs) == 1:
+                new_msg = msgs[0]['text']
             else:
-                self.send_message(chat_id, "Перешлите только 1 сообщение")
+                new_msg = ""
+                for msg in msgs:
+                    new_msg += msg['text'] + "\n"
+            new_msg = new_msg.replace('.', ' бля.').replace('?', ' бля?').replace('!', ' бля!').replace(',', ' бля,') \
+                .replace(':', ' бля:').replace('—', ' бля —').replace('-', ' бля -')
+            new_msg = new_msg.replace('блябля', 'бля').replace('бля бля', 'бля')
+            self.send_message(chat_id, new_msg)
 
         #     -----------------------------------------
         elif command in ["расписание", "расп"]:
-            RASP_PATH = BASE_DIR + "/static/vkapi/rasp.png"
-            photo = self.upload.photo_messages(RASP_PATH)[0]
+            # RASP_PATH = BASE_DIR + "/static/vkapi/rasp.png"
+            # photo = self.upload.photo_messages(RASP_PATH)[0]
+            photo = {'owner_id': -186416119, 'id': 457239626}
             attachments.append('photo{}_{}'.format(photo['owner_id'], photo['id']))
             self.send_message(chat_id, str((datetime.datetime.now().isocalendar()[1] - 35)) + " неделя",
                               attachments=attachments)
