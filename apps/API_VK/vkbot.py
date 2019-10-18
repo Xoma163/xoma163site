@@ -479,7 +479,7 @@ class VkBot(threading.Thread):
                 "buttons": []
             }
             self.send_message(chat_id, 'Убрал', keyboard=json.dumps(keyboard))
-        elif command in ["уъу", "бля"]:
+        elif command in ["уъу", "бля", "ъуъ"]:
 
             if not 'fwd' in vk_event:
                 self.send_message(chat_id, "Перешлите сообщения для сохранения цитаты")
