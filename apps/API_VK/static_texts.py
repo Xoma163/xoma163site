@@ -1,4 +1,4 @@
-def get_default_keyboard():
+def get_admin_keyboard():
     return {
         "one_time": False,
         "buttons": [
@@ -84,6 +84,15 @@ def get_default_keyboard():
                 {
                     "action": {
                         "type": "text",
+                        "label": "Расписание"
+                    },
+                    "color": "primary"
+                }
+            ],
+            [
+                {
+                    "action": {
+                        "type": "text",
                         "label": "Скрыть"
                     },
                     "color": "secondary"
@@ -93,7 +102,7 @@ def get_default_keyboard():
     }
 
 
-def get_admin_keyboard():
+def get_default_keyboard():
     return {
         "one_time": False,
         "buttons": [
@@ -179,7 +188,8 @@ def get_help_text():
         "\n--для администраторов--\n" \
         "̲У̲п̲р̲а̲в̲л̲е̲н̲и̲е (N,M) - N - chat_id, M - сообщение [Только для администраторов]\n" \
         "̲С̲т̲р̲и̲м [N] (N - ссылка на стрим) \n" \
-        "̲С̲т̲а̲р̲т/̲С̲т̲о̲п [N]- возобновляет/продолжает работу бота. С параметром можно отключить нужный модуль\n"
+        "̲С̲т̲а̲р̲т/̲С̲т̲о̲п [N]- возобновляет/продолжает работу бота. С параметром можно отключить нужный модуль\n" \
+        "Бан/Разбан N - N - пользователь \n"
 
 
 def get_insults():

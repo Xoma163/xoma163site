@@ -79,9 +79,9 @@ def message_for_me(message, mentions):
 
 def get_keyboard(admin):
     if admin:
-        keyboard = get_default_keyboard()
-    else:
         keyboard = get_admin_keyboard()
+    else:
+        keyboard = get_default_keyboard()
     return keyboard
 
 
@@ -497,6 +497,17 @@ class VkBot(threading.Thread):
                 .replace(':', ' бля:').replace('—', ' бля —').replace('-', ' бля -')
             new_msg = new_msg.replace('блябля', 'бля').replace('бля бля', 'бля')
             self.send_message(chat_id, new_msg)
+        #     ToDo: бан и разбан
+        elif command in ["бан"]:
+            if not user_is_admin(user_id):
+                self.send_message(chat_id, "Недостаточно прав на бан")
+                return
+            self.send_message(chat_id,"Забанен")
+        elif command in ["разбан"]:
+            if not user_is_admin(user_id):
+                self.send_message(chat_id, "Недостаточно прав на разбан")
+                return
+            self.send_message(chat_id,"Разбанен")
 
         #     -----------------------------------------
         elif command in ["расписание", "расп"]:
