@@ -30,22 +30,27 @@ class CameraHandler(threading.Thread):
         capture = cv2.VideoCapture("http://192.168.1.44/mjpg/video.mjpg")
 
         time1 = time.time()
+        # ToDo: возможно если я отрублю камеру, всё сломается
         while capture.isOpened():
             while self._running:
-                delta_time = time.time() - time1
-                self.time_on_frame.push(delta_time * 1000)  # мс
-                fps = round(1 / delta_time, 1)
-                time1 = time.time()
+                try:
+                    delta_time = time.time() - time1
+                    self.time_on_frame.push(delta_time * 1000)  # мс
+                    fps = round(1 / delta_time, 1)
+                    time1 = time.time()
 
-                ret, frame = capture.read()
-                frame = cv2.resize(frame, (0, 0), fx=self.SCALED_WIDTH / self._MAX_WIDTH,
-                                   fy=self.SCALED_WIDTH / self._MAX_WIDTH)
-                frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+                    ret, frame = capture.read()
+                    frame = cv2.resize(frame, (0, 0), fx=self.SCALED_WIDTH / self._MAX_WIDTH,
+                                       fy=self.SCALED_WIDTH / self._MAX_WIDTH)
+                    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
-                frame = self.draw_text_on_image(frame, datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S"), (10, 20))
-                frame = self.draw_text_on_image(frame, str(fps) + " FPS", (frame.shape[1] - 80, 20))
+                    frame = self.draw_text_on_image(frame, datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S"), (10, 20))
+                    frame = self.draw_text_on_image(frame, str(fps) + " FPS", (frame.shape[1] - 80, 20))
 
-                self.images.push(frame)
+                    self.images.push(frame)
+                except Exception as e:
+                    print("EXCEPTION IN CAMERAHANDLER" +str(e))
+                    self.wait()
             else:
                 self.wait()
         else:

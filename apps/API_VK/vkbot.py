@@ -99,6 +99,10 @@ class VkBot(threading.Thread):
     def send_message(self, peer_id, msg, attachments=None, keyboard=None):
         if attachments is None:
             attachments = []
+
+        if len(msg) > 4096:
+            msg = msg[:4092]
+            msg+="\n..."
         self.vk.messages.send(peer_id=peer_id,
                               message=msg,
                               access_token=self._TOKEN,
@@ -161,7 +165,12 @@ class VkBot(threading.Thread):
                 stream.save()
                 self.send_message(chat_id, "Ссылка изменена на " + arg)
         elif command in ["данет"] or full_message[-1] == '?':
-            bad_words = ['еба', 'ёба', 'пидор', 'пидар', "пидр", 'гандон', 'годнон', 'хуй', 'пизд', 'бля', 'шлюха',
+            bad_words = ['еба', 'ебa', 'eба', 'eбa',
+                         'ёба', 'ёбa',
+                         'пидор', 'пидoр', 'пидоp', 'пидop',
+                         'пидар', 'пидaр', 'пидаp', 'пидap',
+                         "пидр", "пидp",
+                         'гандон', 'годнон', 'хуй', 'пизд', 'бля', 'шлюха',
                          'мудак', 'говно', 'моча', 'залупа', 'гей', 'сука', 'дурак', 'говно', 'жопа', 'ублюдок',
                          'мудак']
 
@@ -445,7 +454,7 @@ class VkBot(threading.Thread):
                     return
 
                 if text_filter is not None:
-                    objs = QuoteBook.objects.filter(text__contains=text_filter)
+                    objs = QuoteBook.objects.filter(text__icontains=text_filter)
                 else:
                     objs = QuoteBook.objects.all()
             else:
@@ -460,13 +469,13 @@ class VkBot(threading.Thread):
 
             objs_on_page = p.page(page)
             msg = "Страница {}/{}\n\n".format(page, p.num_pages)
-            for obj_on_page in objs_on_page:
-                msg += "{}\n" \
-                       "(c) {} {}\n" \
-                       "------------------------------------------------------------\n".format(obj_on_page.text,
-                                                                                               obj_on_page.username,
-                                                                                               obj_on_page.date.strftime(
-                                                                                                   "%d.%m.%Y %H:%M:%S"))
+            for i, obj_on_page in enumerate(objs_on_page):
+                msg += "------------------------------{}------------------------------\n" \
+                       "{}\n" \
+                       "(c) {} {}\n".format(i + 1, obj_on_page.text,
+                                            obj_on_page.username,
+                                            obj_on_page.date.strftime(
+                                                "%d.%m.%Y %H:%M:%S"))
 
             self.send_message(chat_id, msg)
         elif command in ["клава", "клавиатура"]:
@@ -482,7 +491,7 @@ class VkBot(threading.Thread):
         elif command in ["уъу", "бля", "ъуъ"]:
 
             if not 'fwd' in vk_event:
-                self.send_message(chat_id, "Перешлите сообщения для сохранения цитаты")
+                self.send_message(chat_id, "Перешлите сообщения для уъуфикации")
                 return
 
             msgs = vk_event['fwd']
@@ -497,17 +506,7 @@ class VkBot(threading.Thread):
                 .replace(':', ' бля:').replace('—', ' бля —').replace('-', ' бля -')
             new_msg = new_msg.replace('блябля', 'бля').replace('бля бля', 'бля')
             self.send_message(chat_id, new_msg)
-        #     ToDo: бан и разбан
-        elif command in ["бан"]:
-            if not user_is_admin(user_id):
-                self.send_message(chat_id, "Недостаточно прав на бан")
-                return
-            self.send_message(chat_id,"Забанен")
-        elif command in ["разбан"]:
-            if not user_is_admin(user_id):
-                self.send_message(chat_id, "Недостаточно прав на разбан")
-                return
-            self.send_message(chat_id,"Разбанен")
+
 
         #     -----------------------------------------
         elif command in ["расписание", "расп"]:
@@ -568,6 +567,37 @@ class VkBot(threading.Thread):
                 else:
                     self.send_message(chat_id, "Синички уже стартовали!")
                 return
+        elif command in ["команда"]:
+            if not user_is_admin(user_id):
+                self.send_message(chat_id, "Недостаточно прав на выполнение команд")
+                return
+            if arg is None:
+                self.send_message(chat_id, "Нет параметров у команды")
+                return
+
+            # process = subprocess.Popen(arg.split(), stdout=subprocess.PIPE)
+            # output, error = process.communicate()
+            # output = output.decode("utf-8")
+            # if error:
+            #     output += "\n{}".format(error)
+            # self.send_message(chat_id, output)
+        #     ToDo: бан и разбан
+        elif command in ["бан"]:
+            # if not user_is_admin(user_id):
+            #     self.send_message(chat_id, "Недостаточно прав на бан")
+            #     return
+            self.send_message(chat_id, "Забанен")
+        elif command in ["разбан"]:
+            # if not user_is_admin(user_id):
+            #     self.send_message(chat_id, "Недостаточно прав на разбан")
+            #     return
+            self.send_message(chat_id, "Разбанен")
+        # elif command in ["рестарт"]:
+        #     if not user_is_admin(user_id):
+        #         self.send_message(chat_id, "Недостаточно прав на рестарт")
+        #         return
+        #     self.send_message(chat_id, "Разбанен")
+
         else:
             self.send_message(chat_id, "Я не понял команды \"%s\"" % command)
 
@@ -606,7 +636,8 @@ class VkBot(threading.Thread):
                     if 'reply_message' in event.object:
                         vk_event['fwd'] = [event.object['reply_message']]
                     elif 'fwd_messages' in event.object:
-                        vk_event['fwd'] = event.object['fwd_messages']
+                        if len(event.object['fwd_messages']) != 0:
+                            vk_event['fwd'] = event.object['fwd_messages']
 
                     # Сообщение либо мне в лс, либо упоминание меня
                     if message_for_me(vk_event['message']['text'], self.mentions) or vk_event['from_user']:

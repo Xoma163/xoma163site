@@ -40,25 +40,13 @@ class Command(BaseCommand):
         schedule['1']['3']['3']['DISCIPLINE'] = "ПРПО"
         schedule['1']['3']['3']['CABINET'] = "421"
         schedule['1']['3']['3']['TYPE'] = "🍎 Практика"
-        schedule['1']['4'] = {}
-        schedule['1']['4']['5'] = {}
-        schedule['1']['4']['5']['TEACHER'] = "Лёзина И.В."
-        schedule['1']['4']['5']['DISCIPLINE'] = "ПРПО"
-        schedule['1']['4']['5']['CABINET'] = "421"
-        schedule['1']['4']['5']['TYPE'] = "🍎 Практика"
-        # ВРЕМЕННАЯ ПАРА
+
         schedule['1']['5'] = {}
-        schedule['1']['5']['1'] = {}
-        schedule['1']['5']['1']['TEACHER'] = "Солдатова О.П."
-        schedule['1']['5']['1']['DISCIPLINE'] = "ИС"
-        schedule['1']['5']['1']['CABINET'] = "хз"
-        schedule['1']['5']['1']['TYPE'] = "🍏 Лекция"
-        # ВРЕМЕННАЯ ПАРА
         schedule['1']['5']['2'] = {}
         schedule['1']['5']['2']['TEACHER'] = "Лёзин И.А."
         schedule['1']['5']['2']['DISCIPLINE'] = "ТРПО"
         schedule['1']['5']['2']['CABINET'] = "505"
-        schedule['1']['5']['2']['TYPE'] = "🍏 Лаба"
+        schedule['1']['5']['2']['TYPE'] = "🍋 Лаба"
         schedule['2'] = {}
         schedule['2']['1'] = {}
         schedule['2']['1']['1'] = {}

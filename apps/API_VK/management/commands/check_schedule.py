@@ -4,8 +4,6 @@ import json
 from django.core.management.base import BaseCommand
 
 from xoma163site.settings import BASE_DIR
-# from apps.API_VK.vkbot import VkBot
-# from apps.API_VK.vkbot import VkBot
 from xoma163site.wsgi import vkbot
 
 timetable = {'1': {'START': '9:00', 'END': '9:35'},
