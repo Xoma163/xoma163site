@@ -64,7 +64,7 @@ def get_weather(city="самара"):
         'evening': 'вечер',
     }
 
-    WEATHER = {
+    weather = {
         'now': {
             'temp': result['fact']['temp'],
             'temp_feels_like': result['fact']['feels_like'],
@@ -77,7 +77,7 @@ def get_weather(city="самара"):
         'forecast': {}}
 
     for i in range(len(result['forecast']['parts'])):
-        WEATHER['forecast'][i] = {
+        weather['forecast'][i] = {
             'part_name': DAY_TRANSLATE[result['forecast']['parts'][i]['part_name']],
             'temp_min': result['forecast']['parts'][i]['temp_min'],
             'temp_max': result['forecast']['parts'][i]['temp_max'],
@@ -98,26 +98,38 @@ def get_weather(city="самара"):
           'Ветер {}м/c(порывы до {}м/c)\n' \
           'Давление  {}мм.рт.ст., влажность {}%'.format(
         city_name,
-        WEATHER['now']['condition'], WEATHER['now']['temp'], WEATHER['now']['temp_feels_like'],
-        WEATHER['now']['wind_speed'], WEATHER['now']['wind_gust'], WEATHER['now']['pressure'],
-        WEATHER['now']['humidity'])
+        weather['now']['condition'], weather['now']['temp'], weather['now']['temp_feels_like'],
+        weather['now']['wind_speed'], weather['now']['wind_gust'], weather['now']['pressure'],
+        weather['now']['humidity'])
 
     forecast = ""
-    for i in range(len(WEATHER['forecast'])):
+    for i in range(len(weather['forecast'])):
         forecast += '\n\n' \
                     'Прогноз на {}:\n' \
-                    '{}\n' \
-                    'Температура {}-{}°С(ощущается как {}°С)' \
-                    '\nВетер {}м/c(порывы до {}м/c)\n' \
-                    'Давление {} мм.рт.ст., влажность {}%\n' \
-                    'Осадки {}мм на протяжении {} часов с вероятностью {}%'.format(
-            WEATHER['forecast'][i]['part_name'],
-            WEATHER['forecast'][i]['condition'],
-            WEATHER['forecast'][i]['temp_min'], WEATHER['forecast'][i]['temp_max'],
-            WEATHER['forecast'][i]['temp_feels_like'],
-            WEATHER['forecast'][i]['wind_speed'], WEATHER['forecast'][i]['wind_gust'],
-            WEATHER['forecast'][i]['pressure'], WEATHER['forecast'][i]['humidity'],
-            WEATHER['forecast'][i]['prec_mm'], WEATHER['forecast'][i]['prec_period'],
-            WEATHER['forecast'][i]['prec_prob']
-        )
+                    '{}\n'.format(
+            weather['forecast'][i]['part_name'],
+            weather['forecast'][i]['condition'])
+
+        if weather['forecast'][i]['temp_min'] != weather['forecast'][i]['temp_max']:
+            forecast += 'Температура {}-{}°С'.format(weather['forecast'][i]['temp_min'],
+                                                     weather['forecast'][i]['temp_max'])
+        else:
+            forecast += 'Температура {}°С'.format(weather['forecast'][i]['temp_max'])
+
+        forecast += '(ощущается как {}°С)\n' \
+                    'Ветер {}м/c(порывы до {}м/c)\n' \
+                    'Давление {} мм.рт.ст., влажность {}%\n'.format(weather['forecast'][i]['temp_feels_like'],
+                                                                    weather['forecast'][i]['wind_speed'],
+                                                                    weather['forecast'][i]['wind_gust'],
+                                                                    weather['forecast'][i]['pressure'],
+                                                                    weather['forecast'][i]['humidity'],
+
+                                                                    )
+        if weather['forecast'][i]['prec_mm'] != 0:
+            forecast += 'Осадки {}мм на протяжении {} часов с вероятностью {}%'.format(
+                weather['forecast'][i]['prec_mm'],
+                weather['forecast'][i]['prec_period'],
+                weather['forecast'][i]['prec_prob'])
+        else:
+            forecast += "Без осадков"
     return now + forecast
