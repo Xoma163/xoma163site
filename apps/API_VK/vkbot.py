@@ -314,16 +314,22 @@ class VkBot(threading.Thread):
             result_list = {}
             for player in players:
                 result_list[player.username] = {}
-                result_list[player.username]['RESULT'] = 0
+                result_list[player.username] = 0
 
             winners = Winners.objects.filter(chat_id=chat_id)
             for winner in winners:
-                result_list[str(winner)]['RESULT'] += 1
+                result_list[str(winner)] += 1
             msg = "Наши любимые Петровичи:\n"
 
-            for player in players:
-                msg += "%s - %s\n" % (player.username, result_list[player.username]['RESULT'])
+            sorted_results = list(result_list.items())
+            sorted_results.sort(key=lambda i: i[1], reverse=True)
+            for i in sorted_results:
+                print(i[0], ':', i[1])
+
+            for result in sorted_results:
+                msg += "%s - %s\n" % (result[0], result[1])
             self.send_message(chat_id, msg)
+            return
         elif command in ["рандом", "ранд"]:
             if len(args) == 2:
                 try:
