@@ -96,11 +96,12 @@ def get_weather(city="самара"):
           '{}\n' \
           'Температура {}°С(ощущается как {}°С)\n' \
           'Ветер {}м/c(порывы до {}м/c)\n' \
-          'Давление  {}мм.рт.ст., влажность {}%'.format(
-        city_name,
-        weather['now']['condition'], weather['now']['temp'], weather['now']['temp_feels_like'],
-        weather['now']['wind_speed'], weather['now']['wind_gust'], weather['now']['pressure'],
-        weather['now']['humidity'])
+          'Давление  {}мм.рт.ст., влажность {}%'.format(city_name,
+                                                        weather['now']['condition'], weather['now']['temp'],
+                                                        weather['now']['temp_feels_like'],
+                                                        weather['now']['wind_speed'], weather['now']['wind_gust'],
+                                                        weather['now']['pressure'],
+                                                        weather['now']['humidity'])
 
     forecast = ""
     for i in range(len(weather['forecast'])):
@@ -122,8 +123,7 @@ def get_weather(city="самара"):
                                                                     weather['forecast'][i]['wind_speed'],
                                                                     weather['forecast'][i]['wind_gust'],
                                                                     weather['forecast'][i]['pressure'],
-                                                                    weather['forecast'][i]['humidity'],
-
+                                                                    weather['forecast'][i]['humidity']
                                                                     )
         if weather['forecast'][i]['prec_mm'] != 0:
             forecast += 'Осадки {}мм на протяжении {} часов с вероятностью {}%'.format(

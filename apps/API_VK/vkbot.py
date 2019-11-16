@@ -73,7 +73,7 @@ def get_keyboard(admin):
     return keyboard
 
 
-def get_random_item_from_list(list, arg):
+def get_random_item_from_list(list, arg=None):
     rand_int = random.randint(0, len(list) - 1)
     if arg:
         msg = "{}, ты {}".format(arg, list[rand_int].lower())
@@ -366,11 +366,18 @@ class VkBot(threading.Thread):
 
             self.send_message(chat_id, weather)
         elif command in ["похвалить", "похвали", "хвалить"]:
+            if args[0].lower() == "петрович":
+                self.send_message(chat_id, "спс))")
             msg = get_random_item_from_list(get_praises(), args[0])
             self.send_message(chat_id, msg)
         elif command in ["обосрать", "обосри"]:
+            print('!!!!!!!!!!!!!!!!!!!',args[0])
+            if args[0].lower() == "петрович":
+                self.send_message(chat_id, get_random_item_from_list(get_bad_answers()))
+                return
             msg = get_random_item_from_list(get_insults(), args[0])
             self.send_message(chat_id, msg)
+            return
         elif command in ["цитата", "(c)", "(с)"]:
             if not 'fwd' in vk_event:
                 self.send_message(chat_id, "Перешлите сообщения для сохранения цитаты")
@@ -487,14 +494,14 @@ class VkBot(threading.Thread):
         elif command in ["привет", "хай", "даров", "дарова", "здравствуй", "здравствуйте", "привки", "прив", "q", "qq",
                          "ку", "куку", "здаров", "здарова"]:
             self.send_message(chat_id, 'Хай')
-        elif command in ["пока", "бай", "bb", "бай-бай", "байбай", "бб", "досвидос", "до встречи","бывай"]:
+        elif command in ["пока", "бай", "bb", "бай-бай", "байбай", "бб", "досвидос", "до встречи", "бывай"]:
             self.send_message(chat_id, 'Пока((')
         elif command in ["дерьмо"]:
-            self.send_message(chat_id,"ня")
+            self.send_message(chat_id, "ня")
         elif command in ["ня"]:
-            self.send_message(chat_id,"дерьмо")
+            self.send_message(chat_id, "дерьмо")
         elif command in ["гит"]:
-            self.send_message(chat_id,"https://github.com/Xoma163/xoma163site/")
+            self.send_message(chat_id, "https://github.com/Xoma163/xoma163site/")
         #     -----------------------------------------
         elif command in ["расписание", "расп"]:
             # RASP_PATH = BASE_DIR + "/static/vkapi/rasp.png"
