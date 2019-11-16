@@ -347,6 +347,7 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, rand_int)
         elif command in ["спасибо", "спасибо!", "спс"]:
             self.send_message(chat_id, "Всегда пожалуйста! :)")
+            return
         elif command in ['сори', 'прости', 'извини']:
             phrases = get_sorry_phrases()
             msg = get_random_item_from_list(phrases)
@@ -371,7 +372,7 @@ class VkBot(threading.Thread):
             msg = get_random_item_from_list(get_praises(), args[0])
             self.send_message(chat_id, msg)
         elif command in ["обосрать", "обосри"]:
-            print('!!!!!!!!!!!!!!!!!!!',args[0])
+            print('!!!!!!!!!!!!!!!!!!!', args[0])
             if args[0].lower() == "петрович":
                 self.send_message(chat_id, get_random_item_from_list(get_bad_answers()))
                 return
@@ -460,6 +461,7 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, msg)
         elif command in ["клава", "клавиатура"]:
             self.send_message(chat_id, 'Лови', keyboard=json.dumps(get_keyboard(user_is_admin(user_id))))
+            return
         elif command in ["убери", "скрыть"]:
             keyboard = {
                 "one_time": False,
@@ -494,14 +496,22 @@ class VkBot(threading.Thread):
         elif command in ["привет", "хай", "даров", "дарова", "здравствуй", "здравствуйте", "привки", "прив", "q", "qq",
                          "ку", "куку", "здаров", "здарова"]:
             self.send_message(chat_id, 'Хай')
+            return
         elif command in ["пока", "бай", "bb", "бай-бай", "байбай", "бб", "досвидос", "до встречи", "бывай"]:
             self.send_message(chat_id, 'Пока((')
+            return
         elif command in ["дерьмо"]:
             self.send_message(chat_id, "ня")
+            return
         elif command in ["ня"]:
             self.send_message(chat_id, "дерьмо")
+            return
         elif command in ["гит"]:
             self.send_message(chat_id, "https://github.com/Xoma163/xoma163site/")
+            return
+        elif command in ["донат"]:
+            self.send_message(chat_id, "https://www.donationalerts.com/r/xoma163")
+            return
         #     -----------------------------------------
         elif command in ["расписание", "расп"]:
             # RASP_PATH = BASE_DIR + "/static/vkapi/rasp.png"
@@ -512,10 +522,13 @@ class VkBot(threading.Thread):
                               attachments=attachments)
         elif command in ["гугл", "ссылка", "учебное"]:
             self.send_message(chat_id, "https://drive.google.com/open?id=1AJPnT2XXYNc39-2CSr_MzHnv4hs6Use6")
+            return
         elif command in ["лекции"]:
             self.send_message(chat_id, "https://drive.google.com/open?id=19QVRRbj6ePEFTxS2bHOjjaKljkJwZxNB")
+            return
         elif command in ["неделя"]:
             self.send_message(chat_id, str((datetime.datetime.now().isocalendar()[1] - 35)) + " неделя")
+            return
 
         #     -----------------------------------------
 
@@ -592,6 +605,7 @@ class VkBot(threading.Thread):
 
         else:
             self.send_message(chat_id, "Я не понял команды \"%s\"" % command)
+            return
 
     def __init__(self):
         super().__init__()
