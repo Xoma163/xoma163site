@@ -6,6 +6,7 @@
 import datetime
 import json
 import random
+import re
 import threading
 
 import vk_api
@@ -15,7 +16,8 @@ from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.utils import get_random_id
 
 from apps.API_VK.models import Log, VkChatId, Stream, TrustIMEI, VkUser, Winners, QuoteBook, UsersCache
-from apps.API_VK.static_texts import get_default_keyboard, get_admin_keyboard, get_help_text, get_insults, get_praises
+from apps.API_VK.static_texts import get_default_keyboard, get_admin_keyboard, get_help_text, get_insults, get_praises, \
+    get_bad_words, get_bad_answers, get_sorry_phrases
 from xoma163site.settings import BASE_DIR
 from xoma163site.wsgi import cameraHandler
 
@@ -30,38 +32,25 @@ def user_is_admin(user_id):
 
 def parse_msg_to_me(msg, mentions):
     for mention in mentions:
-        msg = msg.replace(mention, ' ')
-    return msg.lstrip().lstrip(',').lstrip().lstrip(' ').lstrip().lower()
-
-
-special_commands_list = ['петрович дня']
+        msg = msg.replace(mention, '')
+    msg = re.sub(" +", " ", msg)
+    return msg.lstrip().lstrip(',').lstrip().lstrip(' ').lstrip().replace(' ,', ',').replace(', ', ',')
 
 
 # ToDo: переписать всё это нахрен по-человечески
 def parse_msg(msg):
-    msg_dict = {'COMMAND': None, 'ARG': None}
+    msg_dict = {'command': None, 'args': None}
 
-    for item in special_commands_list:
-        if msg == item:
-            msg_dict['COMMAND'] = msg
-            return msg_dict
+    command_arg = msg.split(' ', 1)
+    msg_dict['command'] = command_arg[0].lower()
+    if len(command_arg) > 1:
+        msg_dict['args'] = command_arg[1].split(',')
+    else:
+        msg_dict['args'] = None
 
-    message = [None, None]
-    # Парс команды с пробелами
-    first_space = msg.find(' ')
-    # Добавил в условие =, хз чё сломает
-    first_space = first_space if first_space >= 1 else len(msg)
-    message[0] = msg[0:first_space]
-    message[1] = msg[first_space + 1:len(msg)]
-
-    if message[1] in ['', ' ']:
-        message[1] = None
-
-    msg_dict['COMMAND'] = message[0]
-    try:
-        msg_dict['ARG'] = message[1]
-    except Exception:
-        pass
+    print(command_arg)
+    print('command', msg_dict['command'])
+    print('args', msg_dict['args'])
     return msg_dict
 
 
@@ -88,7 +77,7 @@ def get_keyboard(admin):
 def get_random_item_from_list(list, arg):
     rand_int = random.randint(0, len(list) - 1)
     if arg:
-        msg = "{}, ты {}".format(arg.capitalize(), list[rand_int].lower())
+        msg = "{}, ты {}".format(arg, list[rand_int].lower())
     else:
         msg = list[rand_int]
     return msg
@@ -102,7 +91,7 @@ class VkBot(threading.Thread):
 
         if len(msg) > 4096:
             msg = msg[:4092]
-            msg+="\n..."
+            msg += "\n..."
         self.vk.messages.send(peer_id=peer_id,
                               message=msg,
                               access_token=self._TOKEN,
@@ -115,8 +104,8 @@ class VkBot(threading.Thread):
         user_id = vk_event['message']['user_id']
         peer_id = vk_event['message']['peer_id']
 
-        command = vk_event['message']['text']['COMMAND']
-        arg = vk_event['message']['text']['ARG']
+        command = vk_event['message']['text']['command']
+        args = vk_event['message']['text']['args']
         is_lk = vk_event['from_user']
         full_message = vk_event['message']['full_text']
 
@@ -145,7 +134,7 @@ class VkBot(threading.Thread):
         # Выбор команды
         if command in ["стрим", "поток"]:
             # Если нет аргументов
-            if arg is None:
+            if args is None:
                 stream = Stream.objects.first()
                 if len(str(stream)) < 5:
                     self.send_message(chat_id, "Стрим пока не идёт")
@@ -161,18 +150,11 @@ class VkBot(threading.Thread):
                     self.send_message(chat_id, "Недостаточно прав на изменение ссылки стрима")
                     return
                 stream = Stream.objects.first()
-                stream.link = arg
+                stream.link = args[0]
                 stream.save()
-                self.send_message(chat_id, "Ссылка изменена на " + arg)
-        elif command in ["данет"] or full_message[-1] == '?':
-            bad_words = ['еба', 'ебa', 'eба', 'eбa',
-                         'ёба', 'ёбa',
-                         'пидор', 'пидoр', 'пидоp', 'пидop',
-                         'пидар', 'пидaр', 'пидаp', 'пидap',
-                         "пидр", "пидp",
-                         'гандон', 'годнон', 'хуй', 'пизд', 'бля', 'шлюха',
-                         'мудак', 'говно', 'моча', 'залупа', 'гей', 'сука', 'дурак', 'говно', 'жопа', 'ублюдок',
-                         'мудак']
+                self.send_message(chat_id, "Ссылка изменена на " + args[0])
+        elif full_message[-1] == '?':
+            bad_words = get_bad_words()
 
             min_index_bad = len(full_message)
             max_index_bad = -1
@@ -200,8 +182,7 @@ class VkBot(threading.Thread):
                     if len_bad == -1:
                         len_bad = full_message.find('?', max_index_bad)
 
-                bad_answers = ['как же вы меня затрахали...', 'ты обижаешь бота?', 'тебе заняться нечем?', '...',
-                               'о боже', 'тебе не стыдно?', 'зачем ты так?']
+                bad_answers = get_bad_answers()
                 rand_int = random.randint(0, len(bad_answers) - 1)
                 self.send_message(chat_id, bad_answers[rand_int])
                 user = self.get_user_by_id(user_id)
@@ -223,10 +204,10 @@ class VkBot(threading.Thread):
                 msg = "Ну тут даже я хз"
             self.send_message(chat_id, msg)
         elif command in ["где"]:
-            if arg is None:
+            if args is None:
                 msg = "Нет аргумента у команды 'Где'"
             else:
-                user = TrustIMEI.objects.filter(name=arg.capitalize()).first()
+                user = TrustIMEI.objects.filter(name=args[0].capitalize()).first()
 
                 today = datetime.datetime.now()
                 vk_event = Log.objects.filter(success=True,
@@ -252,8 +233,7 @@ class VkBot(threading.Thread):
             quality = 0
 
             try:
-                args = arg.split(',')
-                if arg:
+                if args:
                     try:
                         frames = int(args[0])
                         if frames > cameraHandler.MAX_FRAMES:
@@ -301,13 +281,13 @@ class VkBot(threading.Thread):
                 self.send_message(chat_id, "Ты уже зарегистрирован :)")
                 return
 
-            vkuser = VkUser()
-            vkuser.chat_id = chat_id
-            vkuser.user_id = user_id
-            vkuser.username = "%s %s" % (str(info['first_name']), str(info['last_name']))
-            vkuser.save()
+            vk_user = VkUser()
+            vk_user.chat_id = chat_id
+            vk_user.user_id = user_id
+            vk_user.username = "%s %s" % (str(info['first_name']), str(info['last_name']))
+            vk_user.save()
             self.send_message(chat_id, "Регистрация прошла успешно")
-        elif command in ["петрович дня", "петрович", "петр"]:
+        elif command in ["петрович", "петр"]:
             if is_lk:
                 self.send_message(chat_id, "Команда работает только в беседах.")
                 return
@@ -347,8 +327,6 @@ class VkBot(threading.Thread):
                 msg += "%s - %s\n" % (player.username, result_list[player.username]['RESULT'])
             self.send_message(chat_id, msg)
         elif command in ["рандом", "ранд"]:
-            args = arg.split(',')
-            # except если оба хрень
             if len(args) == 2:
                 try:
                     int1 = int(args[0])
@@ -372,8 +350,7 @@ class VkBot(threading.Thread):
         elif command in ["спасибо", "спасибо!", "спс"]:
             self.send_message(chat_id, "Всегда пожалуйста! :)")
         elif command in ['сори', 'прости', 'извини']:
-            phrases = ["лан", "нет", "окей", "ничего страшного", "Бот любит тебя", "я подумаю", "ой всё",
-                       "ну а чё ты :(", "всё хорошо", "каво", "сь"]
+            phrases = get_sorry_phrases()
             self.send_message(chat_id, phrases[random.randint(0, len(phrases) - 1)])
         elif command in ["помощь", "хелп", "ман", "команды", "помоги", "памаги", "спаси", "хелб"]:
             self.send_message(
@@ -381,10 +358,10 @@ class VkBot(threading.Thread):
                 get_help_text())
         # ToDo: кэширование запросов, раз в 3 часа
         elif command in ["погода"]:
-            if arg is None:
+            if args is None:
                 city = 'самара'
             else:
-                city = arg
+                city = args[0].lower()
             from apps.API_VK.yandex_weather import get_weather
 
             weather = get_weather(city)
@@ -392,10 +369,10 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, weather)
         # ToDo: возможно сделать привязку к гуглтаблам
         elif command in ["похвалить", "похвали", "хвалить"]:
-            msg = get_random_item_from_list(get_praises(), arg)
+            msg = get_random_item_from_list(get_praises(), args[0])
             self.send_message(chat_id, msg)
         elif command in ["обосрать", "обосри"]:
-            msg = get_random_item_from_list(get_insults(), arg)
+            msg = get_random_item_from_list(get_insults(), args[0])
             self.send_message(chat_id, msg)
         elif command in ["цитата", "(c)", "(с)"]:
             if not 'fwd' in vk_event:
@@ -428,8 +405,7 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, "Цитата сохранена")
         elif command in ["цитаты"]:
             text_filter = None
-            if arg is not None:
-                args = arg.split(',')
+            if args is not None:
                 if len(args) == 2:
                     try:
                         page = int(args[1])
@@ -442,13 +418,13 @@ class VkBot(threading.Thread):
                     text_filter = args[0]
                 elif len(args) == 1:
                     try:
-                        page = int(arg)
+                        page = int(args[0])
                         if page <= 0:
                             self.send_message(chat_id, "Номер страницы должен быть положительным")
                             return
                     except:
                         page = 1
-                        text_filter = arg
+                        text_filter = args[0]
                 else:
                     self.send_message(chat_id, "Неверное количество аргументов")
                     return
@@ -529,10 +505,9 @@ class VkBot(threading.Thread):
             if not is_lk:
                 self.send_message(chat_id, "Управление ботом производится только в ЛК")
                 return
-            if arg is None:
+            if args is None:
                 self.send_message(chat_id, "Отсутствуют аргументы chat_id и сообщение")
                 return
-            args = arg.split(',')
             msg_chat_id = int(args[0])
             msg = args[1]
             if not user_is_admin(user_id):
@@ -543,11 +518,11 @@ class VkBot(threading.Thread):
         elif command in ["стоп"]:
             if not user_is_admin(user_id):
                 text = "бота"
-                if arg == "синички":
+                if args[0] == "синички":
                     text = "синичек"
                 self.send_message(chat_id, "Недостаточно прав на остановку {}".format(text))
                 return
-            if arg == "синички":
+            if args[0] == "синички":
                 if cameraHandler._running:
                     cameraHandler.terminate()
                     self.send_message(chat_id, "Финишируем синичек")
@@ -560,7 +535,7 @@ class VkBot(threading.Thread):
             if not user_is_admin(user_id):
                 self.send_message(chat_id, "Недостаточно прав на старт синичек")
                 return
-            if arg == "синички":
+            if args[0] == "синички":
                 if not cameraHandler._running:
                     cameraHandler.resume()
                     self.send_message(chat_id, "Стартуем синичек!")
@@ -571,7 +546,7 @@ class VkBot(threading.Thread):
             if not user_is_admin(user_id):
                 self.send_message(chat_id, "Недостаточно прав на выполнение команд")
                 return
-            if arg is None:
+            if args[0] is None:
                 self.send_message(chat_id, "Нет параметров у команды")
                 return
 
