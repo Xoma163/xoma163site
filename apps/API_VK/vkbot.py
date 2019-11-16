@@ -37,7 +37,6 @@ def parse_msg_to_me(msg, mentions):
     return msg.lstrip().lstrip(',').lstrip().lstrip(' ').lstrip().replace(' ,', ',').replace(', ', ',')
 
 
-# ToDo: переписать всё это нахрен по-человечески
 def parse_msg(msg):
     msg_dict = {'command': None, 'args': None}
 
@@ -227,7 +226,7 @@ class VkBot(threading.Thread):
                 # path = snapshot()
                 path = cameraHandler.get_img()
             except RuntimeError as e:
-                self.send_message(chat_id, e)
+                print(e)
                 return
             frames = 20
             quality = 0
@@ -310,7 +309,6 @@ class VkBot(threading.Thread):
             new_winner.save()
             self.send_message(chat_id, "Такс такс такс, кто тут у нас")
             self.send_message(chat_id, "Наш сегодняшний Петрович дня - %s" % winner)
-        #     ToDo: Сортировать по победам
         elif command in ["стата", "статистика"]:
             players = VkUser.objects.filter(chat_id=chat_id)
             result_list = {}
@@ -351,12 +349,12 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, "Всегда пожалуйста! :)")
         elif command in ['сори', 'прости', 'извини']:
             phrases = get_sorry_phrases()
-            self.send_message(chat_id, phrases[random.randint(0, len(phrases) - 1)])
+            msg = get_random_item_from_list(phrases)
+            self.send_message(chat_id, msg)
         elif command in ["помощь", "хелп", "ман", "команды", "помоги", "памаги", "спаси", "хелб"]:
             self.send_message(
                 chat_id,
                 get_help_text())
-        # ToDo: кэширование запросов, раз в 3 часа
         elif command in ["погода"]:
             if args is None:
                 city = 'самара'
@@ -367,7 +365,6 @@ class VkBot(threading.Thread):
             weather = get_weather(city)
 
             self.send_message(chat_id, weather)
-        # ToDo: возможно сделать привязку к гуглтаблам
         elif command in ["похвалить", "похвали", "хвалить"]:
             msg = get_random_item_from_list(get_praises(), args[0])
             self.send_message(chat_id, msg)
@@ -455,8 +452,6 @@ class VkBot(threading.Thread):
 
             self.send_message(chat_id, msg)
         elif command in ["клава", "клавиатура"]:
-            # ToDo: когда устаканится, сделать в json и отправлять по запросу
-
             self.send_message(chat_id, 'Лови', keyboard=json.dumps(get_keyboard(user_is_admin(user_id))))
         elif command in ["убери", "скрыть"]:
             keyboard = {
@@ -486,11 +481,20 @@ class VkBot(threading.Thread):
             for symbol in symbols:
                 new_msg = new_msg.replace(symbol, " бля" + symbol)
             if flag:
-                new_msg=new_msg[:-1]
+                new_msg = new_msg[:-1]
             # new_msg = new_msg.replace('блябля', 'бля').replace('бля бля', 'бля')
             self.send_message(chat_id, new_msg)
-
-
+        elif command in ["привет", "хай", "даров", "дарова", "здравствуй", "здравствуйте", "привки", "прив", "q", "qq",
+                         "ку", "куку", "здаров", "здарова"]:
+            self.send_message(chat_id, 'Хай')
+        elif command in ["пока", "бай", "bb", "бай-бай", "байбай", "бб", "досвидос", "до встречи","бывай"]:
+            self.send_message(chat_id, 'Пока((')
+        elif command in ["дерьмо"]:
+            self.send_message(chat_id,"ня")
+        elif command in ["ня"]:
+            self.send_message(chat_id,"дерьмо")
+        elif command in ["гит"]:
+            self.send_message(chat_id,"https://github.com/Xoma163/xoma163site/")
         #     -----------------------------------------
         elif command in ["расписание", "расп"]:
             # RASP_PATH = BASE_DIR + "/static/vkapi/rasp.png"
@@ -563,7 +567,6 @@ class VkBot(threading.Thread):
             # if error:
             #     output += "\n{}".format(error)
             # self.send_message(chat_id, output)
-        #     ToDo: бан и разбан
         elif command in ["бан"]:
             # if not user_is_admin(user_id):
             #     self.send_message(chat_id, "Недостаточно прав на бан")
