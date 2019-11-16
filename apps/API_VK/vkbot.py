@@ -478,9 +478,16 @@ class VkBot(threading.Thread):
                 new_msg = ""
                 for msg in msgs:
                     new_msg += msg['text'] + "\n"
-            new_msg = new_msg.replace('.', ' бля.').replace('?', ' бля?').replace('!', ' бля!').replace(',', ' бля,') \
-                .replace(':', ' бля:').replace('—', ' бля —').replace('-', ' бля -')
-            new_msg = new_msg.replace('блябля', 'бля').replace('бля бля', 'бля')
+            symbols = ['.', ',', '?', '!', ':', '—', '-']
+            flag = False
+            if new_msg[-1] not in symbols:
+                new_msg += '.'
+                flag = True
+            for symbol in symbols:
+                new_msg = new_msg.replace(symbol, " бля" + symbol)
+            if flag:
+                new_msg=new_msg[:-1]
+            # new_msg = new_msg.replace('блябля', 'бля').replace('бля бля', 'бля')
             self.send_message(chat_id, new_msg)
 
 
