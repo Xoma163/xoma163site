@@ -18,6 +18,7 @@ from vk_api.utils import get_random_id
 from apps.API_VK.models import Log, Stream, VkUser, QuoteBook, PetrovichUser, PetrovichGames
 from apps.API_VK.static_texts import get_help_text, get_insults, get_praises, get_bad_words, get_bad_answers, \
     get_sorry_phrases, get_keyboard
+from apps.Statistics.views import append_command_to_statistics
 from xoma163site.settings import BASE_DIR
 from xoma163site.wsgi import cameraHandler
 
@@ -117,6 +118,8 @@ class VkBot(threading.Thread):
             else:
                 self.send_message(chat_id, "Недостаточно прав на возобновление бота")
             return
+
+        append_command_to_statistics(command)
 
         attachments = []
         # Выбор команды
@@ -355,7 +358,7 @@ class VkBot(threading.Thread):
             msg = get_random_item_from_list(phrases)
             self.send_message(chat_id, msg)
             return
-        elif command in ["помощь", "хелп", "ман", "команды", "помоги", "памаги", "спаси", "хелб"]:
+        elif command in ["помощь", "хелп", "ман", "команды", "помоги", "памаги", "спаси", "хелб", "манул"]:
             self.send_message(chat_id, get_help_text(sender.is_admin, sender.is_student))
             return
         elif command in ["погода"]:
@@ -566,13 +569,14 @@ class VkBot(threading.Thread):
                     text = "синичек"
                 self.send_message(chat_id, "Недостаточно прав на остановку {}".format(text))
                 return
-            if args[0] == "синички":
-                if cameraHandler._running:
-                    cameraHandler.terminate()
-                    self.send_message(chat_id, "Финишируем синичек")
-                else:
-                    self.send_message(chat_id, "Синички уже финишировали")
-                return
+            if args:
+                if args[0] == "синички":
+                    if cameraHandler._running:
+                        cameraHandler.terminate()
+                        self.send_message(chat_id, "Финишируем синичек")
+                    else:
+                        self.send_message(chat_id, "Синички уже финишировали")
+                    return
             self.BOT_CAN_WORK = False
             self.send_message(chat_id, "Финишируем")
             return
