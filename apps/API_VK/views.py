@@ -3,13 +3,13 @@ import json
 
 from django.http import HttpResponse
 
-from apps.API_VK.models import VkChatId, TrustIMEI, Log
+from apps.API_VK.models import VkUser, Log
 from apps.API_VK.yandex_geo import get_address
 from xoma163site.wsgi import vkbot
 
 
 def where_is_me(request):
-    log = Log.objects.create()
+    log = Log()
     tries = 0
     response_data = []
     while log.success is not True and tries < 10:
@@ -18,13 +18,22 @@ def where_is_me(request):
             log.event = event
             imei = request.GET.get('imei', None)
             log.imei = imei
-            author = check_imei(imei)
-            log.author = author
+            author = get_user_by_imei(imei)
+
             if author is None:
-                log.msg = "Wrong IMEI"
+                log.msg = "Не найден IMEI"
                 log.save()
                 return HttpResponse(json.dumps({'success': True, 'error': 'Wrong IMEI'}, ensure_ascii=False),
                                     content_type="application/json")
+            log.author = author
+
+            recipients = get_recipients(author)
+            if recipients is None:
+                log.msg = "Не найден получатель"
+                log.save()
+                return HttpResponse(json.dumps({'success': True, 'error': 'Wrong IMEI'}, ensure_ascii=False),
+                                    content_type="application/json")
+
 
             if event == 'somewhere':
                 lat = request.GET.get('lat', None)
@@ -50,25 +59,23 @@ def where_is_me(request):
                 today = datetime.datetime.now()
                 today_logs = Log.objects.filter(date__year=today.year, date__month=today.month, date__day=today.day,
                                                 author=author)
-
                 for today_log in today_logs:
                     if today_log.event in positions:
                         positions[today_log.event]['count'] += 1
-
                 msg = positions[event][positions[event]['count'] % 2]
 
                 if msg is None:
-                    log.msg = "Wrong event(?)"
+                    log.msg = "Не найдено такое событие(?)"
                     log.save()
                     return HttpResponse(json.dumps({'success': True, 'error': 'Wrong IMEI'}, ensure_ascii=False),
                                         content_type="application/json")
 
             log.msg = msg
-            msg += "\n%s" % author
-            chats = VkChatId.objects.filter(is_active=True)
+            msg += "\n%s" % author.name
 
-            for chat in chats:
-                vkbot.send_message(chat.chat_id, msg)
+            for recipient in recipients:
+                if recipient.send_notify:
+                    vkbot.send_message(recipient.user_id, msg)
 
             response_data = {'success': True, 'msg': msg}
             log.success = True
@@ -83,9 +90,9 @@ def where_is_me(request):
     return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
 
 
-def check_imei(imei):
-    imeis = TrustIMEI.objects.filter(is_active=True)
-    for item in imeis:
-        if imei == item.imei:
-            return item
-    return None
+def get_user_by_imei(imei):
+    return VkUser.objects.filter(imei=imei).first()
+
+
+def get_recipients(user):
+    return VkUser.objects.filter(get_notify_from=user)

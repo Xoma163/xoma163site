@@ -1,14 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from apps.API_VK.models import TrustIMEI, VkChatId, Log, Stream, VkUser, Winners, QuoteBook
-
-admin.site.register(TrustIMEI)
-
-
-@admin.register(VkChatId)
-class VkChatIdAdmin(admin.ModelAdmin):
-    list_display = ('name', 'chat_id', 'is_active', 'is_admin')
+from apps.API_VK.models import  Log, Stream, VkUser, QuoteBook, PetrovichUser, PetrovichGames
 
 
 admin.site.register(Stream)
@@ -16,12 +9,18 @@ admin.site.register(Stream)
 
 @admin.register(VkUser)
 class VkUserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'chat_id', 'user_id')
+    list_display = (
+    'name', 'surname', 'user_id', 'gender', 'get_notify_from', 'send_notify', 'is_admin', 'is_student', 'is_banned')
 
 
-@admin.register(Winners)
-class WinnersAdmin(admin.ModelAdmin):
-    list_display = ('id', 'winner', 'date')
+@admin.register(PetrovichUser)
+class PetrovichUserAdmin(admin.ModelAdmin):
+    list_display = ('user', 'chat_id', 'wins',)
+
+
+@admin.register(PetrovichGames)
+class PetrovichGamesAdmin(admin.ModelAdmin):
+    list_display = ('user', 'chat_id', 'date',)
 
 
 @admin.register(Log)
