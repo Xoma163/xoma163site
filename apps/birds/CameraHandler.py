@@ -44,12 +44,13 @@ class CameraHandler(threading.Thread):
                                        fy=self.SCALED_WIDTH / self._MAX_WIDTH)
                     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
-                    frame = self.draw_text_on_image(frame, datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S"), (10, 20))
+                    frame = self.draw_text_on_image(frame, datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S"),
+                                                    (10, 20))
                     frame = self.draw_text_on_image(frame, str(fps) + " FPS", (frame.shape[1] - 80, 20))
 
                     self.images.push(frame)
                 except Exception as e:
-                    print("EXCEPTION IN CAMERAHANDLER" +str(e))
+                    print("EXCEPTION IN CAMERAHANDLER" + str(e))
                     self.wait()
             else:
                 self.wait()

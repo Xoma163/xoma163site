@@ -16,19 +16,10 @@ from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.utils import get_random_id
 
 from apps.API_VK.models import Log, Stream, VkUser, QuoteBook, PetrovichUser, PetrovichGames
-from apps.API_VK.static_texts import get_default_keyboard, get_admin_keyboard, get_help_text, get_insults, get_praises, \
-    get_bad_words, get_bad_answers, get_sorry_phrases
+from apps.API_VK.static_texts import get_help_text, get_insults, get_praises, get_bad_words, get_bad_answers, \
+    get_sorry_phrases, get_keyboard
 from xoma163site.settings import BASE_DIR
 from xoma163site.wsgi import cameraHandler
-
-
-def user_is_admin(user_id):
-    vk_user = VkUser.objects.filter(user_id=user_id, is_admin=True).first()
-
-    if vk_user is None:
-        return False
-    else:
-        return True
 
 
 def parse_msg_to_me(msg, mentions):
@@ -62,14 +53,6 @@ def message_for_me(message, mentions):
         if message.find(mention) > -1:
             return True
     return False
-
-
-def get_keyboard(admin):
-    if admin:
-        keyboard = get_admin_keyboard()
-    else:
-        keyboard = get_default_keyboard()
-    return keyboard
 
 
 def get_random_item_from_list(list, arg=None):
@@ -116,15 +99,14 @@ class VkBot(threading.Thread):
         # self.send_message(chat_id, "Команда:{}\n "
         #                            "Аргументы:{}\n".format(str(command), str(args)))
 
-        sender = VkUser.objects.filter(user_id=user_id).first()
-        if sender is None:
-            sender = self.get_user_by_id(user_id, chat_id)
+        sender = self.get_user_by_id(user_id, chat_id)
+
         if sender.is_banned:
             self.send_message(chat_id, "У тебя бан")
             return
         # Проверяем не остановлен ли бот, если так, то проверяем вводимая команда = старт?
         if not self.BOT_CAN_WORK:
-            if user_is_admin(user_id):
+            if sender.is_admin:
                 if command in ['старт']:
                     self.BOT_CAN_WORK = True
                     cameraHandler.resume()
@@ -154,7 +136,7 @@ class VkBot(threading.Thread):
                     return
                     # Если есть права на выполнение команды
 
-                if not user_is_admin(user_id):
+                if not sender.is_admin:
                     self.send_message(chat_id, "Недостаточно прав на изменение ссылки стрима")
                     return
                 stream = Stream.objects.first()
@@ -194,9 +176,8 @@ class VkBot(threading.Thread):
                 bad_answers = get_bad_answers()
                 rand_int = random.randint(0, len(bad_answers) - 1)
                 self.send_message(chat_id, bad_answers[rand_int])
-                user = self.get_user_by_id(user_id,chat_id)
-                name = user['name']
-                if user['gender'] == 1:
+                name = sender.name
+                if sender.gender == 1:
                     msg_self = "сама"
                 else:
                     msg_self = "сам"
@@ -290,7 +271,7 @@ class VkBot(threading.Thread):
                 self.send_message(chat_id, "Команда работает только в беседах.")
                 return
 
-            if user_is_admin(user_id):
+            if sender.is_admin:
                 if args:
                     user_id = int(args[0])
 
@@ -299,11 +280,9 @@ class VkBot(threading.Thread):
                 if PetrovichUser.objects.filter(user=vk_user, chat_id=chat_id).first() is not None:
                     self.send_message(chat_id, "Ты уже зарегистрирован :)")
                     return
-            else:
-                vk_user = self.get_user_by_id(user_id, chat_id)
 
             p_user = PetrovichUser()
-            p_user.user = vk_user
+            p_user.user = sender
             p_user.chat_id = chat_id
             p_user.save()
 
@@ -377,7 +356,7 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, msg)
             return
         elif command in ["помощь", "хелп", "ман", "команды", "помоги", "памаги", "спаси", "хелб"]:
-            self.send_message(chat_id, get_help_text())
+            self.send_message(chat_id, get_help_text(sender.is_admin, sender.is_student))
             return
         elif command in ["погода"]:
             if args is None:
@@ -421,8 +400,7 @@ class VkBot(threading.Thread):
             quote.user_id = 0
             if len(msgs) == 1:
                 if msgs[0]['from_id'] > 0:
-                    user = self.get_user_by_id(msgs[0]['from_id'],chat_id)
-                    quote.username = user['name'] + " " + user['surname']
+                    quote.username = sender.name + " " + sender.surname
                 else:
                     quote.username = self.get_groupname_by_id(int(msgs[0]['from_id']) * -1)
             else:
@@ -431,8 +409,7 @@ class VkBot(threading.Thread):
             for msg in msgs:
                 text = msg['text']
                 if msg['from_id'] > 0:
-                    user = self.get_user_by_id(msg['from_id'],chat_id)
-                    username = user['name'] + " " + user['surname']
+                    username = sender.name + " " + sender.surname
                 else:
                     username = self.get_groupname_by_id(int(msg['from_id']) * -1)
                 quote_text += "{}\n{}\n\n".format(username, text)
@@ -493,7 +470,10 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, msg)
             return
         elif command in ["клава", "клавиатура"]:
-            self.send_message(chat_id, 'Лови', keyboard=json.dumps(get_keyboard(user_is_admin(user_id))))
+            print(sender.is_admin)
+            print(sender.is_student)
+            self.send_message(chat_id, 'Лови',
+                              keyboard=json.dumps(get_keyboard(sender.is_admin, sender.is_student)))
             return
         elif command in ["убери", "скрыть"]:
             keyboard = {
@@ -573,14 +553,14 @@ class VkBot(threading.Thread):
                 return
             msg_chat_id = int(args[0])
             msg = args[1]
-            if not user_is_admin(user_id):
+            if not sender.is_admin:
                 self.send_message(chat_id, "Недостаточно прав на изменение ссылки стрима")
                 return
 
             self.send_message(2000000000 + msg_chat_id, msg)
             return
         elif command in ["стоп"]:
-            if not user_is_admin(user_id):
+            if not sender.is_admin:
                 text = "бота"
                 if args[0] == "синички":
                     text = "синичек"
@@ -597,7 +577,7 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, "Финишируем")
             return
         elif command in ["старт"]:
-            if not user_is_admin(user_id):
+            if not sender.is_admin:
                 self.send_message(chat_id, "Недостаточно прав на старт синичек")
                 return
             if args[0] == "синички":
@@ -608,7 +588,7 @@ class VkBot(threading.Thread):
                     self.send_message(chat_id, "Синички уже стартовали!")
                 return
         elif command in ["команда"]:
-            if not user_is_admin(user_id):
+            if not sender.is_admin:
                 self.send_message(chat_id, "Недостаточно прав на выполнение команд")
                 return
             if args[0] is None:
@@ -622,7 +602,7 @@ class VkBot(threading.Thread):
             #     output += "\n{}".format(error)
             # self.send_message(chat_id, output)
         elif command in ["бан"]:
-            if not user_is_admin(user_id):
+            if not sender.is_admin:
                 self.send_message(chat_id, "Недостаточно прав на бан")
                 return
 
@@ -647,7 +627,7 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, "Забанен")
             return
         elif command in ["разбан"]:
-            if not user_is_admin(user_id):
+            if not sender.is_admin:
                 self.send_message(chat_id, "Недостаточно прав на разбан")
                 return
 
@@ -666,7 +646,7 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, "Разбанен")
             return
         # elif command in ["рестарт"]:
-        #     if not user_is_admin(user_id):
+        #     if not sender.is_admin:
         #         self.send_message(chat_id, "Недостаточно прав на рестарт")
         #         return
         #     self.send_message(chat_id, "Разбанен")
@@ -757,22 +737,21 @@ class VkBot(threading.Thread):
         vk_user = VkUser.objects.filter(user_id=user_id)
         if len(vk_user) > 0:
             vk_user = vk_user.first()
-            user = {'name': vk_user.name, 'surname': vk_user.surname, 'gender': vk_user.gender}
-            return user
+            # user = {'name': vk_user.name, 'surname': vk_user.surname, 'gender': vk_user.gender}
         else:
             # Прозрачная регистрация
             user = self.vk.users.get(user_id=user_id, lang='ru', fields='sex')[0]
             vk_user = VkUser()
             vk_user.user_id = user_id
-            vk_user.name = user['name']
-            vk_user.surname = user['surname']
-            vk_user.gender = user['gender']
+            vk_user.name = user['first_name']
+            vk_user.surname = user['last_name']
+            vk_user.gender = user['sex']
 
             if chat_id == 2000000003:
                 vk_user.is_student = True
             vk_user.save()
 
-            return user
+        return vk_user
 
     def get_groupname_by_id(self, group_id):
         group = self.vk.groups.getById(group_id=group_id)[0]

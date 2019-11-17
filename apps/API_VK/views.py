@@ -34,7 +34,6 @@ def where_is_me(request):
                 return HttpResponse(json.dumps({'success': True, 'error': 'Wrong IMEI'}, ensure_ascii=False),
                                     content_type="application/json")
 
-
             if event == 'somewhere':
                 lat = request.GET.get('lat', None)
                 lon = request.GET.get('lon', None)

@@ -12,5 +12,6 @@ def get_address(lat, lon):
         API_KEY, lat, lon)
     result = requests.get(URL).json()
     return \
-    result['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']['GeocoderMetaData'][
-        'text']
+        result['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty'][
+            'GeocoderMetaData'][
+            'text']
