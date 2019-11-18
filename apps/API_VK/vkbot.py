@@ -312,6 +312,9 @@ class VkBot(threading.Thread):
             new_winner.user = winner
             new_winner.chat_id = chat_id
             new_winner.save()
+            winner_petrovich = PetrovichUser.objects.filter(user=winner).first()
+            winner_petrovich.wins += 1
+            winner_petrovich.save()
             self.send_message(chat_id, "Такс такс такс, кто тут у нас")
             self.send_message(chat_id, "Наш сегодняшний Петрович дня - %s" % winner)
             return
