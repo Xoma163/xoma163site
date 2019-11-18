@@ -403,21 +403,16 @@ class VkBot(threading.Thread):
 
             quote = QuoteBook()
             quote.peer_id = peer_id
-            quote.user_id = 0
-            if len(msgs) == 1:
-                if msgs[0]['from_id'] > 0:
-                    quote.username = sender.name + " " + sender.surname
-                else:
-                    quote.username = self.get_groupname_by_id(int(msgs[0]['from_id']) * -1)
-            else:
-                quote.username = ""
             quote_text = ""
             for msg in msgs:
                 text = msg['text']
                 if msg['from_id'] > 0:
-                    username = sender.name + " " + sender.surname
+                    quote_user_id = int(msg['from_id'])
+                    quote_user = self.get_user_by_id(quote_user_id, chat_id)
+                    username = quote_user.name + " " + quote_user.surname
                 else:
-                    username = self.get_groupname_by_id(int(msg['from_id']) * -1)
+                    quote_user_id = int(msgs[0]['from_id']) * -1
+                    username = self.get_groupname_by_id(quote_user_id)
                 quote_text += "{}\n{}\n\n".format(username, text)
             quote.text = quote_text
             quote.save()
@@ -468,16 +463,11 @@ class VkBot(threading.Thread):
             for i, obj_on_page in enumerate(objs_on_page):
                 msg += "------------------------------{}------------------------------\n" \
                        "{}\n" \
-                       "(c) {} {}\n".format(i + 1, obj_on_page.text,
-                                            obj_on_page.username,
-                                            obj_on_page.date.strftime(
-                                                "%d.%m.%Y %H:%M:%S"))
+                       "(c) {}\n".format(i + 1, obj_on_page.text, obj_on_page.date.strftime("%d.%m.%Y %H:%M:%S"))
 
             self.send_message(chat_id, msg)
             return
         elif command in ["клава", "клавиатура"]:
-            print(sender.is_admin)
-            print(sender.is_student)
             self.send_message(chat_id, 'Лови',
                               keyboard=json.dumps(get_keyboard(sender.is_admin, sender.is_student)))
             return
