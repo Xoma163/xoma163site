@@ -7,6 +7,7 @@ import datetime
 import json
 import random
 import re
+import subprocess
 import threading
 
 import vk_api
@@ -114,12 +115,10 @@ class VkBot(threading.Thread):
                     self.send_message(chat_id, "Стартуем!")
                     return
                 else:
+                    self.send_message(chat_id, "Чё стартуем-то?")
                     return
             else:
                 self.send_message(chat_id, "Недостаточно прав на возобновление бота")
-            return
-
-        append_command_to_statistics(command)
 
         attachments = []
         # Выбор команды
@@ -132,7 +131,6 @@ class VkBot(threading.Thread):
                     return
                 else:
                     self.send_message(chat_id, str(stream))
-                    return
             else:
                 if not is_lk:
                     self.send_message(chat_id, "Управление ботом производится только в ЛК")
@@ -146,7 +144,6 @@ class VkBot(threading.Thread):
                 stream.link = args[0]
                 stream.save()
                 self.send_message(chat_id, "Ссылка изменена на " + args[0])
-                return
         elif full_message[-1] == '?':
             bad_words = get_bad_words()
 
@@ -186,7 +183,6 @@ class VkBot(threading.Thread):
                     msg_self = "сам"
                 msg = "{}, {} {} {}?".format(name, "может ты", msg_self, full_message[min_index_bad: len_bad])
                 self.send_message(chat_id, msg)
-                return
 
             rand_int = random.randint(1, 100)
             if rand_int <= 48:
@@ -196,7 +192,6 @@ class VkBot(threading.Thread):
             else:
                 msg = "Ну тут даже я хз"
             self.send_message(chat_id, msg)
-            return
         elif command in ["где"]:
             if args is None:
                 self.send_message(chat_id, "Нет аргумента у команды 'Где'")
@@ -220,13 +215,13 @@ class VkBot(threading.Thread):
             else:
                 msg = "%s\n%s" % (vk_event.date.strftime("%H:%M:%S"), vk_event.msg)
             self.send_message(chat_id, str(msg))
-            return
         elif command in ["c", "с", "синички"]:
             try:
                 # path = snapshot()
                 path = cameraHandler.get_img()
             except RuntimeError as e:
                 print(e)
+                self.send_message(chat_id, "какая-то дичь с синичками. Зовите разраба")
                 return
             frames = 20
             quality = 0
@@ -268,7 +263,6 @@ class VkBot(threading.Thread):
                 attachments.append('doc{}_{}'.format(gifka['owner_id'], gifka['id']))
 
             self.send_message(chat_id, "http://birds.xoma163.xyz", attachments=attachments)
-            return
         elif command in ["рег", "регистрация"]:
             if is_lk:
                 self.send_message(chat_id, "Команда работает только в беседах.")
@@ -290,7 +284,6 @@ class VkBot(threading.Thread):
             p_user.save()
 
             self.send_message(chat_id, "Регистрация прошла успешно")
-            return
         elif command in ["петрович", "петр"]:
             if is_lk:
                 self.send_message(chat_id, "Команда работает только в беседах.")
@@ -317,7 +310,6 @@ class VkBot(threading.Thread):
             winner_petrovich.save()
             self.send_message(chat_id, "Такс такс такс, кто тут у нас")
             self.send_message(chat_id, "Наш сегодняшний Петрович дня - %s" % winner)
-            return
         elif command in ["стата", "статистика"]:
             players = PetrovichUser.objects.filter(chat_id=chat_id)
             result_list = []
@@ -330,7 +322,6 @@ class VkBot(threading.Thread):
             for result in result_list:
                 msg += "%s - %s\n" % (result[0], result[1])
             self.send_message(chat_id, msg)
-            return
         elif command in ["рандом", "ранд"]:
             if len(args) == 2:
                 try:
@@ -352,18 +343,14 @@ class VkBot(threading.Thread):
 
             rand_int = random.randint(int1, int2)
             self.send_message(chat_id, rand_int)
-            return
         elif command in ["спасибо", "спасибо!", "спс"]:
             self.send_message(chat_id, "Всегда пожалуйста! :)")
-            return
         elif command in ['сори', 'прости', 'извини']:
             phrases = get_sorry_phrases()
             msg = get_random_item_from_list(phrases)
             self.send_message(chat_id, msg)
-            return
         elif command in ["помощь", "хелп", "ман", "команды", "помоги", "памаги", "спаси", "хелб", "манул"]:
             self.send_message(chat_id, get_help_text(sender.is_admin, sender.is_student))
-            return
         elif command in ["погода"]:
             if args is None:
                 city = 'самара'
@@ -374,7 +361,6 @@ class VkBot(threading.Thread):
             weather = get_weather(city)
 
             self.send_message(chat_id, weather)
-            return
         elif command in ["похвалить", "похвали", "хвалить"]:
             if args:
                 if args[0].lower() == "петрович":
@@ -384,7 +370,6 @@ class VkBot(threading.Thread):
             else:
                 msg = get_random_item_from_list(get_praises())
             self.send_message(chat_id, msg)
-            return
         elif command in ["обосрать", "обосри"]:
             if args:
                 if args[0].lower() == "петрович":
@@ -394,7 +379,6 @@ class VkBot(threading.Thread):
             else:
                 msg = get_random_item_from_list(get_insults())
             self.send_message(chat_id, msg)
-            return
         elif command in ["цитата", "(c)", "(с)"]:
             if not 'fwd' in vk_event:
                 self.send_message(chat_id, "Перешлите сообщения для сохранения цитаты")
@@ -417,7 +401,6 @@ class VkBot(threading.Thread):
             quote.text = quote_text
             quote.save()
             self.send_message(chat_id, "Цитата сохранена")
-            return
         elif command in ["цитаты"]:
             text_filter = None
             if args is not None:
@@ -466,7 +449,6 @@ class VkBot(threading.Thread):
                        "(c) {}\n".format(i + 1, obj_on_page.text, obj_on_page.date.strftime("%d.%m.%Y %H:%M:%S"))
 
             self.send_message(chat_id, msg)
-            return
         elif command in ["клава", "клавиатура"]:
             self.send_message(chat_id, 'Лови',
                               keyboard=json.dumps(get_keyboard(sender.is_admin, sender.is_student)))
@@ -477,7 +459,6 @@ class VkBot(threading.Thread):
                 "buttons": []
             }
             self.send_message(chat_id, 'Убрал', keyboard=json.dumps(keyboard))
-            return
         elif command in ["уъу", "бля", "ъуъ"]:
 
             if not 'fwd' in vk_event:
@@ -501,44 +482,32 @@ class VkBot(threading.Thread):
                 new_msg = new_msg.replace(symbol, " бля" + symbol)
             if flag:
                 new_msg = new_msg[:-1]
-            # new_msg = new_msg.replace('блябля', 'бля').replace('бля бля', 'бля')
             self.send_message(chat_id, new_msg)
-            return
         elif command in ["привет", "хай", "даров", "дарова", "здравствуй", "здравствуйте", "привки", "прив", "q", "qq",
                          "ку", "куку", "здаров", "здарова"]:
             self.send_message(chat_id, 'Хай')
-            return
         elif command in ["пока", "бай", "bb", "бай-бай", "байбай", "бб", "досвидос", "до встречи", "бывай"]:
             self.send_message(chat_id, 'Пока((')
-            return
         elif command in ["дерьмо"]:
             self.send_message(chat_id, "ня")
-            return
         elif command in ["ня"]:
             self.send_message(chat_id, "дерьмо")
-            return
         elif command in ["гит"]:
             self.send_message(chat_id, "https://github.com/Xoma163/xoma163site/")
-            return
         elif command in ["донат"]:
             self.send_message(chat_id, "https://www.donationalerts.com/r/xoma163")
-            return
         #     -----------------------------------------
         elif command in ["расписание", "расп"]:
             photo = {'owner_id': -186416119, 'id': 457239626}
             attachments.append('photo{}_{}'.format(photo['owner_id'], photo['id']))
             self.send_message(chat_id, str((datetime.datetime.now().isocalendar()[1] - 35)) + " неделя",
                               attachments=attachments)
-            return
         elif command in ["гугл", "ссылка", "учебное"]:
             self.send_message(chat_id, "https://drive.google.com/open?id=1AJPnT2XXYNc39-2CSr_MzHnv4hs6Use6")
-            return
         elif command in ["лекции"]:
             self.send_message(chat_id, "https://drive.google.com/open?id=19QVRRbj6ePEFTxS2bHOjjaKljkJwZxNB")
-            return
         elif command in ["неделя"]:
             self.send_message(chat_id, str((datetime.datetime.now().isocalendar()[1] - 35)) + " неделя")
-            return
         #     -----------------------------------------
         elif command in ["управление", "сообщение"]:
             if not is_lk:
@@ -554,7 +523,6 @@ class VkBot(threading.Thread):
                 return
 
             self.send_message(2000000000 + msg_chat_id, msg)
-            return
         elif command in ["стоп"]:
             if not sender.is_admin:
                 text = "бота"
@@ -572,7 +540,6 @@ class VkBot(threading.Thread):
                     return
             self.BOT_CAN_WORK = False
             self.send_message(chat_id, "Финишируем")
-            return
         elif command in ["старт"]:
             if not sender.is_admin:
                 self.send_message(chat_id, "Недостаточно прав на старт синичек")
@@ -583,7 +550,8 @@ class VkBot(threading.Thread):
                     self.send_message(chat_id, "Стартуем синичек!")
                 else:
                     self.send_message(chat_id, "Синички уже стартовали!")
-                return
+                    return
+
         elif command in ["команда"]:
             if not sender.is_admin:
                 self.send_message(chat_id, "Недостаточно прав на выполнение команд")
@@ -592,12 +560,12 @@ class VkBot(threading.Thread):
                 self.send_message(chat_id, "Нет параметров у команды")
                 return
 
-            # process = subprocess.Popen(arg.split(), stdout=subprocess.PIPE)
-            # output, error = process.communicate()
-            # output = output.decode("utf-8")
-            # if error:
-            #     output += "\n{}".format(error)
-            # self.send_message(chat_id, output)
+            process = subprocess.Popen(args, stdout=subprocess.PIPE)
+            output, error = process.communicate()
+            output = output.decode("utf-8")
+            if error:
+                output += "\n{}".format(error)
+            self.send_message(chat_id, output)
         elif command in ["бан"]:
             if not sender.is_admin:
                 self.send_message(chat_id, "Недостаточно прав на бан")
@@ -622,7 +590,6 @@ class VkBot(threading.Thread):
             user.save()
 
             self.send_message(chat_id, "Забанен")
-            return
         elif command in ["разбан"]:
             if not sender.is_admin:
                 self.send_message(chat_id, "Недостаточно прав на разбан")
@@ -641,7 +608,6 @@ class VkBot(threading.Thread):
             user.is_banned = False
             user.save()
             self.send_message(chat_id, "Разбанен")
-            return
         # elif command in ["рестарт"]:
         #     if not sender.is_admin:
         #         self.send_message(chat_id, "Недостаточно прав на рестарт")
@@ -651,6 +617,8 @@ class VkBot(threading.Thread):
         else:
             self.send_message(chat_id, "Я не понял команды \"%s\"" % command)
             return
+        # Ведение статистики
+        append_command_to_statistics(command)
 
     def __init__(self):
         super().__init__()
