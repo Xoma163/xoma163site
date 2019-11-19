@@ -19,7 +19,7 @@ from vk_api.utils import get_random_id
 from apps.API_VK.APIs.rzhunemogy_joke import get_joke
 from apps.API_VK.models import Log, Stream, VkUser, QuoteBook, PetrovichUser, PetrovichGames
 from apps.API_VK.static_texts import get_help_text, get_insults, get_praises, get_bad_words, get_bad_answers, \
-    get_sorry_phrases, get_keyboard
+    get_sorry_phrases, get_keyboard, get_teachers_email
 from apps.Statistics.views import append_command_to_statistics, append_feature, get_features_text
 from xoma163site.settings import BASE_DIR
 from xoma163site.wsgi import cameraHandler
@@ -350,7 +350,7 @@ class VkBot(threading.Thread):
             phrases = get_sorry_phrases()
             msg = get_random_item_from_list(phrases)
             self.send_message(chat_id, msg)
-        elif command in ["помощь", "хелп", "ман", "команды", "помоги", "памаги", "спаси", "хелб", "манул"]:
+        elif command in ["помощь", "хелп", "ман", "команды", "помоги", "памаги", "спаси", "хелб", "манул", "help"]:
             self.send_message(chat_id, get_help_text(sender.is_admin, sender.is_student))
         elif command in ["погода"]:
             if args is None:
@@ -545,6 +545,11 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, "https://drive.google.com/open?id=19QVRRbj6ePEFTxS2bHOjjaKljkJwZxNB")
         elif command in ["неделя"]:
             self.send_message(chat_id, str((datetime.datetime.now().isocalendar()[1] - 35)) + " неделя")
+        elif command in ["почта"]:
+            if not sender.is_student:
+                self.send_message(chat_id, "Команда доступна только студентам")
+                return
+            self.send_message(chat_id, get_teachers_email())
         #     -----------------------------------------
         elif command in ["управление", "сообщение"]:
             if not is_lk:

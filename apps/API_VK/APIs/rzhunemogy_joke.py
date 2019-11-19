@@ -12,4 +12,5 @@ def get_joke(type=1):
 
     result_text = result.text.replace('\r', '')
     result_json = json.loads(result_text, strict=False)
+    print(result.text)
     return result_json['content']
