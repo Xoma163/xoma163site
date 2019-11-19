@@ -14,13 +14,13 @@ class Statistic(models.Model):
         return str(self.command)
 
 
-class Feature(models.Model):
+class Isssue(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
     text = models.TextField(verbose_name='Фича', max_length=5000)
 
     class Meta:
-        verbose_name = "фича"
-        verbose_name_plural = "Фичи"
+        verbose_name = "ишю"
+        verbose_name_plural = "Ишюс"
 
     def __str__(self):
         return str(self.text)

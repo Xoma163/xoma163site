@@ -20,7 +20,7 @@ from apps.API_VK.APIs.rzhunemogy_joke import get_joke
 from apps.API_VK.models import Log, Stream, VkUser, QuoteBook, PetrovichUser, PetrovichGames
 from apps.API_VK.static_texts import get_help_text, get_insults, get_praises, get_bad_words, get_bad_answers, \
     get_sorry_phrases, get_keyboard, get_teachers_email
-from apps.Statistics.views import append_command_to_statistics, append_feature, get_features_text
+from apps.Statistics.views import append_command_to_statistics, append_feature, get_issues_text
 from xoma163site.settings import BASE_DIR
 from xoma163site.wsgi import cameraHandler
 
@@ -500,9 +500,9 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, "https://github.com/Xoma163/xoma163site/")
         elif command in ["донат"]:
             self.send_message(chat_id, "https://www.donationalerts.com/r/xoma163")
-        elif command in ["фича"]:
+        elif command in ["ишю"]:
             if not 'fwd' in vk_event:
-                self.send_message(chat_id, "Перешлите сообщения для сохранения цитаты")
+                self.send_message(chat_id, "Перешлите сообщения для сохранения ишю")
                 return
             msgs = vk_event['fwd']
             feature_text = ""
@@ -518,8 +518,8 @@ class VkBot(threading.Thread):
                 feature_text += "{}:\n{}\n\n".format(username, text)
             append_feature(feature_text)
             self.send_message(chat_id, "Сохранено")
-        elif command in ["фичи"]:
-            features = get_features_text()
+        elif command in ["ишюс"]:
+            features = get_issues_text()
             self.send_message(chat_id, features)
         elif command in ["анекдот", "анек", "а"]:
             if args is None:
