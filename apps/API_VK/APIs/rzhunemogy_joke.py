@@ -1,5 +1,3 @@
-import json
-
 import requests
 
 
@@ -9,8 +7,6 @@ def get_joke(type=1):
 
     if result.status_code != 200:
         return "Чёто не работает. Пинайте этого лентяя"
-
-    result_text = result.text.replace('\r', '')
-    result_json = json.loads(result_text, strict=False)
     print(result.text)
-    return result_json['content']
+    print(result.text.replace('{"content":"', '').replace('"}', ''))
+    return result.text.replace('{"content":"', '').replace('"}', '')

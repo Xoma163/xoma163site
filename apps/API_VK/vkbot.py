@@ -120,6 +120,7 @@ class VkBot(threading.Thread):
                     return
             else:
                 self.send_message(chat_id, "Недостаточно прав на возобновление бота")
+                return
 
         attachments = []
         # Выбор команды
@@ -465,7 +466,7 @@ class VkBot(threading.Thread):
             if not 'fwd' in vk_event:
                 self.send_message(chat_id, "Перешлите сообщения для уъуфикации")
                 return
-
+            add_word = "бля"
             msgs = vk_event['fwd']
 
             if len(msgs) == 1:
@@ -474,16 +475,19 @@ class VkBot(threading.Thread):
                 new_msg = ""
                 for msg in msgs:
                     new_msg += msg['text'] + "\n"
+            symbols_first_priority = ['...']
             symbols_left = ['.', ',', '?', '!', ':']
-            symbols_right = ['—', '-']
+            symbols_right = [' —', ' -']
             flag = False
             if new_msg[-1] not in symbols_left:
                 new_msg += '.'
                 flag = True
+            for symbol in symbols_first_priority:
+                new_msg = new_msg.replace(symbol, " " + add_word + symbol)
             for symbol in symbols_left:
-                new_msg = new_msg.replace(symbol, " бля" + symbol)
+                new_msg = new_msg.replace(symbol, " " + add_word + symbol)
             for symbol in symbols_right:
-                new_msg = new_msg.replace(symbol, "бля " + symbol)
+                new_msg = new_msg.replace(symbol, " " + add_word + " " + symbol)
             if flag:
                 new_msg = new_msg[:-1]
             self.send_message(chat_id, new_msg)
