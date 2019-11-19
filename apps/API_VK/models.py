@@ -93,11 +93,8 @@ class PetrovichGames(models.Model):
 
 
 class QuoteBook(models.Model):
-    text = models.CharField(verbose_name="Текст", max_length=10000)
+    text = models.TextField(verbose_name="Текст", max_length=5000)
     date = models.DateTimeField(verbose_name="Дата", auto_now_add=True, blank=True)
-    # author = models.ForeignKey(VkUser, on_delete=models.SET_NULL, null=True, verbose_name="Автор")
-    # username = models.CharField(verbose_name='Имя пользователя', max_length=40, default="")
-    # user_id = models.CharField(verbose_name='ID автора', max_length=20, default=0)
     peer_id = models.CharField(verbose_name='ID чата', max_length=20, default=0)
 
     class Meta:

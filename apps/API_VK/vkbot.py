@@ -19,7 +19,7 @@ from vk_api.utils import get_random_id
 from apps.API_VK.models import Log, Stream, VkUser, QuoteBook, PetrovichUser, PetrovichGames
 from apps.API_VK.static_texts import get_help_text, get_insults, get_praises, get_bad_words, get_bad_answers, \
     get_sorry_phrases, get_keyboard
-from apps.Statistics.views import append_command_to_statistics
+from apps.Statistics.views import append_command_to_statistics, append_feature, get_features_text
 from xoma163site.settings import BASE_DIR
 from xoma163site.wsgi import cameraHandler
 
@@ -397,7 +397,7 @@ class VkBot(threading.Thread):
                 else:
                     quote_user_id = int(msgs[0]['from_id']) * -1
                     username = self.get_groupname_by_id(quote_user_id)
-                quote_text += "{}\n{}\n\n".format(username, text)
+                quote_text += "{}:\n{}\n\n".format(username, text)
             quote.text = quote_text
             quote.save()
             self.send_message(chat_id, "Цитата сохранена")
@@ -499,6 +499,27 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, "https://github.com/Xoma163/xoma163site/")
         elif command in ["донат"]:
             self.send_message(chat_id, "https://www.donationalerts.com/r/xoma163")
+        elif command in ["фича"]:
+            if not 'fwd' in vk_event:
+                self.send_message(chat_id, "Перешлите сообщения для сохранения цитаты")
+                return
+            msgs = vk_event['fwd']
+            feature_text = ""
+            for msg in msgs:
+                text = msg['text']
+                if msg['from_id'] > 0:
+                    quote_user_id = int(msg['from_id'])
+                    quote_user = self.get_user_by_id(quote_user_id, chat_id)
+                    username = quote_user.name + " " + quote_user.surname
+                else:
+                    quote_user_id = int(msgs[0]['from_id']) * -1
+                    username = self.get_groupname_by_id(quote_user_id)
+                feature_text += "{}:\n{}\n\n".format(username, text)
+            append_feature(feature_text)
+            self.send_message(chat_id, "Сохранено")
+        elif command in ["фичи"]:
+            features = get_features_text()
+            self.send_message(chat_id, features)
         #     -----------------------------------------
         elif command in ["расписание", "расп"]:
             photo = {'owner_id': -186416119, 'id': 457239626}

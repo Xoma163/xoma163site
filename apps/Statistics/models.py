@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Statistics(models.Model):
+class Statistic(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
     command = models.CharField(verbose_name='Команда', max_length=20)
     count_queries = models.IntegerField(verbose_name='Количество запросов', default=0)
@@ -12,3 +12,15 @@ class Statistics(models.Model):
 
     def __str__(self):
         return str(self.command)
+
+
+class Feature(models.Model):
+    id = models.AutoField(primary_key=True, verbose_name='ID')
+    text = models.TextField(verbose_name='Фича', max_length=5000)
+
+    class Meta:
+        verbose_name = "фича"
+        verbose_name_plural = "Фичи"
+
+    def __str__(self):
+        return str(self.text)
