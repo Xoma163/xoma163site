@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from apps.API_VK.yandex_weather import get_weather
+from apps.API_VK.APIs.yandex_weather import get_weather
 from xoma163site.wsgi import vkbot
 
 

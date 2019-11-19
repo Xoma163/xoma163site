@@ -34,7 +34,6 @@ def get_weather(city="самара"):
     URL = "https://api.weather.yandex.ru/v1/informers?lat={}&lon={}&lang=ru_RU".format(lat, lon)
     HEADERS = {'X-Yandex-API-Key': TOKEN}
     result = requests.get(URL, headers=HEADERS).json()
-    print(result)
     if 'status' in result:
         if result['status'] == 403:
             return "На сегодня я исчерпал все запросы к Yandex Weather :("
@@ -112,8 +111,8 @@ def get_weather(city="самара"):
             weather['forecast'][i]['condition'])
 
         if weather['forecast'][i]['temp_min'] != weather['forecast'][i]['temp_max']:
-            forecast += 'Температура {}-{}°С'.format(weather['forecast'][i]['temp_min'],
-                                                     weather['forecast'][i]['temp_max'])
+            forecast += 'Температура от {} до {}°С'.format(weather['forecast'][i]['temp_min'],
+                                                           weather['forecast'][i]['temp_max'])
         else:
             forecast += 'Температура {}°С'.format(weather['forecast'][i]['temp_max'])
 

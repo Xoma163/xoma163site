@@ -3,8 +3,8 @@ import json
 
 from django.http import HttpResponse
 
+from apps.API_VK.APIs.yandex_geo import get_address
 from apps.API_VK.models import VkUser, Log
-from apps.API_VK.yandex_geo import get_address
 from xoma163site.wsgi import vkbot
 
 

@@ -16,6 +16,7 @@ from vk_api import VkUpload
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.utils import get_random_id
 
+from apps.API_VK.APIs.rzhunemogy_joke import get_joke
 from apps.API_VK.models import Log, Stream, VkUser, QuoteBook, PetrovichUser, PetrovichGames
 from apps.API_VK.static_texts import get_help_text, get_insults, get_praises, get_bad_words, get_bad_answers, \
     get_sorry_phrases, get_keyboard
@@ -356,7 +357,7 @@ class VkBot(threading.Thread):
                 city = 'самара'
             else:
                 city = args[0].lower()
-            from apps.API_VK.yandex_weather import get_weather
+            from apps.API_VK.APIs.yandex_weather import get_weather
 
             weather = get_weather(city)
 
@@ -520,6 +521,18 @@ class VkBot(threading.Thread):
         elif command in ["фичи"]:
             features = get_features_text()
             self.send_message(chat_id, features)
+        elif command in ["анекдот", "анек", "а"]:
+            if args is None:
+                type = 1
+            else:
+                try:
+                    type = args[0]
+                except:
+                    self.send_message(chat_id, "параметр должен быть целочисленным")
+                    return
+
+            joke = get_joke(type)
+            self.send_message(chat_id, joke)
         #     -----------------------------------------
         elif command in ["расписание", "расп"]:
             photo = {'owner_id': -186416119, 'id': 457239626}
