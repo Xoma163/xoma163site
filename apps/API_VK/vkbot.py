@@ -473,13 +473,16 @@ class VkBot(threading.Thread):
                 new_msg = ""
                 for msg in msgs:
                     new_msg += msg['text'] + "\n"
-            symbols = ['.', ',', '?', '!', ':', '—', '-']
+            symbols_left = ['.', ',', '?', '!', ':']
+            symbols_right = ['—', '-']
             flag = False
-            if new_msg[-1] not in symbols:
+            if new_msg[-1] not in symbols_left:
                 new_msg += '.'
                 flag = True
-            for symbol in symbols:
+            for symbol in symbols_left:
                 new_msg = new_msg.replace(symbol, " бля" + symbol)
+            for symbol in symbols_right:
+                new_msg = new_msg.replace(symbol, "бля " + symbol)
             if flag:
                 new_msg = new_msg[:-1]
             self.send_message(chat_id, new_msg)
