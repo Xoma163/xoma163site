@@ -525,17 +525,21 @@ class VkBot(threading.Thread):
         elif command in ["ишюс"]:
             features = get_issues_text()
             self.send_message(chat_id, features)
-        elif command in ["анекдот", "анек", "а"]:
+        elif command in ["анекдот", "анек", "а", "a"]:
             if args is None:
-                type = 1
+                a_type = 1
             else:
                 try:
-                    type = args[0]
+                    a_type = int(args[0])
+                    banned_types = [9, 10]
+                    if 0 <= a_type or a_type >= 19 or a_type in banned_types:
+                        self.send_message(chat_id, "низя")
+                        return
                 except:
                     self.send_message(chat_id, "параметр должен быть целочисленным")
                     return
 
-            joke = get_joke(type)
+            joke = get_joke(a_type)
             self.send_message(chat_id, joke)
         #     -----------------------------------------
         elif command in ["расписание", "расп"]:
