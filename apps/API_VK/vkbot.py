@@ -532,7 +532,7 @@ class VkBot(threading.Thread):
                 try:
                     a_type = int(args[0])
                     banned_types = [9, 10]
-                    if 0 <= a_type or a_type >= 19 or a_type in banned_types:
+                    if a_type <= 0 or a_type >= 19 or a_type in banned_types:
                         self.send_message(chat_id, "низя")
                         return
                 except:
