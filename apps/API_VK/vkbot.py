@@ -33,7 +33,7 @@ def parse_msg_to_me(msg, mentions):
 
 
 def parse_msg(msg):
-    msg_dict = {'command': None, 'args': None}
+    msg_dict = {'command': None, 'args': None, 'original_args': None}
 
     command_arg = msg.split(' ', 1)
     msg_dict['command'] = command_arg[0].lower()
@@ -66,6 +66,16 @@ def get_random_item_from_list(list, arg=None):
     else:
         msg = list[rand_int]
     return msg
+
+
+def parse_date(date):
+    date_arr = date.split('.')
+    if len(date_arr) == 2:
+        print("{}-{}-{}".format(1970, date_arr[1], date_arr[0]))
+        return "{}-{}-{}".format(1970, date_arr[1], date_arr[0])
+    else:
+        print("{}-{}-{}".format(date_arr[2], date_arr[1], date_arr[0]))
+        return "{}-{}-{}".format(date_arr[2], date_arr[1], date_arr[0])
 
 
 class VkBotClass(threading.Thread):
@@ -362,9 +372,12 @@ class VkBotClass(threading.Thread):
             self.send_message(chat_id, get_help_text(sender.is_admin, sender.is_student))
         elif command in ["погода"]:
             if args is None:
-                city = 'самара'
+                if sender.city:
+                    city = sender.city.capitalize()
+                else:
+                    city = 'Самара'
             else:
-                city = args[0].lower()
+                city = args[0].capitalize()
             from apps.API_VK.APIs.yandex_weather import get_weather
 
             weather = get_weather(city)
@@ -662,11 +675,19 @@ class VkBotClass(threading.Thread):
             user.is_banned = False
             user.save()
             self.send_message(chat_id, "Разбанен")
-        # elif command in ["рестарт"]:
-        #     if not sender.is_admin:
-        #         self.send_message(chat_id, "Недостаточно прав на рестарт")
-        #         return
-        #     self.send_message(chat_id, "Разбанен")
+        elif command in ["get_user_by_id"]:
+            if not sender.is_admin:
+                self.send_message(chat_id, "Команда доступна только администраторам")
+                return
+            self.get_user_by_id(args[0], chat_id)
+        elif command in ["update_users"]:
+            if not sender.is_admin:
+                self.send_message(chat_id, "Команда доступна только администраторам")
+                return
+
+            self.update_users()
+            self.send_message(chat_id, "done")
+
 
         else:
             self.send_message(chat_id, "Я не понял команды \"%s\"" % command)
@@ -756,12 +777,20 @@ class VkBotClass(threading.Thread):
             vk_user = vk_user.first()
         else:
             # Прозрачная регистрация
-            user = self.vk.users.get(user_id=user_id, lang='ru', fields='sex')[0]
+            user = self.vk.users.get(user_id=user_id, lang='ru', fields='sex, bdate, city, screen_name')[0]
+            print(user)
             vk_user = VkUser()
             vk_user.user_id = user_id
             vk_user.name = user['first_name']
             vk_user.surname = user['last_name']
-            vk_user.gender = user['sex']
+            if 'sex' in user:
+                vk_user.gender = user['sex']
+            if 'bdate' in user:
+                vk_user.birthday = user['bdate']
+            if 'city' in user:
+                vk_user.birthday = parse_date(user['bdate'])
+            if 'screen_name' in user:
+                vk_user.nickname = user['screen_name']
 
             if chat_id == 2000000003:
                 vk_user.is_student = True
@@ -772,16 +801,14 @@ class VkBotClass(threading.Thread):
     def get_user_by_name(self, args):
         if not args:
             raise RuntimeError("Отпутствуют аргументы")
-        name = None
-        surname = None
-        if len(args) >= 1:
-            name = args[0].capitalize()
         if len(args) >= 2:
-            surname = args[1].capitalize()
-        if surname:
-            user = VkUser.objects.filter(name=name, surname=surname)
+            user = VkUser.objects.filter(name=args[0].capitalize(), surname=args[1].capitalize())
         else:
-            user = VkUser.objects.filter(name=name)
+            user = VkUser.objects.filter(name=args[0].capitalize())
+            if len(user) == 0:
+                user = VkUser.objects.filter(surname=args[0].capitalize())
+                if len(user) == 0:
+                    user = VkUser.objects.filter(nickname=args[0])
         if len(user) > 1:
             raise RuntimeError("2 и более пользователей подходит под поиск")
 
@@ -799,7 +826,7 @@ class VkBotClass(threading.Thread):
             bot = self.vk.groups.getById(group_id=bot_id)[0]
 
             vk_bot = VkBot()
-            vk_bot.id = bot_id
+            vk_bot.bot_id = bot_id
             vk_bot.name = bot['name']
             vk_bot.save()
 
@@ -808,6 +835,23 @@ class VkBotClass(threading.Thread):
     def get_group_name_by_id(self, group_id):
         group = self.vk.groups.getById(group_id=group_id)[0]
         return group['name']
+
+    def update_users(self):
+        users = VkUser.objects.all()
+        for vk_user in users:
+            print(vk_user)
+            user = self.vk.users.get(user_id=vk_user.user_id, lang='ru', fields='sex, bdate, city, screen_name')[0]
+            vk_user.name = user['first_name']
+            vk_user.surname = user['last_name']
+            if 'sex' in user:
+                vk_user.gender = user['sex']
+            if vk_user.birthday is None and 'bdate' in user:
+                vk_user.birthday = parse_date(user['bdate'])
+            if vk_user.city is None and 'city' in user:
+                vk_user.city = user['city']['title']
+            if vk_user.nickname is None and 'screen_name' in user:
+                vk_user.nickname = user['screen_name']
+            vk_user.save()
 
 
 class MyVkBotLongPoll(VkBotLongPoll):

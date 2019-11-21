@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from apps.API_VK.models import Log, Stream, VkUser, QuoteBook, PetrovichUser, PetrovichGames
+from apps.API_VK.models import Log, Stream, VkUser, QuoteBook, PetrovichUser, PetrovichGames, VkBot
 
 admin.site.register(Stream)
 
@@ -9,8 +9,15 @@ admin.site.register(Stream)
 @admin.register(VkUser)
 class VkUserAdmin(admin.ModelAdmin):
     list_display = (
-        'name', 'surname', 'user_id', 'gender', 'get_notify_from', 'send_notify', 'is_admin', 'is_student', 'is_banned')
-    list_filter = ('gender', 'send_notify', 'is_admin', 'is_student', 'is_banned')
+        'user_id', 'name', 'surname', 'nickname', 'gender', 'birthday', 'city', 'get_notify_from', 'send_notify',
+        'is_admin',
+        'is_student', 'is_banned')
+    list_filter = ('gender', 'send_notify', 'is_admin', 'is_student', 'is_banned', 'city')
+
+
+@admin.register(VkBot)
+class VkBotAdmin(admin.ModelAdmin):
+    list_display = ('bot_id', 'name',)
 
 
 @admin.register(PetrovichUser)

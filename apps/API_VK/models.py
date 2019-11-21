@@ -19,7 +19,10 @@ class VkUser(models.Model):
     user_id = models.CharField(verbose_name='ID пользователя', max_length=20)
     name = models.CharField(verbose_name='Имя', max_length=40, default="")
     surname = models.CharField(verbose_name='Фамилия', max_length=40, default="")
-    gender = models.CharField(verbose_name='Пол', max_length=6, blank=True, default="")
+    nickname = models.CharField(verbose_name="Никнейм", max_length=40, blank=True, default="")
+    gender = models.CharField(verbose_name='Пол', max_length=2, blank=True, default="")
+    birthday = models.DateField(verbose_name='Дата рождения', null=True, blank=True)
+    city = models.CharField(verbose_name='Город', max_length=40, blank=True, default="")
 
     get_notify_from = models.ForeignKey('self', on_delete=models.SET_NULL, verbose_name="Получение уведомлений от",
                                         null=True, blank=True)
@@ -42,6 +45,13 @@ class VkBot(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
     bot_id = models.CharField(verbose_name='ID бота', max_length=20)
     name = models.CharField(verbose_name='Имя', max_length=40, default="")
+
+    class Meta:
+        verbose_name = "Бот"
+        verbose_name_plural = "Боты"
+
+    def __str__(self):
+        return str(self.name)
 
 
 class Log(models.Model):

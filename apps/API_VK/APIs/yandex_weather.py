@@ -4,23 +4,23 @@ from xoma163site.settings import BASE_DIR
 
 
 def get_weather(city="самара"):
-    if city == "самара":
+    if city == "Самара":
         city_name = "Самаре"
         lat = 53.212273
         lon = 50.169435
-    elif city in ['питер', 'санкт-петербург', 'питере', 'санкт-петербурге', 'спб']:
+    elif city in ['Питер', 'Санкт-петербург', 'Санкт-петербурге', 'Спб']:
         city_name = "Питере"
         lat = 59.939095
         lon = 30.315868
-    elif city in ['сызрань', 'сызрани']:
+    elif city in ['Сызрань', 'Сызрани']:
         city_name = "Сызрани"
         lat = 53.155782
         lon = 48.474485
-    elif city in ['прибой', 'прибое']:
+    elif city in ['Прибой', 'Прибое']:
         city_name = "Прибое"
         lat = 52.8689435
         lon = 49.6516931
-    elif city in ['купчино']:
+    elif city in ['Купчино']:
         city_name = "Купчино"
         lat = 59.872380
         lon = 30.370291
