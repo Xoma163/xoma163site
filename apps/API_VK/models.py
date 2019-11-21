@@ -30,6 +30,7 @@ class VkUser(models.Model):
     imei = models.CharField(verbose_name='IMEI', max_length=20, null=True, blank=True)
 
     is_admin = models.BooleanField(verbose_name='Админ', default=False)
+    is_moderator = models.BooleanField(verbose_name='Модератор', default=False)
     is_student = models.BooleanField(verbose_name='Студент', default=False)
     is_banned = models.BooleanField(verbose_name='Забанен', default=False)
 

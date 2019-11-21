@@ -10,9 +10,8 @@ admin.site.register(Stream)
 class VkUserAdmin(admin.ModelAdmin):
     list_display = (
         'user_id', 'name', 'surname', 'nickname', 'gender', 'birthday', 'city', 'get_notify_from', 'send_notify',
-        'is_admin',
-        'is_student', 'is_banned')
-    list_filter = ('gender', 'send_notify', 'is_admin', 'is_student', 'is_banned', 'city')
+        'is_admin', 'is_moderator', 'is_student', 'is_banned')
+    list_filter = ('gender', 'send_notify', 'is_admin', 'is_moderator', 'is_student', 'is_banned', 'city')
 
 
 @admin.register(VkBot)

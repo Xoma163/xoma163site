@@ -24,6 +24,8 @@ from apps.Statistics.views import append_command_to_statistics, append_feature, 
 from xoma163site.settings import BASE_DIR
 from xoma163site.wsgi import cameraHandler
 
+THREAD_IS_ACTIVE = False
+
 
 def parse_msg_to_me(msg, mentions):
     for mention in mentions:
@@ -45,9 +47,6 @@ def parse_msg(msg):
         msg_dict['args'] = None
 
     return msg_dict
-
-
-THREAD_IS_ACTIVE = False
 
 
 def message_for_me(message, mentions):
@@ -120,22 +119,17 @@ class VkBotClass(threading.Thread):
             self.send_message(chat_id, "Боты не могут общаться с Петровичем")
             return
 
-        if sender.is_banned:
-            self.send_message(chat_id, "У тебя бан")
+        if not self.check_sender_banned(sender, chat_id):
             return
         # Проверяем не остановлен ли бот, если так, то проверяем вводимая команда = старт?
-        if not self.BOT_CAN_WORK:
-            if sender.is_admin:
-                if command in ['старт']:
-                    self.BOT_CAN_WORK = True
-                    cameraHandler.resume()
-                    self.send_message(chat_id, "Стартуем!")
-                    return
-                else:
-                    self.send_message(chat_id, "Чё стартуем-то?")
-                    return
-            else:
-                self.send_message(chat_id, "Недостаточно прав на возобновление бота")
+        if not self.check_bot_working():
+            if not self.check_sender_admin(sender):
+                return
+
+            if command in ['старт']:
+                self.BOT_CAN_WORK = True
+                cameraHandler.resume()
+                self.send_message(chat_id, "Стартуем!")
                 return
 
         attachments = []
@@ -150,14 +144,10 @@ class VkBotClass(threading.Thread):
                 else:
                     self.send_message(chat_id, str(stream))
             else:
-                if not is_lk:
-                    self.send_message(chat_id, "Управление ботом производится только в ЛК")
-                    return
-                    # Если есть права на выполнение команды
 
-                if not sender.is_admin:
-                    self.send_message(chat_id, "Недостаточно прав на изменение ссылки стрима")
+                if not self.check_sender_admin(sender, chat_id):
                     return
+
                 stream = Stream.objects.first()
                 stream.link = args[0]
                 stream.save()
@@ -213,9 +203,9 @@ class VkBotClass(threading.Thread):
             self.send_message(chat_id, msg)
             return
         elif command in ["где"]:
-            if args is None:
-                self.send_message(chat_id, "Нет аргумента у команды 'Где'")
+            if not self.check_args(args, chat_id):
                 return
+
             try:
                 user = self.get_user_by_name(args)
             except RuntimeError as e:
@@ -284,13 +274,12 @@ class VkBotClass(threading.Thread):
 
             self.send_message(chat_id, "http://birds.xoma163.xyz", attachments=attachments)
         elif command in ["рег", "регистрация"]:
-            if is_lk:
-                self.send_message(chat_id, "Команда работает только в беседах.")
+            if self.check_lk(is_lk, chat_id):
                 return
 
-            if sender.is_admin:
-                if args:
-                    user_id = int(args[0])
+            if not self.check_sender_admin(sender, chat_id):
+                return
+
             vk_user = self.get_user_by_id(user_id, chat_id)
             if vk_user is not None:
                 if PetrovichUser.objects.filter(user=vk_user, chat_id=chat_id).first() is not None:
@@ -304,8 +293,7 @@ class VkBotClass(threading.Thread):
 
             self.send_message(chat_id, "Регистрация прошла успешно")
         elif command in ["петрович", "петр"]:
-            if is_lk:
-                self.send_message(chat_id, "Команда работает только в беседах.")
+            if self.check_conversation(is_lk, chat_id):
                 return
             today = datetime.datetime.now()
             winner_today = PetrovichGames.objects.filter(date__year=today.year,
@@ -426,6 +414,7 @@ class VkBotClass(threading.Thread):
             self.send_message(chat_id, "Цитата сохранена")
         elif command in ["цитаты"]:
             text_filter = None
+
             if args is not None:
                 if len(args) == 2:
                     try:
@@ -575,60 +564,55 @@ class VkBotClass(threading.Thread):
         elif command in ["неделя"]:
             self.send_message(chat_id, str((datetime.datetime.now().isocalendar()[1] - 35)) + " неделя")
         elif command in ["почта"]:
-            if not sender.is_student:
-                self.send_message(chat_id, "Команда доступна только студентам")
+            if not self.check_sender_student(sender, chat_id):
                 return
             self.send_message(chat_id, get_teachers_email())
         #     -----------------------------------------
         elif command in ["управление", "сообщение"]:
-            if not is_lk:
-                self.send_message(chat_id, "Управление ботом производится только в ЛК")
-                return
-            if args is None:
-                self.send_message(chat_id, "Отсутствуют аргументы chat_id и сообщение")
+            if not self.check_args(args, chat_id):
                 return
             msg_chat_id = int(args[0])
             msg = original_args.split(' ', 1)[1]
-            if not sender.is_admin:
-                self.send_message(chat_id, "Недостаточно прав на изменение ссылки стрима")
+            if not self.check_sender_admin(sender, chat_id):
                 return
 
             self.send_message(2000000000 + msg_chat_id, msg)
         elif command in ["стоп"]:
-            if not sender.is_admin:
-                text = "бота"
-                if args[0] == "синички":
-                    text = "синичек"
-                self.send_message(chat_id, "Недостаточно прав на остановку {}".format(text))
+            if not self.check_sender_admin(sender, chat_id):
                 return
+
             if args:
                 if args[0] == "синички":
-                    if cameraHandler._running:
+                    if cameraHandler.is_active():
                         cameraHandler.terminate()
                         self.send_message(chat_id, "Финишируем синичек")
                     else:
                         self.send_message(chat_id, "Синички уже финишировали")
                     return
-            self.BOT_CAN_WORK = False
-            self.send_message(chat_id, "Финишируем")
+            else:
+                self.BOT_CAN_WORK = False
+                self.send_message(chat_id, "Финишируем")
+
         elif command in ["старт"]:
-            if not sender.is_admin:
-                self.send_message(chat_id, "Недостаточно прав на старт синичек")
+            if not self.check_sender_admin(sender, chat_id):
+                return
+            if not self.check_args(args, chat_id):
                 return
             if args[0] == "синички":
-                if not cameraHandler._running:
+                if not cameraHandler.is_active():
                     cameraHandler.resume()
                     self.send_message(chat_id, "Стартуем синичек!")
                 else:
                     self.send_message(chat_id, "Синички уже стартовали!")
                     return
+            else:
+                self.BOT_CAN_WORK = True
+                self.send_message(chat_id, "Стартуем!")
 
         elif command in ["команда"]:
-            if not sender.is_admin:
-                self.send_message(chat_id, "Недостаточно прав на выполнение команд")
+            if not self.check_sender_admin(sender, chat_id):
                 return
-            if args[0] is None:
-                self.send_message(chat_id, "Нет параметров у команды")
+            if not self.check_args(args, chat_id):
                 return
 
             process = subprocess.Popen(args, stdout=subprocess.PIPE)
@@ -638,12 +622,10 @@ class VkBotClass(threading.Thread):
                 output += "\n{}".format(error)
             self.send_message(chat_id, output)
         elif command in ["бан"]:
-            if not sender.is_admin:
-                self.send_message(chat_id, "Недостаточно прав на бан")
+            if not self.check_sender_admin(sender, chat_id):
                 return
 
-            if args is None:
-                self.send_message(chat_id, "Нет аргумента у команды 'бан'")
+            if not self.check_args(args, chat_id):
                 return
 
             try:
@@ -660,12 +642,10 @@ class VkBotClass(threading.Thread):
 
             self.send_message(chat_id, "Забанен")
         elif command in ["разбан"]:
-            if not sender.is_admin:
-                self.send_message(chat_id, "Недостаточно прав на разбан")
+            if not self.check_sender_admin(sender, chat_id):
                 return
 
-            if args is None:
-                self.send_message(chat_id, "Нет аргумента у команды 'разбан'")
+            if not self.check_args(args, chat_id):
                 return
             try:
                 user = self.get_user_by_name(args)
@@ -676,13 +656,11 @@ class VkBotClass(threading.Thread):
             user.save()
             self.send_message(chat_id, "Разбанен")
         elif command in ["get_user_by_id"]:
-            if not sender.is_admin:
-                self.send_message(chat_id, "Команда доступна только администраторам")
+            if not self.check_sender_admin(sender, chat_id):
                 return
             self.get_user_by_id(args[0], chat_id)
         elif command in ["update_users"]:
-            if not sender.is_admin:
-                self.send_message(chat_id, "Команда доступна только администраторам")
+            if not self.check_sender_admin(sender, chat_id):
                 return
 
             self.update_users()
@@ -852,6 +830,58 @@ class VkBotClass(threading.Thread):
             if vk_user.nickname is None and 'screen_name' in user:
                 vk_user.nickname = user['screen_name']
             vk_user.save()
+
+    # Проверки
+
+    def check_sender_admin(self, user, chat_id=None):
+        if user.is_admin:
+            return True
+        if chat_id is not None:
+            self.send_message(chat_id, "Команда доступна только администраторам")
+        return False
+
+    def check_sender_moderator(self, user, chat_id):
+        if user.is_moderator or user.is_moderator:
+            return True
+        self.send_message(chat_id, "Команда доступна только администраторам и модераторам")
+        return False
+
+    def check_sender_student(self, user, chat_id):
+        if user.is_student:
+            return True
+        self.send_message(chat_id, "Команда доступна только студентам")
+        return False
+
+    def check_sender_banned(self, user, chat_id):
+        if not user.is_banned:
+            return True
+        self.send_message(chat_id, "У вас бан")
+        return False
+
+    # ToDo: проверка на количество введёных аргументов
+    def check_args(self, args, chat_id, size=None):
+        if args:
+            return True
+
+        self.send_message(chat_id, "Аргументы не переданы")
+        return False
+
+    def check_lk(self, is_lk, chat_id):
+        if is_lk:
+            return True
+
+        self.send_message(chat_id, "Команда работает только в ЛС")
+        return False
+
+    def check_conversation(self, is_lk, chat_id):
+        if is_lk:
+            return False
+
+        self.send_message(chat_id, "Команда работает только в беседах")
+        return True
+
+    def check_bot_working(self):
+        return self.BOT_CAN_WORK
 
 
 class MyVkBotLongPoll(VkBotLongPoll):
