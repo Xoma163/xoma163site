@@ -17,7 +17,7 @@ from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.utils import get_random_id
 
 from apps.API_VK.APIs.rzhunemogy_joke import get_joke
-from apps.API_VK.models import Log, Stream, VkUser, QuoteBook, PetrovichUser, PetrovichGames
+from apps.API_VK.models import Log, Stream, VkUser, QuoteBook, PetrovichUser, PetrovichGames, VkBot
 from apps.API_VK.static_texts import get_help_text, get_insults, get_praises, get_bad_words, get_bad_answers, \
     get_sorry_phrases, get_keyboard, get_teachers_email
 from apps.Statistics.views import append_command_to_statistics, append_feature, get_issues_text
@@ -38,8 +38,9 @@ def parse_msg(msg):
     command_arg = msg.split(' ', 1)
     msg_dict['command'] = command_arg[0].lower()
     if len(command_arg) > 1:
-        command_arg[1] = command_arg[1].replace(' ', ',')
-        msg_dict['args'] = command_arg[1].split(',')
+        command_arg[1] = command_arg[1].replace(',', ' ')
+        msg_dict['original_args'] = command_arg[1]
+        msg_dict['args'] = command_arg[1].split(' ')
     else:
         msg_dict['args'] = None
 
@@ -67,7 +68,7 @@ def get_random_item_from_list(list, arg=None):
     return msg
 
 
-class VkBot(threading.Thread):
+class VkBotClass(threading.Thread):
 
     def send_message(self, peer_id, msg, attachments=None, keyboard=None):
         if attachments is None:
@@ -90,6 +91,7 @@ class VkBot(threading.Thread):
 
         command = vk_event['message']['text']['command']
         args = vk_event['message']['text']['args']
+        original_args = vk_event['message']['text']['original_args']
         is_lk = vk_event['from_user']
         full_message = vk_event['message']['full_text']
 
@@ -102,7 +104,11 @@ class VkBot(threading.Thread):
         # self.send_message(chat_id, "Команда:{}\n "
         #                            "Аргументы:{}\n".format(str(command), str(args)))
 
-        sender = self.get_user_by_id(user_id, chat_id)
+        if user_id > 0:
+            sender = self.get_user_by_id(user_id, chat_id)
+        else:
+            self.send_message(chat_id, "Боты не могут общаться с Петровичем")
+            return
 
         if sender.is_banned:
             self.send_message(chat_id, "У тебя бан")
@@ -185,6 +191,7 @@ class VkBot(threading.Thread):
                     msg_self = "сам"
                 msg = "{}, {} {} {}?".format(name, "может ты", msg_self, full_message[min_index_bad: len_bad])
                 self.send_message(chat_id, msg)
+                return
 
             rand_int = random.randint(1, 100)
             if rand_int <= 48:
@@ -194,15 +201,16 @@ class VkBot(threading.Thread):
             else:
                 msg = "Ну тут даже я хз"
             self.send_message(chat_id, msg)
+            return
         elif command in ["где"]:
             if args is None:
                 self.send_message(chat_id, "Нет аргумента у команды 'Где'")
                 return
-            elif len(args) > 1:
-                user = VkUser.objects.filter(name=args[0].capitalize(), surname=args[1].capitalize(),
-                                             chat_id=chat_id).first()
-            else:
-                user = VkUser.objects.filter(name=args[0].capitalize()).first()
+            try:
+                user = self.get_user_by_name(args)
+            except RuntimeError as e:
+                self.send_message(chat_id, str(e))
+                return
 
             today = datetime.datetime.now()
             vk_event = Log.objects.filter(success=True,
@@ -273,8 +281,7 @@ class VkBot(threading.Thread):
             if sender.is_admin:
                 if args:
                     user_id = int(args[0])
-
-            vk_user = VkUser.objects.filter(user_id=user_id).first()
+            vk_user = self.get_user_by_id(user_id, chat_id)
             if vk_user is not None:
                 if PetrovichUser.objects.filter(user=vk_user, chat_id=chat_id).first() is not None:
                     self.send_message(chat_id, "Ты уже зарегистрирован :)")
@@ -313,13 +320,13 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, "Такс такс такс, кто тут у нас")
             self.send_message(chat_id, "Наш сегодняшний Петрович дня - %s" % winner)
         elif command in ["стата", "статистика"]:
-            players = PetrovichUser.objects.filter(chat_id=chat_id)
+            players = PetrovichUser.objects.filter(chat_id=chat_id).order_by('-wins')
             result_list = []
             for player in players:
                 result_list.append([player, player.wins])
 
             msg = "Наши любимые Петровичи:\n"
-            result_list.sort(key=lambda i: i[1], reverse=True)
+            # result_list.sort(key=lambda i: i[1], reverse=True)
 
             for result in result_list:
                 msg += "%s - %s\n" % (result[0], result[1])
@@ -397,8 +404,9 @@ class VkBot(threading.Thread):
                     quote_user = self.get_user_by_id(quote_user_id, chat_id)
                     username = quote_user.name + " " + quote_user.surname
                 else:
-                    quote_user_id = int(msgs[0]['from_id']) * -1
-                    username = self.get_groupname_by_id(quote_user_id)
+                    quote_user_id = int(msgs[0]['from_id']) * (-1)
+                    quote_bot = self.get_bot_by_id(quote_user_id)
+                    username = quote_bot.name
                 quote_text += "{}:\n{}\n\n".format(username, text)
             quote.text = quote_text
             quote.save()
@@ -504,7 +512,7 @@ class VkBot(threading.Thread):
             self.send_message(chat_id, "https://github.com/Xoma163/xoma163site/")
         elif command in ["донат"]:
             self.send_message(chat_id, "https://www.donationalerts.com/r/xoma163")
-        elif command in ["ишю"]:
+        elif command in ["ишю", "ишью"]:
             if not 'fwd' in vk_event:
                 self.send_message(chat_id, "Перешлите сообщения для сохранения ишю")
                 return
@@ -518,11 +526,11 @@ class VkBot(threading.Thread):
                     username = quote_user.name + " " + quote_user.surname
                 else:
                     quote_user_id = int(msgs[0]['from_id']) * -1
-                    username = self.get_groupname_by_id(quote_user_id)
+                    username = self.get_group_name_by_id(quote_user_id)
                 feature_text += "{}:\n{}\n\n".format(username, text)
             append_feature(feature_text)
             self.send_message(chat_id, "Сохранено")
-        elif command in ["ишюс"]:
+        elif command in ["ишюс", "ишьюс", "иши"]:
             features = get_issues_text()
             self.send_message(chat_id, features)
         elif command in ["анекдот", "анек", "а", "a"]:
@@ -567,7 +575,7 @@ class VkBot(threading.Thread):
                 self.send_message(chat_id, "Отсутствуют аргументы chat_id и сообщение")
                 return
             msg_chat_id = int(args[0])
-            msg = args[1]
+            msg = original_args.split(' ', 1)[1]
             if not sender.is_admin:
                 self.send_message(chat_id, "Недостаточно прав на изменение ссылки стрима")
                 return
@@ -624,13 +632,11 @@ class VkBot(threading.Thread):
             if args is None:
                 self.send_message(chat_id, "Нет аргумента у команды 'бан'")
                 return
-            elif len(args) > 1:
-                user = VkUser.objects.filter(name=args[0].capitalize(), surname=args[1].capitalize()).first()
-            else:
-                user = VkUser.objects.filter(name=args[0].capitalize()).first()
 
-            if user is None:
-                self.send_message(chat_id, "Пользователь не найден")
+            try:
+                user = self.get_user_by_name(args)
+            except RuntimeError as e:
+                self.send_message(chat_id, str(e))
                 return
 
             if user.is_admin:
@@ -648,12 +654,10 @@ class VkBot(threading.Thread):
             if args is None:
                 self.send_message(chat_id, "Нет аргумента у команды 'разбан'")
                 return
-            elif len(args) > 1:
-                user = VkUser.objects.filter(name=args[0].capitalize(), surname=args[1].capitalize()).first()
-            else:
-                user = VkUser.objects.filter(name=args[0].capitalize()).first()
-            if user is None:
-                self.send_message(chat_id, "Пользователь не найден")
+            try:
+                user = self.get_user_by_name(args)
+            except RuntimeError as e:
+                self.send_message(chat_id, str(e))
                 return
             user.is_banned = False
             user.save()
@@ -720,7 +724,6 @@ class VkBot(threading.Thread):
 
                         thread = threading.Thread(target=self.menu, args=(vk_event,))
                         thread.start()
-                        # self.menu(vk_event)
 
                     else:
                         print('Сообщение не для меня :(')
@@ -738,7 +741,6 @@ class VkBot(threading.Thread):
 
     def set_chat_title(self, chat_id, title):
         self.vk.messages.editChat(chat_id=chat_id, title=title)
-        pass
 
     def set_chat_title_if_not_equals(self, chat_id, title):
         if title != self.vk.messages.getConversationsById(peer_ids=2000000000 + chat_id)['items'][0]['chat_settings'][
@@ -752,7 +754,6 @@ class VkBot(threading.Thread):
         vk_user = VkUser.objects.filter(user_id=user_id)
         if len(vk_user) > 0:
             vk_user = vk_user.first()
-            # user = {'name': vk_user.name, 'surname': vk_user.surname, 'gender': vk_user.gender}
         else:
             # Прозрачная регистрация
             user = self.vk.users.get(user_id=user_id, lang='ru', fields='sex')[0]
@@ -768,22 +769,45 @@ class VkBot(threading.Thread):
 
         return vk_user
 
-    def get_groupname_by_id(self, group_id):
+    def get_user_by_name(self, args):
+        if not args:
+            raise RuntimeError("Отпутствуют аргументы")
+        name = None
+        surname = None
+        if len(args) >= 1:
+            name = args[0].capitalize()
+        if len(args) >= 2:
+            surname = args[1].capitalize()
+        if surname:
+            user = VkUser.objects.filter(name=name, surname=surname)
+        else:
+            user = VkUser.objects.filter(name=name)
+        if len(user) > 1:
+            raise RuntimeError("2 и более пользователей подходит под поиск")
+
+        if len(user) == 0:
+            raise RuntimeError("Пользователь не найден")
+
+        return user.first()
+
+    def get_bot_by_id(self, bot_id):
+        vk_bot = VkBot.objects.filter(bot_id=bot_id)
+        if len(vk_bot) > 0:
+            vk_bot = vk_bot.first()
+        else:
+            # Прозрачная регистрация
+            bot = self.vk.groups.getById(group_id=bot_id)[0]
+
+            vk_bot = VkBot()
+            vk_bot.id = bot_id
+            vk_bot.name = bot['name']
+            vk_bot.save()
+
+        return vk_bot
+
+    def get_group_name_by_id(self, group_id):
         group = self.vk.groups.getById(group_id=group_id)[0]
         return group['name']
-
-    # def register_user(self, user_id, chat_id):
-    #     vk_user = VkUser()
-    #     vk_user.user_id = user_id
-    #     user = self.get_user_by_id(user_id)
-    #     vk_user.name = user['name']
-    #     vk_user.surname = user['surname']
-    #     vk_user.gender = user['gender']
-    #
-    #     if chat_id == 2000000003:
-    #         vk_user.is_student = True
-    #     vk_user.save()
-    #     return vk_user
 
 
 class MyVkBotLongPoll(VkBotLongPoll):

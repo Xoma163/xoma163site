@@ -38,6 +38,12 @@ class VkUser(models.Model):
         return str(self.name + " " + self.surname)
 
 
+class VkBot(models.Model):
+    id = models.AutoField(primary_key=True, verbose_name='ID')
+    bot_id = models.CharField(verbose_name='ID бота', max_length=20)
+    name = models.CharField(verbose_name='Имя', max_length=40, default="")
+
+
 class Log(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
     date = models.DateTimeField(verbose_name="Дата", auto_now_add=True, blank=True)

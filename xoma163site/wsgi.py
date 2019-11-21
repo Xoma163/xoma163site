@@ -21,9 +21,9 @@ from apps.birds.CameraHandler import CameraHandler
 
 cameraHandler = CameraHandler()
 
-from apps.API_VK.vkbot import VkBot
+from apps.API_VK.vkbot import VkBotClass
 
-vkbot = VkBot()
+vkbot = VkBotClass()
 if not os.path.exists('thread.lock'):
     cameraHandler.start()
     vkbot.start()
