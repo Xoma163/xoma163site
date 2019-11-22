@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Stream(models.Model):
+class StreamModel(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
     link = models.URLField(verbose_name='Ссылка на стрим')
 
