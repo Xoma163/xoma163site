@@ -293,7 +293,7 @@ class VkBotClass(threading.Thread):
 
             self.send_message(chat_id, "Регистрация прошла успешно")
         elif command in ["петрович", "петр"]:
-            if self.check_conversation(is_lk, chat_id):
+            if not self.check_conversation(is_lk, chat_id):
                 return
             today = datetime.datetime.now()
             winner_today = PetrovichGames.objects.filter(date__year=today.year,
@@ -874,11 +874,11 @@ class VkBotClass(threading.Thread):
         return False
 
     def check_conversation(self, is_lk, chat_id):
-        if is_lk:
-            return False
+        if not is_lk:
+            return True
 
         self.send_message(chat_id, "Команда работает только в беседах")
-        return True
+        return False
 
     def check_bot_working(self):
         return self.BOT_CAN_WORK
