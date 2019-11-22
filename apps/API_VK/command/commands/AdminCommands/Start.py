@@ -5,7 +5,8 @@ from xoma163site.wsgi import cameraHandler
 class Start(CommonCommand):
     def __init__(self):
         names = ["старт"]
-        super().__init__(names, for_admin=True)
+        help_text = "̲С̲т̲а̲р̲т - возобновляет работу Петровича. С параметром можно включить нужный модуль (синички)"
+        super().__init__(names, help_text, for_admin=True)
 
     def start(self):
         if self.vk_event.args[0] == "синички":

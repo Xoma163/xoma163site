@@ -5,7 +5,8 @@ from apps.API_VK.static_texts import get_bad_answers, get_insults
 class Scold(CommonCommand):
     def __init__(self):
         names = ["обосрать", "обосри"]
-        super().__init__(names)
+        help_text = "̲О̲б̲о̲с̲р̲а̲т̲ь [N] - рандомное оскорбление. N - что/кто либо"
+        super().__init__(names, help_text)
 
     def start(self):
         if self.vk_event.args:

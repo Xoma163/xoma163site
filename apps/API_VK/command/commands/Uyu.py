@@ -4,7 +4,8 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 class Uyu(CommonCommand):
     def __init__(self):
         names = ["уъу", "бля", "ъуъ"]
-        super().__init__(names, check_fwd=True)
+        help_text = "̲У̲ъ̲у - уъуфикация текста"
+        super().__init__(names, help_text, check_fwd=True)
 
     def start(self):
 

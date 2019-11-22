@@ -7,6 +7,7 @@ from apps.API_VK.static_texts import get_bad_words, get_bad_answers
 class YesNo(CommonCommand):
     def __init__(self):
         names = ["get_user_by_id"]
+        help_text = "̲.̲.̲.̲? - вернёт да или нет."
         super().__init__(names)
 
     def accept(self, vk_bot, vk_event):

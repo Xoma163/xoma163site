@@ -17,8 +17,6 @@ from apps.Statistics.views import append_command_to_statistics
 from xoma163site.settings import BASE_DIR
 from xoma163site.wsgi import cameraHandler
 
-THREAD_IS_ACTIVE = False
-
 
 def parse_msg_to_me(msg, mentions):
     for mention in mentions:
@@ -54,10 +52,8 @@ def message_for_me(message, mentions):
 def parse_date(date):
     date_arr = date.split('.')
     if len(date_arr) == 2:
-        print("{}-{}-{}".format(1970, date_arr[1], date_arr[0]))
         return "{}-{}-{}".format(1970, date_arr[1], date_arr[0])
     else:
-        print("{}-{}-{}".format(date_arr[2], date_arr[1], date_arr[0]))
         return "{}-{}-{}".format(date_arr[2], date_arr[1], date_arr[0])
 
 
@@ -98,7 +94,6 @@ class VkBotClass(threading.Thread):
         for command in commands:
             try:
                 if command.accept(self, vk_event):
-                    print(command.names)
                     append_command_to_statistics(vk_event.command)
                     return
             except RuntimeError as e:
@@ -202,7 +197,6 @@ class VkBotClass(threading.Thread):
         else:
             # Прозрачная регистрация
             user = self.vk.users.get(user_id=user_id, lang='ru', fields='sex, bdate, city, screen_name')[0]
-            print(user)
             vk_user = VkUser()
             vk_user.user_id = user_id
             vk_user.name = user['first_name']
@@ -266,7 +260,6 @@ class VkBotClass(threading.Thread):
     def update_users(self):
         users = VkUser.objects.all()
         for vk_user in users:
-            print(vk_user)
             user = self.vk.users.get(user_id=vk_user.user_id, lang='ru', fields='sex, bdate, city, screen_name')[0]
             vk_user.name = user['first_name']
             vk_user.surname = user['last_name']

@@ -5,7 +5,8 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 class Joke(CommonCommand):
     def __init__(self):
         names = ["анекдот", "анек", "а", "a"]
-        super().__init__(names)
+        help_text = "̲А̲н̲е̲к̲д̲о̲т [N] - присылает случайный анекдот. N=[1-Анекдот, 2-Рассказы, 3-Стишки, 4-Афоризмы, 5-Цитаты, 6-Тосты, 8-Статусы. Добавляем 10, тогда будет (+18)]"
+        super().__init__(names, help_text)
 
     def start(self):
         if self.vk_event.args is None:

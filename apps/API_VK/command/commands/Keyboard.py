@@ -7,7 +7,8 @@ from apps.API_VK.static_texts import get_keyboard
 class Keyboard(CommonCommand):
     def __init__(self):
         names = ["клава", "клавиатура"]
-        super().__init__(names)
+        help_text = "̲К̲л̲а̲в̲а - показать клавиатуру"
+        super().__init__(names, help_text)
 
     def start(self):
         self.vk_bot.send_message(self.vk_event.chat_id, 'Лови', keyboard=json.dumps(

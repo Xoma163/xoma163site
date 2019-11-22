@@ -6,7 +6,8 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 class TimeTable(CommonCommand):
     def __init__(self):
         names = ["расписание", "расп"]
-        super().__init__(names, for_student=True)
+        help_text = "̲Р̲а̲с̲п̲и̲с̲а̲н̲и̲е - картинка с расписанием"
+        super().__init__(names, help_text, for_student=True)
 
     def start(self):
         attachments = []

@@ -5,7 +5,7 @@ from apps.API_VK.models import StreamModel
 class Stream(CommonCommand):
     def __init__(self):
         names = ["стрим", "поток"]
-        help_text = "ссылка на стрим"
+        help_text = "̲С̲т̲р̲и̲м - ссылка на стрим"
         super().__init__(names, help_text)
 
     def start(self):

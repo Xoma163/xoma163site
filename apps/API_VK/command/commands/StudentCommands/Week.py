@@ -6,7 +6,8 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 class Week(CommonCommand):
     def __init__(self):
         names = ["неделя"]
-        super().__init__(names)
+        help_text = "̲Н̲е̲д̲е̲л̲я - номер текущей учебной недели"
+        super().__init__(names, help_text, for_student=True)
 
     def start(self):
         self.vk_bot.send_message(self.vk_event.chat_id,

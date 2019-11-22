@@ -8,7 +8,8 @@ from apps.API_VK.models import PetrovichGames, PetrovichUser
 class Petrovich(CommonCommand):
     def __init__(self):
         names = ["петрович"]
-        super().__init__(names, for_conversations=True)
+        help_text = "̲П̲е̲т̲р̲о̲в̲и̲ч - мини-игра, определяющая кто Петрович Дня"
+        super().__init__(names, help_text, for_conversations=True)
 
     def start(self):
         today = datetime.datetime.now()

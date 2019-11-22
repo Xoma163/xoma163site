@@ -4,7 +4,8 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 class Control(CommonCommand):
     def __init__(self):
         names = ["управление", "сообщение"]
-        super().__init__(names, for_admin=True, check_args=True)
+        help_text = "̲У̲п̲р̲а̲в̲л̲е̲н̲и̲е (N,M) - N - chat_id, M - сообщение"
+        super().__init__(names, help_text, for_admin=True, check_args=True)
 
     def start(self):
         # ToDo: вынос в check_args

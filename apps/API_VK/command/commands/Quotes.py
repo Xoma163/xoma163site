@@ -7,7 +7,8 @@ from apps.API_VK.models import QuoteBook
 class Quotes(CommonCommand):
     def __init__(self):
         names = ["цитаты"]
-        super().__init__(names)
+        help_text = "̲Ц̲и̲т̲а̲т̲ы [N[,M]]- просмотр сохранённых цитат. Возможные комбинации - N - номер страницы, N - фраза для поиска, N - фраза для поиска, M - номер страницы"
+        super().__init__(names, help_text)
 
     def start(self):
         text_filter = None

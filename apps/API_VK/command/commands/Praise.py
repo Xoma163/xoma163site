@@ -5,7 +5,8 @@ from apps.API_VK.static_texts import get_praises
 class Praise(CommonCommand):
     def __init__(self):
         names = ["похвалить", "похвали", "хвалить"]
-        super().__init__(names)
+        help_text = "̲П̲о̲х̲в̲а̲л̲и̲т̲ь [N] - рандомная похвала. N - что/кто либо"
+        super().__init__(names, help_text)
 
     def start(self):
         if self.vk_event.args:

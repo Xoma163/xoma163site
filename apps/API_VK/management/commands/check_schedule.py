@@ -44,8 +44,6 @@ class Command(BaseCommand):
             self.change_title_on_default()
             return
 
-        print(schedule[now_weeknumber][now_weekday])
-
         # Узнаём какая пара первая, а какая последняя
         for i in range(len(timetable)):
             if str(i + 1) in schedule[now_weeknumber][now_weekday]:
@@ -62,7 +60,6 @@ class Command(BaseCommand):
             new_hour -= 24
 
         now_1900 = datetime.datetime.strptime("%s:%s" % (new_hour, new_min), '%H:%M')
-        print(now_1900)
         current_discipline = None
         for item in timetable:
             item_date_start = datetime.datetime.strptime(timetable[item]['START'], '%H:%M')

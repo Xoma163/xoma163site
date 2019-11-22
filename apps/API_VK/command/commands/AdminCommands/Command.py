@@ -6,7 +6,8 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 class Command(CommonCommand):
     def __init__(self):
         names = ["команда"]
-        super().__init__(names, for_admin=True, check_args=True)
+        help_text = "̲К̲о̲м̲а̲н̲д̲а - запускает любую команду на сервере"
+        super().__init__(names, help_text, for_admin=True, check_args=True)
 
     def start(self):
         process = subprocess.Popen(self.vk_event.args, stdout=subprocess.PIPE)

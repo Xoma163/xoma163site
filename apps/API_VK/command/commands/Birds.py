@@ -5,7 +5,8 @@ from xoma163site.wsgi import cameraHandler
 class Birds(CommonCommand):
     def __init__(self):
         names = ["с", "c", "синички"]
-        super().__init__(names)
+        help_text = "̲С̲и̲н̲и̲ч̲к̲и [N[,M]](N - количество кадров в гифке, 20 дефолт, M - качество(0 или 1), 0 дефолт) - ссылка, снапшот и гифка"
+        super().__init__(names, help_text)
 
     def start(self):
         attachments = []

@@ -40,15 +40,48 @@ from apps.API_VK.command.commands.Weather import Weather
 from apps.API_VK.command.commands.Where import Where
 from apps.API_VK.command.commands.YesNo import YesNo
 
+commands = [Thanks(), Stream(), Where(), Birds(), Register(), Petrovich(), Statistics(), Random(), Sorry(), Help(),
+            Weather(), Praise(), Scold(), Quote(), Quotes(), Keyboard(), KeyboardHide(), Uyu(), Hi(), Bye(), Nya(),
+            Shit(), Git(), Donate(), Issue(), Issues(), Joke(), TimeTable(), GoogleDrive(), Week(), Mail(), Ban(),
+            DeBan(), Command(), Start(), Stop(), Control(), get_user_by_id(), update_users(), YesNo()]
+
 
 def get_commands():
-    commands = [Thanks(), Stream(), Where(), Birds(), Register(), Petrovich(), Statistics(), Random(), Sorry(), Help(),
-                Weather(), Praise(), Scold(), Quote(), Quotes(), Keyboard(), KeyboardHide(), Uyu(), Hi(), Bye(), Nya(),
-                Shit(), Git(), Donate(), Issue(), Issues(), Joke(), TimeTable(), GoogleDrive(), Week(), Mail(), Ban(),
-                DeBan(), Command(), Start(), Stop(), Control(), get_user_by_id(), update_users(), YesNo()]
     return commands
 
 
+# ToDo: сохранение
+def get_help_admin_texts():
+    texts = ""
+    for command in commands:
+        if command.for_admin:
+            if command.help_text:
+                texts += "{}\n".format(command.help_text)
+    return texts
+
+
+def get_help_student_texts():
+    texts = ""
+    for command in commands:
+        if command.for_student:
+            if command.help_text:
+                texts += "{}\n".format(command.help_text)
+    return texts
+
+
+def get_help_moderator_texts():
+    texts = ""
+    for command in commands:
+        if command.for_moderator:
+            if command.help_text:
+                texts += "{}\n".format(command.help_text)
+    return texts
+
+
 def get_help_texts():
-    texts = []
+    texts = ""
+    for command in commands:
+        if not command.for_moderator and not command.for_admin and not command.for_student:
+            if command.help_text:
+                texts += "{}\n".format(command.help_text)
     return texts

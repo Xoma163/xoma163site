@@ -4,7 +4,8 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 class Ban(CommonCommand):
     def __init__(self):
         names = ["бан"]
-        super().__init__(names, for_admin=True, check_args=True)
+        help_text = "̲Б̲а̲н - бан пользователя"
+        super().__init__(names, help_text, for_admin=True, check_args=True)
 
     def start(self):
         try:

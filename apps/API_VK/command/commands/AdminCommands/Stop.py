@@ -5,7 +5,8 @@ from xoma163site.wsgi import cameraHandler
 class Stop(CommonCommand):
     def __init__(self):
         names = ["стоп"]
-        super().__init__(names, for_admin=True)
+        help_text = "̲С̲т̲о̲п - останавливает работу Петровича. С параметром можно отключить нужный модуль (синички)"
+        super().__init__(names, help_text, for_admin=True)
 
     def start(self):
         if self.vk_event.args:

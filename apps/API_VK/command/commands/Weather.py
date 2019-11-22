@@ -4,7 +4,8 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 class Weather(CommonCommand):
     def __init__(self):
         names = ["погода"]
-        super().__init__(names)
+        help_text = "̲П̲о̲г̲о̲д̲а [N] (N - название города(Самара, Питер, Сызрань, Прибой)) - погода в городе. По умолчанию берёт город из профиля"
+        super().__init__(names, help_text)
 
     def start(self):
         if self.vk_event.args is None:

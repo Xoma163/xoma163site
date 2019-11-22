@@ -5,7 +5,8 @@ from apps.API_VK.models import PetrovichUser
 class Register(CommonCommand):
     def __init__(self):
         names = ["регистрация", "рег"]
-        super().__init__(names)
+        help_text = "̲Р̲е̲г - регистрация для участия в петровиче дня"
+        super().__init__(names, help_text)
 
     def start(self):
         if not check_conversation(self.vk_bot, self.vk_event):

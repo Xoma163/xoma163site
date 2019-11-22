@@ -48,17 +48,6 @@ class Command(BaseCommand):
         schedule['1']['5']['2']['CABINET'] = "505"
         schedule['1']['5']['2']['TYPE'] = "🍋 Лаба"
         schedule['2'] = {}
-        schedule['2']['1'] = {}
-        schedule['2']['1']['1'] = {}
-        schedule['2']['1']['1']['TEACHER'] = "Лёзин И.А."
-        schedule['2']['1']['1']['DISCIPLINE'] = "ТРПО"
-        schedule['2']['1']['1']['CABINET'] = "510"
-        schedule['2']['1']['1']['TYPE'] = "🍋 Лаба"
-        schedule['2']['1']['2'] = {}
-        schedule['2']['1']['2']['TEACHER'] = "Лёзин И.А."
-        schedule['2']['1']['2']['DISCIPLINE'] = "ТРПО"
-        schedule['2']['1']['2']['CABINET'] = "510"
-        schedule['2']['1']['2']['TYPE'] = "🍋 Лаба"
         schedule['2']['3'] = {}
         schedule['2']['3']['5'] = {}
         schedule['2']['3']['5']['TEACHER'] = "Лёзина И.В."
@@ -107,7 +96,6 @@ class Command(BaseCommand):
         schedule['2']['5']['6']['DISCIPLINE'] = "ПАСНИ"
         schedule['2']['5']['6']['CABINET'] = "Логово"
         schedule['2']['5']['6']['TYPE'] = "🍋 Лаба"
-        print(schedule)
 
         with open(BASE_DIR + '/static/schedules/schedule.json', 'w') as outfile:
             import json
