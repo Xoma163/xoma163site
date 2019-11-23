@@ -9,7 +9,7 @@ class Issue(CommonCommand):
         super().__init__(names, help_text, check_fwd=True)
 
     def start(self):
-        msgs = self.vk_event['fwd']
+        msgs = self.vk_event.fwd
         feature_text = ""
         for msg in msgs:
             text = msg['text']

@@ -8,7 +8,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         chat_ids = options['chat_id'][0].split(',')
-        city = options['city'][0].lower()
+        city = options['city'][0].capitalize()
         weather = get_weather(city)
 
         for chat_id in chat_ids:
