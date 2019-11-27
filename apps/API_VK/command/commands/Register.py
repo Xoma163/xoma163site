@@ -12,7 +12,7 @@ class Register(CommonCommand):
         if not check_conversation(self.vk_bot, self.vk_event):
             return
 
-        vk_user = self.vk_bot.get_user_by_id(self.vk_event.user_id, self.vk_event.chat_id)
+        vk_user = self.vk_bot.get_user_by_id(self.vk_event.user_id)
         if vk_user is not None:
             if PetrovichUser.objects.filter(user=vk_user, chat_id=self.vk_event.chat_id).first() is not None:
                 self.vk_bot.send_message(self.vk_event.chat_id, "Ты уже зарегистрирован :)")

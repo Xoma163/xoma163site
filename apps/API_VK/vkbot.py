@@ -1,8 +1,3 @@
-# ToDo: Yandex translate
-# https://translate.yandex.net/api/v1.5/tr.json/translate?lang=ru-en &key=trnsl.1.1.20190926T183128Z.8452015e2670796c.b68628c3dc7cd243cfacdbc62da980a41435cb43&text=Привет, как дела?
-# Разобраться с ответками.
-
-
 import re
 import threading
 
@@ -12,7 +7,7 @@ from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.utils import get_random_id
 
 from apps.API_VK.command import get_commands
-from apps.API_VK.models import VkUser, VkBot
+from apps.API_VK.models import VkUser, VkBot, VkChat
 from apps.Statistics.views import append_command_to_statistics
 from xoma163site.settings import BASE_DIR
 from xoma163site.wsgi import cameraHandler
@@ -100,7 +95,6 @@ class VkBotClass(threading.Thread):
                 return
         self.send_message(vk_event.chat_id, "Я не понял команды \"%s\"" % vk_event.command)
         return
-        # Выбор команды
 
     def __init__(self):
         super().__init__()
@@ -122,7 +116,6 @@ class VkBotClass(threading.Thread):
             try:
                 # Если пришло новое сообщение
                 if event.type == VkBotEventType.MESSAGE_NEW:
-
                     vk_event = {'from_chat': event.from_chat,
                                 'from_group': event.from_group,
                                 'from_user': event.from_user,
@@ -153,12 +146,16 @@ class VkBotClass(threading.Thread):
                         vk_event['message']['text'] = parse_msg(vk_event['message']['text'])
 
                         if vk_event['message']['user_id'] > 0:
-                            vk_event['sender'] = self.get_user_by_id(vk_event['message']['user_id'],
-                                                                     vk_event['chat_id'])
+
+                            vk_event['sender'] = self.get_user_by_id(vk_event['message']['user_id'])
                         else:
-                            print("Вот тут походу ошибка с ботом")
-                            self.send_message(vk_event['chat_id'], "Боты не могут общаться с Петровичем")
+                            self.send_message(vk_event['message']['peer_id'], "Боты не могут общаться с Петровичем")
                             return
+                        if vk_event['chat_id']:
+                            vk_event['chat'] = self.get_chat_by_id(int(vk_event['chat_id']))
+                            self.add_group_to_user(int(vk_event['message']['user_id']), int(vk_event['chat_id']))
+                        else:
+                            vk_event['chat'] = None
 
                         vk_event_object = VkEvent(vk_event)
 
@@ -190,7 +187,7 @@ class VkBotClass(threading.Thread):
         else:
             print('dont set title')
 
-    def get_user_by_id(self, user_id, chat_id):
+    def get_user_by_id(self, user_id):
         vk_user = VkUser.objects.filter(user_id=user_id)
         if len(vk_user) > 0:
             vk_user = vk_user.first()
@@ -209,16 +206,13 @@ class VkBotClass(threading.Thread):
                 vk_user.birthday = parse_date(user['bdate'])
             if 'screen_name' in user:
                 vk_user.nickname = user['screen_name']
-
-            if chat_id == 2000000003:
-                vk_user.is_student = True
             vk_user.save()
 
         return vk_user
 
     def get_user_by_name(self, args):
         if not args:
-            raise RuntimeError("Отпутствуют аргументы")
+            raise RuntimeError("Отсутствуют аргументы")
         if len(args) >= 2:
             user = VkUser.objects.filter(name=args[0].capitalize(), surname=args[1].capitalize())
         else:
@@ -250,9 +244,25 @@ class VkBotClass(threading.Thread):
 
         return vk_bot
 
+    def get_chat_by_id(self, chat_id):
+        vk_chat = VkChat.objects.filter(chat_id=chat_id)
+        if len(vk_chat) > 0:
+            vk_chat = vk_chat.first()
+        else:
+            # Прозрачная регистрация
+            vk_chat = VkChat()
+            vk_chat.chat_id = chat_id
+            vk_chat.save()
+
+        return vk_chat
+
     def get_group_name_by_id(self, group_id):
         group = self.vk.groups.getById(group_id=group_id)[0]
         return group['name']
+
+    # ToDo: Реализовать добавление групп пользователю, откуда он написал
+    def add_group_to_user(self, user_id, chat_id):
+        pass
 
     def get_group_id(self, id):
         return 2000000000 + id
@@ -272,6 +282,10 @@ class VkBotClass(threading.Thread):
             if vk_user.nickname is None and 'screen_name' in user:
                 vk_user.nickname = user['screen_name']
             vk_user.save()
+
+    def get_conversations(self):
+        res = self.vk.messages.getConversations()
+        print(res)
 
     # Проверки
 
@@ -307,3 +321,5 @@ class VkEvent:
             self.chat_id = self.peer_id
 
         self.sender = vk_event['sender']
+        if vk_event['chat']:
+            self.chat = vk_event['chat']

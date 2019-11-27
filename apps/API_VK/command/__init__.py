@@ -2,6 +2,7 @@ from apps.API_VK.command.commands.AdminCommands.Ban import Ban
 from apps.API_VK.command.commands.AdminCommands.Command import Command
 from apps.API_VK.command.commands.AdminCommands.Control import Control
 from apps.API_VK.command.commands.AdminCommands.DeBan import DeBan
+from apps.API_VK.command.commands.AdminCommands.Service.get_conversations import get_conversations
 from apps.API_VK.command.commands.AdminCommands.Service.get_user_by_id import get_user_by_id
 from apps.API_VK.command.commands.AdminCommands.Service.update_users import update_users
 from apps.API_VK.command.commands.AdminCommands.Start import Start
@@ -40,10 +41,12 @@ from apps.API_VK.command.commands.Weather import Weather
 from apps.API_VK.command.commands.Where import Where
 from apps.API_VK.command.commands.YesNo import YesNo
 
-commands = [Thanks(), Stream(), Where(), Birds(), Register(), Petrovich(), Statistics(), Random(), Sorry(), Help(),
-            Weather(), Praise(), Scold(), Quote(), Quotes(), Keyboard(), KeyboardHide(), Uyu(), Hi(), Bye(), Nya(),
-            Shit(), Git(), Donate(), Issue(), Issues(), Joke(), TimeTable(), GoogleDrive(), Week(), Mail(), Ban(),
-            DeBan(), Command(), Start(), Stop(), Control(), get_user_by_id(), update_users(), YesNo()]
+commands = [YesNo(), Thanks(), Stream(), Where(), Birds(), Register(), Petrovich(), Statistics(), Random(), Sorry(),
+            Help(), Weather(), Praise(), Scold(), Quote(), Quotes(), Keyboard(), KeyboardHide(), Uyu(), Hi(), Bye(),
+            Nya(), Shit(), Git(), Donate(), Issue(), Issues(), Joke(), TimeTable(), GoogleDrive(), Week(), Mail(),
+            Ban(), DeBan(), Command(), Start(), Stop(), Control(), get_user_by_id(), update_users(),
+            get_conversations(),
+            ]
 
 
 def get_commands():

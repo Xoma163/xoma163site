@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from apps.API_VK.models import Log, StreamModel, VkUser, QuoteBook, PetrovichUser, PetrovichGames, VkBot
+from apps.API_VK.models import Log, StreamModel, VkUser, QuoteBook, PetrovichUser, PetrovichGames, VkBot, VkChat
 
 admin.site.register(StreamModel)
 
@@ -12,6 +12,11 @@ class VkUserAdmin(admin.ModelAdmin):
         'user_id', 'name', 'surname', 'nickname', 'gender', 'birthday', 'city', 'get_notify_from', 'send_notify',
         'is_admin', 'is_moderator', 'is_student', 'is_banned')
     list_filter = ('gender', 'send_notify', 'is_admin', 'is_moderator', 'is_student', 'is_banned', 'city')
+
+
+@admin.register(VkChat)
+class VkChatAdmin(admin.ModelAdmin):
+    list_display = ('chat_id', 'name',)
 
 
 @admin.register(VkBot)

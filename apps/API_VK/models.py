@@ -42,6 +42,19 @@ class VkUser(models.Model):
         return str(self.name + " " + self.surname)
 
 
+class VkChat(models.Model):
+    id = models.AutoField(primary_key=True, verbose_name='ID')
+    chat_id = models.CharField(verbose_name='ID чата', max_length=20)
+    name = models.CharField(verbose_name='Название', max_length=40, default="", blank=True)
+
+    class Meta:
+        verbose_name = "Чат"
+        verbose_name_plural = "Чаты"
+
+    def __str__(self):
+        return str(self.chat_id + " " + self.name)
+
+
 class VkBot(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
     bot_id = models.CharField(verbose_name='ID бота', max_length=20)

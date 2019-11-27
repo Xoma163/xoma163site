@@ -15,7 +15,7 @@ class Issue(CommonCommand):
             text = msg['text']
             if msg['from_id'] > 0:
                 quote_user_id = int(msg['from_id'])
-                quote_user = self.vk_bot.get_user_by_id(quote_user_id, self.vk_event.chat_id)
+                quote_user = self.vk_bot.get_user_by_id(quote_user_id)
                 username = quote_user.name + " " + quote_user.surname
             else:
                 quote_user_id = int(msgs[0]['from_id']) * -1
