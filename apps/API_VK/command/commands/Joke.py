@@ -23,4 +23,5 @@ class Joke(CommonCommand):
                 return
 
         joke = get_joke(a_type)
+        print('joke', joke)
         self.vk_bot.send_message(self.vk_event.chat_id, joke)

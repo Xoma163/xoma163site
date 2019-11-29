@@ -17,7 +17,7 @@ class CameraHandler(threading.Thread):
         self.time_on_frame = MaxSizeList(self.MAX_FRAMES)
         self.time_on_frame.init_0()
 
-    def __init__(self, MAX_FRAMES=100):
+    def __init__(self, MAX_FRAMES=200):
         super().__init__()
         self.MAX_FRAMES = MAX_FRAMES
         self._MAX_WIDTH = 1600
