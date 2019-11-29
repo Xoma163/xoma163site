@@ -146,19 +146,18 @@ class VkBotClass(threading.Thread):
                         vk_event['message']['text'] = parse_msg(vk_event['message']['text'])
 
                         if vk_event['message']['user_id'] > 0:
-
                             vk_event['sender'] = self.get_user_by_id(vk_event['message']['user_id'])
                         else:
                             self.send_message(vk_event['message']['peer_id'], "Боты не могут общаться с Петровичем")
                             return
                         if vk_event['chat_id']:
                             vk_event['chat'] = self.get_chat_by_id(int(vk_event['chat_id']))
-                            self.add_group_to_user(int(vk_event['message']['user_id']), int(vk_event['chat_id']))
+                            if vk_event['sender'] and vk_event['chat']:
+                                self.add_group_to_user(vk_event['sender'], vk_event['chat'])
+
                         else:
                             vk_event['chat'] = None
-
                         vk_event_object = VkEvent(vk_event)
-
                         thread = threading.Thread(target=self.menu, args=(vk_event_object,))
                         thread.start()
 
@@ -207,10 +206,10 @@ class VkBotClass(threading.Thread):
             if 'screen_name' in user:
                 vk_user.nickname = user['screen_name']
             vk_user.save()
-
         return vk_user
 
-    def get_user_by_name(self, args):
+    @staticmethod
+    def get_user_by_name(args):
         if not args:
             raise RuntimeError("Отсутствуют аргументы")
         if len(args) >= 2:
@@ -244,7 +243,8 @@ class VkBotClass(threading.Thread):
 
         return vk_bot
 
-    def get_chat_by_id(self, chat_id):
+    @staticmethod
+    def get_chat_by_id(chat_id):
         vk_chat = VkChat.objects.filter(chat_id=chat_id)
         if len(vk_chat) > 0:
             vk_chat = vk_chat.first()
@@ -253,7 +253,6 @@ class VkBotClass(threading.Thread):
             vk_chat = VkChat()
             vk_chat.chat_id = chat_id
             vk_chat.save()
-
         return vk_chat
 
     def get_group_name_by_id(self, group_id):
@@ -261,10 +260,14 @@ class VkBotClass(threading.Thread):
         return group['name']
 
     # ToDo: Реализовать добавление групп пользователю, откуда он написал
-    def add_group_to_user(self, user_id, chat_id):
-        pass
+    @staticmethod
+    def add_group_to_user(vk_user, chat):
+        chats = vk_user.chats
+        if chat not in chats.all():
+            chats.add(chat)
 
-    def get_group_id(self, id):
+    @staticmethod
+    def get_group_id(id):
         return 2000000000 + id
 
     def update_users(self):

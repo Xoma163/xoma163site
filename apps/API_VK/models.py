@@ -8,9 +8,24 @@ class StreamModel(models.Model):
     class Meta:
         verbose_name = "Стрим"
         verbose_name_plural = "Стрим"
+        ordering = ["id"]
 
     def __str__(self):
         return str(self.link)
+
+
+class VkChat(models.Model):
+    id = models.AutoField(primary_key=True, verbose_name='ID')
+    chat_id = models.CharField(verbose_name='ID чата', max_length=20)
+    name = models.CharField(verbose_name='Название', max_length=40, default="", blank=True)
+
+    class Meta:
+        verbose_name = "Чат"
+        verbose_name_plural = "Чаты"
+        ordering = ["id"]
+
+    def __str__(self):
+        return str(self.chat_id + " " + self.name)
 
 
 class VkUser(models.Model):
@@ -23,6 +38,8 @@ class VkUser(models.Model):
     gender = models.CharField(verbose_name='Пол', max_length=2, blank=True, default="")
     birthday = models.DateField(verbose_name='Дата рождения', null=True, blank=True)
     city = models.CharField(verbose_name='Город', max_length=40, blank=True, default="")
+
+    chats = models.ManyToManyField(VkChat, verbose_name="Чаты", null=True, blank=True)
 
     get_notify_from = models.ForeignKey('self', on_delete=models.SET_NULL, verbose_name="Получение уведомлений от",
                                         null=True, blank=True)
@@ -37,22 +54,10 @@ class VkUser(models.Model):
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
+        ordering = ["name", "surname"]
 
     def __str__(self):
         return str(self.name + " " + self.surname)
-
-
-class VkChat(models.Model):
-    id = models.AutoField(primary_key=True, verbose_name='ID')
-    chat_id = models.CharField(verbose_name='ID чата', max_length=20)
-    name = models.CharField(verbose_name='Название', max_length=40, default="", blank=True)
-
-    class Meta:
-        verbose_name = "Чат"
-        verbose_name_plural = "Чаты"
-
-    def __str__(self):
-        return str(self.chat_id + " " + self.name)
 
 
 class VkBot(models.Model):
@@ -63,6 +68,7 @@ class VkBot(models.Model):
     class Meta:
         verbose_name = "Бот"
         verbose_name_plural = "Боты"
+        ordering = ["id"]
 
     def __str__(self):
         return str(self.name)
@@ -91,6 +97,7 @@ class Log(models.Model):
     class Meta:
         verbose_name = "Событие"
         verbose_name_plural = "Журнал событий"
+        ordering = ["-date"]
 
     def __str__(self):
         return str(self.id)
@@ -98,12 +105,14 @@ class Log(models.Model):
 
 class PetrovichUser(models.Model):
     user = models.ForeignKey(VkUser, on_delete=models.SET_NULL, null=True, verbose_name="Пользователь")
+    # ToDo: переделать на VkChat
     chat_id = models.CharField(verbose_name='ID чата', max_length=20)
     wins = models.IntegerField(verbose_name="Побед в Петровиче", default=0)
 
     class Meta:
         verbose_name = "Игрок"
         verbose_name_plural = "Игроки"
+        ordering = ["user"]
 
     def __str__(self):
         return str(self.user)
@@ -111,12 +120,14 @@ class PetrovichUser(models.Model):
 
 class PetrovichGames(models.Model):
     user = models.ForeignKey(VkUser, on_delete=models.SET_NULL, null=True, verbose_name="Пользователь")
+    # ToDo: переделать на VkChat
     chat_id = models.CharField(verbose_name='ID чата', max_length=20, default=0)
     date = models.DateTimeField(verbose_name="Дата", auto_now_add=True, editable=True)
 
     class Meta:
         verbose_name = "Игра Петровича"
         verbose_name_plural = "Игры Петровича"
+        ordering = ['-date']
 
     def __str__(self):
         return str(self.user)
@@ -130,6 +141,7 @@ class QuoteBook(models.Model):
     class Meta:
         verbose_name = "Цитата"
         verbose_name_plural = "Цитаты"
+        ordering = ['-date']
 
     def __str__(self):
         return str(self.text)
