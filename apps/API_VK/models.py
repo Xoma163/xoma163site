@@ -25,7 +25,7 @@ class VkChat(models.Model):
         ordering = ["id"]
 
     def __str__(self):
-        return str(self.chat_id + " " + self.name)
+        return str(self.name)
 
 
 class VkUser(models.Model):
@@ -105,8 +105,7 @@ class Log(models.Model):
 
 class PetrovichUser(models.Model):
     user = models.ForeignKey(VkUser, on_delete=models.SET_NULL, null=True, verbose_name="Пользователь")
-    # ToDo: переделать на VkChat
-    chat_id = models.CharField(verbose_name='ID чата', max_length=20)
+    chat = models.ForeignKey(VkChat, verbose_name='Чат', null=True, blank=True, on_delete=models.SET_NULL)
     wins = models.IntegerField(verbose_name="Побед в Петровиче", default=0)
 
     class Meta:
@@ -120,8 +119,7 @@ class PetrovichUser(models.Model):
 
 class PetrovichGames(models.Model):
     user = models.ForeignKey(VkUser, on_delete=models.SET_NULL, null=True, verbose_name="Пользователь")
-    # ToDo: переделать на VkChat
-    chat_id = models.CharField(verbose_name='ID чата', max_length=20, default=0)
+    chat = models.ForeignKey(VkChat, verbose_name='Чат', null=True, blank=True, on_delete=models.SET_NULL)
     date = models.DateTimeField(verbose_name="Дата", auto_now_add=True, editable=True)
 
     class Meta:

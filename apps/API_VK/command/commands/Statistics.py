@@ -9,7 +9,7 @@ class Statistics(CommonCommand):
         super().__init__(names, help_text, for_conversations=True)
 
     def start(self):
-        players = PetrovichUser.objects.filter(chat_id=self.vk_event.chat_id).order_by('-wins')
+        players = PetrovichUser.objects.filter(chat=self.vk_event.chat).order_by('-wins')
         result_list = []
         for player in players:
             result_list.append([player, player.wins])

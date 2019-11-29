@@ -8,7 +8,7 @@ class YesNo(CommonCommand):
     def __init__(self):
         names = ["get_user_by_id"]
         help_text = "̲.̲.̲.̲? - вернёт да или нет."
-        super().__init__(names)
+        super().__init__(names, help_text)
 
     def accept(self, vk_bot, vk_event):
         self.vk_bot = vk_bot

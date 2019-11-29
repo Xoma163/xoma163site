@@ -23,6 +23,7 @@ from apps.API_VK.command.commands.Issues import Issues
 from apps.API_VK.command.commands.Joke import Joke
 from apps.API_VK.command.commands.Keyboard import Keyboard
 from apps.API_VK.command.commands.KeyboardHide import KeyboardHide
+from apps.API_VK.command.commands.ModeratorCommands.Logs import Logs
 from apps.API_VK.command.commands.Petrovich import Petrovich
 from apps.API_VK.command.commands.Praise import Praise
 from apps.API_VK.command.commands.Quote import Quote
@@ -45,7 +46,7 @@ commands = [YesNo(), Thanks(), Stream(), Where(), Birds(), Register(), Petrovich
             Help(), Weather(), Praise(), Scold(), Quote(), Quotes(), Keyboard(), KeyboardHide(), Uyu(), Hi(), Bye(),
             Nya(), Shit(), Git(), Donate(), Issue(), Issues(), Joke(), TimeTable(), GoogleDrive(), Week(), Mail(),
             Ban(), DeBan(), Command(), Start(), Stop(), Control(), get_user_by_id(), update_users(),
-            get_conversations(),
+            get_conversations(), Logs()
             ]
 
 

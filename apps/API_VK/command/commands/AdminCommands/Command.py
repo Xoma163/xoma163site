@@ -10,9 +10,12 @@ class Command(CommonCommand):
         super().__init__(names, help_text, for_admin=True, check_args=True)
 
     def start(self):
-        process = subprocess.Popen(self.vk_event.args, stdout=subprocess.PIPE)
-        output, error = process.communicate()
-        output = output.decode("utf-8")
-        if error:
-            output += "\n{}".format(error)
-        self.vk_bot.send_message(self.vk_event.chat_id, output)
+        try:
+            process = subprocess.Popen(self.vk_event.args, stdout=subprocess.PIPE)
+            output, error = process.communicate()
+            output = output.decode("utf-8")
+            if error:
+                output += "\n{}".format(error)
+            self.vk_bot.send_message(self.vk_event.chat_id, output)
+        except Exception as e:
+            self.vk_bot.send_message(self.vk_event.chat_id, "Ошибка:\n{}".format(str(e)))

@@ -26,14 +26,14 @@ class VkBotAdmin(admin.ModelAdmin):
 
 @admin.register(PetrovichUser)
 class PetrovichUserAdmin(admin.ModelAdmin):
-    list_display = ('user', 'chat_id', 'wins',)
-    list_filter = ('user', 'chat_id',)
+    list_display = ('user', 'chat', 'wins',)
+    list_filter = ('user', 'chat',)
 
 
 @admin.register(PetrovichGames)
 class PetrovichGamesAdmin(admin.ModelAdmin):
-    list_display = ('user', 'chat_id', 'date',)
-    list_filter = ('user', 'chat_id',)
+    list_display = ('user', 'date', 'chat',)
+    list_filter = ('user', 'chat',)
 
 
 @admin.register(Log)

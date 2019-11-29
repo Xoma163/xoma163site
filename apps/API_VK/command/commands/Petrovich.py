@@ -1,5 +1,4 @@
 import datetime
-import random
 
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.models import PetrovichGames, PetrovichUser
@@ -16,21 +15,20 @@ class Petrovich(CommonCommand):
         winner_today = PetrovichGames.objects.filter(date__year=today.year,
                                                      date__month=today.month,
                                                      date__day=today.day,
-                                                     chat_id=self.vk_event.chat_id).last()
+                                                     chat=self.vk_event.chat).last()
         if winner_today is not None:
             self.vk_bot.send_message(self.vk_event.chat_id, "Петрович дня - %s" % winner_today.user)
             return
 
-        users = PetrovichUser.objects.filter(chat_id=self.vk_event.chat_id)
-        random_int = random.randint(0, len(users) - 1)
-        winner = users[random_int].user
-        PetrovichGames.objects.filter(chat_id=self.vk_event.chat_id).delete()
+        # order_by ? = random
+        winner = PetrovichUser.objects.filter(chat=self.vk_event.chat).order_by("?").first().user
+        PetrovichGames.objects.filter(chat=self.vk_event.chat).delete()
         new_winner = PetrovichGames()
         new_winner.user = winner
-        new_winner.chat_id = self.vk_event.chat_id
+        new_winner.chat = self.vk_event.chat
         new_winner.save()
-        winner_petrovich = PetrovichUser.objects.filter(user=winner).first()
-        winner_petrovich.wins += 1
+        winner_petrovich = PetrovichUser.objects.filter(user=winner, chat=self.vk_event.chat).first()
+        winner_petrovich.wins = int(winner_petrovich.wins) + 1
         winner_petrovich.save()
         self.vk_bot.send_message(self.vk_event.chat_id, "Такс такс такс, кто тут у нас")
         self.vk_bot.send_message(self.vk_event.chat_id, "Наш сегодняшний Петрович дня - %s" % winner)
