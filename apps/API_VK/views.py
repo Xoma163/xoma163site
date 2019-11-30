@@ -5,7 +5,7 @@ from django.http import HttpResponse
 
 from apps.API_VK.APIs.yandex_geo import get_address
 from apps.API_VK.models import VkUser, Log
-from xoma163site.wsgi import vkbot
+from xoma163site.wsgi import vk_bot
 
 
 def where_is_me(request):
@@ -74,7 +74,7 @@ def where_is_me(request):
 
             for recipient in recipients:
                 if recipient.send_notify:
-                    vkbot.send_message(recipient.user_id, msg)
+                    vk_bot.send_message(recipient.user_id, msg)
 
             response_data = {'success': True, 'msg': msg}
             log.success = True

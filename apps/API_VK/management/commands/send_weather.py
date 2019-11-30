@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
 from apps.API_VK.APIs.yandex_weather import get_weather
-from xoma163site.wsgi import vkbot
+from xoma163site.wsgi import vk_bot
 
 
 class Command(BaseCommand):
@@ -12,7 +12,7 @@ class Command(BaseCommand):
         weather = get_weather(city)
 
         for chat_id in chat_ids:
-            vkbot.send_message(chat_id, weather)
+            vk_bot.send_message(chat_id, weather)
 
     def add_arguments(self, parser):
         parser.add_argument('chat_id', nargs='+', type=str,

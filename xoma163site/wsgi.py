@@ -23,10 +23,10 @@ cameraHandler = CameraHandler()
 
 from apps.API_VK.vkbot import VkBotClass
 
-vkbot = VkBotClass()
+vk_bot = VkBotClass()
 if not os.path.exists('thread.lock'):
     cameraHandler.start()
-    vkbot.start()
+    vk_bot.start()
     print("BOT and CAMERA HANDLER STARTED")
 else:
     print("BOT and CAMERA HANDLER  WILL BE NOT STARTED")

@@ -4,7 +4,7 @@ import json
 from django.core.management.base import BaseCommand
 
 from xoma163site.settings import BASE_DIR
-from xoma163site.wsgi import vkbot
+from xoma163site.wsgi import vk_bot
 
 timetable = {'1': {'START': '9:00', 'END': '9:35'},
              '2': {'START': '9:45', 'END': '11:20'},
@@ -27,7 +27,7 @@ class Command(BaseCommand):
 
     def change_title_on_default(self):
         vk_title = '6221'
-        vkbot.set_chat_title_if_not_equals(self.chat_id, vk_title)
+        vk_bot.set_chat_title_if_not_equals(self.chat_id, vk_title)
 
     def handle(self, *args, **kwargs):
         with open(BASE_DIR + '/static/schedules/schedule.json') as json_file:
@@ -81,7 +81,7 @@ class Command(BaseCommand):
                 schedule[now_weeknumber][now_weekday][self.first_discipline]['TEACHER'],
                 schedule[now_weeknumber][now_weekday][self.first_discipline]['TYPE'],
             )
-            vkbot.set_chat_title_if_not_equals(self.chat_id, vk_title)
+            vk_bot.set_chat_title_if_not_equals(self.chat_id, vk_title)
             return
         # Текущая пара
         elif int(self.first_discipline) <= int(current_discipline) <= int(self.last_discipline):
@@ -91,10 +91,10 @@ class Command(BaseCommand):
                     schedule[now_weeknumber][now_weekday][current_discipline]['CABINET'],
                     schedule[now_weeknumber][now_weekday][current_discipline]['TEACHER'],
                     schedule[now_weeknumber][now_weekday][current_discipline]['TYPE'])
-                vkbot.set_chat_title_if_not_equals(self.chat_id, vk_title)
+                vk_bot.set_chat_title_if_not_equals(self.chat_id, vk_title)
                 return
         # После пар
         elif int(current_discipline) > int(self.last_discipline):
             self.change_title_on_default()
         else:
-            vkbot.set_chat_title_if_not_equals(self.chat_id, 'втф я сломался, АНДРЕЙ ЧИНИ')
+            vk_bot.set_chat_title_if_not_equals(self.chat_id, 'втф я сломался, АНДРЕЙ ЧИНИ')
