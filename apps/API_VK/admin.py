@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from apps.API_VK.models import Log, StreamModel, VkUser, QuoteBook, PetrovichUser, PetrovichGames, VkBot, VkChat
+from apps.API_VK.models import Log, StreamModel, VkUser, QuoteBook, PetrovichUser, PetrovichGames, VkBot, VkChat, Words
 
 admin.site.register(StreamModel)
 
@@ -48,3 +48,10 @@ class QuoteBookAdmin(admin.ModelAdmin):
     readonly_fields = ('peer_id', 'date', 'text')
     list_display = ('peer_id', 'date', 'text')
     list_filter = ('peer_id',)
+
+
+@admin.register(Words)
+class WordsAdmin(admin.ModelAdmin):
+    readonly_fields = ('m1', 'f1', 'n1', 'mm', 'fm', 'type')
+    list_display = ('m1', 'f1', 'n1', 'mm', 'fm', 'type')
+    list_filter = ('type',)

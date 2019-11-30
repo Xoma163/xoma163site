@@ -39,7 +39,7 @@ class VkUser(models.Model):
     birthday = models.DateField(verbose_name='Дата рождения', null=True, blank=True)
     city = models.CharField(verbose_name='Город', max_length=40, blank=True, default="")
 
-    chats = models.ManyToManyField(VkChat, verbose_name="Чаты", null=True, blank=True)
+    chats = models.ManyToManyField(VkChat, verbose_name="Чаты", blank=True)
 
     get_notify_from = models.ForeignKey('self', on_delete=models.SET_NULL, verbose_name="Получение уведомлений от",
                                         null=True, blank=True)
@@ -91,7 +91,6 @@ class Log(models.Model):
     @classmethod
     def create(cls, imei, author, event, msg, success):
         log = cls(imei=imei, author=author, event=event, msg=msg, success=success)
-        # do something with the book
         return log
 
     class Meta:
@@ -143,3 +142,22 @@ class QuoteBook(models.Model):
 
     def __str__(self):
         return str(self.text)
+
+
+class Words(models.Model):
+    m1 = models.CharField(verbose_name="Мужской", max_length=100, null=True)
+    f1 = models.CharField(verbose_name="Женский", max_length=100, null=True)
+    n1 = models.CharField(verbose_name="Средний", max_length=100, null=True)
+    mm = models.CharField(verbose_name="Множественный мужской", max_length=100, null=True)
+    fm = models.CharField(verbose_name="Множественный женский", max_length=100, null=True)
+
+    type = models.CharField(verbose_name='Событие', choices=(('bad', 'Плохое'), ('good', 'Хорошее')), default="bad",
+                            max_length=10)
+
+    class Meta:
+        verbose_name = "Слово"
+        verbose_name_plural = "Слова"
+        ordering = ['m1']
+
+    def __str__(self):
+        return str(self.m1)

@@ -142,3 +142,6 @@ FILE_UPLOAD_PERMISSIONS = 0o644
 
 # New TBot
 # tBot = TBot()
+
+APPEND_SLASH = True
+APPEND_SLASH = True

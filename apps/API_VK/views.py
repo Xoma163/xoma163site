@@ -1,10 +1,12 @@
 import datetime
 import json
+import time
 
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from apps.API_VK.APIs.yandex_geo import get_address
-from apps.API_VK.models import VkUser, Log
+from apps.API_VK.models import VkUser, Log, Words
 from xoma163site.wsgi import vk_bot
 
 
@@ -87,6 +89,48 @@ def where_is_me(request):
 
     log.save()
     return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
+
+
+@csrf_exempt
+def add_new_words(request):
+    if request.method == "POST":
+        time1 = time.time()
+        data = request.POST.get('data', None)
+        if not data:
+            response_data = {'status': 'error', 'status_code': 1, 'error': 'no data in request'}
+            return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
+        try:
+            data = json.loads(data)
+        except Exception as e:
+            print(e)
+            response_data = {'status': 'error', 'status_code': 2, 'error': 'cant parse json'}
+            return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
+
+        if 'words' not in data:
+            response_data = {'status': 'error', 'status_code': 3, 'error': 'no words in data'}
+            return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
+        words = data['words']
+
+        total = 0
+        updated = 0
+        for word in words:
+            if 'm1' in word:
+                new_word = Words.objects.filter(m1=word['m1'])
+                if len(new_word) == 0:
+                    new_word = Words(**word)
+                else:
+                    new_word = new_word.first()
+                    updated += 1
+            else:
+                new_word = Words(**word)
+
+            new_word.save()
+            total += 1
+
+        time2 = time.time()
+        response_data = {'status': 'success', 'status_code': 200, 'time': time2 - time1,
+                         'statistics': {'total': total, 'updated': updated, 'added': total - updated}}
+        return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
 
 
 def get_user_by_imei(imei):
