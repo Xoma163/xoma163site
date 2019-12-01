@@ -45,13 +45,11 @@ class LogAdmin(admin.ModelAdmin):
 
 @admin.register(QuoteBook)
 class QuoteBookAdmin(admin.ModelAdmin):
-    readonly_fields = ('peer_id', 'date', 'text')
     list_display = ('peer_id', 'date', 'text')
     list_filter = ('peer_id',)
 
 
 @admin.register(Words)
 class WordsAdmin(admin.ModelAdmin):
-    readonly_fields = ('m1', 'f1', 'n1', 'mm', 'fm', 'type')
-    list_display = ('m1', 'f1', 'n1', 'mm', 'fm', 'type')
+    list_display = ('id', 'm1', 'f1', 'n1', 'mm', 'fm', 'type')
     list_filter = ('type',)

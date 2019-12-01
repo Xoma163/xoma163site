@@ -145,6 +145,8 @@ class QuoteBook(models.Model):
 
 
 class Words(models.Model):
+    id = models.AutoField(primary_key=True, verbose_name='ID')
+
     m1 = models.CharField(verbose_name="Мужской", max_length=100, null=True)
     f1 = models.CharField(verbose_name="Женский", max_length=100, null=True)
     n1 = models.CharField(verbose_name="Средний", max_length=100, null=True)
