@@ -20,6 +20,11 @@ def where_is_me(request):
             log.event = event
             imei = request.GET.get('imei', None)
             log.imei = imei
+            if imei is None or imei == "":
+                log.msg = "IMEI None"
+                log.save()
+                return HttpResponse(json.dumps({'success': True, 'error': 'None IMEI'}, ensure_ascii=False),
+                                    content_type="application/json")
             author = get_user_by_imei(imei)
 
             if author is None:
@@ -111,37 +116,46 @@ def add_new_words(request):
             return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
         words = data['words']
 
-        statistics = {"total": 0, "added": 0, "updated": 0, "deleted": 0, "already_deleted": 0, "skipped": 0,
-                      "errors": 0}
-        errors = {"no_id_in_data": [], 'already_deleted': []}
-        for word in words:
-            if 'id' not in word:
-                errors['no_id_in_data'].append(word)
-                statistics['errors'] += 1
-            else:
-                new_word = Words.objects.filter(id=word['id'])
+        statistics = {"total": 0, "added": 0, "updated": 0, "deleted": 0, "skipped": 0, "errors": 0}
+        errors = {"no_id_in_word": [], "no_type_in_word": [], 'already_deleted': []}
 
-                if len(word) == 1:
-                    if len(new_word) == 0:
-                        errors['already_deleted'].append(word)
-                        statistics['errors'] += 1
-                    else:
-                        new_word.delete()
-                        statistics['deleted'] += 1
-                else:
-                    if len(new_word) == 0:
-                        new_word = Words(**word)
-                        new_word.save()
-                        statistics['added'] += 1
-                    else:
-                        ex_word = list(new_word.values())[0]
-                        ex_word = remove_none_in_dict(ex_word)
-                        if ex_word == word:
-                            statistics['skipped'] += 1
-                        else:
-                            new_word.update(**word)
-                            statistics['updated'] += 1
+        if len(words) == 0:
+            Words.objects.all().delete()
+
+        for word in words:
             statistics['total'] += 1
+
+            if 'id' not in word:
+                errors['no_id_in_word'].append(word)
+                statistics['errors'] += 1
+                continue
+
+            new_word = Words.objects.filter(id=word['id'])
+
+            if len(word) == 1:
+                if len(new_word) == 0:
+                    errors['already_deleted'].append(word)
+                    statistics['errors'] += 1
+                else:
+                    new_word.delete()
+                    statistics['deleted'] += 1
+            else:
+                if 'type' not in word:
+                    errors['no_type_in_word'].append(word)
+                    statistics['errors'] += 1
+                    continue
+                if len(new_word) == 0:
+                    new_word = Words(**word)
+                    new_word.save()
+                    statistics['added'] += 1
+                else:
+                    ex_word = list(new_word.values())[0]
+                    ex_word = remove_none_in_dict(ex_word)
+                    if ex_word == word:
+                        statistics['skipped'] += 1
+                    else:
+                        new_word.update(**word)
+                        statistics['updated'] += 1
 
         time2 = time.time()
         response_data = {'status': 'success', 'status_code': 200, 'time': time2 - time1,

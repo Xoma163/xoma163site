@@ -153,7 +153,7 @@ class Words(models.Model):
     mm = models.CharField(verbose_name="Множественный мужской", max_length=100, null=True)
     fm = models.CharField(verbose_name="Множественный женский", max_length=100, null=True)
 
-    type = models.CharField(verbose_name='Событие', choices=(('bad', 'Плохое'), ('good', 'Хорошее')), default="bad",
+    type = models.CharField(verbose_name='Тип', choices=(('bad', 'Плохое'), ('good', 'Хорошее')), default="bad",
                             max_length=10)
 
     class Meta:

@@ -149,7 +149,7 @@ class VkBotClass(threading.Thread):
                             vk_event['sender'] = self.get_user_by_id(vk_event['message']['user_id'])
                         else:
                             self.send_message(vk_event['message']['peer_id'], "Боты не могут общаться с Петровичем")
-                            return
+                            continue
                         if vk_event['chat_id']:
                             vk_event['chat'] = self.get_chat_by_id(int(vk_event['chat_id']))
                             if vk_event['sender'] and vk_event['chat']:
@@ -162,7 +162,7 @@ class VkBotClass(threading.Thread):
                         thread.start()
 
                     else:
-                        print('Сообщение не для меня :(')
+                        pass
 
             except Exception as e:
                 print('ОШИБКА ВЫПОЛНЕНИЯ ЛОНГПОЛА 1:', e)
@@ -259,7 +259,6 @@ class VkBotClass(threading.Thread):
         group = self.vk.groups.getById(group_id=group_id)[0]
         return group['name']
 
-    # ToDo: Реализовать добавление групп пользователю, откуда он написал
     @staticmethod
     def add_group_to_user(vk_user, chat):
         chats = vk_user.chats
