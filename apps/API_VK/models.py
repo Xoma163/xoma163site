@@ -147,11 +147,11 @@ class QuoteBook(models.Model):
 class Words(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
 
-    m1 = models.CharField(verbose_name="Мужской", max_length=100, null=True)
-    f1 = models.CharField(verbose_name="Женский", max_length=100, null=True)
-    n1 = models.CharField(verbose_name="Средний", max_length=100, null=True)
-    mm = models.CharField(verbose_name="Множественный мужской", max_length=100, null=True)
-    fm = models.CharField(verbose_name="Множественный женский", max_length=100, null=True)
+    m1 = models.CharField(verbose_name="Мужской", max_length=500, null=True)
+    f1 = models.CharField(verbose_name="Женский", max_length=500, null=True)
+    n1 = models.CharField(verbose_name="Средний", max_length=500, null=True)
+    mm = models.CharField(verbose_name="Множественный мужской", max_length=500, null=True)
+    fm = models.CharField(verbose_name="Множественный женский", max_length=500, null=True)
 
     type = models.CharField(verbose_name='Тип', choices=(('bad', 'Плохое'), ('good', 'Хорошее')), default="bad",
                             max_length=10)

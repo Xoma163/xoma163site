@@ -9,7 +9,7 @@ from vk_api.utils import get_random_id
 from apps.API_VK.command import get_commands
 from apps.API_VK.models import VkUser, VkBot, VkChat
 from apps.Statistics.views import append_command_to_statistics
-from xoma163site.settings import BASE_DIR
+from secrets.secrets import secrets
 from xoma163site.wsgi import cameraHandler
 
 
@@ -98,18 +98,14 @@ class VkBotClass(threading.Thread):
 
     def __init__(self):
         super().__init__()
-        f = open(BASE_DIR + "/secrets/vk.txt")
-        self._TOKEN = f.readline().strip()
-        self._group_id = int(f.readline().strip())
+        self._TOKEN = secrets['vk']['TOKEN']
+        self._group_id = secrets['vk']['group_id']
         vk_session = vk_api.VkApi(token=self._TOKEN)
         self.longpoll = MyVkBotLongPoll(vk_session, group_id=self._group_id)
         self.upload = VkUpload(vk_session)
         self.vk = vk_session.get_api()
-        self.mentions = []
+        self.mentions = secrets['vk']['mentions']
         self.BOT_CAN_WORK = True
-        for i in range(3):
-            self.mentions.append(f.readline().strip())
-        f.close()
 
     def listen_longpoll(self):
         for event in self.longpoll.listen():

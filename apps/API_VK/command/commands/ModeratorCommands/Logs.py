@@ -1,6 +1,5 @@
-import subprocess
-
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command._DoTheLinuxComand import do_the_linux_command
 
 
 class Logs(CommonCommand):
@@ -21,9 +20,8 @@ class Logs(CommonCommand):
 
         command = "systemctl status xoma163site -n{}".format(count)
         try:
-            process = subprocess.Popen(command.split(' '), stdout=subprocess.PIPE)
-            output, error = process.communicate()
-            output = output.decode("utf-8")
+            output = do_the_linux_command(command)
+
 
             # Обрезаем инфу самого systemctl
             index_command = output.find(command)
@@ -49,8 +47,6 @@ class Logs(CommonCommand):
                     left_index = output.rfind('\n', 0, word_index - len(word))
                     right_index = output.find('\n', word_index)
                     output = output[:left_index] + output[right_index:]
-            if error:
-                output += "\n{}".format(error)
 
             self.vk_bot.send_message(self.vk_event.chat_id, output)
         except Exception as e:

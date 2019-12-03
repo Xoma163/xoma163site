@@ -157,9 +157,8 @@ def add_new_words(request):
                         new_word.update(**word)
                         statistics['updated'] += 1
 
-        time2 = time.time()
-        response_data = {'status': 'success', 'status_code': 200, 'time': time2 - time1,
-                         'statistics': statistics, 'errors': errors}
+        statistics['time'] = time.time() - time1
+        response_data = {'status': 'success', 'status_code': 200, 'statistics': statistics, 'errors': errors}
         return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
 
 

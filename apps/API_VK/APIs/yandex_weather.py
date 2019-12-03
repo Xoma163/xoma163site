@@ -1,6 +1,6 @@
 import requests
 
-from xoma163site.settings import BASE_DIR
+from secrets.secrets import secrets
 
 
 def get_weather(city="самара"):
@@ -27,9 +27,7 @@ def get_weather(city="самара"):
     else:
         return 'Я не знаю координат города {}. Сообщите их разработчику'.format(city)
 
-    f = open(BASE_DIR + "/secrets/yandex_weather.txt")
-    TOKEN = f.readline().strip()
-    f.close()
+    TOKEN = secrets['yandex']['weather']
 
     URL = "https://api.weather.yandex.ru/v1/informers?lat={}&lon={}&lang=ru_RU".format(lat, lon)
     HEADERS = {'X-Yandex-API-Key': TOKEN}

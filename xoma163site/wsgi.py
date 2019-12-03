@@ -28,7 +28,7 @@ if not os.path.exists('thread.lock'):
     cameraHandler.start()
     vk_bot.start()
     print("BOT and CAMERA HANDLER STARTED")
-else:
-    print("BOT and CAMERA HANDLER  WILL BE NOT STARTED")
+# else:
+# print("BOT and CAMERA HANDLER  WILL BE NOT STARTED")
 
 application = get_wsgi_application()

@@ -1,12 +1,11 @@
 import requests
 
-from xoma163site.settings import BASE_DIR
+from secrets.secrets import secrets
 
 
 def get_address(lat, lon):
-    f = open(BASE_DIR + "/secrets/yandex_geo.txt")
-    API_KEY = f.readline().strip()
-    f.close()
+    API_KEY = secrets['yandex']['geo']
+
 
     URL = "https://geocode-maps.yandex.ru/1.x/?apikey={}&geocode={},{}&format=json&sco=latlong&kind=house&results=1&lang=ru_RU".format(
         API_KEY, lat, lon)

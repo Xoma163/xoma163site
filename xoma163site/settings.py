@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-
+from secrets.secrets import secrets
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -21,9 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-f = open(BASE_DIR + "/secrets/secret_key.txt")
-SECRET_KEY = f.readline().strip()
-f.close()
+SECRET_KEY = secrets['django']['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 # MAIN_DOMAIN = "xoma163.xyz"
@@ -81,20 +79,16 @@ TEMPLATES = [
 ]
 WSGI_APPLICATION = 'xoma163site.wsgi.application'
 
-f = open(BASE_DIR + "/secrets/db.txt")
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': f.readline().replace('\r', '').replace('\n', ''),
-        'USER': f.readline().replace('\r', '').replace('\n', ''),
-        'PASSWORD': f.readline().replace('\r', '').replace('\n', ''),
-        'HOST': f.readline().replace('\r', '').replace('\n', ''),
-        'PORT': f.readline().replace('\r', '').replace('\n', ''),
+        'NAME': secrets['db']['NAME'],
+        'USER': secrets['db']['USER'],
+        'PASSWORD': secrets['db']['PASSWORD'],
+        'HOST': secrets['db']['HOST'],
+        'PORT': secrets['db']['PORT'],
     }
 }
-
-f.close()
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
