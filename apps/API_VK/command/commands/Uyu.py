@@ -5,13 +5,17 @@ class Uyu(CommonCommand):
     def __init__(self):
         names = ["уъу", "бля", "ъуъ"]
         help_text = "̲У̲ъ̲у - уъуфикация текста"
-        super().__init__(names, help_text, check_fwd=True)
+        super().__init__(names, help_text)
 
     def start(self):
-
-        add_word = "бля"
+        if self.vk_event.original_args:
+            add_word = self.vk_event.original_args
+        else:
+            add_word = "бля"
         msgs = self.vk_event.fwd
-
+        if msgs is None:
+            self.vk_bot.send_message(self.vk_event.chat_id, add_word)
+            return
         if len(msgs) == 1:
             new_msg = msgs[0]['text']
         else:

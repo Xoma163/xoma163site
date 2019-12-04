@@ -6,10 +6,12 @@ class Issue(CommonCommand):
     def __init__(self):
         names = ["ишю", "ишью"]
         help_text = "̲И̲ш̲ь̲ю + пересылаемые сообщения - добавлеет проблему Петровича, которую нужно решить"
-        super().__init__(names, help_text, check_fwd=True)
+        super().__init__(names, help_text)
 
     def start(self):
         msgs = self.vk_event.fwd
+        if not msgs:
+            msgs = [{'text': self.vk_event.original_args, 'from_id': self.vk_event.user_id}]
         feature_text = ""
         for msg in msgs:
             text = msg['text']
