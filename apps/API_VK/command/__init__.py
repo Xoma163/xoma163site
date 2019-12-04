@@ -58,7 +58,6 @@ def get_commands():
     return commands
 
 
-# ToDo: сохранение
 def get_help_admin_texts():
     texts = ""
     for command in commands:
@@ -93,3 +92,9 @@ def get_help_texts():
             if command.help_text:
                 texts += "{}\n".format(command.help_text)
     return texts
+
+
+ADMIN_TEXTS = get_help_admin_texts()
+MODERATOR_TEXTS = get_help_moderator_texts()
+STUDENT_TEXTS = get_help_student_texts()
+COMMON_TEXTS = get_help_texts()

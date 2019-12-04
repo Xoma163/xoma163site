@@ -7,23 +7,20 @@ class Help(CommonCommand):
         super().__init__(names)
 
     def start(self):
-        from apps.API_VK.command import get_help_admin_texts, get_help_moderator_texts, get_help_student_texts, \
-            get_help_texts
-
-        # self.vk_bot.send_message(self.vk_event.chat_id, get_help_text(self.vk_event.sender.is_admin, self.vk_event.sender.is_student))
+        from apps.API_VK.command import COMMON_TEXTS, STUDENT_TEXTS, MODERATOR_TEXTS, ADMIN_TEXTS
 
         help_text = "\n— общие команды —\n"
-        help_text += get_help_texts()
+        help_text += COMMON_TEXTS
         help_text += "\n"
         if self.vk_event.sender.is_student:
             help_text += "\n— команды для группы 6221 —\n"
-            help_text += get_help_student_texts()
+            help_text += STUDENT_TEXTS
         if self.vk_event.sender.is_moderator:
             help_text += "\n— команды для модераторов —\n"
-            help_text += get_help_moderator_texts()
+            help_text += MODERATOR_TEXTS
         if self.vk_event.sender.is_admin:
             help_text += "\n— команды для администраторов —\n"
-            help_text += get_help_admin_texts()
+            help_text += ADMIN_TEXTS
 
         self.vk_bot.send_message(self.vk_event.chat_id, help_text)
 
