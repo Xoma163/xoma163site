@@ -1,7 +1,9 @@
-def get_keyboard(is_admin=False, is_student=False):
+def get_keyboard(is_admin=False, is_moderator=False, is_student=False):
     buttons = []
     if is_admin:
         buttons += get_admin_keyboard_buttons()
+    if is_admin:
+        buttons += get_modetaror_keyboard_buttons()
     if is_student:
         buttons += get_student_keyboard_buttons()
     buttons += get_default_keyboard_buttons()
@@ -48,6 +50,20 @@ def get_admin_keyboard_buttons():
     ]
     return buttons
 
+
+def get_modetaror_keyboard_buttons():
+    buttons = [
+        [
+            {
+                "action": {
+                    "type": "text",
+                    "label": "Логи"
+                },
+                "color": "primary"
+            }
+        ],
+    ]
+    return buttons
 
 def get_default_keyboard_buttons():
     buttons = [

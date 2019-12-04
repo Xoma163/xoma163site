@@ -2,12 +2,10 @@ from apps.API_VK.command.commands.AdminCommands.Ban import Ban
 from apps.API_VK.command.commands.AdminCommands.Command import Command
 from apps.API_VK.command.commands.AdminCommands.Control import Control
 from apps.API_VK.command.commands.AdminCommands.DeBan import DeBan
+from apps.API_VK.command.commands.AdminCommands.Reboot import Reboot
 from apps.API_VK.command.commands.AdminCommands.Service.get_conversations import get_conversations
 from apps.API_VK.command.commands.AdminCommands.Service.get_user_by_id import get_user_by_id
 from apps.API_VK.command.commands.AdminCommands.Service.update_users import update_users
-from apps.API_VK.command.commands.AdminCommands.Start import Start
-from apps.API_VK.command.commands.AdminCommands.Stop import Stop
-from apps.API_VK.command.commands.AdminCommands.Stop import Stop
 from apps.API_VK.command.commands.Birds import Birds
 from apps.API_VK.command.commands.EasyCommands.Bye import Bye
 from apps.API_VK.command.commands.EasyCommands.Donate import Donate
@@ -24,6 +22,10 @@ from apps.API_VK.command.commands.Joke import Joke
 from apps.API_VK.command.commands.Keyboard import Keyboard
 from apps.API_VK.command.commands.KeyboardHide import KeyboardHide
 from apps.API_VK.command.commands.ModeratorCommands.Logs import Logs
+from apps.API_VK.command.commands.ModeratorCommands.Restart import Restart
+from apps.API_VK.command.commands.ModeratorCommands.Start import Start
+from apps.API_VK.command.commands.ModeratorCommands.Stop import Stop
+from apps.API_VK.command.commands.ModeratorCommands.Stop import Stop
 from apps.API_VK.command.commands.ModeratorCommands.Words import Words
 from apps.API_VK.command.commands.Petrovich import Petrovich
 from apps.API_VK.command.commands.Praise import Praise
@@ -46,7 +48,8 @@ from apps.API_VK.command.commands.YesNo import YesNo
 commands = [YesNo(), Thanks(), Stream(), Where(), Birds(), Register(), Petrovich(), Statistics(), Random(), Sorry(),
             Help(), Weather(), Praise(), Scold(), Quote(), Quotes(), Keyboard(), KeyboardHide(), Uyu(), Hi(), Bye(),
             Nya(), Shit(), Git(), Donate(), Issue(), Issues(), Joke(), TimeTable(), GoogleDrive(), Week(), Mail(),
-            Ban(), DeBan(), Command(), Start(), Stop(), Control(), get_user_by_id(), update_users(),
+            Ban(), DeBan(), Command(), Start(), Stop(), Restart(), Reboot(), Control(), get_user_by_id(),
+            update_users(),
             get_conversations(), Logs(), Words(),
             ]
 

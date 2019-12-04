@@ -10,6 +10,7 @@ from apps.API_VK.command import get_commands
 from apps.API_VK.models import VkUser, VkBot, VkChat
 from apps.Statistics.views import append_command_to_statistics
 from secrets.secrets import secrets
+from xoma163site.settings import BASE_DIR
 from xoma163site.wsgi import cameraHandler
 
 
@@ -164,7 +165,7 @@ class VkBotClass(threading.Thread):
                 print('ОШИБКА ВЫПОЛНЕНИЯ ЛОНГПОЛА 1:', e)
 
     def run(self):
-        open('thread.lock', 'w')
+        open(BASE_DIR + '/thread.lock', 'w')
         self.listen_longpoll()
 
     def get_chat_title(self, chat_id):
