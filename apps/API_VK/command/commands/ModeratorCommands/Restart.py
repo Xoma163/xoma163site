@@ -7,7 +7,7 @@ class Restart(CommonCommand):
     def __init__(self):
         names = ["рестарт"]
         help_text = "̲Р̲е̲с̲т̲а̲р̲т - перезагружает веб-сервер и Петровича(только для админов). " \
-                    "С параметром можно включить грузануть модуль (синички, майн)"
+                    "С параметром можно включить грузануть модуль (синички, майн(1.12 1.15))"
         super().__init__(names, help_text, for_moderator=True)
 
     def start(self):
@@ -23,7 +23,7 @@ class Restart(CommonCommand):
                         do_the_linux_command('sudo systemctl start minecraft')
                         self.vk_bot.send_message(self.vk_event.chat_id, "Рестартим майн 1.12!")
                     elif self.vk_event.args[1] == '1.15':
-                        if not check_command_time(self.vk_bot, self.vk_event, 'minecraft 1.15', 90):
+                        if not check_command_time(self.vk_bot, self.vk_event, 'minecraft 1.15', 30):
                             return
 
                         do_the_linux_command('sudo systemctl start minecraft_1_15')

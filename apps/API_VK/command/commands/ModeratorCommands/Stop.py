@@ -8,7 +8,7 @@ class Stop(CommonCommand):
     def __init__(self):
         names = ["стоп"]
         help_text = "̲С̲т̲о̲п - останавливает работу Петровича. " \
-                    "С параметром можно отключить нужный модуль (синички, майн)"
+                    "С параметром можно отключить нужный модуль (синички, майн(1.12 1.15))"
         super().__init__(names, help_text, for_moderator=True)
 
     def start(self):
@@ -30,7 +30,7 @@ class Stop(CommonCommand):
                         do_the_linux_command('sudo systemctl stop minecraft')
                         self.vk_bot.send_message(self.vk_event.chat_id, "Финишируем майн 1.12!")
                     elif self.vk_event.args[1] == '1.15':
-                        if not check_command_time(self.vk_bot, self.vk_event, 'minecraft 1.15', 90):
+                        if not check_command_time(self.vk_bot, self.vk_event, 'minecraft 1.15', 30):
                             return
 
                         do_the_linux_command('sudo systemctl stop minecraft_1_15')
