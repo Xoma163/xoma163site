@@ -10,20 +10,24 @@ class Random(CommonCommand):
         super().__init__(names, help_text)
 
     def start(self):
-        if len(self.vk_event.args) == 2:
-            try:
-                int1 = int(self.vk_event.args[0])
-                int2 = int(self.vk_event.args[1])
-            except:
-                self.vk_bot.send_message(self.vk_event.chat_id, "Аргументы должны быть целочисленными")
-                return
+        if self.vk_event.args:
+            if len(self.vk_event.args) == 2:
+                try:
+                    int1 = int(self.vk_event.args[0])
+                    int2 = int(self.vk_event.args[1])
+                except:
+                    self.vk_bot.send_message(self.vk_event.chat_id, "Аргументы должны быть целочисленными")
+                    return
+            else:
+                int1 = 1
+                try:
+                    int2 = int(self.vk_event.args[0])
+                except:
+                    self.vk_bot.send_message(self.vk_event.chat_id, "Аргументы должны быть целочисленными")
+                    return
         else:
-            int1 = 1
-            try:
-                int2 = int(self.vk_event.args[0])
-            except:
-                self.vk_bot.send_message(self.vk_event.chat_id, "Аргументы должны быть целочисленными")
-                return
+            int1 = 0
+            int2 = 1
 
         if int1 > int2:
             int1, int2 = int2, int1

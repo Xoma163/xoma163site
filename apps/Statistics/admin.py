@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.Statistics.models import Statistic, Isssue
+from apps.Statistics.models import Statistic, Issue, Service
 
 
 @admin.register(Statistic)
@@ -9,6 +9,9 @@ class VkUserAdmin(admin.ModelAdmin):
     ordering = ('-count_queries',)
 
 
-@admin.register(Isssue)
+@admin.register(Issue)
 class FeatureAdmin(admin.ModelAdmin):
     list_display = ('text',)
+
+
+admin.site.register(Service)

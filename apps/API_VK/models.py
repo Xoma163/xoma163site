@@ -1,19 +1,6 @@
 from django.db import models
 
 
-class StreamModel(models.Model):
-    id = models.AutoField(primary_key=True, verbose_name='ID')
-    link = models.URLField(verbose_name='Ссылка на стрим')
-
-    class Meta:
-        verbose_name = "Стрим"
-        verbose_name_plural = "Стрим"
-        ordering = ["id"]
-
-    def __str__(self):
-        return str(self.link)
-
-
 class VkChat(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
     chat_id = models.CharField(verbose_name='ID чата', max_length=20)

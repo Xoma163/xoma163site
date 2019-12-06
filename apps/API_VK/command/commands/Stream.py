@@ -1,5 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand, check_sender_admin
-from apps.API_VK.models import StreamModel
+from apps.Statistics.models import Service
 
 
 class Stream(CommonCommand):
@@ -10,7 +10,8 @@ class Stream(CommonCommand):
 
     def start(self):
         if self.vk_event.args is None:
-            stream_link = StreamModel.objects.first().link
+            stream, created = Service.objects.get_or_create(name="stream")
+            stream_link = stream.value
             if len(stream_link) < 5:
                 self.vk_bot.send_message(self.vk_event.chat_id, "Стрим пока не идёт")
                 return
@@ -19,8 +20,5 @@ class Stream(CommonCommand):
         else:
             if not check_sender_admin(self.vk_bot, self.vk_event):
                 return
-
-            stream = StreamModel.objects.first()
-            stream.link = self.vk_event.args[0]
-            stream.save()
+            Service.objects.update_or_create(name="stream", defaults={'value': self.vk_event.args[0]})
             self.vk_bot.send_message(self.vk_event.chat_id, "Ссылка изменена на " + self.vk_event.args[0])
