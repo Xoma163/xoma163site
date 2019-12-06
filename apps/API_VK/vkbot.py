@@ -58,7 +58,7 @@ class VkBotClass(threading.Thread):
     def send_message(self, peer_id, msg, attachments=None, keyboard=None):
         if attachments is None:
             attachments = []
-
+        msg = str(msg)
         if len(msg) > 4096:
             msg = msg[:4092]
             msg += "\n..."
