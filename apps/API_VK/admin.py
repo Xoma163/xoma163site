@@ -9,9 +9,10 @@ admin.site.register(StreamModel)
 @admin.register(VkUser)
 class VkUserAdmin(admin.ModelAdmin):
     list_display = (
-        'user_id', 'name', 'surname', 'nickname', 'gender', 'birthday', 'city', 'get_notify_from', 'send_notify',
-        'is_admin', 'is_moderator', 'is_student', 'is_banned')
-    list_filter = ('gender', 'send_notify', 'is_admin', 'is_moderator', 'is_student', 'is_banned', 'city')
+        'user_id', 'name', 'surname', 'nickname', 'gender', 'birthday', 'city',
+        'is_admin', 'is_moderator', 'is_student', 'is_banned', 'is_minecraft', 'get_notify_from', 'send_notify',)
+    list_filter = (
+    'gender', 'send_notify', 'is_admin', 'is_moderator', 'is_student', 'is_banned', 'city', 'is_minecraft',)
 
 
 @admin.register(VkChat)

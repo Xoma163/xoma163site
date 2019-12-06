@@ -10,6 +10,7 @@ from googleapiclient.discovery import build
 
 from apps.API_VK.models import Words
 from secrets.secrets import secrets
+from xoma163site.settings import BASE_DIR
 
 
 class Command(BaseCommand):
@@ -24,16 +25,16 @@ class Command(BaseCommand):
         SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
         creds = None
-        if os.path.exists('secrets/google_token.pickle'):
-            with open('secrets/google_token.pickle', 'rb') as token:
+        if os.path.exists(BASE_DIR + '/secrets/google_token.pickle'):
+            with open(BASE_DIR + '/secrets/google_token.pickle', 'rb') as token:
                 creds = pickle.load(token)
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
             else:
-                flow = InstalledAppFlow.from_client_secrets_file('secrets/google_credentials.json', SCOPES)
+                flow = InstalledAppFlow.from_client_secrets_file(BASE_DIR + '/secrets/google_credentials.json', SCOPES)
                 creds = flow.run_local_server(port=0)
-            with open('secrets/google_token.pickle', 'wb') as token:
+            with open(BASE_DIR + '/secrets/google_token.pickle', 'wb') as token:
                 pickle.dump(creds, token)
 
         service = build('sheets', 'v4', credentials=creds)
@@ -57,9 +58,12 @@ class Command(BaseCommand):
                     for k, item in enumerate(val):
                         if item != 'None' and item is not None and item != ' ' and item != '':
                             word_dict[headers[k]] = item
-
-                    new_word = Words(**word_dict)
-                    new_word.save()
+                    if 'id' in word_dict:
+                        word, created = Words.objects.update_or_create(id=word_dict['id'], defaults=word_dict)
+                    else:
+                        print("Слово не имеет id. Проверьте - {}".format(word_dict))
+                    # new_word = Words(**word_dict)
+                    # new_word.save()
                 else:
                     headers = [header for header in val]
         print("Result: success")

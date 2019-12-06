@@ -1,4 +1,7 @@
 import random
+from datetime import datetime
+
+from apps.Statistics.models import Service
 
 
 def check_sender_admin(vk_bot, vk_event):
@@ -27,6 +30,13 @@ def check_sender_banned(vk_bot, vk_event):
     if not vk_event.sender.is_banned:
         return True
     vk_bot.send_message(vk_event.chat_id, "У вас бан")
+    return False
+
+
+def check_sender_minecraft(vk_bot, vk_event):
+    if vk_event.sender.is_minecraft:
+        return True
+    vk_bot.send_message(vk_event.chat_id, "Команда доступна только майнкрафтерам")
     return False
 
 
@@ -70,6 +80,21 @@ def get_random_item_from_list(list, arg=None):
     else:
         msg = list[rand_int]
     return msg
+
+
+def check_command_time(vk_bot, vk_event, name, seconds):
+    entity, created = Service.objects.get_or_create(name=name)
+    if created:
+        return True
+    update_datetime = entity.update_datetime
+    delta_seconds = (datetime.now() - update_datetime).seconds
+    if delta_seconds < seconds:
+        vk_bot.send_message(vk_event.chat_id, "Нельзя часто вызывать команды остановки и старта. Жди ещё {} секунд"
+                            .format(seconds - delta_seconds))
+        return False
+    entity.name = name
+    entity.save()
+    return True
 
 
 class CommonCommand:

@@ -24,3 +24,8 @@ class Isssue(models.Model):
 
     def __str__(self):
         return str(self.text)
+
+
+class Service(models.Model):
+    name = models.CharField(verbose_name="Имя", max_length=20)
+    update_datetime = models.DateTimeField(verbose_name="Дата создания", auto_now=True)

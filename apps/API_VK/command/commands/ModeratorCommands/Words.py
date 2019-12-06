@@ -11,4 +11,6 @@ class Words(CommonCommand):
     def start(self):
         command = "/var/www/xoma163.site/venv/bin/python /var/www/xoma163.site/manage.py get_words"
         result = do_the_linux_command(command)
+        if not result:
+            result = "done"
         self.vk_bot.send_message(self.vk_event.chat_id, result)

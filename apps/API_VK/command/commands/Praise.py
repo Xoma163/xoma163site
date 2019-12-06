@@ -14,7 +14,6 @@ def get_from_db(field_name):
 
 
 def add_phrase_before(smth, word, field_name):
-    print(field_name)
     if field_name[1] == '1':
         return "{}, ты {}".format(smth, word)
     elif field_name[1] == 'm':

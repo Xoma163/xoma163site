@@ -41,15 +41,17 @@ class VkUser(models.Model):
 
     chats = models.ManyToManyField(VkChat, verbose_name="Чаты", blank=True)
 
-    get_notify_from = models.ForeignKey('self', on_delete=models.SET_NULL, verbose_name="Получение уведомлений от",
-                                        null=True, blank=True)
-    send_notify = models.BooleanField(verbose_name='Отправлять сведения передвижения', default=False)
     imei = models.CharField(verbose_name='IMEI', max_length=20, null=True, blank=True)
 
     is_admin = models.BooleanField(verbose_name='Админ', default=False)
     is_moderator = models.BooleanField(verbose_name='Модератор', default=False)
     is_student = models.BooleanField(verbose_name='Студент', default=False)
     is_banned = models.BooleanField(verbose_name='Забанен', default=False)
+    is_minecraft = models.BooleanField(verbose_name='Майнкрафт', default=False)
+
+    send_notify = models.BooleanField(verbose_name='Передвижения', default=False)
+    get_notify_from = models.ForeignKey('self', on_delete=models.SET_NULL, verbose_name="Получение уведомлений от",
+                                        null=True, blank=True)
 
     class Meta:
         verbose_name = "Пользователь"

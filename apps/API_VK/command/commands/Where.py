@@ -23,7 +23,7 @@ class Where(CommonCommand):
                                  date__year=today.year,
                                  date__month=today.month,
                                  date__day=today.day,
-                                 author=user).last()
+                                 author=user).first()
         if user is None:
             msg = "Такого пользователя нет"
         elif log is None:
