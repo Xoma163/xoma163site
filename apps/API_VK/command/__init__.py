@@ -1,5 +1,3 @@
-from apps.API_VK.command.commands.ModeratorCommands.Load import Load
-
 from apps.API_VK.command.commands.AdminCommands.Ban import Ban
 from apps.API_VK.command.commands.AdminCommands.Command import Command
 from apps.API_VK.command.commands.AdminCommands.Control import Control
@@ -9,6 +7,7 @@ from apps.API_VK.command.commands.AdminCommands.Service.get_conversations import
 from apps.API_VK.command.commands.AdminCommands.Service.get_user_by_id import get_user_by_id
 from apps.API_VK.command.commands.AdminCommands.Service.update_users import update_users
 from apps.API_VK.command.commands.Birds import Birds
+from apps.API_VK.command.commands.EasyCommands.Apologize import Apologize
 from apps.API_VK.command.commands.EasyCommands.Bye import Bye
 from apps.API_VK.command.commands.EasyCommands.Donate import Donate
 from apps.API_VK.command.commands.EasyCommands.Git import Git
@@ -52,7 +51,7 @@ commands = [YesNo(), Thanks(), Stream(), Where(), Birds(), Register(), Petrovich
             Help(), Weather(), Praise(), Scold(), Quote(), Quotes(), Keyboard(), KeyboardHide(), Uyu(), Hi(), Bye(),
             Nya(), Shit(), Git(), Donate(), Issue(), Issues(), Joke(), TimeTable(), GoogleDrive(), Week(), Mail(),
             Ban(), DeBan(), Command(), Start(), Stop(), Restart(), Reboot(), Control(), get_user_by_id(),
-            update_users(), get_conversations(), Logs(), Words(), Temperature(), Load()
+            update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize()
             ]
 
 
