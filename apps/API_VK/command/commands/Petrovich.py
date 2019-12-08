@@ -6,7 +6,7 @@ from apps.API_VK.models import PetrovichGames, PetrovichUser
 
 class Petrovich(CommonCommand):
     def __init__(self):
-        names = ["петрович", ""]
+        names = ["петрович", "женя"]
         help_text = "̲П̲е̲т̲р̲о̲в̲и̲ч - мини-игра, определяющая кто Петрович Дня"
         super().__init__(names, help_text, for_conversations=True)
 
