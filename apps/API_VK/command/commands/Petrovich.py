@@ -6,7 +6,7 @@ from apps.API_VK.models import PetrovichGames, PetrovichUser
 
 class Petrovich(CommonCommand):
     def __init__(self):
-        names = ["петрович"]
+        names = ["петрович", ""]
         help_text = "̲П̲е̲т̲р̲о̲в̲и̲ч - мини-игра, определяющая кто Петрович Дня"
         super().__init__(names, help_text, for_conversations=True)
 
@@ -31,4 +31,9 @@ class Petrovich(CommonCommand):
         winner_petrovich.wins = int(winner_petrovich.wins) + 1
         winner_petrovich.save()
         self.vk_bot.send_message(self.vk_event.chat_id, "Такс такс такс, кто тут у нас")
-        self.vk_bot.send_message(self.vk_event.chat_id, "Наш сегодняшний Петрович дня - %s" % winner)
+        who = "Петрович"
+        if winner.name in ["Евгений", "Женя"]:
+            who = "Женя"
+        self.vk_bot.send_message(self.vk_event.chat_id,
+                                 "Наш сегодняшний {} дня - [{}|{} {}]".format(who, winner.nickname, winner.name,
+                                                                              winner.surname))
