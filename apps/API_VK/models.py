@@ -22,6 +22,7 @@ class VkUser(models.Model):
     name = models.CharField(verbose_name='Имя', max_length=40, default="")
     surname = models.CharField(verbose_name='Фамилия', max_length=40, default="")
     nickname = models.CharField(verbose_name="Никнейм", max_length=40, blank=True, default="")
+    nickname_real = models.CharField(verbose_name="Прозвище", max_length=40, blank=True, default="")
     gender = models.CharField(verbose_name='Пол', max_length=2, blank=True, default="")
     birthday = models.DateField(verbose_name='Дата рождения', null=True, blank=True)
     city = models.CharField(verbose_name='Город', max_length=40, blank=True, default="")

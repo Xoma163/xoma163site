@@ -7,7 +7,7 @@ from apps.API_VK.models import Log, VkUser, QuoteBook, PetrovichUser, PetrovichG
 @admin.register(VkUser)
 class VkUserAdmin(admin.ModelAdmin):
     list_display = (
-        'user_id', 'name', 'surname', 'nickname', 'gender', 'birthday', 'city',
+        'user_id', 'name', 'surname', 'nickname', 'nickname_real', 'gender', 'birthday', 'city',
         'is_admin', 'is_moderator', 'is_student', 'is_banned', 'is_minecraft', 'get_notify_from', 'send_notify',)
     list_filter = (
         'gender', 'send_notify', 'is_admin', 'is_moderator', 'is_student', 'is_banned', 'city', 'is_minecraft',)
