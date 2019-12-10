@@ -9,6 +9,7 @@ from apps.API_VK.command.commands.AdminCommands.Service.update_users import upda
 from apps.API_VK.command.commands.Birds import Birds
 from apps.API_VK.command.commands.EasyCommands.Apologize import Apologize
 from apps.API_VK.command.commands.EasyCommands.Bye import Bye
+from apps.API_VK.command.commands.EasyCommands.Clear import Clear
 from apps.API_VK.command.commands.EasyCommands.Donate import Donate
 from apps.API_VK.command.commands.EasyCommands.Git import Git
 from apps.API_VK.command.commands.EasyCommands.Hi import Hi
@@ -51,7 +52,7 @@ commands = [YesNo(), Thanks(), Stream(), Where(), Birds(), Register(), Petrovich
             Help(), Weather(), Praise(), Scold(), Quote(), Quotes(), Keyboard(), KeyboardHide(), Uyu(), Hi(), Bye(),
             Nya(), Shit(), Git(), Donate(), Issue(), Issues(), Joke(), TimeTable(), GoogleDrive(), Week(), Mail(),
             Ban(), DeBan(), Command(), Start(), Stop(), Restart(), Reboot(), Control(), get_user_by_id(),
-            update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize()
+            update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear()
             ]
 
 

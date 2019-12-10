@@ -6,7 +6,7 @@ from apps.API_VK.command.CommonCommand import CommonCommand, get_random_item_fro
 
 class Apologize(CommonCommand):
     def __init__(self):
-        names = ["извинись", "извиняйся"]
+        names = ["извинись", "извиняйся", "извинитесь"]
 
         super().__init__(names)
 
