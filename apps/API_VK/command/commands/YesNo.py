@@ -55,7 +55,7 @@ class YesNo(CommonCommand):
                 rand_int = random.randint(0, len(bad_answers) - 1)
                 self.vk_bot.send_message(self.vk_event.chat_id, bad_answers[rand_int])
                 name = self.vk_event.sender.name
-                if self.vk_event.sender.gender == 1:
+                if self.vk_event.sender.gender == '1':
                     msg_self = "сама"
                 else:
                     msg_self = "сам"

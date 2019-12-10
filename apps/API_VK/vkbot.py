@@ -229,79 +229,71 @@ class VkBotClass(threading.Thread):
 
         return user.first()
 
+    def get_bot_by_id(self, bot_id):
+        vk_bot = VkBot.objects.filter(bot_id=bot_id)
+        if len(vk_bot) > 0:
+            vk_bot = vk_bot.first()
+        else:
+            # Прозрачная регистрация
+            bot = self.vk.groups.getById(group_id=bot_id)[0]
 
-def get_bot_by_id(self, bot_id):
-    vk_bot = VkBot.objects.filter(bot_id=bot_id)
-    if len(vk_bot) > 0:
-        vk_bot = vk_bot.first()
-    else:
-        # Прозрачная регистрация
-        bot = self.vk.groups.getById(group_id=bot_id)[0]
+            vk_bot = VkBot()
+            vk_bot.bot_id = bot_id
+            vk_bot.name = bot['name']
+            vk_bot.save()
 
-        vk_bot = VkBot()
-        vk_bot.bot_id = bot_id
-        vk_bot.name = bot['name']
-        vk_bot.save()
+        return vk_bot
 
-    return vk_bot
+    @staticmethod
+    def get_chat_by_id(chat_id):
+        vk_chat = VkChat.objects.filter(chat_id=chat_id)
+        if len(vk_chat) > 0:
+            vk_chat = vk_chat.first()
+        else:
+            # Прозрачная регистрация
+            vk_chat = VkChat()
+            vk_chat.chat_id = chat_id
+            vk_chat.save()
+        return vk_chat
 
+    def get_group_name_by_id(self, group_id):
+        group = self.vk.groups.getById(group_id=group_id)[0]
+        return group['name']
 
-@staticmethod
-def get_chat_by_id(chat_id):
-    vk_chat = VkChat.objects.filter(chat_id=chat_id)
-    if len(vk_chat) > 0:
-        vk_chat = vk_chat.first()
-    else:
-        # Прозрачная регистрация
-        vk_chat = VkChat()
-        vk_chat.chat_id = chat_id
-        vk_chat.save()
-    return vk_chat
+    @staticmethod
+    def add_group_to_user(vk_user, chat):
+        chats = vk_user.chats
+        if chat not in chats.all():
+            chats.add(chat)
 
+    @staticmethod
+    def get_group_id(id):
+        return 2000000000 + id
 
-def get_group_name_by_id(self, group_id):
-    group = self.vk.groups.getById(group_id=group_id)[0]
-    return group['name']
+    def update_users(self):
+        users = VkUser.objects.all()
+        for vk_user in users:
+            user = self.vk.users.get(user_id=vk_user.user_id, lang='ru', fields='sex, bdate, city, screen_name')[0]
+            vk_user.name = user['first_name']
+            vk_user.surname = user['last_name']
+            if 'sex' in user:
+                vk_user.gender = user['sex']
+            if vk_user.birthday is None and 'bdate' in user:
+                vk_user.birthday = parse_date(user['bdate'])
+            if vk_user.city is None and 'city' in user:
+                vk_user.city = user['city']['title']
+            if vk_user.nickname is None and 'screen_name' in user:
+                vk_user.nickname = user['screen_name']
+            vk_user.save()
 
+    def get_conversations(self):
+        res = self.vk.messages.getConversations()
+        print(res)
 
-@staticmethod
-def add_group_to_user(vk_user, chat):
-    chats = vk_user.chats
-    if chat not in chats.all():
-        chats.add(chat)
+    # Проверки
 
-
-@staticmethod
-def get_group_id(id):
-    return 2000000000 + id
-
-
-def update_users(self):
-    users = VkUser.objects.all()
-    for vk_user in users:
-        user = self.vk.users.get(user_id=vk_user.user_id, lang='ru', fields='sex, bdate, city, screen_name')[0]
-        vk_user.name = user['first_name']
-        vk_user.surname = user['last_name']
-        if 'sex' in user:
-            vk_user.gender = user['sex']
-        if vk_user.birthday is None and 'bdate' in user:
-            vk_user.birthday = parse_date(user['bdate'])
-        if vk_user.city is None and 'city' in user:
-            vk_user.city = user['city']['title']
-        if vk_user.nickname is None and 'screen_name' in user:
-            vk_user.nickname = user['screen_name']
-        vk_user.save()
-
-
-def get_conversations(self):
-    res = self.vk.messages.getConversations()
-    print(res)
-
-
-# Проверки
-
-def check_bot_working(self):
-    return self.BOT_CAN_WORK
+    def check_bot_working(self):
+        return self.BOT_CAN_WORK
 
 
 class MyVkBotLongPoll(VkBotLongPoll):

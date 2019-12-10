@@ -17,7 +17,10 @@ class Petrovich(CommonCommand):
                                                      date__day=today.day,
                                                      chat=self.vk_event.chat).last()
         if winner_today is not None:
-            self.vk_bot.send_message(self.vk_event.chat_id, "Петрович дня - %s" % winner_today.user)
+            if winner_today.user.name in ["Евгений", "Женя"]:
+                self.vk_bot.send_message(self.vk_event.chat_id, "Женя дня - %s" % winner_today.user)
+            else:
+                self.vk_bot.send_message(self.vk_event.chat_id, "Петрович дня - %s" % winner_today.user)
             return
 
         # order_by ? = random
