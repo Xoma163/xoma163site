@@ -30,6 +30,7 @@ class Scold(CommonCommand):
         super().__init__(names, help_text)
 
     def start(self):
+
         translator = {
             'м': 'm1',
             'ж': 'f1',
@@ -40,35 +41,24 @@ class Scold(CommonCommand):
             'мм': 'mm',
             'жм': 'fm'
         }
-
-        if self.vk_event.args:
-            args = self.vk_event.args
-            if args[0].lower() == "петрович":
-                msg = get_random_item_from_list(get_bad_answers())
-            elif args[0].lower() in translator:
-                msg = get_from_db(translator[args[0].lower()])
+        if self.vk_event.keys:
+            str_keys = ''.join(k for k in self.vk_event.keys)
+            if str_keys in translator:
+                translator_key = str_keys
             else:
-                msg = add_phrase_before(args[0], get_from_db(translator['м1']), translator['м1'])
-            if len(self.vk_event.args) >= 2:
-
-                if args[0].lower() not in translator and args[1].lower() not in translator:
-                    msg = "Неверный аргумент определения пола и числа. Доступные: {}".format(
-                        str(list(translator.keys())))
-                else:
-                    if args[1].lower() in translator:
-                        args[0], args[1] = args[1], args[0]
-                    msg = add_phrase_before(args[1], get_from_db(translator[args[0].lower()]),
-                                            translator[args[0].lower()])
+                msg = "Неверные ключи определения пола и числа. Доступные: {}".format(str(list(translator.keys())))
+                self.vk_bot.send_message(self.vk_event.chat_id, msg)
+                return
         else:
-            msg = get_from_db(translator['м1'])
+            translator_key = 'м1'
 
+        if self.vk_event.original_args:
+            recipient = self.vk_event.original_args
+            if "петрович" in recipient:
+                msg = get_random_item_from_list(get_bad_answers())
+            else:
+                word = get_from_db(translator[translator_key])
+                msg = add_phrase_before(recipient, word, translator[translator_key])
+        else:
+            msg = get_from_db(translator[translator_key])
         self.vk_bot.send_message(self.vk_event.chat_id, msg)
-
-        # if self.vk_event.args:
-        #     if self.vk_event.args[0].lower() == "петрович":
-        #         msg = get_random_item_from_list(get_bad_answers())
-        #     else:
-        #         msg = get_random_item_from_list(get_insults(), self.vk_event.args[0])
-        # else:
-        #     msg = get_random_item_from_list(get_insults())
-        # self.vk_bot.send_message(self.vk_event.chat_id, msg)

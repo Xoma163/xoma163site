@@ -46,4 +46,5 @@ class Stop(CommonCommand):
             if not check_sender_admin(self.vk_bot, self.vk_event):
                 return
             self.vk_bot.BOT_CAN_WORK = False
+            cameraHandler.terminate()
             self.vk_bot.send_message(self.vk_event.chat_id, "Финишируем")

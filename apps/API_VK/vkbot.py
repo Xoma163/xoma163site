@@ -22,16 +22,27 @@ def parse_msg_to_me(msg, mentions):
 
 
 def parse_msg(msg):
-    msg_dict = {'command': None, 'args': None, 'original_args': None}
+    msg_dict = {'command': None, 'args': None, 'original_args': None, 'keys': None}
 
     command_arg = msg.split(' ', 1)
     msg_dict['command'] = command_arg[0].lower()
     if len(command_arg) > 1:
         command_arg[1] = command_arg[1].replace(',', ' ')
-        msg_dict['original_args'] = command_arg[1]
+
+        find_dash = command_arg[1].find('-')
+        if find_dash != -1:
+            msg_dict['keys'] = []
+        while find_dash != -1:
+            next_space = command_arg[1].find(' ', find_dash)
+            if next_space == -1:
+                next_space = len(command_arg[1])
+
+            for letter in command_arg[1][find_dash + 1:next_space]:
+                msg_dict['keys'].append(letter)
+            command_arg[1] = command_arg[1][:find_dash] + command_arg[1][next_space:]
+            find_dash = command_arg[1].find('-')
         msg_dict['args'] = command_arg[1].split(' ')
-    else:
-        msg_dict['args'] = None
+        msg_dict['original_args'] = command_arg[1].strip()
 
     return msg_dict
 
@@ -71,6 +82,12 @@ class VkBotClass(threading.Thread):
                               )
 
     def menu(self, vk_event):
+        # debug_message = "command = {}\n" \
+        #                 "args = {}\n" \
+        #                 "original_args = {}\n" \
+        #                 "keys = {}".format(vk_event.command, vk_event.args, vk_event.original_args, vk_event.keys)
+        # self.send_message(vk_event.chat_id, debug_message)
+
         if vk_event.sender.is_banned:
             self.send_message(vk_event.chat_id, "У вас бан")
             return
@@ -314,6 +331,7 @@ class VkEvent:
         self.command = vk_event['message']['text']['command']
         self.args = vk_event['message']['text']['args']
         self.original_args = vk_event['message']['text']['original_args']
+        self.keys = vk_event['message']['text']['keys']
         self.is_lk = vk_event['from_user']
         self.full_message = vk_event['message']['full_text']
         self.fwd = vk_event['fwd']
