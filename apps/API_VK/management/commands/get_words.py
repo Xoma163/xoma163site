@@ -61,7 +61,7 @@ class Command(BaseCommand):
                     if 'id' in word_dict:
                         word, created = Words.objects.update_or_create(id=word_dict['id'], defaults=word_dict)
                     else:
-                        print("Слово не имеет id. Проверьте - {}".format(word_dict))
+                        print("Слово не имеет id. Проверьте - {}. Строка - {}".format(word_dict, j))
                     # new_word = Words(**word_dict)
                     # new_word.save()
                 else:

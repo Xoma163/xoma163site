@@ -39,6 +39,7 @@ from apps.API_VK.command.commands.Register import Register
 from apps.API_VK.command.commands.Scold import Scold
 from apps.API_VK.command.commands.Statistics import Statistics
 from apps.API_VK.command.commands.Stream import Stream
+from apps.API_VK.command.commands.StudentCommands.Find import Find
 from apps.API_VK.command.commands.StudentCommands.GoogleDrive import GoogleDrive
 from apps.API_VK.command.commands.StudentCommands.Mail import Mail
 from apps.API_VK.command.commands.StudentCommands.TimeTable import TimeTable
@@ -52,7 +53,7 @@ commands = [YesNo(), Thanks(), Stream(), Where(), Birds(), Register(), Petrovich
             Help(), Weather(), Praise(), Scold(), Quote(), Quotes(), Keyboard(), KeyboardHide(), Uyu(), Hi(), Bye(),
             Nya(), Shit(), Git(), Donate(), Issue(), Issues(), Joke(), TimeTable(), GoogleDrive(), Week(), Mail(),
             Ban(), DeBan(), Command(), Start(), Stop(), Restart(), Reboot(), Control(), get_user_by_id(),
-            update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear()
+            update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(), Find()
             ]
 
 
