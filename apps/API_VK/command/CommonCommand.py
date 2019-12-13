@@ -26,11 +26,11 @@ def check_sender_student(vk_bot, vk_event):
     return False
 
 
-def check_sender_banned(vk_bot, vk_event):
-    if not vk_event.sender.is_banned:
-        return True
-    vk_bot.send_message(vk_event.chat_id, "У вас бан")
-    return False
+# def check_sender_banned(vk_bot, vk_event):
+#     if not vk_event.sender.is_banned:
+#         return True
+#     # vk_bot.send_message(vk_event.chat_id, "У вас бан")
+#     return False
 
 
 def check_sender_minecraft(vk_bot, vk_event):
@@ -45,7 +45,7 @@ def check_args(vk_bot, vk_event, size=None):
     if vk_event.args:
         return True
 
-    vk_bot.send_message(vk_event.chat_id, "Аргументы не переданы")
+    vk_bot.send_message(vk_event.chat_id, "Для рабоыт команды требуются аргументы")
     return False
 
 
@@ -149,3 +149,6 @@ class CommonCommand:
         if self.check_fwd:
             if not check_fwd(self.vk_bot, self.vk_event):
                 raise RuntimeError("Команда работает только в беседах")
+        if self.check_args:
+            if not check_args(self.vk_bot, self.vk_event):
+                raise RuntimeError("Для рабоыт команды требуются аргументы")

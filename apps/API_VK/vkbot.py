@@ -89,7 +89,7 @@ class VkBotClass(threading.Thread):
         # self.send_message(vk_event.chat_id, debug_message)
 
         if vk_event.sender.is_banned:
-            self.send_message(vk_event.chat_id, "У вас бан")
+            # self.send_message(vk_event.chat_id, "У вас бан")
             return
         # Проверяем не остановлен ли бот, если так, то проверяем вводимая команда = старт?
         if not self.check_bot_working():
@@ -111,7 +111,7 @@ class VkBotClass(threading.Thread):
                     append_command_to_statistics(vk_event.command)
                     return
             except RuntimeError as e:
-                self.send_message(vk_event.chat_id, "Какой-то капец. Зовите лентяя. {}".format(str(e)))
+                # self.send_message(vk_event.chat_id, "Какой-то капец. Зовите лентяя. {}".format(str(e)))
                 return
         self.send_message(vk_event.chat_id, "Я не понял команды \"%s\"" % vk_event.command)
         return
