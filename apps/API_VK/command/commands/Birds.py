@@ -45,6 +45,7 @@ class Birds(CommonCommand):
             pass
 
         photo = self.vk_bot.upload.photo_messages(path)[0]
+        cameraHandler.clear_file(path)
         attachments.append('photo{}_{}'.format(photo['owner_id'], photo['id']))
 
         if frames != 0:
@@ -54,6 +55,7 @@ class Birds(CommonCommand):
                 self.vk_bot.send_message(self.vk_event.chat_id, str(e))
                 return
             gif = self.vk_bot.upload.document_message(path2, title='Синички', peer_id=self.vk_event.chat_id)['doc']
+            cameraHandler.clear_file(path2)
             attachments.append('doc{}_{}'.format(gif['owner_id'], gif['id']))
 
         self.vk_bot.send_message(self.vk_event.chat_id, "", attachments=attachments)

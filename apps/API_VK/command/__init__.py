@@ -17,6 +17,7 @@ from apps.API_VK.command.commands.EasyCommands.Nya import Nya
 from apps.API_VK.command.commands.EasyCommands.Shit import Shit
 from apps.API_VK.command.commands.EasyCommands.Sorry import Sorry
 from apps.API_VK.command.commands.EasyCommands.Thanks import Thanks
+from apps.API_VK.command.commands.Find import Find
 from apps.API_VK.command.commands.Help import Help
 from apps.API_VK.command.commands.Issue import Issue
 from apps.API_VK.command.commands.Issues import Issues
@@ -39,7 +40,6 @@ from apps.API_VK.command.commands.Register import Register
 from apps.API_VK.command.commands.Scold import Scold
 from apps.API_VK.command.commands.Statistics import Statistics
 from apps.API_VK.command.commands.Stream import Stream
-from apps.API_VK.command.commands.StudentCommands.Find import Find
 from apps.API_VK.command.commands.StudentCommands.GoogleDrive import GoogleDrive
 from apps.API_VK.command.commands.StudentCommands.Mail import Mail
 from apps.API_VK.command.commands.StudentCommands.TimeTable import TimeTable

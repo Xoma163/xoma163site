@@ -5,6 +5,7 @@ import time
 
 import cv2
 import imageio
+import numpy as np
 from PIL import Image
 
 from xoma163site.settings import BASE_DIR
@@ -77,7 +78,7 @@ class CameraHandler(threading.Thread):
                 self.wait()
             self.terminate()
 
-        filename = BASE_DIR + "/static/vkapi/birds.gif"
+        filename = "{}/static/vkapi/birds-{}.gif".format(BASE_DIR, threading.get_ident())
         images = self.images.get_list_size(frames)
 
         # Высокое качество
@@ -108,12 +109,15 @@ class CameraHandler(threading.Thread):
             while self.time_on_frame.get_last() == 0:
                 self.wait()
             self.terminate()
-
-        filename = BASE_DIR + "/static/vkapi/snapshot.jpg"
+        filename = "{}/static/vkapi/snapshot-{}.jpg".format(BASE_DIR, threading.get_ident())
         frame = self.images.get_last()
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         cv2.imwrite(filename, frame, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
         return os.path.abspath(filename)
+
+    @staticmethod
+    def clear_file(path):
+        os.remove(path)
 
     @staticmethod
     def draw_text_on_image(image, text, pos):
@@ -129,10 +133,12 @@ class MaxSizeList(object):
         self.ls = []
 
     def init_frames(self):
-        filename = BASE_DIR + "/static/vkapi/snapshot.jpg"
-        frame = cv2.imread(filename)
-        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-        # Frame convert to ndarray
+        try:
+            filename = BASE_DIR + "/static/vkapi/snapshot.jpg"
+            frame = cv2.imread(filename)
+            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+        except:
+            frame = np.zeros((100, 100, 3), np.uint8)
         self.ls = [frame for i in range(self.max_length)]
 
     def init_0(self):

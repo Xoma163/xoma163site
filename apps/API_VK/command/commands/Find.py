@@ -1,3 +1,5 @@
+import os
+
 from apps.API_VK.command.CommonCommand import CommonCommand
 from xoma163site.settings import BASE_DIR
 
@@ -39,16 +41,19 @@ class Find(CommonCommand):
             return
         attachments = []
         for url in urls:
+            path = "{}/static/vkapi/{}.jpg".format(BASE_DIR, query)
             try:
                 img = requests.get(url)
-                img_file = open("{}/static/vkapi/{}.jpg".format(BASE_DIR, query), "wb")
+                img_file = open(path, "wb")
                 img_file.write(img.content)
                 img_file.close()
 
-                photo = self.vk_bot.upload.photo_messages("{}/static/vkapi/{}.jpg".format(BASE_DIR, query))[0]
+                photo = self.vk_bot.upload.photo_messages(path)[0]
                 attachments.append('photo{}_{}'.format(photo['owner_id'], photo['id']))
             except Exception as e:
                 pass
+            finally:
+                os.remove(path)
             if len(attachments) >= count:
                 break
 
