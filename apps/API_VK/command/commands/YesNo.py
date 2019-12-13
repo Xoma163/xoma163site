@@ -10,16 +10,17 @@ class YesNo(CommonCommand):
         help_text = "̲.̲.̲.̲? - вернёт да или нет."
         super().__init__(names, help_text)
 
-    def accept(self, vk_bot, vk_event):
+    def accept(self, vk_event):
+        if vk_event.full_message[-1] != '?':
+            return False
+        return True
+
+    def check_and_start(self, vk_bot, vk_event):
         self.vk_bot = vk_bot
         self.vk_event = vk_event
 
-        if self.vk_event.full_message[-1] != '?':
-            return False
-
         self.checks()
         self.start()
-        return True
 
     def start(self):
         bad_words = get_bad_words()

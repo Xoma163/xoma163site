@@ -114,16 +114,18 @@ class CommonCommand:
         self.vk_bot = None
         self.vk_event = None
 
-    def accept(self, vk_bot, vk_event):
+    def accept(self, vk_event):
         if vk_event.command not in self.names:
             return False
 
+        return True
+
+    def check_and_start(self, vk_bot, vk_event):
         self.vk_bot = vk_bot
         self.vk_event = vk_event
 
         self.checks()
         self.start()
-        return True
 
     def start(self):
         return True

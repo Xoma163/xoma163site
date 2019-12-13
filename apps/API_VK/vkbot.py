@@ -106,10 +106,12 @@ class VkBotClass(threading.Thread):
         commands = get_commands()
         for command in commands:
             try:
-                if command.accept(self, vk_event):
+                if command.accept(vk_event):
+                    command.__class__().check_and_start(self, vk_event)
                     append_command_to_statistics(vk_event.command)
                     return
             except RuntimeError as e:
+                self.send_message(vk_event.chat_id, "Какой-то капец. Зовите лентяя. {}".format(str(e)))
                 return
         self.send_message(vk_event.chat_id, "Я не понял команды \"%s\"" % vk_event.command)
         return
@@ -344,3 +346,18 @@ class VkEvent:
         self.sender = vk_event['sender']
         if vk_event['chat']:
             self.chat = vk_event['chat']
+
+    def __str__(self):
+        s = []
+        s.append(self.user_id)
+        s.append(self.peer_id)
+        s.append(self.command)
+        s.append(self.args)
+        s.append(self.original_args)
+        s.append(self.keys)
+        s.append(self.is_lk)
+        s.append(self.full_message)
+        s.append(self.fwd)
+        s.append(self.is_lk)
+        s.append(self.sender)
+        return str(s)
