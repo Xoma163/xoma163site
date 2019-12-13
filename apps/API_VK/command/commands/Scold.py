@@ -53,7 +53,7 @@ class Scold(CommonCommand):
             translator_key = 'м1'
 
         if self.vk_event.original_args:
-            recipient = self.vk_event.original_args
+            recipient = self.vk_event.original_args.lower()
             if "петрович" in recipient:
                 msg = get_random_item_from_list(get_bad_answers())
             else:

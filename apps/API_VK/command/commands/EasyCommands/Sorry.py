@@ -4,7 +4,7 @@ from apps.API_VK.static_texts import get_sorry_phrases
 
 class Sorry(CommonCommand):
     def __init__(self):
-        names = ['сори', 'прости', 'извини', 'простите', 'извините']
+        names = ['сори', 'прости', 'извини', 'простите', 'извините', 'извиняюсь']
         super().__init__(names)
 
     def start(self):

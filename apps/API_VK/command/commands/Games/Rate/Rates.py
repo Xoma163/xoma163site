@@ -19,7 +19,7 @@ class Rates(CommonCommand):
 
         rnd = random.randint(1, 100)
 
-        min_delta = gamers[0].rate
+        min_delta = abs(rnd - gamers[0].rate)
         min_delta_index = 0
         for i, gamer in enumerate(gamers):
             if abs(rnd - gamer.rate) < min_delta:

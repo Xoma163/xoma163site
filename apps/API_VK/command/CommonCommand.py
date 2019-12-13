@@ -45,7 +45,7 @@ def check_args(vk_bot, vk_event, size=None):
     if vk_event.args:
         return True
 
-    vk_bot.send_message(vk_event.chat_id, "Для рабоыт команды требуются аргументы")
+    vk_bot.send_message(vk_event.chat_id, "Для работы команды требуются аргументы")
     return False
 
 
@@ -151,4 +151,4 @@ class CommonCommand:
                 raise RuntimeError("Команда работает только в беседах")
         if self.check_args:
             if not check_args(self.vk_bot, self.vk_event):
-                raise RuntimeError("Для рабоыт команды требуются аргументы")
+                raise RuntimeError("Для работы команды требуются аргументы")

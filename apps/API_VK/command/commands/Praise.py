@@ -51,7 +51,7 @@ class Praise(CommonCommand):
             translator_key = 'м1'
 
         if self.vk_event.original_args:
-            recipient = self.vk_event.original_args
+            recipient = self.vk_event.original_args.lower()
             if "петрович" in recipient:
                 msg = "спс))"
             else:
