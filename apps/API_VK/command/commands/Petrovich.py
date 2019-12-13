@@ -24,7 +24,12 @@ class Petrovich(CommonCommand):
             return
 
         # order_by ? = random
-        winner = PetrovichUser.objects.filter(chat=self.vk_event.chat).order_by("?").first().user
+        winner = PetrovichUser.objects.filter(chat=self.vk_event.chat, active=True).order_by("?").first()
+        if winner:
+            winner = winner.user
+        else:
+            self.vk_bot.send_message(self.vk_event.chat_id, "Нет участников игры. Зарегистрируйтесь! /рег")
+            return
         PetrovichGames.objects.filter(chat=self.vk_event.chat).delete()
         new_winner = PetrovichGames()
         new_winner.user = winner

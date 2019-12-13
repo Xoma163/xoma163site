@@ -97,6 +97,8 @@ class PetrovichUser(models.Model):
     chat = models.ForeignKey(VkChat, verbose_name='Чат', null=True, blank=True, on_delete=models.SET_NULL)
     wins = models.IntegerField(verbose_name="Побед в Петровиче", default=0)
 
+    active = models.BooleanField(verbose_name="Активность", default=True)
+
     class Meta:
         verbose_name = "Игрок"
         verbose_name_plural = "Игроки"

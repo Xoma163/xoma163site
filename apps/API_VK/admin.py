@@ -25,7 +25,7 @@ class VkBotAdmin(admin.ModelAdmin):
 
 @admin.register(PetrovichUser)
 class PetrovichUserAdmin(admin.ModelAdmin):
-    list_display = ('user', 'chat', 'wins',)
+    list_display = ('user', 'chat', 'wins', 'active',)
     list_filter = ('user', 'chat',)
 
 

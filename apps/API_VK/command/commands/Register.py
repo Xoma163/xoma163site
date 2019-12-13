@@ -12,16 +12,22 @@ class Register(CommonCommand):
 
     def start(self):
         vk_user = self.vk_bot.get_user_by_id(self.vk_event.user_id)
-        if vk_user is not None:
-            if PetrovichUser.objects.filter(user=vk_user, chat=self.vk_event.chat).first() is not None:
-                self.vk_bot.send_message(self.vk_event.chat_id, "Ты уже зарегистрирован :)")
-                return
-        min_wins = PetrovichUser.objects.filter(chat=self.vk_event.chat).aggregate(Min('wins'))['wins__min']
 
+        p_user = PetrovichUser.objects.filter(user=vk_user, chat=self.vk_event.chat).first()
+        if p_user is not None:
+            if not p_user.active:
+                p_user.active = True
+                p_user.save()
+                self.vk_bot.send_message(self.vk_event.chat_id, "Возвращаю тебя в строй")
+            else:
+                self.vk_bot.send_message(self.vk_event.chat_id, "Ты уже зарегистрирован :)")
+            return
+        min_wins = PetrovichUser.objects.filter(chat=self.vk_event.chat).aggregate(Min('wins'))['wins__min']
 
         p_user = PetrovichUser()
         p_user.user = self.vk_event.sender
         p_user.chat = self.vk_event.chat
+        p_user.active = True
         if min_wins:
             p_user.wins = min_wins
         p_user.save()
