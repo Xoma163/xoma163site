@@ -29,18 +29,18 @@ def parse_msg(msg):
     if len(command_arg) > 1:
         command_arg[1] = command_arg[1].replace(',', ' ')
 
-        find_dash = command_arg[1].find('-')
+        find_dash = command_arg[1].find(' -')
         if find_dash != -1:
             msg_dict['keys'] = []
         while find_dash != -1:
-            next_space = command_arg[1].find(' ', find_dash)
+            next_space = command_arg[1].find(' ', find_dash + 2)
             if next_space == -1:
                 next_space = len(command_arg[1])
 
-            for letter in command_arg[1][find_dash + 1:next_space]:
+            for letter in command_arg[1][find_dash + 2:next_space]:
                 msg_dict['keys'].append(letter)
             command_arg[1] = command_arg[1][:find_dash] + command_arg[1][next_space:]
-            find_dash = command_arg[1].find('-')
+            find_dash = command_arg[1].find(' -')
         msg_dict['args'] = command_arg[1].split(' ')
         msg_dict['original_args'] = command_arg[1].strip()
 
