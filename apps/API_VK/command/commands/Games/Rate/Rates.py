@@ -29,7 +29,12 @@ class Rates(CommonCommand):
         winner = gamers[min_delta_index].user
         gamer = Gamer.objects.get(user=winner)
         gamer.points = int(gamer.points) + 1
-        gamer.save()
 
-        gamers.delete()
         self.vk_bot.send_message(self.vk_event.chat_id, "Выпавшее число - {}\nПобедитель - {}".format(rnd, gamer))
+
+        if min_delta == 0:
+            gamer.points = int(gamer.points) + 2
+            self.vk_bot.send_message(self.vk_event.chat_id, "Бонус +2 очка за точное попадание")
+
+        gamer.save()
+        gamers.delete()

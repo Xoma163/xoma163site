@@ -14,11 +14,11 @@ def get_from_db(field_name):
     return word
 
 
-def add_phrase_before(smth, word, field_name):
+def add_phrase_before(recipient, word, field_name):
     if field_name[1] == '1':
-        return "{}, ты {}".format(smth, word)
+        return "{}, ты {}".format(recipient.capitalize(), word)
     elif field_name[1] == 'm':
-        return "{}, вы {}".format(smth, word)
+        return "{}, вы {}".format(recipient.capitalize(), word)
     else:
         return "EXCEPTION LOLOLOL"
 
@@ -50,7 +50,17 @@ class Scold(CommonCommand):
                 self.vk_bot.send_message(self.vk_event.chat_id, msg)
                 return
         else:
-            translator_key = 'м1'
+            if self.vk_event.original_args:
+                try:
+                    user = self.vk_bot.get_user_by_name([self.vk_event.original_args])
+                    if user.gender == '1':
+                        translator_key = 'ж1'
+                    else:
+                        translator_key = 'м1'
+                except Exception as e:
+                    translator_key = 'м1'
+            else:
+                translator_key = 'м1'
 
         if self.vk_event.original_args:
             recipient = self.vk_event.original_args.lower()
