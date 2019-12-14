@@ -31,9 +31,9 @@ def get_weather(city="самара"):
 
     URL = "https://api.weather.yandex.ru/v1/informers?lat={}&lon={}&lang=ru_RU".format(lat, lon)
     HEADERS = {'X-Yandex-API-Key': TOKEN}
-    result = requests.get(URL, headers=HEADERS).json()
-    if 'status' in result:
-        if result['status'] == 403:
+    response = requests.get(URL, headers=HEADERS).json()
+    if 'status' in response:
+        if response['status'] == 403:
             return "На сегодня я исчерпал все запросы к Yandex Weather :("
     WEATHER_TRANSLATE = {
         'clear': 'Ясно ☀',
@@ -63,30 +63,30 @@ def get_weather(city="самара"):
 
     weather = {
         'now': {
-            'temp': result['fact']['temp'],
-            'temp_feels_like': result['fact']['feels_like'],
-            'condition': WEATHER_TRANSLATE[result['fact']['condition']],
-            'wind_speed': result['fact']['wind_speed'],
-            'wind_gust': result['fact']['wind_gust'],
-            'pressure': result['fact']['pressure_mm'],
-            'humidity': result['fact']['humidity'],
+            'temp': response['fact']['temp'],
+            'temp_feels_like': response['fact']['feels_like'],
+            'condition': WEATHER_TRANSLATE[response['fact']['condition']],
+            'wind_speed': response['fact']['wind_speed'],
+            'wind_gust': response['fact']['wind_gust'],
+            'pressure': response['fact']['pressure_mm'],
+            'humidity': response['fact']['humidity'],
         },
         'forecast': {}}
 
-    for i in range(len(result['forecast']['parts'])):
+    for i in range(len(response['forecast']['parts'])):
         weather['forecast'][i] = {
-            'part_name': DAY_TRANSLATE[result['forecast']['parts'][i]['part_name']],
-            'temp_min': result['forecast']['parts'][i]['temp_min'],
-            'temp_max': result['forecast']['parts'][i]['temp_max'],
-            'temp_feels_like': result['forecast']['parts'][i]['feels_like'],
-            'condition': WEATHER_TRANSLATE[result['forecast']['parts'][i]['condition']],
-            'wind_speed': result['forecast']['parts'][i]['wind_speed'],
-            'wind_gust': result['forecast']['parts'][i]['wind_gust'],
-            'pressure': result['forecast']['parts'][i]['pressure_mm'],
-            'humidity': result['forecast']['parts'][i]['humidity'],
-            'prec_mm': result['forecast']['parts'][i]['prec_mm'],
-            'prec_period': int(int(result['forecast']['parts'][i]['prec_period']) / 60),
-            'prec_prob': result['forecast']['parts'][i]['prec_prob'],
+            'part_name': DAY_TRANSLATE[response['forecast']['parts'][i]['part_name']],
+            'temp_min': response['forecast']['parts'][i]['temp_min'],
+            'temp_max': response['forecast']['parts'][i]['temp_max'],
+            'temp_feels_like': response['forecast']['parts'][i]['feels_like'],
+            'condition': WEATHER_TRANSLATE[response['forecast']['parts'][i]['condition']],
+            'wind_speed': response['forecast']['parts'][i]['wind_speed'],
+            'wind_gust': response['forecast']['parts'][i]['wind_gust'],
+            'pressure': response['forecast']['parts'][i]['pressure_mm'],
+            'humidity': response['forecast']['parts'][i]['humidity'],
+            'prec_mm': response['forecast']['parts'][i]['prec_mm'],
+            'prec_period': int(int(response['forecast']['parts'][i]['prec_period']) / 60),
+            'prec_prob': response['forecast']['parts'][i]['prec_prob'],
         }
 
     now = 'Погода в {} сейчас:\n' \
