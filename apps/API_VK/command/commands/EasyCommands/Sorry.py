@@ -1,4 +1,5 @@
-from apps.API_VK.command.CommonCommand import CommonCommand, get_random_item_from_list
+from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import get_random_item_from_list
 from apps.API_VK.static_texts import get_sorry_phrases
 
 

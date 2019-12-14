@@ -1,6 +1,7 @@
 import time
 
-from apps.API_VK.command.CommonCommand import CommonCommand, get_random_item_from_list, random_probability
+from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import get_random_item_from_list, random_probability
 
 
 class Apologize(CommonCommand):

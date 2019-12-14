@@ -1,4 +1,4 @@
-from apps.API_VK.command.CommonCommand import CommonCommand, check_int_arg_range
+from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.games.models import Gamer
 # from apps.games.games.Rate.Rate import start as start_game
 from apps.games.models import Rate as RateModel
@@ -7,12 +7,12 @@ from apps.games.models import Rate as RateModel
 class Rate(CommonCommand):
     def __init__(self):
         names = ["ставка"]
-        super().__init__(names, check_args=1, check_int_args=[0], for_conversations=True)
+        super().__init__(names, need_args=1, check_int_args=[0], for_conversations=True)
 
     def start(self):
         rate = self.vk_event.args[0]
 
-        if not check_int_arg_range(self.vk_bot, self.vk_event, rate, 0, 1):
+        if not self.check_int_arg_range(rate, 0, 1):
             return
 
         existed_rate = RateModel.objects.filter(chat=self.vk_event.chat, user=self.vk_event.sender)

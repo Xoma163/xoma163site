@@ -1,6 +1,7 @@
 import random
 
-from apps.API_VK.command.CommonCommand import CommonCommand, random_probability
+from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import random_probability
 from apps.API_VK.static_texts import get_bad_words, get_bad_answers
 
 

@@ -1,5 +1,4 @@
-from apps.API_VK.command.CommonCommand import CommonCommand, check_sender_admin, check_sender_minecraft, \
-    check_command_time
+from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command._DoTheLinuxComand import do_the_linux_command
 
 
@@ -13,17 +12,17 @@ class Restart(CommonCommand):
     def start(self):
         if self.vk_event.args:
             if self.vk_event.args[0] in ["майн", "майнкрафт"]:
-                if not check_sender_minecraft(self.vk_bot, self.vk_event):
+                if not self.check_sender_minecraft():
                     return
                 if len(self.vk_event.args) >= 2:
                     if self.vk_event.args[1] == '1.12':
-                        if not check_command_time(self.vk_bot, self.vk_event, 'minecraft 1.12', 90):
+                        if not self.check_command_time('minecraft 1.12', 90):
                             return
 
                         do_the_linux_command('sudo systemctl start minecraft')
                         self.vk_bot.send_message(self.vk_event.chat_id, "Рестартим майн 1.12!")
                     elif self.vk_event.args[1] == '1.15':
-                        if not check_command_time(self.vk_bot, self.vk_event, 'minecraft 1.15', 30):
+                        if not self.check_command_time('minecraft 1.15', 30):
                             return
 
                         do_the_linux_command('sudo systemctl start minecraft_1_15')
@@ -36,7 +35,7 @@ class Restart(CommonCommand):
             else:
                 self.vk_bot.send_message(self.vk_event.chat_id, "Не найден такой модуль")
         else:
-            if not check_sender_admin(self.vk_bot, self.vk_event):
+            if not self.check_sender_admin():
                 return
 
             self.vk_bot.send_message(self.vk_event.chat_id, "Внимание! Веб-сервер и Петрович будут перезагружены. "

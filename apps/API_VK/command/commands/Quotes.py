@@ -1,6 +1,6 @@
 from django.core.paginator import Paginator
 
-from apps.API_VK.command.CommonCommand import CommonCommand, check_int_arg, check_int_arg_range
+from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.models import QuoteBook
 
 
@@ -19,10 +19,10 @@ class Quotes(CommonCommand):
                 text_filter = self.vk_event.args[0]
 
                 page = self.vk_event.args[1]
-                page, result = check_int_arg(self.vk_bot, self.vk_event, page)
+                page, result = self.check_int_arg(page)
                 if not result:
                     return
-                if not check_int_arg_range(self.vk_bot, self.vk_event, page, 0, float('inf')):
+                if not self.check_int_arg_range(page, 0, float('inf')):
                     return
 
             elif len(self.vk_event.args) == 1:

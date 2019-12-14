@@ -1,4 +1,4 @@
-from apps.API_VK.command.CommonCommand import CommonCommand, check_int_arg_range
+from apps.API_VK.command.CommonCommand import CommonCommand
 from xoma163site.wsgi import cameraHandler
 
 
@@ -22,11 +22,11 @@ class Birds(CommonCommand):
 
         if self.vk_event.args:
             frames = self.vk_event.args[0]
-            if not check_int_arg_range(self.vk_bot, self.vk_event, frames, 0, cameraHandler.MAX_FRAMES):
+            if not self.check_int_arg_range(frames, 0, cameraHandler.MAX_FRAMES):
                 return
             if len(self.vk_event.args) > 1:
                 quality = self.vk_event.args[1]
-                if not check_int_arg_range(self.vk_bot, self.vk_event, quality, 0, 1):
+                if not self.check_int_arg_range(quality, 0, 1):
                     return
 
         photo = self.vk_bot.upload.photo_messages(path)[0]

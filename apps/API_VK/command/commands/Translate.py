@@ -10,7 +10,7 @@ class Translate(CommonCommand):
     def __init__(self):
         names = ["перевод"]
         help_text = "̲П̲е̲р̲е̲в̲о̲д - англо-русский переводчик"
-        super().__init__(names, help_text, check_args=1)
+        super().__init__(names, help_text, need_args=1)
 
     def start(self):
         text = self.vk_event.original_args

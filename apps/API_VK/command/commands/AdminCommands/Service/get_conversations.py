@@ -5,7 +5,7 @@ class get_conversations(CommonCommand):
     def __init__(self):
         names = ["get_conversations"]
         help_text = "get_conversations - получить данные о всех беседах"
-        super().__init__(names, help_text, for_admin=True, check_args=1)
+        super().__init__(names, help_text, for_admin=True, need_args=1)
 
     def start(self):
         res = self.vk_bot.vk.messages.getConversationsById(
