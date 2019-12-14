@@ -23,5 +23,3 @@ class Help(CommonCommand):
             help_text += ADMIN_TEXTS
 
         self.vk_bot.send_message(self.vk_event.chat_id, help_text)
-
-        # print(get_commands())

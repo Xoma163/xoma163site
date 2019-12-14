@@ -1,4 +1,4 @@
-from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonCommand import CommonCommand, check_int_arg_range
 from xoma163site.wsgi import cameraHandler
 
 
@@ -6,7 +6,7 @@ class Birds(CommonCommand):
     def __init__(self):
         names = ["с", "c", "синички"]
         help_text = "̲С̲и̲н̲и̲ч̲к̲и [N[,M]](N - количество кадров в гифке, 20 дефолт, M - качество(0 или 1), 0 дефолт) - ссылка, снапшот и гифка"
-        super().__init__(names, help_text)
+        super().__init__(names, help_text, check_int_args=[0, 1])
 
     def start(self):
         attachments = []
@@ -20,29 +20,14 @@ class Birds(CommonCommand):
         frames = 20
         quality = 0
 
-        try:
-            if self.vk_event.args:
-                try:
-                    frames = int(self.vk_event.args[0])
-                    if frames > cameraHandler.MAX_FRAMES:
-                        self.vk_bot.send_message(self.vk_event.chat_id,
-                                                 "Ты совсем поехавший? До {} кадров давай".format(
-                                                     cameraHandler.MAX_FRAMES))
-                        return
-                except:
-                    self.vk_bot.send_message(self.vk_event.chat_id, "Введите количество кадров в gif")
+        if self.vk_event.args:
+            frames = self.vk_event.args[0]
+            if not check_int_arg_range(self.vk_bot, self.vk_event, frames, 0, cameraHandler.MAX_FRAMES):
+                return
+            if len(self.vk_event.args) > 1:
+                quality = self.vk_event.args[1]
+                if not check_int_arg_range(self.vk_bot, self.vk_event, quality, 0, 1):
                     return
-                if len(self.vk_event.args) > 1:
-                    try:
-                        quality = int(self.vk_event.args[1])
-                        if not 0 <= quality <= 1:
-                            self.vk_bot.send_message(self.vk_event.chat_id, "Качество может быть в диапазоне [0,1]")
-                            return
-                    except:
-                        self.vk_bot.send_message(self.vk_event.chat_id, "Качество может быть в диапазоне [0,1]")
-                        return
-        except:
-            pass
 
         photo = self.vk_bot.upload.photo_messages(path)[0]
         cameraHandler.clear_file(path)

@@ -26,13 +26,6 @@ def check_sender_student(vk_bot, vk_event):
     return False
 
 
-# def check_sender_banned(vk_bot, vk_event):
-#     if not vk_event.sender.is_banned:
-#         return True
-#     # vk_bot.send_message(vk_event.chat_id, "У вас бан")
-#     return False
-
-
 def check_sender_minecraft(vk_bot, vk_event):
     if vk_event.sender.is_minecraft:
         return True
@@ -40,13 +33,50 @@ def check_sender_minecraft(vk_bot, vk_event):
     return False
 
 
-# ToDo: проверка на количество введёных аргументов
-def check_args(vk_bot, vk_event, size=None):
+def check_args(vk_bot, vk_event, size=1):
     if vk_event.args:
-        return True
+        if len(vk_event.args) >= size:
+            return True
+        else:
+            vk_bot.send_message(vk_event.chat_id, "Передано недостаточно аргументов")
+            return False
 
     vk_bot.send_message(vk_event.chat_id, "Для работы команды требуются аргументы")
     return False
+
+
+def check_int_arg_range(vk_bot, vk_event, arg, val1, val2, banned_list=None):
+    if val1 <= arg <= val2:
+        if banned_list:
+            if arg not in banned_list:
+                return True
+            else:
+                vk_bot.send_message(vk_event.chat_id, "Аргумент не может принимать это значение".format(val1, val2))
+                return False
+        else:
+            return True
+    else:
+        vk_bot.send_message(vk_event.chat_id, "Значение может быть в диапазоне [{};{}]".format(val1, val2))
+        return False
+
+
+def check_int_arg(vk_bot, vk_event, arg):
+    try:
+        return int(arg), True
+    except ValueError:
+        vk_bot.send_message(vk_event.chat_id, "Аргумент должен быть целочисленным")
+        return arg, False
+
+
+def parse_int_args(vk_bot, vk_event, checked_args):
+    for checked_arg_index in checked_args:
+        try:
+            if len(vk_event.args) - 1 >= checked_arg_index:
+                vk_event.args[checked_arg_index] = int(vk_event.args[checked_arg_index])
+        except ValueError:
+            vk_bot.send_message(vk_event.chat_id, "Аргумент должен быть целочисленным")
+            return False
+    return vk_event.args
 
 
 def check_lk(vk_bot, vk_event):
@@ -97,19 +127,48 @@ def check_command_time(vk_bot, vk_event, name, seconds):
     return True
 
 
+# Вероятность события в процентах
+def random_probability(probability):
+    rand_int = random.randint(1, 100)
+    if rand_int <= probability:
+        return True
+    else:
+        return False
+
+
 class CommonCommand:
 
-    def __init__(self, names, help_text=None, for_admin=False, for_moderator=False, for_student=False, for_lk=False,
-                 for_conversations=False, check_fwd=False, check_args=False):
+    def __init__(self, names,
+                 help_text=None,
+                 for_admin=False,
+                 for_moderator=False,
+                 for_student=False,
+                 for_lk=False,
+                 for_conversations=False,
+                 check_fwd=False,
+                 check_args=False,
+                 check_int_args=None
+                 ):
+        # Имена, на которые откликается команда
         self.names = names
+        # Текст в помощи
         self.help_text = help_text
+        # Команда для админов
         self.for_admin = for_admin
+        # Команда для модераторов
         self.for_moderator = for_moderator
+        # Команда для студентов
         self.for_student = for_student
+        # Команда для лс
         self.for_lk = for_lk
+        # Команда для конф
         self.for_conversations = for_conversations
+        # Требуются пересылаемые сообщения
         self.check_fwd = check_fwd
+        # Требуются аргументы(число)
         self.check_args = check_args
+        # Требуются интовые аргументы (позиции)
+        self.check_int_args = check_int_args
 
         self.vk_bot = None
         self.vk_event = None
@@ -126,9 +185,6 @@ class CommonCommand:
 
         self.checks()
         self.start()
-
-    def start(self):
-        return True
 
     def checks(self):
         if self.for_admin:
@@ -150,5 +206,14 @@ class CommonCommand:
             if not check_fwd(self.vk_bot, self.vk_event):
                 raise RuntimeError("Команда работает только в беседах")
         if self.check_args:
-            if not check_args(self.vk_bot, self.vk_event):
+            if not check_args(self.vk_bot, self.vk_event, self.check_args):
                 raise RuntimeError("Для работы команды требуются аргументы")
+        if self.check_int_args:
+            res = parse_int_args(self.vk_bot, self.vk_event, self.check_int_args)
+            if not res:
+                raise RuntimeError("Аргумент должен быть целочисленным")
+            else:
+                self.vk_event.args = res
+
+    def start(self):
+        return True

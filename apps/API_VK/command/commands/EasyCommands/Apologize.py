@@ -1,7 +1,6 @@
-import random
 import time
 
-from apps.API_VK.command.CommonCommand import CommonCommand, get_random_item_from_list
+from apps.API_VK.command.CommonCommand import CommonCommand, get_random_item_from_list, random_probability
 
 
 class Apologize(CommonCommand):
@@ -16,7 +15,6 @@ class Apologize(CommonCommand):
 
         self.vk_bot.send_message(self.vk_event.chat_id, phrase)
         if phrase == "Извини":
-            rand_int = random.randint(0, 100)
-            if rand_int <= 25:
+            if random_probability(25):
                 time.sleep(3)
                 self.vk_bot.send_message(self.vk_event.chat_id, "сь")

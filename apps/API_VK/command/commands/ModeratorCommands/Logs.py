@@ -6,17 +6,13 @@ class Logs(CommonCommand):
     def __init__(self):
         names = ["лог", "логи"]
         help_text = "̲Л̲о̲г - логи веб-сервера"
-        super().__init__(names, help_text, for_moderator=True)
+        super().__init__(names, help_text, for_moderator=True, check_int_args=[0])
 
     def start(self):
         count = 50
 
         if self.vk_event.args:
-            try:
-                count = int(self.vk_event.args[0])
-            except Exception as e:
-                self.vk_bot.send_message(self.vk_event.chat_id, "Аргумент должен быть целочисленным")
-                return
+            count = self.vk_event.args[0]
 
         command = "systemctl status xoma163site -n{}".format(count)
         try:

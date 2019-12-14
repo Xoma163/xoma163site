@@ -8,7 +8,7 @@ class Where(CommonCommand):
     def __init__(self):
         names = ["где"]
         help_text = "̲Г̲д̲е N(N - имя человека) - информация о чекточках"
-        super().__init__(names, help_text, check_args=True)
+        super().__init__(names, help_text, check_args=1)
 
     def start(self):
 

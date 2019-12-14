@@ -9,7 +9,7 @@ class Find(CommonCommand):
         names = ["поиск", "найди", "мем"]
         help_text = "̲П̲̲̲о̲и̲с̲к [N] (N - поисковый запрос) - ищет информацию по картинкам"
 
-        super().__init__(names, check_args=True)
+        super().__init__(names, help_text, check_args=1)
 
     def start(self):
         import requests

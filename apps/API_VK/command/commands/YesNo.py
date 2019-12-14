@@ -1,6 +1,6 @@
 import random
 
-from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonCommand import CommonCommand, random_probability
 from apps.API_VK.static_texts import get_bad_words, get_bad_answers
 
 
@@ -14,13 +14,6 @@ class YesNo(CommonCommand):
         if vk_event.full_message[-1] != '?':
             return False
         return True
-
-    def check_and_start(self, vk_bot, vk_event):
-        self.vk_bot = vk_bot
-        self.vk_event = vk_event
-
-        self.checks()
-        self.start()
 
     def start(self):
         bad_words = get_bad_words()
@@ -65,12 +58,12 @@ class YesNo(CommonCommand):
                 self.vk_bot.send_message(self.vk_event.chat_id, msg)
                 return
 
-        rand_int = random.randint(1, 100)
-        if rand_int <= 48:
-            msg = "Да"
-        elif rand_int <= 96:
-            msg = "Нет"
-        else:
+        if random_probability(4):
             msg = "Ну тут даже я хз"
+        elif random_probability(50):
+            msg = "Да"
+        else:
+            msg = "Нет"
+
         self.vk_bot.send_message(self.vk_event.chat_id, msg)
         return
