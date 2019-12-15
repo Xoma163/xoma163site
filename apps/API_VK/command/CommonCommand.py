@@ -73,14 +73,11 @@ class CommonCommand:
             if not self.check_fwd():
                 raise RuntimeError("Команда работает только в беседах")
         if self.need_args:
-            if not self.check_args(self.need_args):
+            if not self.check_args():
                 raise RuntimeError("Для работы команды требуются аргументы")
         if self.check_int_args:
-            res = self.parse_int_args(self.check_int_args)
-            if not res:
+            if not self.parse_int_args():
                 raise RuntimeError("Аргумент должен быть целочисленным")
-            else:
-                self.vk_event.args = res
 
     def start(self):
         return True
@@ -112,9 +109,9 @@ class CommonCommand:
         self.vk_bot.send_message(self.vk_event.chat_id, "Команда доступна только майнкрафтерам")
         return False
 
-    def check_args(self, size=1):
+    def check_args(self):
         if self.vk_event.args:
-            if len(self.vk_event.args) >= size:
+            if len(self.vk_event.args) >= self.need_args:
                 return True
             else:
                 self.vk_bot.send_message(self.vk_event.chat_id, "Передано недостаточно аргументов")
@@ -146,15 +143,19 @@ class CommonCommand:
             self.vk_bot.send_message(self.vk_event.chat_id, "Аргумент должен быть целочисленным")
             return arg, False
 
-    def parse_int_args(self, checked_args):
-        for checked_arg_index in checked_args:
+    def parse_int_args(self):
+        if not self.vk_event.args:
+            return True
+
+        for checked_arg_index in self.check_int_args:
             try:
                 if len(self.vk_event.args) - 1 >= checked_arg_index:
                     self.vk_event.args[checked_arg_index] = int(self.vk_event.args[checked_arg_index])
             except ValueError:
                 self.vk_bot.send_message(self.vk_event.chat_id, "Аргумент должен быть целочисленным")
                 return False
-        return self.vk_event.args
+
+        return True
 
     def check_lk(self):
         if self.vk_event.is_lk:

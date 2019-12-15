@@ -10,9 +10,9 @@ class Rate(CommonCommand):
         super().__init__(names, need_args=1, check_int_args=[0], for_conversations=True)
 
     def start(self):
-        rate = self.vk_event.args[0]
+        arg = self.vk_event.args[0]
 
-        if not self.check_int_arg_range(rate, 0, 1):
+        if not self.check_int_arg_range(arg, 0, 100):
             return
 
         existed_rate = RateModel.objects.filter(chat=self.vk_event.chat, user=self.vk_event.sender)
@@ -29,7 +29,7 @@ class Rate(CommonCommand):
         rate = RateModel()
         rate.user = self.vk_event.sender
         rate.chat = self.vk_event.chat
-        rate.rate = rate
+        rate.rate = arg
         rate.save()
         self.vk_bot.send_message(self.vk_event.chat_id, "Ставка принята")
         #
