@@ -46,6 +46,7 @@ from apps.API_VK.command.commands.StudentCommands.GoogleDrive import GoogleDrive
 from apps.API_VK.command.commands.StudentCommands.Mail import Mail
 from apps.API_VK.command.commands.StudentCommands.TimeTable import TimeTable
 from apps.API_VK.command.commands.StudentCommands.Week import Week
+from apps.API_VK.command.commands.Translate import Translate
 from apps.API_VK.command.commands.UnRegister import UnRegister
 from apps.API_VK.command.commands.Uyu import Uyu
 from apps.API_VK.command.commands.Weather import Weather
@@ -58,7 +59,7 @@ commands = [YesNo(), Thanks(), Stream(), Where(), Birds(), Register(), UnRegiste
             Nya(), Shit(), Git(), Donate(), Issue(), Issues(), Joke(), TimeTable(), GoogleDrive(), Week(), Mail(),
             Ban(), DeBan(), Command(), Start(), Stop(), Restart(), Reboot(), Control(), get_user_by_id(),
             update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(), Find(), Rate(),
-            Rates()
+            Rates(), Translate()
             ]
 
 
