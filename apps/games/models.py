@@ -21,6 +21,8 @@ class Rate(models.Model):
     user = models.ForeignKey(VkUser, verbose_name="Пользователь", on_delete=models.SET_NULL, null=True)
     chat = models.ForeignKey(VkChat, verbose_name="Чат", on_delete=models.SET_NULL, null=True)
     rate = models.IntegerField(verbose_name="Ставка")
+    date = models.DateTimeField(verbose_name="Дата", auto_now_add=True, blank=True)
+
 
     class Meta:
         verbose_name = "Ставка"

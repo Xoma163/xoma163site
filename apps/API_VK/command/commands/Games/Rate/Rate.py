@@ -12,7 +12,7 @@ class Rate(CommonCommand):
     def start(self):
         arg = self.vk_event.args[0]
 
-        if not self.check_int_arg_range(arg, 0, 100):
+        if not self.check_int_arg_range(arg, 1, 100):
             return
 
         existed_rate = RateModel.objects.filter(chat=self.vk_event.chat, user=self.vk_event.sender)
