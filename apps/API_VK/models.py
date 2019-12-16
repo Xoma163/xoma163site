@@ -151,7 +151,7 @@ class Words(models.Model):
     class Meta:
         verbose_name = "Слово"
         verbose_name_plural = "Слова"
-        ordering = ['m1']
+        ordering = ['type', 'id']
 
     def __str__(self):
         return str(self.m1)
