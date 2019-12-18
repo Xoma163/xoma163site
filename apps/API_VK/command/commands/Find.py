@@ -15,7 +15,7 @@ class Find(CommonCommand):
         import requests
 
         query = self.vk_event.original_args
-        count = 3
+        count = 5
 
         r = requests.get("https://api.qwant.com/api/search/images",
                          params={
@@ -53,7 +53,8 @@ class Find(CommonCommand):
             except Exception as e:
                 pass
             finally:
-                os.remove(path)
+                if os.path.exists(path):
+                    os.remove(path)
             if len(attachments) >= count:
                 break
 
