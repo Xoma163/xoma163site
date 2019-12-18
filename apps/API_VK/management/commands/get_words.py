@@ -102,7 +102,9 @@ class Command(BaseCommand):
               "created - {}\n"
               "updated - {}\n"
               "deleted - {}\n"
-              "skipped - {}".format(statistics['created'],
-                                    statistics['updated'],
-                                    statistics['deleted'],
-                                    statistics['skipped']))
+              "skipped - {}\n"
+              "total - {}".format(statistics['created'],
+                                  statistics['updated'],
+                                  statistics['deleted'],
+                                  statistics['skipped'],
+                                  sum(list(statistics.values()))))
