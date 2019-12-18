@@ -32,6 +32,7 @@ from apps.API_VK.command.commands.ModeratorCommands.Start import Start
 from apps.API_VK.command.commands.ModeratorCommands.Stop import Stop
 from apps.API_VK.command.commands.ModeratorCommands.Stop import Stop
 from apps.API_VK.command.commands.ModeratorCommands.Temperature import Temperature
+from apps.API_VK.command.commands.ModeratorCommands.Uptime import Uptime
 from apps.API_VK.command.commands.ModeratorCommands.Words import Words
 from apps.API_VK.command.commands.Petrovich import Petrovich
 from apps.API_VK.command.commands.Praise import Praise
@@ -59,7 +60,7 @@ commands = [YesNo(), Thanks(), Stream(), Where(), Birds(), Register(), UnRegiste
             Nya(), Shit(), Git(), Donate(), Issue(), Issues(), Joke(), TimeTable(), GoogleDrive(), Week(), Mail(),
             Ban(), DeBan(), Command(), Start(), Stop(), Restart(), Reboot(), Control(), get_user_by_id(),
             update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(), Find(), Rate(),
-            Rates(), Translate()
+            Rates(), Translate(), Uptime()
             ]
 
 
