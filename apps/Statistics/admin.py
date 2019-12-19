@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.Statistics.models import Statistic, Issue, Service
+from apps.Statistics.models import Statistic, Issue, Service, Counter
 
 
 @admin.register(Statistic)
@@ -15,3 +15,4 @@ class FeatureAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Service)
+admin.site.register(Counter)

@@ -1,0 +1,23 @@
+from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.Statistics.models import Counter as CounterModel
+
+
+class Counter(CommonCommand):
+    def __init__(self):
+        names = ["счётчик", "счетчик", "счёт", "счет"]
+        help_text = "̲С̲ч̲ё̲т̲ч̲и̲к - счётчик события"
+        super().__init__(names, help_text, need_args=1)
+
+    def start(self):
+        name = self.vk_event.original_args.capitalize()
+        if len(name) >= 50:
+            return "Длина названия счётчика не может превышать 50"
+
+        counter, created = CounterModel.objects.update_or_create(name=name,
+                                                                 defaults={
+                                                                     'name': name,
+                                                                     'chat': self.vk_event.chat
+                                                                 })
+        counter.count += 1
+        counter.save()
+        return "++"
