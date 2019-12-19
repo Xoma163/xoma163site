@@ -10,4 +10,4 @@ class get_conversations(CommonCommand):
     def start(self):
         res = self.vk_bot.vk.messages.getConversationsById(
             peer_ids=[2000000001, 2000000003], extended=1, group_id=186416119)
-        self.vk_bot.send_message(self.vk_event.chat_id, res)
+        return res

@@ -20,13 +20,11 @@ class Rate(CommonCommand):
 
         existed_rate = RateModel.objects.filter(chat=self.vk_event.chat, user=self.vk_event.sender)
         if len(existed_rate) > 0:
-            self.vk_bot.send_message(self.vk_event.chat_id, "Ставка уже поставлена")
-            return
+            return "Ставка уже поставлена"
 
         existed_another_rate = RateModel.objects.filter(chat=self.vk_event.chat, rate=arg)
         if len(existed_another_rate) > 0:
-            self.vk_bot.send_message(self.vk_event.chat_id, "Эта ставка уже поставлена другим игроком")
-            return
+            return "Эта ставка уже поставлена другим игроком"
 
         gamer = Gamer.objects.filter(user=self.vk_event.sender)
         if len(gamer) == 0:
@@ -40,7 +38,7 @@ class Rate(CommonCommand):
         rate.rate = arg
         rate.save()
 
-        self.vk_bot.send_message(self.vk_event.chat_id, "Ставка принята - {}".format(arg))
+        return "Ставка принята - {}".format(arg)
         #
         # start_game(self.vk_event.sender, arg)
         # pass

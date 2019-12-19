@@ -27,4 +27,4 @@ class Quote(CommonCommand):
             quote_text += "{}:\n{}\n\n".format(username, text)
         quote.text = quote_text
         quote.save()
-        self.vk_bot.send_message(self.vk_event.chat_id, "Цитата сохранена")
+        return "Цитата сохранена"

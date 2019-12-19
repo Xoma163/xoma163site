@@ -15,6 +15,9 @@ from xoma163site.wsgi import cameraHandler
 
 
 def parse_msg_to_me(msg, mentions):
+    # Обрезаем палку
+    if msg[0] == '/':
+        msg = msg[1:]
     for mention in mentions:
         msg = msg.replace(mention, '')
     msg = re.sub(" +", " ", msg)
@@ -22,7 +25,7 @@ def parse_msg_to_me(msg, mentions):
 
 
 def parse_msg(msg):
-    msg_dict = {'command': None, 'args': None, 'original_args': None, 'keys': None}
+    msg_dict = {'msg': msg, 'command': None, 'args': None, 'original_args': None, 'keys': None}
 
     command_arg = msg.split(' ', 1)
     msg_dict['command'] = command_arg[0].lower()
@@ -89,8 +92,8 @@ class VkBotClass(threading.Thread):
         # self.send_message(vk_event.chat_id, debug_message)
 
         if vk_event.sender.is_banned:
-            # self.send_message(vk_event.chat_id, "У вас бан")
             return
+
         # Проверяем не остановлен ли бот, если так, то проверяем вводимая команда = старт?
         if not self.check_bot_working():
             if not vk_event.sender.is_admin:
@@ -107,13 +110,14 @@ class VkBotClass(threading.Thread):
         for command in commands:
             try:
                 if command.accept(vk_event):
-                    command.__class__().check_and_start(self, vk_event)
+                    result = command.__class__().check_and_start(self, vk_event)
+                    if result:
+                        self.send_message(vk_event.peer_id, result)
                     append_command_to_statistics(vk_event.command)
                     return
             except RuntimeError as e:
-                # self.send_message(vk_event.chat_id, "Какой-то капец. Зовите лентяя. {}".format(str(e)))
                 return
-        self.send_message(vk_event.chat_id, "Я не понял команды \"%s\"" % vk_event.command)
+        self.send_message(vk_event.peer_id, "Я не понял команды \"%s\"" % vk_event.command)
         return
 
     def __init__(self):
@@ -132,17 +136,54 @@ class VkBotClass(threading.Thread):
             try:
                 # Если пришло новое сообщение
                 if event.type == VkBotEventType.MESSAGE_NEW:
+                    '''
+                    from_chat - сообщение пришло из чата
+                    from_user - сообщение пришло из диалога с пользователем
+                    chat_id - присутствует только в чатах
+                    text - текст сообщения
+                    from_id - кто отправил сообщение (если значение отрицательное, то другой бот)
+                    peer_id - откуда отправил сообщение (если там значение совпадает с from_id, то это from_user, 
+                        если нет и значение начинается на 200000000*, то это конфа
+                    
+                    '''
                     vk_event = {'from_chat': event.from_chat,
-                                'from_group': event.from_group,
                                 'from_user': event.from_user,
                                 'chat_id': event.chat_id,
                                 'message': {
                                     'text': event.object.text,
-                                    'full_text': event.object.text,
+                                    'full_message': event.object.text,
                                     'user_id': event.object.from_id,
                                     'peer_id': event.object.peer_id,
+                                },
+                                'parsed': {
                                 }}
 
+                    # Сообщение либо мне в лс, либо упоминание меня
+                    if not (message_for_me(vk_event['message']['text'], self.mentions) or vk_event['from_user']):
+                        continue
+
+                    vk_event['message']['text'] = parse_msg_to_me(vk_event['message']['text'], self.mentions)
+                    vk_event['parsed'] = parse_msg(vk_event['message']['text'])
+
+                    if vk_event['message']['user_id'] > 0:
+                        vk_event['sender'] = self.get_user_by_id(vk_event['message']['user_id'])
+                    else:
+                        self.send_message(vk_event['message']['peer_id'], "Боты не могут общаться с Петровичем")
+                        continue
+
+                    # Если конфа
+                    if vk_event['chat_id']:
+                        vk_event['chat'] = self.get_chat_by_id(int(vk_event['chat_id']))
+                        if vk_event['sender'] and vk_event['chat']:
+                            self.add_group_to_user(vk_event['sender'], vk_event['chat'])
+                        else:
+                            self.send_message(vk_event['message']['peer_id'],
+                                              'Непредвиденная ошибка. Сообщите разработчику')
+
+                    else:
+                        vk_event['chat'] = None
+
+                    # Обработка вложенных сообщений в vk_event['fwd']. reply и fwd для вк это разные вещи.
                     if 'reply_message' in event.object:
                         vk_event['fwd'] = [event.object['reply_message']]
                     elif 'fwd_messages' in event.object:
@@ -151,34 +192,9 @@ class VkBotClass(threading.Thread):
                         else:
                             vk_event['fwd'] = None
 
-                    # Сообщение либо мне в лс, либо упоминание меня
-                    if message_for_me(vk_event['message']['text'], self.mentions) or vk_event['from_user']:
-
-                        # Обрезаем палку
-                        if vk_event['message']['text'][0] == '/':
-                            vk_event['message']['text'] = vk_event['message']['text'][1:]
-
-                        vk_event['message']['text'] = parse_msg_to_me(vk_event['message']['text'], self.mentions)
-                        vk_event['message']['text'] = parse_msg(vk_event['message']['text'])
-
-                        if vk_event['message']['user_id'] > 0:
-                            vk_event['sender'] = self.get_user_by_id(vk_event['message']['user_id'])
-                        else:
-                            self.send_message(vk_event['message']['peer_id'], "Боты не могут общаться с Петровичем")
-                            continue
-                        if vk_event['chat_id']:
-                            vk_event['chat'] = self.get_chat_by_id(int(vk_event['chat_id']))
-                            if vk_event['sender'] and vk_event['chat']:
-                                self.add_group_to_user(vk_event['sender'], vk_event['chat'])
-
-                        else:
-                            vk_event['chat'] = None
-                        vk_event_object = VkEvent(vk_event)
-                        thread = threading.Thread(target=self.menu, args=(vk_event_object,))
-                        thread.start()
-
-                    else:
-                        pass
+                    vk_event_object = VkEvent(vk_event)
+                    thread = threading.Thread(target=self.menu, args=(vk_event_object,))
+                    thread.start()
 
             except Exception as e:
                 print('ОШИБКА ВЫПОЛНЕНИЯ ЛОНГПОЛА 1:', e)
@@ -315,30 +331,24 @@ class VkBotClass(threading.Thread):
         return self.BOT_CAN_WORK
 
 
-class MyVkBotLongPoll(VkBotLongPoll):
-    def listen(self):
-        while True:
-            try:
-                for event in self.check():
-                    yield event
-            except Exception as e:
-                print('ОШИБКА ВЫПОЛНЕНИЯ ЛОНГПОЛА 2:', e)
-
-
 class VkEvent:
     def __init__(self, vk_event):
         self.user_id = vk_event['message']['user_id']
         self.peer_id = vk_event['message']['peer_id']
 
-        self.command = vk_event['message']['text']['command']
-        self.args = vk_event['message']['text']['args']
-        self.original_args = vk_event['message']['text']['original_args']
-        self.keys = vk_event['message']['text']['keys']
-        self.is_lk = vk_event['from_user']
-        self.full_message = vk_event['message']['full_text']
+        self.msg = vk_event['parsed']['msg']
+        self.command = vk_event['parsed']['command']
+        self.args = vk_event['parsed']['args']
+        self.original_args = vk_event['parsed']['original_args']
+        self.keys = vk_event['parsed']['keys']
+
+        self.from_user = vk_event['from_user']
+        # self.from_chat = vk_event['from_chat']
+
         self.fwd = vk_event['fwd']
 
-        if self.is_lk:
+        # ToDo: Remove
+        if self.from_user:
             self.chat_id = self.user_id
         else:
             self.chat_id = self.peer_id
@@ -355,9 +365,17 @@ class VkEvent:
         s.append(self.args)
         s.append(self.original_args)
         s.append(self.keys)
-        s.append(self.is_lk)
-        s.append(self.full_message)
         s.append(self.fwd)
-        s.append(self.is_lk)
+        s.append(self.from_user)
         s.append(self.sender)
         return str(s)
+
+
+class MyVkBotLongPoll(VkBotLongPoll):
+    def listen(self):
+        while True:
+            try:
+                for event in self.check():
+                    yield event
+            except Exception as e:
+                print('ОШИБКА ВЫПОЛНЕНИЯ ЛОНГПОЛА 2:', e)

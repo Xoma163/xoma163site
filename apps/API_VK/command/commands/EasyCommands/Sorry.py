@@ -10,5 +10,4 @@ class Sorry(CommonCommand):
 
     def start(self):
         phrases = get_sorry_phrases()
-        msg = get_random_item_from_list(phrases)
-        self.vk_bot.send_message(self.vk_event.chat_id, msg)
+        return get_random_item_from_list(phrases)

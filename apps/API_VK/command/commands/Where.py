@@ -15,8 +15,7 @@ class Where(CommonCommand):
         try:
             user = self.vk_bot.get_user_by_name(self.vk_event.args)
         except RuntimeError as e:
-            self.vk_bot.send_message(self.vk_event.chat_id, str(e))
-            return
+            return str(e)
 
         today = datetime.datetime.now()
         log = Log.objects.filter(success=True,
@@ -30,4 +29,4 @@ class Where(CommonCommand):
             msg = "Информации пока ещё нет"
         else:
             msg = "%s\n%s" % (log.date.strftime("%H:%M:%S"), log.msg)
-        self.vk_bot.send_message(self.vk_event.chat_id, str(msg))
+        return str(msg)

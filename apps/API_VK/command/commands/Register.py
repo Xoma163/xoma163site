@@ -18,10 +18,9 @@ class Register(CommonCommand):
             if not p_user.active:
                 p_user.active = True
                 p_user.save()
-                self.vk_bot.send_message(self.vk_event.chat_id, "Возвращаю тебя в строй")
+                return "Возвращаю тебя в строй"
             else:
-                self.vk_bot.send_message(self.vk_event.chat_id, "Ты уже зарегистрирован :)")
-            return
+                return "Ты уже зарегистрирован :)"
         min_wins = PetrovichUser.objects.filter(chat=self.vk_event.chat).aggregate(Min('wins'))['wins__min']
 
         p_user = PetrovichUser()
@@ -32,4 +31,4 @@ class Register(CommonCommand):
             p_user.wins = min_wins
         p_user.save()
 
-        self.vk_bot.send_message(self.vk_event.chat_id, "Регистрация прошла успешно")
+        return "Регистрация прошла успешно"

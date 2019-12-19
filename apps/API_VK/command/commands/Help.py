@@ -22,4 +22,4 @@ class Help(CommonCommand):
             help_text += "\n— команды для администраторов —\n"
             help_text += ADMIN_TEXTS
 
-        self.vk_bot.send_message(self.vk_event.chat_id, help_text)
+        return help_text

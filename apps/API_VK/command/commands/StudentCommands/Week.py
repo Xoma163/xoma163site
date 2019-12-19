@@ -10,5 +10,4 @@ class Week(CommonCommand):
         super().__init__(names, help_text, for_student=True)
 
     def start(self):
-        self.vk_bot.send_message(self.vk_event.chat_id,
-                                 str((datetime.datetime.now().isocalendar()[1] - 35)) + " неделя")
+        return str((datetime.datetime.now().isocalendar()[1] - 35)) + " неделя"

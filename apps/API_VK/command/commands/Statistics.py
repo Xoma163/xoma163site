@@ -28,4 +28,4 @@ class Statistics(CommonCommand):
         for result in result_list:
             msg += "%s - %s\n" % (result[0], result[1])
 
-        self.vk_bot.send_message(self.vk_event.chat_id, msg)
+        return msg

@@ -51,7 +51,7 @@ class CommonCommand:
         self.vk_event = vk_event
 
         self.checks()
-        self.start()
+        return self.start()
 
     def checks(self):
         if self.for_admin:
@@ -80,7 +80,7 @@ class CommonCommand:
                 raise RuntimeError("Аргумент должен быть целочисленным")
 
     def start(self):
-        return True
+        pass
 
     # HELPERS:
 
@@ -158,7 +158,7 @@ class CommonCommand:
         return True
 
     def check_lk(self):
-        if self.vk_event.is_lk:
+        if self.vk_event.from_user:
             return True
 
         self.vk_bot.send_message(self.vk_event.chat_id, "Команда работает только в ЛС")
@@ -172,7 +172,7 @@ class CommonCommand:
         return False
 
     def check_conversation(self):
-        if not self.vk_event.is_lk:
+        if not self.vk_event.from_user:
             return True
 
         self.vk_bot.send_message(self.vk_event.chat_id, "Команда работает только в беседах")

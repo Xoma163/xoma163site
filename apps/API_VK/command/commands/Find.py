@@ -31,14 +31,12 @@ class Find(CommonCommand):
                          }
                          )
         if r.status_code == 429:
-            self.vk_bot.send_message(self.vk_event.chat_id, "Не так часто")
-            return
+            return "Не так часто"
 
         response = r.json().get('data').get('result').get('items')
         urls = [r.get('media') for r in response]
         if len(urls) == 0:
-            self.vk_bot.send_message(self.vk_event.chat_id, "Ничего не нашёл")
-            return
+            return "Ничего не нашёл"
         attachments = []
         for url in urls:
             path = "{}/static/vkapi/{}.jpg".format(BASE_DIR, query)
@@ -57,14 +55,5 @@ class Find(CommonCommand):
                     os.remove(path)
             if len(attachments) >= count:
                 break
-
+        # ToDo: attachments
         self.vk_bot.send_message(self.vk_event.chat_id, 'Лови', attachments=attachments)
-    #
-    # if len(urls) == 0:
-    #     self.vk_bot.send_message(self.vk_event.chat_id, "Ничего не нашёл")
-    #     return
-    # msg = ""
-    # for url in urls:
-    #     msg += "{}\n".format(url)
-    #
-    # self.vk_bot.send_message(self.vk_event.chat_id, msg)

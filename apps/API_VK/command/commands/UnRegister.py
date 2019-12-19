@@ -13,9 +13,7 @@ class UnRegister(CommonCommand):
         p_user = PetrovichUser.objects.filter(user=vk_user, chat=self.vk_event.chat).first()
         if p_user is not None:
             p_user.active = False
-            self.vk_bot.send_message(self.vk_event.chat_id, "Ок")
             p_user.save()
-            return
+            return "Ок"
         else:
-            self.vk_bot.send_message(self.vk_event.chat_id, "А ты и не зареган")
-            return
+            return "А ты и не зареган"

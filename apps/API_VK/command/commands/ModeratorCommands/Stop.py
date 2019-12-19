@@ -15,9 +15,9 @@ class Stop(CommonCommand):
             if self.vk_event.args[0] == "синички":
                 if cameraHandler.is_active():
                     cameraHandler.terminate()
-                    self.vk_bot.send_message(self.vk_event.chat_id, "Финишируем синичек")
+                    return "Финишируем синичек"
                 else:
-                    self.vk_bot.send_message(self.vk_event.chat_id, "Синички уже финишировали")
+                    return "Синички уже финишировали"
             elif self.vk_event.args[0] in ["майн", "майнкрафт"]:
                 if not self.check_sender_minecraft():
                     return
@@ -27,23 +27,22 @@ class Stop(CommonCommand):
                             return
 
                         do_the_linux_command('sudo systemctl stop minecraft')
-                        self.vk_bot.send_message(self.vk_event.chat_id, "Финишируем майн 1.12!")
+                        return "Финишируем майн 1.12!"
                     elif self.vk_event.args[1] == '1.15':
                         if not self.check_command_time('minecraft 1.15', 30):
                             return
 
                         do_the_linux_command('sudo systemctl stop minecraft_1_15')
-                        self.vk_bot.send_message(self.vk_event.chat_id, "Финишируем майн 1.15!")
+                        return "Финишируем майн 1.15!"
                     else:
-                        self.vk_bot.send_message(self.vk_event.chat_id,
-                                                 "Я знаю такой версии {}".format(self.vk_event.args[1]))
+                        return "Я знаю такой версии {}".format(self.vk_event.args[1])
                 else:
-                    self.vk_bot.send_message(self.vk_event.chat_id, "Не указана версия")
+                    return "Не указана версия"
             else:
-                self.vk_bot.send_message(self.vk_event.chat_id, "Не найден такой модуль")
+                return "Не найден такой модуль"
         else:
             if not self.check_sender_admin():
                 return
             self.vk_bot.BOT_CAN_WORK = False
             cameraHandler.terminate()
-            self.vk_bot.send_message(self.vk_event.chat_id, "Финишируем")
+            return "Финишируем"

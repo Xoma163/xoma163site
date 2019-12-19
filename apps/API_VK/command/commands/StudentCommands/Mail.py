@@ -9,4 +9,4 @@ class Mail(CommonCommand):
         super().__init__(names, help_text, for_student=True)
 
     def start(self):
-        self.vk_bot.send_message(self.vk_event.chat_id, get_teachers_email())
+        return get_teachers_email()

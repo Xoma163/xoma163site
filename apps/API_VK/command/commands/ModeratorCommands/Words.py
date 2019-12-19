@@ -13,4 +13,4 @@ class Words(CommonCommand):
         result = do_the_linux_command(command)
         if not result:
             result = "done"
-        self.vk_bot.send_message(self.vk_event.chat_id, result)
+        return result

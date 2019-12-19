@@ -8,4 +8,4 @@ class Donate(CommonCommand):
         super().__init__(names, help_text)
 
     def start(self):
-        self.vk_bot.send_message(self.vk_event.chat_id, 'https://www.donationalerts.com/r/xoma163')
+        return 'https://www.donationalerts.com/r/xoma163'

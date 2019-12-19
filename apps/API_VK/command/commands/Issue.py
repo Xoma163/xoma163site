@@ -24,4 +24,4 @@ class Issue(CommonCommand):
                 username = self.vk_bot.get_group_name_by_id(quote_user_id)
             feature_text += "{}:\n{}\n\n".format(username, text)
         append_feature(feature_text)
-        self.vk_bot.send_message(self.vk_event.chat_id, "Сохранено")
+        return "Сохранено"

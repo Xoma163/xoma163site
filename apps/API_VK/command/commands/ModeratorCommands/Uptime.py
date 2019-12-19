@@ -11,4 +11,4 @@ class Uptime(CommonCommand):
     def start(self):
         command = "uptime"
         result = do_the_linux_command(command)
-        self.vk_bot.send_message(self.vk_event.chat_id, result)
+        return result

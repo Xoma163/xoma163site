@@ -48,8 +48,7 @@ class Scold(CommonCommand):
                 translator_key = str_keys
             else:
                 msg = "Неверные ключи определения пола и числа. Доступные: {}".format(str(list(translator.keys())))
-                self.vk_bot.send_message(self.vk_event.chat_id, msg)
-                return
+                return msg
         else:
             if self.vk_event.original_args:
                 try:
@@ -72,4 +71,4 @@ class Scold(CommonCommand):
                 msg = add_phrase_before(recipient, word, translator[translator_key])
         else:
             msg = get_from_db(translator[translator_key])
-        self.vk_bot.send_message(self.vk_event.chat_id, msg)
+        return msg

@@ -25,9 +25,11 @@ SECRET_KEY = secrets['django']['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 # MAIN_DOMAIN = "xoma163.xyz"
-ALLOWED_HOSTS = ['192.168.1.10', '85.113.60.5',
-                 'xoma163.site', 'api.xoma163.site', 'www.xoma163.site', 'birds.xoma163.site',
-                 'xoma163.xyz', 'api.xoma163.xyz', 'www.xoma163.xyz', 'birds.xoma163.xyz']
+ALLOWED_HOSTS = [
+    '192.168.1.10', '85.113.60.5',
+    # 'xoma163.site', 'api.xoma163.site', 'www.xoma163.site', 'birds.xoma163.site',
+    'xoma163.xyz', 'api.xoma163.xyz', 'www.xoma163.xyz', 'birds.xoma163.xyz'
+]
 
 # Application definition
 
@@ -138,5 +140,4 @@ FILE_UPLOAD_PERMISSIONS = 0o644
 # New TBot
 # tBot = TBot()
 
-APPEND_SLASH = True
 APPEND_SLASH = True

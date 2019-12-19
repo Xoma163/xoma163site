@@ -15,8 +15,7 @@ class Birds(CommonCommand):
             path = cameraHandler.get_img()
         except RuntimeError as e:
             print(e)
-            self.vk_bot.send_message(self.vk_event.chat_id, "какая-то дичь с синичками. Зовите разраба")
-            return
+            return "какая-то дичь с синичками. Зовите разраба"
         frames = 20
         quality = 0
 
@@ -37,13 +36,12 @@ class Birds(CommonCommand):
             try:
                 path2 = cameraHandler.get_gif(frames, quality == 1)
             except RuntimeError as e:
-                self.vk_bot.send_message(self.vk_event.chat_id, str(e))
-                return
+                return str(e)
             gif = self.vk_bot.upload.document_message(path2, title='Синички', peer_id=self.vk_event.chat_id)['doc']
             cameraHandler.clear_file(path2)
             attachments.append('doc{}_{}'.format(gif['owner_id'], gif['id']))
-
+        # ToDo:attachments
         self.vk_bot.send_message(self.vk_event.chat_id, "", attachments=attachments)
-
+        return
         # ToDo: баг ВКАПИ, при котором при отправке ссылки атачменты не прикрепляются. Ишю 54
         # self.vk_bot.send_message(self.vk_event.chat_id, "http://birds.xoma163.xyz", attachments=attachments)

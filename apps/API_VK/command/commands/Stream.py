@@ -13,12 +13,11 @@ class Stream(CommonCommand):
             stream, created = Service.objects.get_or_create(name="stream")
             stream_link = stream.value
             if len(stream_link) < 5:
-                self.vk_bot.send_message(self.vk_event.chat_id, "Стрим пока не идёт")
-                return
+                return "Стрим пока не идёт"
             else:
-                self.vk_bot.send_message(self.vk_event.chat_id, stream_link)
+                return stream_link
         else:
             if not self.check_sender_admin():
                 return
             Service.objects.update_or_create(name="stream", defaults={'value': self.vk_event.args[0]})
-            self.vk_bot.send_message(self.vk_event.chat_id, "Ссылка изменена на " + self.vk_event.args[0])
+            return "Ссылка изменена на " + self.vk_event.args[0]

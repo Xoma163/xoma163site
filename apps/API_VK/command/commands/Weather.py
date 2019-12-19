@@ -19,4 +19,4 @@ class Weather(CommonCommand):
 
         weather = get_weather(city)
 
-        self.vk_bot.send_message(self.vk_event.chat_id, weather)
+        return weather

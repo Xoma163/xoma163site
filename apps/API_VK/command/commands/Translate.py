@@ -24,9 +24,9 @@ class Translate(CommonCommand):
                                                                                                        text)
         response = requests.get(URL).json()
         if response['code'] == 200:
-            self.vk_bot.send_message(self.vk_event.chat_id, response['text'][0])
+            return response['text'][0]
         else:
-            self.vk_bot.send_message(self.vk_event.chat_id, "Ошибка:\n{}".format(response))
+            return "Ошибка:\n{}".format(response)
 
 
 def has_cyrillic(text):

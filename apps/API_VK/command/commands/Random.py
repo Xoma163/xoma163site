@@ -25,4 +25,4 @@ class Random(CommonCommand):
             int1, int2 = int2, int1
 
         rand_int = random.randint(int1, int2)
-        self.vk_bot.send_message(self.vk_event.chat_id, str(rand_int))
+        return str(rand_int)

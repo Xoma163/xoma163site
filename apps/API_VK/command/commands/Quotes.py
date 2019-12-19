@@ -51,4 +51,4 @@ class Quotes(CommonCommand):
                    "{}\n" \
                    "(c) {}\n".format(i + 1, obj_on_page.text, obj_on_page.date.strftime("%d.%m.%Y %H:%M:%S"))
 
-        self.vk_bot.send_message(self.vk_event.chat_id, msg)
+        return msg

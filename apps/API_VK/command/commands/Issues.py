@@ -10,4 +10,4 @@ class Issues(CommonCommand):
 
     def start(self):
         features = get_issues_text()
-        self.vk_bot.send_message(self.vk_event.chat_id, features)
+        return features

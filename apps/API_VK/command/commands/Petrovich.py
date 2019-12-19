@@ -18,18 +18,17 @@ class Petrovich(CommonCommand):
                                                      chat=self.vk_event.chat).last()
         if winner_today is not None:
             if winner_today.user.name in ["Евгений", "Женя"]:
-                self.vk_bot.send_message(self.vk_event.chat_id, "Женя дня - %s" % winner_today.user)
+                return "Женя дня - %s" % winner_today.user
             else:
-                self.vk_bot.send_message(self.vk_event.chat_id, "Петрович дня - %s" % winner_today.user)
-            return
+                return "Петрович дня - %s" % winner_today.user
 
         # order_by ? = random
         winner = PetrovichUser.objects.filter(chat=self.vk_event.chat, active=True).order_by("?").first()
         if winner:
             winner = winner.user
         else:
-            self.vk_bot.send_message(self.vk_event.chat_id, "Нет участников игры. Зарегистрируйтесь! /рег")
-            return
+            return "Нет участников игры. Зарегистрируйтесь! /рег"
+
         PetrovichGames.objects.filter(chat=self.vk_event.chat).delete()
         new_winner = PetrovichGames()
         new_winner.user = winner
@@ -42,6 +41,5 @@ class Petrovich(CommonCommand):
         who = "Петрович"
         if winner.name in ["Евгений", "Женя"]:
             who = "Женя"
-        self.vk_bot.send_message(self.vk_event.chat_id,
-                                 "Наш сегодняшний {} дня - [{}|{} {}]".format(who, winner.nickname, winner.name,
-                                                                              winner.surname))
+        return "Наш сегодняшний {} дня - [{}|{} {}]".format(who, winner.nickname, winner.name,
+                                                            winner.surname)

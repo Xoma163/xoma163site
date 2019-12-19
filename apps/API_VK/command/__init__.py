@@ -7,6 +7,8 @@ from apps.API_VK.command.commands.AdminCommands.Service.get_conversations import
 from apps.API_VK.command.commands.AdminCommands.Service.get_user_by_id import get_user_by_id
 from apps.API_VK.command.commands.AdminCommands.Service.update_users import update_users
 from apps.API_VK.command.commands.Birds import Birds
+from apps.API_VK.command.commands.Counter import Counter
+from apps.API_VK.command.commands.Counters import Counters
 from apps.API_VK.command.commands.EasyCommands.Apologize import Apologize
 from apps.API_VK.command.commands.EasyCommands.Bye import Bye
 from apps.API_VK.command.commands.EasyCommands.Clear import Clear
@@ -60,7 +62,7 @@ commands = [YesNo(), Thanks(), Stream(), Where(), Birds(), Register(), UnRegiste
             Nya(), Shit(), Git(), Donate(), Issue(), Issues(), Joke(), TimeTable(), GoogleDrive(), Week(), Mail(),
             Ban(), DeBan(), Command(), Start(), Stop(), Restart(), Reboot(), Control(), get_user_by_id(),
             update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(), Find(), Rate(),
-            Rates(), Translate(), Uptime()
+            Rates(), Translate(), Uptime(), Counters(), Counter()
             ]
 
 

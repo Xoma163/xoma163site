@@ -14,8 +14,7 @@ class Uyu(CommonCommand):
             add_word = "бля"
         msgs = self.vk_event.fwd
         if msgs is None:
-            self.vk_bot.send_message(self.vk_event.chat_id, add_word)
-            return
+            return add_word
         if len(msgs) == 1:
             new_msg = msgs[0]['text']
         else:
@@ -37,4 +36,4 @@ class Uyu(CommonCommand):
             new_msg = new_msg.replace(symbol, " " + add_word + " " + symbol)
         if flag:
             new_msg = new_msg[:-1]
-        self.vk_bot.send_message(self.vk_event.chat_id, new_msg)
+        return new_msg

@@ -8,5 +8,4 @@ class GoogleDrive(CommonCommand):
         super().__init__(names, help_text, for_student=True)
 
     def start(self):
-        self.vk_bot.send_message(self.vk_event.chat_id,
-                                 "https://drive.google.com/open?id=1AJPnT2XXYNc39-2CSr_MzHnv4hs6Use6")
+        return "https://drive.google.com/open?id=1AJPnT2XXYNc39-2CSr_MzHnv4hs6Use6"

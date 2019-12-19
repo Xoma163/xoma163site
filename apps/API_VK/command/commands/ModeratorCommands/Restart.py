@@ -20,24 +20,21 @@ class Restart(CommonCommand):
                             return
 
                         do_the_linux_command('sudo systemctl start minecraft')
-                        self.vk_bot.send_message(self.vk_event.chat_id, "Рестартим майн 1.12!")
+                        return "Рестартим майн 1.12!"
                     elif self.vk_event.args[1] == '1.15':
                         if not self.check_command_time('minecraft 1.15', 30):
                             return
 
                         do_the_linux_command('sudo systemctl start minecraft_1_15')
-                        self.vk_bot.send_message(self.vk_event.chat_id, "Рестартим майн 1.15!")
+                        return "Рестартим майн 1.15!"
                     else:
-                        self.vk_bot.send_message(self.vk_event.chat_id,
-                                                 "Я знаю такой версии {}".format(self.vk_event.args[1]))
+                        return "Я знаю такой версии {}".format(self.vk_event.args[1])
                 else:
-                    self.vk_bot.send_message(self.vk_event.chat_id, "Не указана версия")
+                    return "Не указана версия"
             else:
-                self.vk_bot.send_message(self.vk_event.chat_id, "Не найден такой модуль")
+                return "Не найден такой модуль"
         else:
             if not self.check_sender_admin():
                 return
 
-            self.vk_bot.send_message(self.vk_event.chat_id, "Внимание! Веб-сервер и Петрович будут перезагружены. "
-                                                            "Встанету ли они - загадка. Желаю удачи")
             do_the_linux_command('sudo systemctl restart xoma163site')

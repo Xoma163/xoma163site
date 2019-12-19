@@ -16,4 +16,4 @@ class Temperature(CommonCommand):
         output = "AVG:" + output[output.find(find_text) + len(find_text):].replace(" (high = +80.0°C, crit = +100.0°C)",
                                                                                    '')
 
-        self.vk_bot.send_message(self.vk_event.chat_id, output)
+        return output

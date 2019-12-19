@@ -44,6 +44,6 @@ class Logs(CommonCommand):
                     right_index = output.find('\n', word_index)
                     output = output[:left_index] + output[right_index:]
 
-            self.vk_bot.send_message(self.vk_event.chat_id, output)
+            return output
         except Exception as e:
-            self.vk_bot.send_message(self.vk_event.chat_id, "Ошибка:\n{}".format(str(e)))
+            return "Ошибка:\n{}".format(str(e))
