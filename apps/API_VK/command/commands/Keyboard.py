@@ -11,7 +11,6 @@ class Keyboard(CommonCommand):
         super().__init__(names, help_text)
 
     def start(self):
-        self.vk_bot.send_message(self.vk_event.chat_id, 'Лови', keyboard=json.dumps(
-            get_keyboard(self.vk_event.sender.is_admin,
-                         self.vk_event.sender.is_moderator,
-                         self.vk_event.sender.is_student)))
+        return {'msg': "Лови", "keyboard": json.dumps(get_keyboard(self.vk_event.sender.is_admin,
+                                                                   self.vk_event.sender.is_moderator,
+                                                                   self.vk_event.sender.is_student))}

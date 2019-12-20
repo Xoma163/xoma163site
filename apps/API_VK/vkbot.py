@@ -69,7 +69,7 @@ def parse_date(date):
 
 class VkBotClass(threading.Thread):
 
-    def send_message(self, peer_id, msg, attachments=None, keyboard=None):
+    def send_message(self, peer_id, msg="", attachments=None, keyboard=None, **kwargs):
         if attachments is None:
             attachments = []
         msg = str(msg)
@@ -112,7 +112,19 @@ class VkBotClass(threading.Thread):
                 if command.accept(vk_event):
                     result = command.__class__().check_and_start(self, vk_event)
                     if result:
-                        self.send_message(vk_event.peer_id, result)
+                        if type(result) == str:
+                            result = {'msg': result}
+                        if type(result) == dict:
+                            result = [result]
+                        if type(result) == list:
+                            for msg in result:
+                                if type(msg) == dict:
+                                    self.send_message(vk_event.peer_id, **msg)
+                                else:
+                                    self.send_message(vk_event.peer_id, msg)
+                                    # self.send_message(vk_event.peer_id,
+                                    #                   "WARN: Сообщите разработчику, если видите это сообщение")
+
                     append_command_to_statistics(vk_event.command)
                     return
             except RuntimeError as e:
@@ -172,8 +184,10 @@ class VkBotClass(threading.Thread):
                         continue
 
                     # Если конфа
+                    # ToDo:
+                    # if vk_event['from_chat']:
                     if vk_event['chat_id']:
-                        vk_event['chat'] = self.get_chat_by_id(int(vk_event['chat_id']))
+                        vk_event['chat'] = self.get_chat_by_id(int(vk_event['message']['peer_id']))
                         if vk_event['sender'] and vk_event['chat']:
                             self.add_group_to_user(vk_event['sender'], vk_event['chat'])
                         else:

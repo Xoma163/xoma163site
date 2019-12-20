@@ -38,7 +38,6 @@ class YesNo(CommonCommand):
                     if min_index_bad == -1:
                         min_index_bad = self.vk_event.msg.find('/')
             min_index_bad += 1
-
             if max_index_bad != -1:
                 len_bad = self.vk_event.msg.find(',', max_index_bad)
                 if len_bad == -1:
@@ -48,22 +47,19 @@ class YesNo(CommonCommand):
 
                 bad_answers = get_bad_answers()
                 rand_int = random.randint(0, len(bad_answers) - 1)
-                # ToDo:
-                self.vk_bot.send_message(self.vk_event.chat_id, bad_answers[rand_int])
+                messages = [bad_answers[rand_int]]
                 name = self.vk_event.sender.name
                 if self.vk_event.sender.gender == '1':
                     msg_self = "сама"
                 else:
                     msg_self = "сам"
-                msg = "{}, {} {} {}?".format(name, "может ты", msg_self,
-                                             self.vk_event.msg[min_index_bad: len_bad])
-                return msg
+                messages.append(
+                    "{}, {} {} {}?".format(name, "может ты", msg_self, self.vk_event.msg[min_index_bad: len_bad]))
+                return messages
 
         if random_probability(4):
-            msg = "Ну тут даже я хз"
+            return "Ну тут даже я хз"
         elif random_probability(50):
-            msg = "Да"
+            return "Да"
         else:
-            msg = "Нет"
-
-        return msg
+            return "Нет"

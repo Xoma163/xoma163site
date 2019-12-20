@@ -14,4 +14,4 @@ class KeyboardHide(CommonCommand):
             "one_time": False,
             "buttons": []
         }
-        self.vk_bot.send_message(self.vk_event.chat_id, 'Убрал', keyboard=json.dumps(keyboard))
+        return {'msg': 'Убрал', 'keyboard': json.dumps(keyboard)}

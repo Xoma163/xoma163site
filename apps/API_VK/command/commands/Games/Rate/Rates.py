@@ -19,10 +19,9 @@ class Rates(CommonCommand):
         lock.acquire()
         gamers = RateModel.objects.filter(chat=self.vk_event.chat).order_by("date")
         if len(gamers) < MIN_GAMERS:
-            return "Минимальное количество игроков - {}".format(MIN_GAMERS)
             lock.release()
-            return
-        return "Ставки сделаны, ставок больше нет."
+            return "Минимальное количество игроков - {}".format(MIN_GAMERS)
+        messages = ["Ставки сделаны, ставок больше нет."]
 
         rnd = random.randint(1, 100)
 
@@ -53,5 +52,5 @@ class Rates(CommonCommand):
 
         gamers.delete()
         lock.release()
-        return msg
-        # self.vk_bot.send_message(self.vk_event.chat_id, msg)
+        messages.append(msg)
+        return messages

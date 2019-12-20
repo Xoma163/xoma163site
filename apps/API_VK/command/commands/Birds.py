@@ -41,7 +41,6 @@ class Birds(CommonCommand):
             cameraHandler.clear_file(path2)
             attachments.append('doc{}_{}'.format(gif['owner_id'], gif['id']))
         # ToDo:attachments
-        self.vk_bot.send_message(self.vk_event.chat_id, "", attachments=attachments)
-        return
+        return {'attachments': attachments}
         # ToDo: баг ВКАПИ, при котором при отправке ссылки атачменты не прикрепляются. Ишю 54
-        # self.vk_bot.send_message(self.vk_event.chat_id, "http://birds.xoma163.xyz", attachments=attachments)
+        # return {'msg': "http://birds.xoma163.xyz", 'attachments': attachments}

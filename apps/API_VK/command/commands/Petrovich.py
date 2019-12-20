@@ -37,9 +37,9 @@ class Petrovich(CommonCommand):
         winner_petrovich = PetrovichUser.objects.filter(user=winner, chat=self.vk_event.chat).first()
         winner_petrovich.wins = int(winner_petrovich.wins) + 1
         winner_petrovich.save()
-        self.vk_bot.send_message(self.vk_event.chat_id, "Такс такс такс, кто тут у нас")
+        messages = ["Такс такс такс, кто тут у нас"]
         who = "Петрович"
         if winner.name in ["Евгений", "Женя"]:
             who = "Женя"
-        return "Наш сегодняшний {} дня - [{}|{} {}]".format(who, winner.nickname, winner.name,
-                                                            winner.surname)
+        messages.append("Наш сегодняшний {} дня - [{}|{} {}]".format(who, winner.nickname, winner.name, winner.surname))
+        return messages

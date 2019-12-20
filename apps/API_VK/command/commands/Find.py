@@ -56,4 +56,4 @@ class Find(CommonCommand):
             if len(attachments) >= count:
                 break
         # ToDo: attachments
-        self.vk_bot.send_message(self.vk_event.chat_id, 'Лови', attachments=attachments)
+        return {'msg': 'Лови', 'attachments': attachments}
