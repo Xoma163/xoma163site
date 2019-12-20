@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from apps.API_VK.models import Log, VkUser, QuoteBook, PetrovichUser, PetrovichGames, VkBot, VkChat, Words
+from apps.API_VK.models import Log, VkUser, QuoteBook, VkBot, VkChat, Words
 
 
 @admin.register(VkUser)
@@ -21,18 +21,6 @@ class VkChatAdmin(admin.ModelAdmin):
 @admin.register(VkBot)
 class VkBotAdmin(admin.ModelAdmin):
     list_display = ('bot_id', 'name',)
-
-
-@admin.register(PetrovichUser)
-class PetrovichUserAdmin(admin.ModelAdmin):
-    list_display = ('user', 'chat', 'wins', 'active',)
-    list_filter = ('user', 'chat',)
-
-
-@admin.register(PetrovichGames)
-class PetrovichGamesAdmin(admin.ModelAdmin):
-    list_display = ('user', 'date', 'chat',)
-    list_filter = ('user', 'chat',)
 
 
 @admin.register(Log)

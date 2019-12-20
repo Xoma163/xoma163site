@@ -1,6 +1,6 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.models import PetrovichUser
 from apps.games.models import Gamer
+from apps.games.models import PetrovichUser
 
 
 class Statistics(CommonCommand):

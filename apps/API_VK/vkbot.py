@@ -118,12 +118,10 @@ class VkBotClass(threading.Thread):
                             result = [result]
                         if type(result) == list:
                             for msg in result:
+                                if type(msg) == str:
+                                    msg = {'msg': msg}
                                 if type(msg) == dict:
                                     self.send_message(vk_event.peer_id, **msg)
-                                else:
-                                    self.send_message(vk_event.peer_id, msg)
-                                    # self.send_message(vk_event.peer_id,
-                                    #                   "WARN: Сообщите разработчику, если видите это сообщение")
 
                     append_command_to_statistics(vk_event.command)
                     return

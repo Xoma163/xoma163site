@@ -17,3 +17,14 @@ def random_probability(probability):
         return True
     else:
         return False
+
+#
+# def wrap_msg(msg_str):
+#     return [{'msg': msg_str}]
+#
+#
+# def append_msgs(*msgs):
+#     new_msgs = []
+#     for msg in msgs:
+#         new_msgs += msg
+#     return new_msgs

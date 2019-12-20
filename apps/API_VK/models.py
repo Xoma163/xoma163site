@@ -92,36 +92,6 @@ class Log(models.Model):
         return str(self.id)
 
 
-class PetrovichUser(models.Model):
-    user = models.ForeignKey(VkUser, on_delete=models.SET_NULL, null=True, verbose_name="Пользователь")
-    chat = models.ForeignKey(VkChat, verbose_name='Чат', null=True, blank=True, on_delete=models.SET_NULL)
-    wins = models.IntegerField(verbose_name="Побед в Петровиче", default=0)
-
-    active = models.BooleanField(verbose_name="Активность", default=True)
-
-    class Meta:
-        verbose_name = "Игрок"
-        verbose_name_plural = "Игроки"
-        ordering = ["user"]
-
-    def __str__(self):
-        return str(self.user)
-
-
-class PetrovichGames(models.Model):
-    user = models.ForeignKey(VkUser, on_delete=models.SET_NULL, null=True, verbose_name="Пользователь")
-    chat = models.ForeignKey(VkChat, verbose_name='Чат', null=True, blank=True, on_delete=models.SET_NULL)
-    date = models.DateTimeField(verbose_name="Дата", auto_now_add=True, editable=True)
-
-    class Meta:
-        verbose_name = "Игра Петровича"
-        verbose_name_plural = "Игры Петровича"
-        ordering = ['-date']
-
-    def __str__(self):
-        return str(self.user)
-
-
 class QuoteBook(models.Model):
     text = models.TextField(verbose_name="Текст", max_length=5000)
     date = models.DateTimeField(verbose_name="Дата", auto_now_add=True, blank=True)

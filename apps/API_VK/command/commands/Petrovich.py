@@ -1,7 +1,7 @@
 import datetime
 
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.models import PetrovichGames, PetrovichUser
+from apps.games.models import PetrovichGames, PetrovichUser
 
 
 class Petrovich(CommonCommand):
