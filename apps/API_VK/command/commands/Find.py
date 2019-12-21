@@ -22,7 +22,7 @@ class Find(CommonCommand):
                              'count': 20,
                              'q': query,
                              't': 'images',
-                             'safesearch': 0,
+                             'safesearch': 1,
                              'locale': 'ru_RU',
                              'uiv': 4
                          },
