@@ -37,9 +37,7 @@ class VkUser(models.Model):
     is_banned = models.BooleanField(verbose_name='Забанен', default=False)
     is_minecraft = models.BooleanField(verbose_name='Майнкрафт', default=False)
 
-    send_notify = models.BooleanField(verbose_name='Передвижения', default=False)
-    get_notify_from = models.ForeignKey('self', on_delete=models.SET_NULL, verbose_name="Получение уведомлений от",
-                                        null=True, blank=True)
+    send_notify_to = models.ManyToManyField('self', verbose_name="Отправление уведомлений", blank=True)
 
     class Meta:
         verbose_name = "Пользователь"

@@ -1,12 +1,10 @@
 import datetime
 import json
-import time
 
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 
 from apps.API_VK.APIs.yandex_geo import get_address
-from apps.API_VK.models import VkUser, Log, Words
+from apps.API_VK.models import VkUser, Log
 from xoma163site.wsgi import vk_bot
 
 
@@ -34,7 +32,7 @@ def where_is_me(request):
                                     content_type="application/json")
             log.author = author
 
-            recipients = get_recipients(author)
+            recipients = author.send_notify_to.all()
             if recipients is None:
                 log.msg = "Не найден получатель"
                 log.save()
@@ -80,8 +78,7 @@ def where_is_me(request):
             msg += "\n%s" % author.name
 
             for recipient in recipients:
-                if recipient.send_notify:
-                    vk_bot.send_message(recipient.user_id, msg)
+                vk_bot.send_message(recipient.user_id, msg)
 
             response_data = {'success': True, 'msg': msg}
             log.success = True
@@ -96,79 +93,75 @@ def where_is_me(request):
     return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
 
 
-@csrf_exempt
-def add_new_words(request):
-    if request.method == "POST":
-        time1 = time.time()
-        data = request.body
-        if not data:
-            response_data = {'status': 'error', 'status_code': 1, 'error': 'no data in request'}
-            return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
-        try:
-            data = json.loads(data)
-        except Exception as e:
-            print(e)
-            response_data = {'status': 'error', 'status_code': 2, 'error': 'cant parse json'}
-            return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
-
-        if 'words' not in data:
-            response_data = {'status': 'error', 'status_code': 3, 'error': 'no words in data'}
-            return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
-        words = data['words']
-
-        statistics = {"total": 0, "added": 0, "updated": 0, "deleted": 0, "skipped": 0, "errors": 0}
-        errors = {"no_id_in_word": [], "no_type_in_word": [], 'already_deleted': []}
-
-        if len(words) == 0:
-            Words.objects.all().delete()
-
-        for word in words:
-            statistics['total'] += 1
-
-            if 'id' not in word:
-                errors['no_id_in_word'].append(word)
-                statistics['errors'] += 1
-                continue
-
-            new_word = Words.objects.filter(id=word['id'])
-
-            if len(word) == 1:
-                if len(new_word) == 0:
-                    errors['already_deleted'].append(word)
-                    statistics['errors'] += 1
-                else:
-                    new_word.delete()
-                    statistics['deleted'] += 1
-            else:
-                if 'type' not in word:
-                    errors['no_type_in_word'].append(word)
-                    statistics['errors'] += 1
-                    continue
-                if len(new_word) == 0:
-                    new_word = Words(**word)
-                    new_word.save()
-                    statistics['added'] += 1
-                else:
-                    ex_word = list(new_word.values())[0]
-                    ex_word = remove_none_in_dict(ex_word)
-                    if ex_word == word:
-                        statistics['skipped'] += 1
-                    else:
-                        new_word.update(**word)
-                        statistics['updated'] += 1
-
-        statistics['time'] = time.time() - time1
-        response_data = {'status': 'success', 'status_code': 200, 'statistics': statistics, 'errors': errors}
-        return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
-
-
-def remove_none_in_dict(old_dict):
-    return {k: v for k, v in old_dict.items() if v is not None}
+# @csrf_exempt
+# def add_new_words(request):
+#     if request.method == "POST":
+#         time1 = time.time()
+#         data = request.body
+#         if not data:
+#             response_data = {'status': 'error', 'status_code': 1, 'error': 'no data in request'}
+#             return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
+#         try:
+#             data = json.loads(data)
+#         except Exception as e:
+#             print(e)
+#             response_data = {'status': 'error', 'status_code': 2, 'error': 'cant parse json'}
+#             return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
+#
+#         if 'words' not in data:
+#             response_data = {'status': 'error', 'status_code': 3, 'error': 'no words in data'}
+#             return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
+#         words = data['words']
+#
+#         statistics = {"total": 0, "added": 0, "updated": 0, "deleted": 0, "skipped": 0, "errors": 0}
+#         errors = {"no_id_in_word": [], "no_type_in_word": [], 'already_deleted': []}
+#
+#         if len(words) == 0:
+#             Words.objects.all().delete()
+#
+#         for word in words:
+#             statistics['total'] += 1
+#
+#             if 'id' not in word:
+#                 errors['no_id_in_word'].append(word)
+#                 statistics['errors'] += 1
+#                 continue
+#
+#             new_word = Words.objects.filter(id=word['id'])
+#
+#             if len(word) == 1:
+#                 if len(new_word) == 0:
+#                     errors['already_deleted'].append(word)
+#                     statistics['errors'] += 1
+#                 else:
+#                     new_word.delete()
+#                     statistics['deleted'] += 1
+#             else:
+#                 if 'type' not in word:
+#                     errors['no_type_in_word'].append(word)
+#                     statistics['errors'] += 1
+#                     continue
+#                 if len(new_word) == 0:
+#                     new_word = Words(**word)
+#                     new_word.save()
+#                     statistics['added'] += 1
+#                 else:
+#                     ex_word = list(new_word.values())[0]
+#                     ex_word = remove_none_in_dict(ex_word)
+#                     if ex_word == word:
+#                         statistics['skipped'] += 1
+#                     else:
+#                         new_word.update(**word)
+#                         statistics['updated'] += 1
+#
+#         statistics['time'] = time.time() - time1
+#         response_data = {'status': 'success', 'status_code': 200, 'statistics': statistics, 'errors': errors}
+#         return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
+#
+#
+# def remove_none_in_dict(old_dict):
+#     return {k: v for k, v in old_dict.items() if v is not None}
 
 
 def get_user_by_imei(imei):
     return VkUser.objects.filter(imei=imei).first()
-
-
-def get_recipients(user):
-    return VkUser.objects.filter(get_notify_from=user)
