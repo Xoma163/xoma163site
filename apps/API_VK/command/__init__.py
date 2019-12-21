@@ -20,8 +20,10 @@ from apps.API_VK.command.commands.EasyCommands.Shit import Shit
 from apps.API_VK.command.commands.EasyCommands.Sorry import Sorry
 from apps.API_VK.command.commands.EasyCommands.Thanks import Thanks
 from apps.API_VK.command.commands.Find import Find
-from apps.API_VK.command.commands.Games.Rate.Rate import Rate
-from apps.API_VK.command.commands.Games.Rate.Rates import Rates
+from apps.API_VK.command.commands.Games.Petrovich import Petrovich
+from apps.API_VK.command.commands.Games.Rate import Rate
+from apps.API_VK.command.commands.Games.Rates import Rates
+from apps.API_VK.command.commands.Games.Statistics import Statistics
 from apps.API_VK.command.commands.Help import Help
 from apps.API_VK.command.commands.Issue import Issue
 from apps.API_VK.command.commands.Issues import Issues
@@ -36,14 +38,12 @@ from apps.API_VK.command.commands.ModeratorCommands.Stop import Stop
 from apps.API_VK.command.commands.ModeratorCommands.Temperature import Temperature
 from apps.API_VK.command.commands.ModeratorCommands.Uptime import Uptime
 from apps.API_VK.command.commands.ModeratorCommands.Words import Words
-from apps.API_VK.command.commands.Petrovich import Petrovich
 from apps.API_VK.command.commands.Praise import Praise
 from apps.API_VK.command.commands.Quote import Quote
 from apps.API_VK.command.commands.Quotes import Quotes
 from apps.API_VK.command.commands.Random import Random
 from apps.API_VK.command.commands.Register import Register
 from apps.API_VK.command.commands.Scold import Scold
-from apps.API_VK.command.commands.Statistics import Statistics
 from apps.API_VK.command.commands.Stream import Stream
 from apps.API_VK.command.commands.StudentCommands.GoogleDrive import GoogleDrive
 from apps.API_VK.command.commands.StudentCommands.Mail import Mail
