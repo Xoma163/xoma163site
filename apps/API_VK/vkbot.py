@@ -315,7 +315,7 @@ class VkBotClass(threading.Thread):
 
     @staticmethod
     def get_group_id(id):
-        return 2000000000 + id
+        return 2000000000 + int(id)
 
     def update_users(self):
         users = VkUser.objects.all()
