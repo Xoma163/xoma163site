@@ -1,31 +1,46 @@
+from datetime import datetime
+
 import requests
 
+from apps.Statistics.models import Service
 from secrets.secrets import secrets
 
 
 def get_weather(city="самара"):
-    if city == "Самара":
+    if city in ["Самара", "Самаре"]:
+        original_city_name = "Самара"
         city_name = "Самаре"
         lat = 53.212273
         lon = 50.169435
-    elif city in ['Питер', 'Санкт-петербург', 'Санкт-петербурге', 'Спб']:
+    elif city in ['Питер', 'Питере', 'Санкт-петербург', 'Санкт-петербурге', 'Спб']:
+        original_city_name = "Питер"
         city_name = "Питере"
         lat = 59.939095
         lon = 30.315868
     elif city in ['Сызрань', 'Сызрани']:
+        original_city_name = "Сызрань"
         city_name = "Сызрани"
         lat = 53.155782
         lon = 48.474485
     elif city in ['Прибой', 'Прибое']:
+        original_city_name = "Прибой"
         city_name = "Прибое"
         lat = 52.8689435
         lon = 49.6516931
     elif city in ['Купчино']:
+        original_city_name = "Купчино"
         city_name = "Купчино"
         lat = 59.872380
         lon = 30.370291
     else:
         return 'Я не знаю координат города {}. Сообщите их разработчику'.format(city)
+
+    entity, created = Service.objects.get_or_create(name='weather_{}'.format(original_city_name))
+    if not created:
+        update_datetime = entity.update_datetime
+        delta_seconds = (datetime.now() - update_datetime).seconds
+        if delta_seconds < 3600:
+            return entity.value
 
     TOKEN = secrets['yandex']['weather']
 
@@ -129,4 +144,6 @@ def get_weather(city="самара"):
                 weather['forecast'][i]['prec_prob'])
         else:
             forecast += "Без осадков"
-    return now + forecast
+    entity.value = now + forecast
+    entity.save()
+    return entity.value

@@ -30,7 +30,7 @@ class Issue(models.Model):
 
 class Service(models.Model):
     name = models.CharField(primary_key=True, verbose_name="Имя", max_length=20)
-    value = models.CharField(verbose_name="Значение", max_length=100, default="", null=True)
+    value = models.CharField(verbose_name="Значение", max_length=1000, default="", null=True)
     update_datetime = models.DateTimeField(verbose_name="Дата создания", auto_now=True)
 
     class Meta:
