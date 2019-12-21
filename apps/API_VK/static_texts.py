@@ -1,159 +1,21 @@
 def get_keyboard(is_admin=False, is_moderator=False, is_student=False):
+    from apps.API_VK.command import STUDENT_KEYBOARD, MODERATOR_KEYBOARD, ADMIN_KEYBOARD, USER_KEYBOARD
+
     buttons = []
+
     if is_admin:
-        buttons += get_admin_keyboard_buttons()
+        buttons += ADMIN_KEYBOARD
     if is_moderator:
-        buttons += get_modetaror_keyboard_buttons()
+        buttons += MODERATOR_KEYBOARD
     if is_student:
-        buttons += get_student_keyboard_buttons()
-    buttons += get_default_keyboard_buttons()
+        buttons += STUDENT_KEYBOARD
+    buttons += USER_KEYBOARD
 
     keyboard = {
         "one_time": False,
         "buttons": buttons
     }
     return keyboard
-
-
-def get_admin_keyboard_buttons():
-    buttons = [
-        [
-            {
-                "action": {
-                    "type": "text",
-                    "label": "Старт"
-                },
-                "color": "positive"
-            },
-            {
-                "action": {
-                    "type": "text",
-                    "label": "Стоп"
-                },
-                "color": "negative"
-            },
-            {
-                "action": {
-                    "type": "text",
-                    "label": "Старт синички"
-                },
-                "color": "positive"
-            },
-            {
-                "action": {
-                    "type": "text",
-                    "label": "Стоп синички"
-                },
-                "color": "negative"
-            }
-        ],
-    ]
-    return buttons
-
-
-def get_modetaror_keyboard_buttons():
-    buttons = [
-        [
-            {
-                "action": {
-                    "type": "text",
-                    "label": "Логи"
-                },
-                "color": "primary"
-            }
-        ],
-    ]
-    return buttons
-
-
-def get_default_keyboard_buttons():
-    buttons = [
-        [
-            {
-                "action": {
-                    "type": "text",
-                    "label": "Погода"
-                },
-                "color": "primary"
-            },
-            {
-                "action": {
-                    "type": "text",
-                    "label": "Помощь"
-                },
-                "color": "primary"
-            }
-        ],
-        [
-            {
-                "action": {
-                    "type": "text",
-                    "label": "Синички 0"
-                },
-                "color": "primary"
-            },
-            {
-                "action": {
-                    "type": "text",
-                    "label": "Синички 20"
-                },
-                "color": "primary"
-            },
-            {
-                "action": {
-                    "type": "text",
-                    "label": "Синички 100"
-                },
-                "color": "primary"
-            }
-        ],
-        [
-            {
-                "action": {
-                    "type": "text",
-                    "label": "Скрыть"
-                },
-                "color": "secondary"
-            }
-        ],
-    ]
-    return buttons
-
-
-def get_student_keyboard_buttons():
-    buttons = [
-        [
-            {
-                "action": {
-                    "type": "text",
-                    "label": "Расписание"
-                },
-                "color": "primary"
-            },
-            {
-                "action": {
-                    "type": "text",
-                    "label": "Неделя"
-                },
-                "color": "primary"
-            },
-            {
-                "action": {
-                    "type": "text",
-                    "label": "Учебное"
-                },
-                "color": "primary"
-            },
-            {
-                "action": {
-                    "type": "text",
-                    "label": "Лекции"
-                },
-                "color": "primary"
-            }
-        ],
-    ]
-    return buttons
 
 
 def get_bad_words():

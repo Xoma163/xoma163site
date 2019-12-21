@@ -8,7 +8,10 @@ class Stop(CommonCommand):
         names = ["стоп"]
         help_text = "̲С̲т̲о̲п - останавливает работу Петровича. " \
                     "С параметром можно отключить нужный модуль (синички, майн(1.12 1.15))"
-        super().__init__(names, help_text, for_moderator=True)
+        keyboard_admin = [{'text': 'Стоп', 'color': 'red', 'row': 1, 'col': 2},
+                          {'text': 'Стоп синички', 'color': 'red', 'row': 1, 'col': 4}]
+
+        super().__init__(names, help_text, for_moderator=True, keyboard_admin=keyboard_admin)
 
     def start(self):
         if self.vk_event.args:

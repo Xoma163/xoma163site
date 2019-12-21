@@ -6,7 +6,11 @@ class Birds(CommonCommand):
     def __init__(self):
         names = ["с", "c", "синички"]
         help_text = "̲С̲и̲н̲и̲ч̲к̲и [N[,M]](N - количество кадров в гифке, 20 дефолт, M - качество(0 или 1), 0 дефолт) - ссылка, снапшот и гифка"
-        super().__init__(names, help_text, check_int_args=[0, 1])
+        keyboard_user = [{'text': 'Синички 0', 'color': 'blue', 'row': 2, 'col': 1},
+                         {'text': 'Синички 20', 'color': 'blue', 'row': 2, 'col': 2},
+                         {'text': 'Синички 100', 'color': 'blue', 'row': 2, 'col': 3}]
+
+        super().__init__(names, help_text, check_int_args=[0, 1], keyboard_user=keyboard_user)
 
     def start(self):
         attachments = []

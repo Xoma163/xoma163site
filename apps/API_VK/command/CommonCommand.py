@@ -7,6 +7,10 @@ class CommonCommand:
 
     def __init__(self, names,
                  help_text=None,
+                 keyboard_admin=None,
+                 keyboard_moderator=None,
+                 keyboard_student=None,
+                 keyboard_user=None,
                  for_admin=False,
                  for_moderator=False,
                  for_student=False,
@@ -20,6 +24,14 @@ class CommonCommand:
         self.names = names
         # Текст в помощи
         self.help_text = help_text
+        # Клавиша для админа
+        self.keyboard_admin = keyboard_admin
+        # Клавиша для модератора
+        self.keyboard_moderator = keyboard_moderator
+        # Клавиша для студента
+        self.keyboard_student = keyboard_student
+        # Клавиша для юзера
+        self.keyboard_user = keyboard_user
         # Команда для админов
         self.for_admin = for_admin
         # Команда для модераторов

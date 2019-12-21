@@ -70,43 +70,74 @@ def get_commands():
     return commands
 
 
-def get_help_admin_texts():
+def get_help_text(attr=None):
     texts = ""
-    for command in commands:
-        if command.for_admin:
-            if command.help_text:
-                texts += "{}\n".format(command.help_text)
+    if attr:
+        for command in commands:
+            if getattr(command, attr):
+                if command.help_text:
+                    texts += "{}\n".format(command.help_text)
+    else:
+        for command in commands:
+            if not command.for_moderator and not command.for_admin and not command.for_student:
+                if command.help_text:
+                    texts += "{}\n".format(command.help_text)
     return texts
 
 
-def get_help_student_texts():
-    texts = ""
+def get_keyboard(attr):
+    keys = []
     for command in commands:
-        if command.for_student:
-            if command.help_text:
-                texts += "{}\n".format(command.help_text)
-    return texts
+        key = getattr(command, attr)
+        if key:
+            if type(key) == dict:
+                keys.append(key)
+            elif type(key) == list:
+                for elem in key:
+                    keys.append(elem)
+
+    buttons = []
+    if keys is None:
+        return []
+    keys = sorted(keys, key=lambda i: (i['row'], i['col']))
+    color_translate = {
+        'red': 'negative',
+        'green': 'positive',
+        'blue': 'primary',
+        'gray': 'secondary'
+    }
+    row = []
+    current_row = 0
+    for key in keys:
+        if not current_row:
+            row = []
+            current_row = key['row']
+
+        elif key['row'] != current_row:
+            buttons.append(row)
+            current_row = key['row']
+            row = []
+
+        row.append(
+            {
+                "action": {
+                    "type": "text",
+                    "label": key['text']
+                },
+                "color": color_translate[key['color']]
+            }
+        )
+    if len(row) > 0:
+        buttons.append(row)
+    return buttons
 
 
-def get_help_moderator_texts():
-    texts = ""
-    for command in commands:
-        if command.for_moderator:
-            if command.help_text:
-                texts += "{}\n".format(command.help_text)
-    return texts
+ADMIN_TEXTS = get_help_text('for_admin')
+MODERATOR_TEXTS = get_help_text('for_moderator')
+STUDENT_TEXTS = get_help_text('for_student')
+COMMON_TEXTS = get_help_text()
 
-
-def get_help_texts():
-    texts = ""
-    for command in commands:
-        if not command.for_moderator and not command.for_admin and not command.for_student:
-            if command.help_text:
-                texts += "{}\n".format(command.help_text)
-    return texts
-
-
-ADMIN_TEXTS = get_help_admin_texts()
-MODERATOR_TEXTS = get_help_moderator_texts()
-STUDENT_TEXTS = get_help_student_texts()
-COMMON_TEXTS = get_help_texts()
+ADMIN_KEYBOARD = get_keyboard('keyboard_admin')
+MODERATOR_KEYBOARD = get_keyboard('keyboard_moderator')
+STUDENT_KEYBOARD = get_keyboard('keyboard_student')
+USER_KEYBOARD = get_keyboard('keyboard_user')

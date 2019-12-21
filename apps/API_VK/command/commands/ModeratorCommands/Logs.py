@@ -6,7 +6,9 @@ class Logs(CommonCommand):
     def __init__(self):
         names = ["лог", "логи"]
         help_text = "̲Л̲о̲г - логи веб-сервера"
-        super().__init__(names, help_text, for_moderator=True, check_int_args=[0])
+        keyboard_moderator = {'text': 'Логи', 'color': 'blue', 'row': 1, 'col': 1}
+        super().__init__(names, help_text, for_moderator=True, check_int_args=[0],
+                         keyboard_moderator=keyboard_moderator)
 
     def start(self):
         count = 50

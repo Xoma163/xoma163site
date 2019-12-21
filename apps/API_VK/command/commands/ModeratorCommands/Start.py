@@ -8,7 +8,9 @@ class Start(CommonCommand):
         names = ["старт"]
         help_text = "̲С̲т̲а̲р̲т - возобновляет работу Петровича(только для админов). " \
                     "С параметром можно включить нужный модуль (синички, майн(1.12 1.15))"
-        super().__init__(names, help_text, for_moderator=True)
+        keyboard_admin = [{'text': 'Старт', 'color': 'green', 'row': 1, 'col': 1},
+                          {'text': 'Старт синички', 'color': 'green', 'row': 1, 'col': 3}]
+        super().__init__(names, help_text, for_moderator=True, keyboard_admin=keyboard_admin)
 
     def start(self):
         if self.vk_event.args:
