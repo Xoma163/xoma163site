@@ -11,6 +11,9 @@ class Issue(CommonCommand):
     def start(self):
         msgs = self.vk_event.fwd
         if not msgs:
+            if not self.vk_event.original_args:
+                return "Требуется аргументы или пересылаемые сообщения"
+
             msgs = [{'text': self.vk_event.original_args, 'from_id': self.vk_event.user_id}]
         feature_text = ""
         for msg in msgs:
