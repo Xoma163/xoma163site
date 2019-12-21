@@ -119,9 +119,8 @@ def get_weather(city="самара"):
     for i in range(len(weather['forecast'])):
         forecast += '\n\n' \
                     'Прогноз на {}:\n' \
-                    '{}\n'.format(
-            weather['forecast'][i]['part_name'],
-            weather['forecast'][i]['condition'])
+                    '{}\n'.format(weather['forecast'][i]['part_name'],
+                                  weather['forecast'][i]['condition'])
 
         if weather['forecast'][i]['temp_min'] != weather['forecast'][i]['temp_max']:
             forecast += 'Температура от {} до {}°С'.format(weather['forecast'][i]['temp_min'],
