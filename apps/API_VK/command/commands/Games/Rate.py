@@ -26,17 +26,10 @@ class Rate(CommonCommand):
         if len(existed_another_rate) > 0:
             return "Эта ставка уже поставлена другим игроком"
 
-        gamer = Gamer.objects.filter(user=self.vk_event.sender)
-        if len(gamer) == 0:
-            gamer = Gamer()
-            gamer.user = self.vk_event.sender
-            gamer.save()
+        if len(Gamer.objects.filter(user=self.vk_event.sender)) == 0:
+            Gamer(**{'user': self.vk_event.sender}).save()
 
-        rate = RateModel()
-        rate.user = self.vk_event.sender
-        rate.chat = self.vk_event.chat
-        rate.rate = arg
-        rate.save()
+        RateModel(**{'user': self.vk_event.sender, 'chat': self.vk_event.chat, 'rate': arg}).save()
 
         return "Ставка принята - {}".format(arg)
         #
