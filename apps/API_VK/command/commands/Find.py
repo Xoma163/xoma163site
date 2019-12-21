@@ -55,5 +55,4 @@ class Find(CommonCommand):
                     os.remove(path)
             if len(attachments) >= count:
                 break
-        # ToDo: attachments
-        return {'msg': 'Лови', 'attachments': attachments}
+        return {'attachments': attachments}

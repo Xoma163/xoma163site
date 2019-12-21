@@ -13,4 +13,4 @@ class KeyboardHide(CommonCommand):
     def start(self):
         from apps.API_VK.command import EMPTY_KEYBOARD
 
-        return {'msg': 'Убрал', 'keyboard': EMPTY_KEYBOARD}
+        return {'keyboard': EMPTY_KEYBOARD}
