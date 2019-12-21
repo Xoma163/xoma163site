@@ -1,5 +1,3 @@
-import json
-
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.static_texts import get_keyboard
 
@@ -11,6 +9,6 @@ class Keyboard(CommonCommand):
         super().__init__(names, help_text)
 
     def start(self):
-        return {'msg': "Лови", "keyboard": json.dumps(get_keyboard(self.vk_event.sender.is_admin,
-                                                                   self.vk_event.sender.is_moderator,
-                                                                   self.vk_event.sender.is_student))}
+        return {"keyboard": get_keyboard(self.vk_event.sender.is_admin,
+                                         self.vk_event.sender.is_moderator,
+                                         self.vk_event.sender.is_student)}

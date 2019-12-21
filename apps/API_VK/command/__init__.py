@@ -24,6 +24,7 @@ from apps.API_VK.command.commands.Games.Petrovich import Petrovich
 from apps.API_VK.command.commands.Games.Rate import Rate
 from apps.API_VK.command.commands.Games.Rates import Rates
 from apps.API_VK.command.commands.Games.Statistics import Statistics
+from apps.API_VK.command.commands.Games.TicTacToe import TicTacToe
 from apps.API_VK.command.commands.Help import Help
 from apps.API_VK.command.commands.Issue import Issue
 from apps.API_VK.command.commands.Issues import Issues
@@ -62,7 +63,7 @@ commands = [YesNo(), Thanks(), Stream(), Where(), Birds(), Register(), UnRegiste
             Nya(), Shit(), Git(), Donate(), Issue(), Issues(), Joke(), TimeTable(), GoogleDrive(), Week(), Mail(),
             Ban(), DeBan(), Command(), Start(), Stop(), Restart(), Reboot(), Control(), get_user_by_id(),
             update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(), Find(), Rate(),
-            Rates(), Translate(), Uptime(), Counters(), Counter()
+            Rates(), Translate(), Uptime(), Counters(), Counter(), TicTacToe()
             ]
 
 
@@ -137,7 +138,12 @@ MODERATOR_TEXTS = get_help_text('for_moderator')
 STUDENT_TEXTS = get_help_text('for_student')
 COMMON_TEXTS = get_help_text()
 
-ADMIN_KEYBOARD = get_keyboard('keyboard_admin')
-MODERATOR_KEYBOARD = get_keyboard('keyboard_moderator')
-STUDENT_KEYBOARD = get_keyboard('keyboard_student')
-USER_KEYBOARD = get_keyboard('keyboard_user')
+ADMIN_BUTTONS = get_keyboard('keyboard_admin')
+MODERATOR_BUTTONS = get_keyboard('keyboard_moderator')
+STUDENT_BUTTONS = get_keyboard('keyboard_student')
+USER_BUTTONS = get_keyboard('keyboard_user')
+
+EMPTY_KEYBOARD = {
+    "one_time": False,
+    "buttons": []
+}

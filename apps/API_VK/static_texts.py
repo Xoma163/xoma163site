@@ -1,15 +1,15 @@
 def get_keyboard(is_admin=False, is_moderator=False, is_student=False):
-    from apps.API_VK.command import STUDENT_KEYBOARD, MODERATOR_KEYBOARD, ADMIN_KEYBOARD, USER_KEYBOARD
+    from apps.API_VK.command import STUDENT_BUTTONS, MODERATOR_BUTTONS, ADMIN_BUTTONS, USER_BUTTONS
 
     buttons = []
 
     if is_admin:
-        buttons += ADMIN_KEYBOARD
+        buttons += ADMIN_BUTTONS
     if is_moderator:
-        buttons += MODERATOR_KEYBOARD
+        buttons += MODERATOR_BUTTONS
     if is_student:
-        buttons += STUDENT_KEYBOARD
-    buttons += USER_KEYBOARD
+        buttons += STUDENT_BUTTONS
+    buttons += USER_BUTTONS
 
     keyboard = {
         "one_time": False,

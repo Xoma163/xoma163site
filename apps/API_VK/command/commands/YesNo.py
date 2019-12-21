@@ -12,8 +12,11 @@ class YesNo(CommonCommand):
         super().__init__(names, help_text)
 
     def accept(self, vk_event):
+        if not vk_event.msg:
+            return False
         if vk_event.msg[-1] != '?':
             return False
+
         return True
 
     def start(self):

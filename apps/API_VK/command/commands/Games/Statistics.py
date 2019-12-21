@@ -19,12 +19,21 @@ class Statistics(CommonCommand):
         for result in result_list:
             msg += "%s - %s\n" % (result[0], result[1])
 
-        gamers = Gamer.objects.all().order_by('-points')
+        gamers = Gamer.objects.exclude(points=0).order_by('-points')
         result_list = []
         for gamer in gamers:
             result_list.append([gamer, gamer.points])
 
         msg += "\nПобедители ставок:\n"
+        for result in result_list:
+            msg += "%s - %s\n" % (result[0], result[1])
+
+        gamers = Gamer.objects.exclude(tic_tac_toe_points=0).order_by('-tic_tac_toe_points')
+        result_list = []
+        for gamer in gamers:
+            result_list.append([gamer, gamer.tic_tac_toe_points])
+
+        msg += "\nПобедители крестиков-ноликов:\n"
         for result in result_list:
             msg += "%s - %s\n" % (result[0], result[1])
 

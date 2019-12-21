@@ -1,3 +1,4 @@
+import json
 import re
 import threading
 
@@ -69,9 +70,11 @@ def parse_date(date):
 
 class VkBotClass(threading.Thread):
 
-    def send_message(self, peer_id, msg="", attachments=None, keyboard=None, **kwargs):
+    def send_message(self, peer_id, msg="&#12288;", attachments=None, keyboard=None, **kwargs):
         if attachments is None:
             attachments = []
+        if keyboard:
+            keyboard = json.dumps(keyboard)
         msg = str(msg)
         if len(msg) > 4096:
             msg = msg[:4092]
@@ -154,6 +157,7 @@ class VkBotClass(threading.Thread):
                     from_id - кто отправил сообщение (если значение отрицательное, то другой бот)
                     peer_id - откуда отправил сообщение (если там значение совпадает с from_id, то это from_user, 
                         если нет и значение начинается на 200000000*, то это конфа
+                    payload - скрытая информация, которая передаётся при нажатии на кнопку
                     
                     '''
                     vk_event = {'from_chat': event.from_chat,
@@ -164,6 +168,7 @@ class VkBotClass(threading.Thread):
                                     'full_message': event.object.text,
                                     'user_id': event.object.from_id,
                                     'peer_id': event.object.peer_id,
+                                    'payload': event.object.payload
                                 },
                                 'parsed': {
                                 }}
@@ -345,14 +350,22 @@ class VkBotClass(threading.Thread):
 
 class VkEvent:
     def __init__(self, vk_event):
+        # Если переданы скрытые параметры с кнопок
+
         self.user_id = vk_event['message']['user_id']
         self.peer_id = vk_event['message']['peer_id']
 
-        self.msg = vk_event['parsed']['msg']
-        self.command = vk_event['parsed']['command']
-        self.args = vk_event['parsed']['args']
-        self.original_args = vk_event['parsed']['original_args']
-        self.keys = vk_event['parsed']['keys']
+        if vk_event['message']['payload']:
+            self.payload = json.loads(vk_event['message']['payload'])
+            self.msg = None
+            self.command = self.payload['command']
+            self.args = [arg for arg in self.payload['args'].values()]
+        else:
+            self.msg = vk_event['parsed']['msg']
+            self.command = vk_event['parsed']['command']
+            self.args = vk_event['parsed']['args']
+            self.original_args = vk_event['parsed']['original_args']
+            self.keys = vk_event['parsed']['keys']
 
         self.from_user = vk_event['from_user']
         # self.from_chat = vk_event['from_chat']
