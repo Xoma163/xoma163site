@@ -76,7 +76,7 @@ class TicTacToeSession(models.Model):
     user2 = models.ForeignKey(VkUser, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Пользователь o",
                               related_name="user2_%(class)ss")
     next_step = models.ForeignKey(VkUser, on_delete=models.SET_NULL, null=True, blank=True,
-                                  verbose_name="Пользователь o",
+                                  verbose_name="Следующий шаг",
                                   related_name="next_%(class)ss")
     board = JSONField(null=True, verbose_name="Поле", default=get_default_board)
 

@@ -5,6 +5,29 @@ from django.db.models import Q
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.games.models import TicTacToeSession, Gamer
 
+MORE_HIDE_KEYBOARD = {
+    "one_time": True,
+    "buttons": [
+        [
+            {
+                "action": {
+                    "type": "text",
+                    "label": "Крестики"
+                },
+                "color": "primary"
+            }
+        ],
+        [
+            {
+                "action": {
+                    "type": "text",
+                    "label": "Скрыть"
+                },
+                "color": "secondary"
+            }
+        ],
+    ]
+}
 
 class TicTacToe(CommonCommand):
     def __init__(self):
@@ -18,28 +41,38 @@ class TicTacToe(CommonCommand):
             Gamer(**{'user': sender}).save()
 
         session = TicTacToeSession.objects.filter(Q(user1=sender) | Q(user2=sender)).first()
+        # Если существует такая сессия, где игрок находится в ней
         if session:
-            if self.vk_event.args:
-                self.step_game(session)
-                return
+            # Если оба игрока существуют в сессии
+            if session.user1 is not None and session.user2 is not None:
+                # Если переданы аргументы
+                if self.vk_event.args:
+                    # Шаг игры
+                    self.step_game(session)
+                    return
+                else:
+                    # Возвращаем пользователю клавиатуру, если он её потерял
+                    self.vk_bot.send_message(sender.user_id, keyboard=get_keyboard_by_board(json.loads(session.board)))
+                    return
+            # Если игрок только один и 99.9% что это user1
             else:
-                self.vk_bot.send_message(sender.user_id, keyboard=get_keyboard_by_board(json.loads(session.board)))
-                return
-
-        existed_session = TicTacToeSession.objects.filter(user2=None).first()
-        if existed_session:
-            if existed_session.user1 == sender:
                 return "Ты начал игру. Подожди, когда подключится второй игрок"
-            self.start_game(existed_session)
-            return
+        # Если нет такой сессии, в которой есть игрок
         else:
-            new_session = TicTacToeSession()
-            new_session.user1 = sender
-            new_session.save()
-            return "Начинаем игру. Ждём второго игрока"
+            waiting_session = TicTacToeSession.objects.filter(user2=None).first()
+            # Если есть сессия, где пустует второй игрок
+            if waiting_session:
+                # То стартуем игру
+                self.start_game(waiting_session)
+                return
+            # Никаких свободных сессий нет - создаём новую
+            else:
+                new_session = TicTacToeSession()
+                new_session.user1 = sender
+                new_session.save()
+                return "Начинаем игру. Ждём второго игрока"
 
     def step_game(self, session):
-        from apps.API_VK.command import EMPTY_KEYBOARD
 
         sender = self.vk_event.sender
         args = self.vk_event.args
@@ -68,12 +101,12 @@ class TicTacToe(CommonCommand):
                                          "Игра закончена. Победитель - {}\n{}".format(
                                              session.user1,
                                              print_table(table)),
-                                         keyboard=EMPTY_KEYBOARD)
+                                         keyboard=MORE_HIDE_KEYBOARD)
                 self.vk_bot.send_message(session.user2.user_id,
                                          "Игра закончена. Победитель - {}\n{}".format(
                                              session.user1,
                                              print_table(table)),
-                                         keyboard=EMPTY_KEYBOARD)
+                                         keyboard=MORE_HIDE_KEYBOARD)
                 gamer = Gamer.objects.get(user=session.user1)
                 gamer.tic_tac_toe_points += 1
                 gamer.save()
@@ -82,12 +115,12 @@ class TicTacToe(CommonCommand):
                                          "Игра закончена. Победитель - {}\n{}".format(
                                              session.user2,
                                              print_table(table)),
-                                         keyboard=EMPTY_KEYBOARD)
+                                         keyboard=MORE_HIDE_KEYBOARD)
                 self.vk_bot.send_message(session.user2.user_id,
                                          "Игра закончена. Победитель - {}\n{}".format(
                                              session.user2,
                                              print_table(table)),
-                                         keyboard=EMPTY_KEYBOARD)
+                                         keyboard=MORE_HIDE_KEYBOARD)
                 gamer = Gamer.objects.get(user=session.user2)
                 gamer.tic_tac_toe_points += 1
                 gamer.save()
@@ -95,30 +128,36 @@ class TicTacToe(CommonCommand):
         elif check_end(table):
             session.delete()
             self.vk_bot.send_message(session.user1.user_id, "Ничья\n{}".format(print_table(table)),
-                                     keyboard=EMPTY_KEYBOARD)
+                                     keyboard=MORE_HIDE_KEYBOARD)
             self.vk_bot.send_message(session.user2.user_id, "Ничья\n{}".format(print_table(table)),
-                                     keyboard=EMPTY_KEYBOARD)
+                                     keyboard=MORE_HIDE_KEYBOARD)
             return
 
+        board = get_keyboard_by_board(table)
+
         if session.next_step == session.user1:
+            self.vk_bot.send_message(session.user1.user_id, "Ход сделан, ждём хода второго игрока", keyboard=board)
+            self.vk_bot.send_message(session.user2.user_id, "Второй игрок сделал ход", keyboard=board)
             session.next_step = session.user2
         elif session.next_step == session.user2:
+            self.vk_bot.send_message(session.user1.user_id, "Второй игрок сделал ход", keyboard=board)
+            self.vk_bot.send_message(session.user2.user_id, "Ход сделан, ждём хода второго игрока", keyboard=board)
             session.next_step = session.user1
 
         session.board = json.dumps(table)
         session.save()
-
-        board = get_keyboard_by_board(table)
-        self.vk_bot.send_message(session.user1.user_id, keyboard=board)
-        self.vk_bot.send_message(session.user2.user_id, keyboard=board)
 
     def start_game(self, session):
         session.user2 = self.vk_event.sender
         session.next_step = session.user1
         session.save()
         keyboard = get_keyboard_by_board(json.loads(session.board))
-        self.vk_bot.send_message(session.user1.user_id, "Второй игрок - {}".format(session.user2), keyboard=keyboard)
-        self.vk_bot.send_message(session.user2.user_id, "Второй игрок - {}".format(session.user1), keyboard=keyboard)
+        self.vk_bot.send_message(session.user1.user_id,
+                                 "Второй игрок - {}\n Ваш ход\nВы играете за ❌".format(session.user2),
+                                 keyboard=keyboard)
+        self.vk_bot.send_message(session.user2.user_id,
+                                 "Второй игрок - {}\n Ход второго игрока\nВы играете за ⭕".format(session.user1),
+                                 keyboard=keyboard)
 
 
 def check_win(table):
@@ -179,19 +218,23 @@ def get_keyboard_by_board(table):
 
 def get_elem(elem, row, col):
     if elem == 'x':
-        color = "negative"
+        label = "❌"
+        # color = "negative"
     elif elem == 'o':
-        color = "primary"
+        label = "⭕"
+        # color = "primary"
     else:
+        label = "&#12288;"
         color = "secondary"
 
     return {
         "action": {
             "type": "text",
-            "label": "&#12288;",
+            "label": label,
             "payload": json.dumps({"command": "крестики", "args": {"row": row, "col": col}}, ensure_ascii=False)
         },
-        "color": color
+        "color": "secondary"
+        # "color": color
     }
 
 
