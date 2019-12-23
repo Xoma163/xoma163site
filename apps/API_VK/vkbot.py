@@ -379,8 +379,7 @@ class VkEvent:
             self.chat_id = self.peer_id
 
         self.sender = vk_event['sender']
-        if vk_event['chat']:
-            self.chat = vk_event['chat']
+        self.chat = vk_event['chat']
 
     def __str__(self):
         s = []
