@@ -9,6 +9,22 @@ class Statistics(CommonCommand):
         help_text = "̲С̲т̲а̲т̲а - статистика по Петровичам"
         super().__init__(names, help_text)
 
+    def start(self):
+        args_translator = {'петрович': self.get_petrovich,
+                           'ставки': self.get_rates,
+                           'крестики': self.get_tic_tac_toe}
+
+        if self.vk_event.args:
+            arg = self.vk_event.args[0].lower()
+
+            if arg not in args_translator:
+                return "Я не знаю такого блока"
+            return args_translator[arg]()
+        msg = ""
+        for val in args_translator.values():
+            msg += "{}\n".format(val())
+        return msg
+
     def get_petrovich(self):
         if not self.vk_event.chat:
             return ""
@@ -45,20 +61,4 @@ class Statistics(CommonCommand):
         for result in result_list:
             msg += "%s - %s\n" % (result[0], result[1])
 
-        return msg
-
-    def start(self):
-        args_translator = {'петрович': self.get_petrovich,
-                           'ставки': self.get_rates,
-                           'крестики': self.get_tic_tac_toe}
-
-        if self.vk_event.args:
-            arg = self.vk_event.args[0].lower()
-
-            if arg not in args_translator:
-                return "Я не знаю такого блока"
-            return args_translator[arg]()
-        msg = ""
-        for val in args_translator.values():
-            msg += "{}\n".format(val())
         return msg
