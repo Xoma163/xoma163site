@@ -5,7 +5,7 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.games.models import Gamer
 from apps.games.models import Rate as RateModel
 
-MIN_GAMERS = 5
+MIN_GAMERS = 4
 
 lock = Lock()
 
@@ -51,6 +51,6 @@ class Rates(CommonCommand):
             msg = "Выпавшее число - {}\nПобедители:\n{}".format(rnd, winners_str)
 
         gamers.delete()
-        lock.release()
         messages.append(msg)
+        lock.release()
         return messages

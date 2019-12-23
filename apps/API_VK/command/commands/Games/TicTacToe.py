@@ -1,4 +1,5 @@
 import json
+from threading import Lock
 
 from django.db.models import Q
 
@@ -29,12 +30,16 @@ MORE_HIDE_KEYBOARD = {
     ]
 }
 
+lock = Lock()
+
+
 class TicTacToe(CommonCommand):
     def __init__(self):
         names = ["крестики", "крестики-нолики", "нолики"]
         super().__init__(names, check_int_args=[0, 1])
 
     def start(self):
+        lock.acquire()
         sender = self.vk_event.sender
 
         if len(Gamer.objects.filter(user=sender)) == 0:
@@ -49,13 +54,17 @@ class TicTacToe(CommonCommand):
                 if self.vk_event.args:
                     # Шаг игры
                     self.step_game(session)
+                    lock.release()
                     return
                 else:
                     # Возвращаем пользователю клавиатуру, если он её потерял
-                    self.vk_bot.send_message(sender.user_id, keyboard=get_keyboard_by_board(json.loads(session.board)))
+                    self.vk_bot.send_message(sender.user_id, "Да держи ты свою клаву, ё-моё",
+                                             keyboard=get_keyboard_by_board(json.loads(session.board)))
+                    lock.release()
                     return
             # Если игрок только один и 99.9% что это user1
             else:
+                lock.release()
                 return "Ты начал игру. Подожди, когда подключится второй игрок"
         # Если нет такой сессии, в которой есть игрок
         else:
@@ -64,12 +73,14 @@ class TicTacToe(CommonCommand):
             if waiting_session:
                 # То стартуем игру
                 self.start_game(waiting_session)
+                lock.release()
                 return
             # Никаких свободных сессий нет - создаём новую
             else:
                 new_session = TicTacToeSession()
                 new_session.user1 = sender
                 new_session.save()
+                lock.release()
                 return "Начинаем игру. Ждём второго игрока"
 
     def step_game(self, session):
