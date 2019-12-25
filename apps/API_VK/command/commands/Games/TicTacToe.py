@@ -235,8 +235,8 @@ def get_elem(elem, row, col):
         label = "⭕"
         # color = "primary"
     else:
-        label = "&#12288;"
-        color = "secondary"
+        label = "ᅠ"
+        # color = "secondary"
 
     return {
         "action": {
