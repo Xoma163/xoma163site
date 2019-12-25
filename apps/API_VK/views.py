@@ -1,10 +1,11 @@
 import datetime
 import json
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 from apps.API_VK.APIs.yandex_geo import get_address
-from apps.API_VK.models import VkUser, Log
+from apps.API_VK.models import VkUser, Log, VkChat
+from apps.games.models import PetrovichGames
 from xoma163site.wsgi import vk_bot
 
 
@@ -93,6 +94,20 @@ def where_is_me(request):
     return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
 
 
+def petrovich(request):
+    today = datetime.datetime.now()
+    chat = VkChat.objects.get(chat_id=2000000001)
+    winner_today = PetrovichGames.objects.filter(date__year=today.year,
+                                                 date__month=today.month,
+                                                 date__day=today.day,
+                                                 chat=chat).last()
+    if winner_today is not None:
+        return JsonResponse({'user': {'name': winner_today.user.name, 'surname': winner_today.user.surname}},
+                            json_dumps_params={'ensure_ascii': False})
+    else:
+        return JsonResponse({'user': None}, json_dumps_params={'ensure_ascii': False})
+
+
 # @csrf_exempt
 # def add_new_words(request):
 #     if request.method == "POST":
@@ -161,7 +176,6 @@ def where_is_me(request):
 #
 # def remove_none_in_dict(old_dict):
 #     return {k: v for k, v in old_dict.items() if v is not None}
-
 
 def get_user_by_imei(imei):
     return VkUser.objects.filter(imei=imei).first()
