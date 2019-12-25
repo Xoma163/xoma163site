@@ -70,7 +70,7 @@ def parse_date(date):
 
 class VkBotClass(threading.Thread):
 
-    def send_message(self, peer_id, msg="&#12288;", attachments=None, keyboard=None, **kwargs):
+    def send_message(self, peer_id, msg="ᅠ", attachments=None, keyboard=None, **kwargs):
         if attachments is None:
             attachments = []
         if keyboard:

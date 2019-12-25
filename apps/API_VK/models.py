@@ -9,7 +9,7 @@ class VkChat(models.Model):
     class Meta:
         verbose_name = "Чат"
         verbose_name_plural = "Чаты"
-        ordering = ["id"]
+        ordering = ["chat_id"]
 
     def __str__(self):
         return str(self.name)

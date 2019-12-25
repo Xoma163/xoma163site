@@ -18,3 +18,8 @@ append:
 >sysctl -p
 
 >service php-fpm restart
+
+
+
+ln -s /var/www/xoma163.site/uWSGI_nginx/xoma163site_nginx.conf /etc/nginx/sites-available/
+ln -s /etc/nginx/sites-available/xoma163site_nginx.conf /etc/nginx/sites-enabled/
