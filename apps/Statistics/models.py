@@ -42,7 +42,9 @@ class Service(models.Model):
 
 
 class Counter(models.Model):
-    name = models.CharField(primary_key=True, verbose_name="Имя", max_length=50)
+    pass
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(verbose_name="Имя", max_length=50, blank=True)
     count = models.IntegerField(verbose_name="Количество", default=0)
     chat = models.ForeignKey(VkChat, verbose_name='Чат', null=True, blank=True, on_delete=models.SET_NULL)
 

@@ -5,7 +5,7 @@ from xoma163site.wsgi import cameraHandler
 
 class Start(CommonCommand):
     def __init__(self):
-        names = ["старт"]
+        names = ["старт", "start"]
         help_text = "̲С̲т̲а̲р̲т - возобновляет работу Петровича(только для админов). " \
                     "С параметром можно включить нужный модуль (синички, майн(1.12 1.15))"
         keyboard_admin = [{'text': 'Старт', 'color': 'green', 'row': 1, 'col': 1},
@@ -20,7 +20,7 @@ class Start(CommonCommand):
                     return "Стартуем синичек!"
                 else:
                     return "Синички уже стартовали"
-            elif self.vk_event.args[0] in ["майн", "майнкрафт"]:
+            elif self.vk_event.args[0] in ["майн", "майнкрафт", "mine", "minecraft"]:
                 if not self.check_sender_minecraft():
                     return
                 if len(self.vk_event.args) >= 2:
@@ -40,6 +40,13 @@ class Start(CommonCommand):
                         return "Я знаю такой версии {}".format(self.vk_event.args[1])
                 else:
                     return "Не указана версия"
+            elif self.vk_event.args[0] in ['террария', 'terraria']:
+                if not self.check_sender_terraria():
+                    return
+                if not self.check_command_time('terraria', 10):
+                    return
+                do_the_linux_command('sudo systemctl start terraria')
+                return "Стартуем террарию!"
             else:
                 return "Не найден такой модуль"
         else:

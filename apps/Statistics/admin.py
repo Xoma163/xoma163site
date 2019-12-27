@@ -15,4 +15,8 @@ class FeatureAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Service)
-admin.site.register(Counter)
+
+
+@admin.register(Counter)
+class FeatureAdmin(admin.ModelAdmin):
+    list_display = ('name', 'count', 'chat')

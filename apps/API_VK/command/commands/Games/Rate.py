@@ -22,10 +22,11 @@ class Rate(CommonCommand):
                 lock.release()
                 return
         else:
-            available_list = [x for x in range(1, 100)]
+            available_list = [x for x in range(1, 101)]
+            print(available_list)
             rates = RateModel.objects.filter(chat=self.vk_event.chat)
             for rate_entity in rates:
-                available_list.pop(rate_entity.rate)
+                available_list.pop(available_list.index(rate_entity.rate))
             if len(available_list) == 0:
                 lock.release()
                 return "Какая-то жесть, 100 игроков в ставке, я не могу больше придумать чисел, играйте(("

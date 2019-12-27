@@ -36,6 +36,7 @@ class VkUser(models.Model):
     is_student = models.BooleanField(verbose_name='Студент', default=False)
     is_banned = models.BooleanField(verbose_name='Забанен', default=False)
     is_minecraft = models.BooleanField(verbose_name='Майнкрафт', default=False)
+    is_terraria = models.BooleanField(verbose_name='Террария', default=False)
 
     send_notify_to = models.ManyToManyField('self', verbose_name="Отправление уведомлений", blank=True)
 

@@ -5,7 +5,7 @@ from xoma163site.wsgi import cameraHandler
 
 class Stop(CommonCommand):
     def __init__(self):
-        names = ["стоп"]
+        names = ["стоп", "stop"]
         help_text = "̲С̲т̲о̲п - останавливает работу Петровича. " \
                     "С параметром можно отключить нужный модуль (синички, майн(1.12 1.15))"
         keyboard_admin = [{'text': 'Стоп', 'color': 'red', 'row': 1, 'col': 2},
@@ -21,7 +21,7 @@ class Stop(CommonCommand):
                     return "Финишируем синичек"
                 else:
                     return "Синички уже финишировали"
-            elif self.vk_event.args[0] in ["майн", "майнкрафт"]:
+            elif self.vk_event.args[0] in ["майн", "майнкрафт", "mine", "minecraft"]:
                 if not self.check_sender_minecraft():
                     return
                 if len(self.vk_event.args) >= 2:
@@ -41,6 +41,13 @@ class Stop(CommonCommand):
                         return "Я знаю такой версии {}".format(self.vk_event.args[1])
                 else:
                     return "Не указана версия"
+            elif self.vk_event.args[0] in ['террария', 'terraria']:
+                if not self.check_sender_terraria():
+                    return
+                if not self.check_command_time('terraria', 10):
+                    return
+                do_the_linux_command('sudo systemctl stop terraria')
+                return "Финишируем террарию!"
             else:
                 return "Не найден такой модуль"
         else:

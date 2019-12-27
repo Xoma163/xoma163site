@@ -13,7 +13,7 @@ class Counter(CommonCommand):
         if len(name) >= 50:
             return "Длина названия счётчика не может превышать 50"
 
-        counter, created = CounterModel.objects.update_or_create(name=name,
+        counter, created = CounterModel.objects.update_or_create(name=name, chat=self.vk_event.chat,
                                                                  defaults={
                                                                      'name': name,
                                                                      'chat': self.vk_event.chat

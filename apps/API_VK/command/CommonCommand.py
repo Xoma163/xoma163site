@@ -118,7 +118,13 @@ class CommonCommand:
     def check_sender_minecraft(self):
         if self.vk_event.sender.is_minecraft:
             return True
-        self.vk_bot.send_message(self.vk_event.chat_id, "Команда доступна только майнкрафтерам")
+        self.vk_bot.send_message(self.vk_event.chat_id, "Команда доступна только для игроков майна")
+        return False
+
+    def check_sender_terraria(self):
+        if self.vk_event.sender.is_terraria:
+            return True
+        self.vk_bot.send_message(self.vk_event.chat_id, "Команда доступна только для игроков террарии")
         return False
 
     def check_args(self):
