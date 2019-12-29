@@ -22,7 +22,7 @@ class Rate(CommonCommand):
 
         rate_gamer_str = ""
         for rate_gamer in rates_gamers:
-            rate_gamer_str += "{}\n".format(str(rate_gamer.user))
+            rate_gamer_str += "{} - {}\n".format(str(rate_gamer.user), rate_gamer.rate)
 
         if len(existed_rate) > 0:
             lock.release()
