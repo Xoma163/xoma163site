@@ -55,7 +55,7 @@ class Rate(CommonCommand):
 
         RateModel(**{'user': self.vk_event.sender, 'chat': self.vk_event.chat, 'rate': arg}).save()
         lock.release()
-
-        return "Ставка принята - {}" \
-               "Игроки {}/{}:" \
-               "\n{}".format(arg, len(rates_gamers), MIN_GAMERS, rate_gamer_str)
+        rate_gamer_str += "{} - {}".format(self.vk_event.sender, arg)
+        return "Игроки {}/{}:\n" \
+               "{}".format(arg, len(rates_gamers) + 1
+                           , MIN_GAMERS, rate_gamer_str)
