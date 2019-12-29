@@ -20,7 +20,6 @@ class Logs(CommonCommand):
         try:
             output = do_the_linux_command(command)
 
-
             # Обрезаем инфу самого systemctl
             index_command = output.find(command)
             if index_command != -1:
@@ -38,7 +37,7 @@ class Logs(CommonCommand):
                 output = output.replace(for_removing, '')
 
             output = "Логи:\n" + output + "\n"
-            words = ["GET", "POST", "spawned uWSGI", "Not Found:"]
+            words = ["GET", "POST", "spawned uWSGI", "Not Found:", "HEAD"]
             for word in words:
                 while output.find(word) != -1:
                     word_index = output.find(word)
