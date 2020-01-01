@@ -55,4 +55,6 @@ class Find(CommonCommand):
                     os.remove(path)
             if len(attachments) >= count:
                 break
+        if len(attachments) == 0:
+            return "Ничего не нашёл 2"
         return {'msg': '', 'attachments': attachments}

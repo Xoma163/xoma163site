@@ -3,7 +3,6 @@ psycopg2
 uwsgi
 pyTelegramBotAPI
 pysocks
-uwsgi
 django-hosts
 opencv-python
 imageio
@@ -12,3 +11,4 @@ requests
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
+mcstatus

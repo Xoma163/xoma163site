@@ -12,6 +12,7 @@ from apps.API_VK.command.commands.Counters import Counters
 from apps.API_VK.command.commands.EasyCommands.Apologize import Apologize
 from apps.API_VK.command.commands.EasyCommands.Bye import Bye
 from apps.API_VK.command.commands.EasyCommands.Clear import Clear
+from apps.API_VK.command.commands.EasyCommands.Discord import Discord
 from apps.API_VK.command.commands.EasyCommands.Donate import Donate
 from apps.API_VK.command.commands.EasyCommands.Git import Git
 from apps.API_VK.command.commands.EasyCommands.Hi import Hi
@@ -45,6 +46,7 @@ from apps.API_VK.command.commands.Quotes import Quotes
 from apps.API_VK.command.commands.Random import Random
 from apps.API_VK.command.commands.Register import Register
 from apps.API_VK.command.commands.Scold import Scold
+from apps.API_VK.command.commands.Status import Status
 from apps.API_VK.command.commands.Stream import Stream
 from apps.API_VK.command.commands.StudentCommands.GoogleDrive import GoogleDrive
 from apps.API_VK.command.commands.StudentCommands.Mail import Mail
@@ -58,12 +60,11 @@ from apps.API_VK.command.commands.Where import Where
 from apps.API_VK.command.commands.YesNo import YesNo
 
 commands = [YesNo(), Thanks(), Stream(), Where(), Birds(), Register(), UnRegister(), Petrovich(), Statistics(),
-            Random(), Sorry(),
-            Help(), Weather(), Praise(), Scold(), Quote(), Quotes(), Keyboard(), KeyboardHide(), Uyu(), Hi(), Bye(),
-            Nya(), Shit(), Git(), Donate(), Issue(), Issues(), Joke(), TimeTable(), GoogleDrive(), Week(), Mail(),
-            Ban(), DeBan(), Command(), Start(), Stop(), Restart(), Reboot(), Control(), get_user_by_id(),
-            update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(), Find(), Rate(),
-            Rates(), Translate(), Uptime(), Counters(), Counter(), TicTacToe()
+            Random(), Sorry(), Help(), Weather(), Praise(), Scold(), Quote(), Quotes(), Keyboard(), KeyboardHide(),
+            Uyu(), Hi(), Bye(), Nya(), Shit(), Git(), Donate(), Discord(), Issue(), Issues(), Joke(), TimeTable(),
+            GoogleDrive(), Week(), Mail(), Ban(), DeBan(), Command(), Start(), Stop(), Restart(), Reboot(), Control(),
+            get_user_by_id(), update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(),
+            Find(), Rate(), Rates(), Translate(), Uptime(), Counters(), Counter(), TicTacToe(), Status()
             ]
 
 

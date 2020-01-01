@@ -27,8 +27,8 @@ class Rate(CommonCommand):
         if len(existed_rate) > 0:
             lock.release()
             return "Ставка уже поставлена\n" \
-                   "Игроки {}/{}:" \
-                   "\n{}".format(len(rates_gamers), MIN_GAMERS, rate_gamer_str)
+                   "Игроки {}/{}:\n" \
+                   "{}".format(len(rates_gamers), MIN_GAMERS, rate_gamer_str)
 
         if self.vk_event.args:
             arg = self.vk_event.args[0]
@@ -57,5 +57,4 @@ class Rate(CommonCommand):
         lock.release()
         rate_gamer_str += "{} - {}".format(self.vk_event.sender, arg)
         return "Игроки {}/{}:\n" \
-               "{}".format(arg, len(rates_gamers) + 1
-                           , MIN_GAMERS, rate_gamer_str)
+               "{}".format(len(rates_gamers) + 1, MIN_GAMERS, rate_gamer_str)
