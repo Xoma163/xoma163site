@@ -23,8 +23,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = secrets['django']['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-# MAIN_DOMAIN = "xoma163.xyz"
+DEBUG = True
+MAIN_DOMAIN = "xoma163.xyz"
 ALLOWED_HOSTS = [
     # ips
     '192.168.1.10', '85.113.60.5',
@@ -45,12 +45,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'django_hosts',
+    'static_autocollect',
 
     'apps.API_VK',
     'apps.birds',
     'apps.Statistics',
     'apps.games',
-
+    'apps.web'
 ]
 
 MIDDLEWARE = [
@@ -71,7 +72,7 @@ ROOT_URLCONF = 'xoma163site.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [(os.path.join(BASE_DIR, 'templates')), ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -139,8 +140,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Правильные права для загружаемых файлов
 FILE_UPLOAD_PERMISSIONS = 0o644
-
-# New TBot
-# tBot = TBot()
 
 APPEND_SLASH = True

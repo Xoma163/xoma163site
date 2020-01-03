@@ -7,7 +7,7 @@ class Restart(CommonCommand):
         names = ["рестарт", "restart"]
         help_text = "̲Р̲е̲с̲т̲а̲р̲т - перезагружает веб-сервер и Петровича(только для админов). " \
                     "С параметром можно включить грузануть модуль (синички, майн(1.12 1.15))"
-        super().__init__(names, help_text, for_moderator=True)
+        super().__init__(names, help_text)
 
     def start(self):
         if self.vk_event.args:

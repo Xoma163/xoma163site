@@ -11,11 +11,13 @@ class Stop(CommonCommand):
         keyboard_admin = [{'text': 'Стоп', 'color': 'red', 'row': 1, 'col': 2},
                           {'text': 'Стоп синички', 'color': 'red', 'row': 1, 'col': 4}]
 
-        super().__init__(names, help_text, for_moderator=True, keyboard_admin=keyboard_admin)
+        super().__init__(names, help_text, keyboard_admin=keyboard_admin)
 
     def start(self):
         if self.vk_event.args:
             if self.vk_event.args[0] == "синички":
+                if not self.check_sender_moderator():
+                    return
                 if cameraHandler.is_active():
                     cameraHandler.terminate()
                     return "Финишируем синичек"
