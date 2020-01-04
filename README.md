@@ -25,3 +25,5 @@ append:
 https://certbot.eff.org/lets-encrypt/ubuntubionic-nginx
 ln -s /var/www/xoma163.site/uWSGI_nginx/xoma163site_nginx.conf /etc/nginx/sites-available/
 ln -s /etc/nginx/sites-available/xoma163site_nginx.conf /etc/nginx/sites-enabled/
+
+cloc . -exclude-list-file=.clocignore

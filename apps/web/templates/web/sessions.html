@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Тусовки
+{% endblock %}
+{% block css %}
+  <link rel="stylesheet" href="{% static 'web/css/style.css' %}">
+{% endblock %}
+{% block body %}
+  <ul>
+    {% for session in sessions %}
+      <li>
+        <a href="{{ session.id }}">{{ session.id }}. {{ session.name }} </a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <form action="" method="POST">
+    {% csrf_token %}
+    <input type="text" name="name" autocomplete="off">
+    <button class="btn btn-success">Добавить</button>
+  </form>
+{% endblock %}
+
+{% block js %}
+  <script type="application/javascript" src="{% static "web/js/script.js" %}"></script>
+{% endblock %}

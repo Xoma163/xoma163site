@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Калькулятор жромбы
+{% endblock %}
+{% block css %}
+  <link rel="stylesheet" href="{% static 'web/css/style.css' %}">
+{% endblock %}
+{% block body %}
+
+  <div class="container-fluid p-0">
+    <table class="table" id="order">
+      <thead class="thead-dark">
+      <tr class="text-center">
+        <th scope="col">#</th>
+        <th scope="col">Продукт</th>
+        {# ToDo: в зависимости от размера экрана количество и куплено#}
+        <th scope="col">Кол-во</th>
+        <th scope="col">Тара</th>
+        <th scope="col">Цена</th>
+        <th scope="col">Кто</th>
+        {# ToDo: в зависимости от размера экрана количество и куплено#}
+
+        <th scope="col">Купл.</th>
+        <th scope="col">x</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% csrf_token %}
+      <input type="hidden" name="session_id" value="{{ session_id }}">
+
+      {% for e in order %}
+        <tr class="text-center">
+          <th scope="row">{{ forloop.counter }}
+            <input type="hidden" value="{{ e.product.id }}" name="id">
+          </th>
+          <td class="form-group">
+            <input class="form-control " type="text" {% if e.product.name %}
+                   value="{{ e.product.name }}" {% endif %}
+                   name="name" autocomplete="nope">
+          </td>
+          <td class="form-group">
+            <input class="form-control " type="text" value="{{ e.product.count }}" name="count"
+                   autocomplete="nope">
+          </td>
+          <td class="form-group">
+            <select class="form-control " name="tare">
+              <option value="None" {% if e.product.tare == None %} selected="selected"{% endif %}></option>
+              {% for tare in tares %}
+                <option {% if e.product.tare == tare %} selected="selected" {% endif %}
+                                                        value="{{ tare.id }}">{{ tare.name }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td class="form-group">
+            <input class="form-control " type="text" value="{{ e.product.price }}" name="price"
+                   autocomplete="nope">
+          </td>
+          <td class="form-group">
+            <select class="form-control " name="user">
+              <option value="None" {% if e.product.user == None %} selected="selected"{% endif %}></option>
+              {% for user in users %}
+                <option {% if e.product.user == user %} selected="selected" {% endif %}
+                                                        value="{{ user.id }}">{{ user.name }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td class="form-group">
+            <input type="checkbox" class="form-control " {% if e.product.is_bought %}
+                   checked="checked" {% endif %}
+                   name="is_bought">
+          </td>
+          <td class="form-group del-elem d-flex justify-content-center flex-column">
+            <i class="fa fa-times" onclick="delRow(this)" style="color:red;cursor:pointer;"></i>
+          </td>
+        </tr>
+      {% endfor %}
+      <tr class="text-center">
+        <th scope="row">
+          <input type="hidden" value="None" name="id">
+        </th>
+        <td class="form-group">
+          <input class="form-control " type="text"
+                 value=""
+                 name="name" autocomplete="nope">
+        </td>
+        <td class="form-group">
+          <input class="form-control " type="text" value="0" name="count"
+                 autocomplete="nope">
+        </td>
+        <td class="form-group">
+          <select class="form-control " name="tare">
+            <option value="None"></option>
+            {% for tare in tares %}
+              <option value="{{ tare.id }}">{{ tare.name }}</option>
+            {% endfor %}
+          </select>
+        </td>
+        <td class="form-group">
+          <input class="form-control " type="text" value="0" name="price" autocomplete="nope">
+        </td>
+        <td class="form-group">
+          <select class="form-control " name="user">
+            <option value="None"></option>
+            {% for user in users %}
+              <option value="{{ user.id }}">{{ user.name }}</option>
+            {% endfor %}
+          </select>
+        </td>
+        <td class="form-group">
+          <input type="checkbox" class="form-control " name="is_bought">
+        </td>
+        <td class="form-group del-elem d-flex justify-content-center flex-column">
+          <i class="fa fa-check" onclick="addRow()" style="color:green;cursor:pointer;"></i>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="d-flex justify-content-between  p-2">
+      <div class="btn btn-success" data-toggle="modal" data-target="#modal-settings">
+        Настройки
+      </div>
+      <div class="btn btn-success" onclick="getCalculateData()">Расчёт
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="modal-settings" tabindex="-1" role="dialog" aria-labelledby="modal-settingsLabel"
+       aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-settingsLabel">Настройки</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <table class="table" id="users">
+            <thead class="thead-dark">
+            <tr class="text-center">
+              <th scope="col">Пользователь</th>
+              <th scope="col">x</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for u in users %}
+              <tr class="text-center">
+                <td class="form-group">
+                  <input type="hidden" name="id" value="{{ u.id }}">
+                  <input class="form-control "
+                         type="text"
+                         value="{{ u.name }}"
+                         name="name"
+                         autocomplete="nope"
+                         onchange="saveUser(this)">
+                </td>
+                <td class="form-group del-elem d-flex justify-content-center flex-column">
+                  <i class="fa fa-times" onclick="delUser(this)" style="color:red;cursor:pointer;"></i>
+                </td>
+              </tr>
+            {% endfor %}
+            <tr class="text-center">
+              <td class="form-group">
+                <input type="hidden" name="id" value="None">
+                <input class="form-control "
+                       type="text"
+                       value=""
+                       name="name"
+                       autocomplete="nope">
+              </td>
+              <td class="form-group del-elem d-flex justify-content-center flex-column">
+                <i class="fa fa-check" onclick="addUser()" style="color:green;cursor:pointer;"></i>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          {#          <div class="d-flex form-group">#}
+          {#            <input type="text" name="newName" autocomplete="nope" class="form-control "#}
+          {#                   style="padding: .75rem;">#}
+          {#            <div class="btn btn-success form-control" onclick="addUser()">Добавить</div>#}
+          {#          </div>#}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Сохранить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="modal-calculation" tabindex="-1" role="dialog" aria-labelledby="modal-calculationLabel"
+       aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-calculationLabel">Расчёт</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+{% endblock %}
+
+{% block js %}
+  <script type="application/javascript" src="{% static "web/js/script.js" %}"></script>
+{% endblock %}
