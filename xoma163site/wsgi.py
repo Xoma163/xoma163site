@@ -32,5 +32,4 @@ if not os.path.exists(BASE_DIR + '/thread.lock'):
     print("BOT AND CAMERA HANDLER STARTED")
 # else:
 #     print("BOT and CAMERA HANDLER  WILL BE NOT STARTED")
-
 application = get_wsgi_application()

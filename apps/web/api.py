@@ -34,7 +34,6 @@ def del_row(request):
     id = data['id']
     product = Product.objects.filter(id=id, session_id=session_id).first()
     Order.objects.filter(session_id=session_id, product=product).delete()
-    # ToDo: product не удаляется
     product.delete()
     return JsonResponse({'status': 'ok'}, json_dumps_params={'ensure_ascii': False})
 

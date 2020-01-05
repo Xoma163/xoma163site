@@ -1,8 +1,10 @@
 import json
 import re
 import threading
+import traceback
 
 import vk_api
+from requests.exceptions import SSLError
 from vk_api import VkUpload
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.utils import get_random_id
@@ -70,6 +72,14 @@ def parse_date(date):
 
 class VkBotClass(threading.Thread):
 
+    # ToDo: https://github.com/python273/vk_api/issues/328
+    def send_with_wrapper(self, peer_id, **kwargs):
+        try:
+            self.send_message(peer_id, **kwargs)
+        except SSLError:
+            self.send_message(peer_id, **kwargs)
+            print(SSLError)
+
     def send_message(self, peer_id, msg="ᅠ", attachments=None, keyboard=None, **kwargs):
         if attachments is None:
             attachments = []
@@ -84,8 +94,23 @@ class VkBotClass(threading.Thread):
                               access_token=self._TOKEN,
                               random_id=get_random_id(),
                               attachment=','.join(attachments),
-                              keyboard=keyboard
+                              keyboard=keyboard,
                               )
+
+    def parse_and_send_msgs(self, result, peer_id, with_wrapper=False):
+        if type(result) == str:
+            result = {'msg': result}
+        if type(result) == dict:
+            result = [result]
+        if type(result) == list:
+            for msg in result:
+                if type(msg) == str:
+                    msg = {'msg': msg}
+                if type(msg) == dict:
+                    if with_wrapper:
+                        self.send_with_wrapper(peer_id, **msg)
+                    else:
+                        self.send_message(peer_id, **msg)
 
     def menu(self, vk_event):
         # debug_message = "command = {}\n" \
@@ -115,16 +140,7 @@ class VkBotClass(threading.Thread):
                 if command.accept(vk_event):
                     result = command.__class__().check_and_start(self, vk_event)
                     if result:
-                        if type(result) == str:
-                            result = {'msg': result}
-                        if type(result) == dict:
-                            result = [result]
-                        if type(result) == list:
-                            for msg in result:
-                                if type(msg) == str:
-                                    msg = {'msg': msg}
-                                if type(msg) == dict:
-                                    self.send_message(vk_event.peer_id, **msg)
+                        self.parse_and_send_msgs(result, vk_event.peer_id)
 
                     append_command_to_statistics(vk_event.command)
                     return
@@ -137,7 +153,7 @@ class VkBotClass(threading.Thread):
         super().__init__()
         self._TOKEN = secrets['vk']['TOKEN']
         self._group_id = secrets['vk']['group_id']
-        vk_session = vk_api.VkApi(token=self._TOKEN)
+        vk_session = vk_api.VkApi(token=self._TOKEN, api_version="5.101")
         self.longpoll = MyVkBotLongPoll(vk_session, group_id=self._group_id)
         self.upload = VkUpload(vk_session)
         self.vk = vk_session.get_api()
@@ -215,6 +231,7 @@ class VkBotClass(threading.Thread):
 
             except Exception as e:
                 print('ОШИБКА ВЫПОЛНЕНИЯ ЛОНГПОЛА 1:', e)
+                print(traceback.format_exc())
 
     def run(self):
         open(BASE_DIR + '/thread.lock', 'w')
