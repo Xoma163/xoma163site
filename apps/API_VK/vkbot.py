@@ -34,7 +34,8 @@ def parse_msg(msg):
     msg_dict['command'] = command_arg[0].lower()
     if len(command_arg) > 1:
         command_arg[1] = command_arg[1].replace(',', ' ')
-
+        if command_arg[1].startswith('-'):
+            command_arg[1] = " " + command_arg[1]
         find_dash = command_arg[1].find(' -')
         if find_dash != -1:
             msg_dict['keys'] = []
