@@ -1,8 +1,7 @@
-import re
-
 import requests
 
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import has_cyrillic
 from secrets.secrets import secrets
 
 
@@ -37,7 +36,3 @@ class Translate(CommonCommand):
             return response['text'][0]
         else:
             return "Ошибка:\n{}".format(response)
-
-
-def has_cyrillic(text):
-    return bool(re.search('[а-яА-Я]', text))

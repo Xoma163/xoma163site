@@ -21,6 +21,7 @@ from apps.API_VK.command.commands.EasyCommands.Shit import Shit
 from apps.API_VK.command.commands.EasyCommands.Sorry import Sorry
 from apps.API_VK.command.commands.EasyCommands.Thanks import Thanks
 from apps.API_VK.command.commands.Find import Find
+from apps.API_VK.command.commands.Fix import Fix
 from apps.API_VK.command.commands.Games.Petrovich import Petrovich
 from apps.API_VK.command.commands.Games.Rate import Rate
 from apps.API_VK.command.commands.Games.Rates import Rates
@@ -66,7 +67,7 @@ commands = [
     Uyu(), Hi(), Bye(), Nya(), Shit(), Git(), Donate(), Discord(), Issue(), Issues(), Joke(),
     GoogleDrive(), Mail(), Ban(), DeBan(), Command(), Start(), Stop(), Restart(), Reboot(), Control(),
     get_user_by_id(), update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(),
-    Find(), Rate(), Rates(), Translate(), Uptime(), Counters(), Counter(), TicTacToe(), Status()
+    Find(), Rate(), Rates(), Translate(), Uptime(), Counters(), Counter(), TicTacToe(), Status(), Fix()
 ]
 
 

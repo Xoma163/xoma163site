@@ -1,4 +1,5 @@
 import random
+import re
 
 
 def get_random_item_from_list(my_list, arg=None):
@@ -17,6 +18,11 @@ def random_probability(probability):
         return True
     else:
         return False
+
+
+def has_cyrillic(text):
+    return bool(re.search('[а-яА-Я]', text))
+
 
 #
 # def wrap_msg(msg_str):
