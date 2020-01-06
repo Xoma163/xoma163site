@@ -7,7 +7,7 @@ class Start(CommonCommand):
     def __init__(self):
         names = ["старт", "start"]
         help_text = "̲С̲т̲а̲р̲т - возобновляет работу Петровича(только для админов). " \
-                    "С параметром можно включить нужный модуль (синички, майн(1.12 1.15))"
+                    "С параметром можно включить нужный модуль (синички, майн(1.12 1.15.1))"
         keyboard_admin = [{'text': 'Старт', 'color': 'green', 'row': 1, 'col': 1},
                           {'text': 'Старт синички', 'color': 'green', 'row': 1, 'col': 3}]
         super().__init__(names, help_text, keyboard_admin=keyboard_admin)
@@ -33,12 +33,12 @@ class Start(CommonCommand):
 
                         do_the_linux_command('sudo systemctl start minecraft')
                         return "Стартуем майн 1.12!"
-                    elif self.vk_event.args[1] == '1.15':
-                        if not self.check_command_time('minecraft 1.15', 30):
+                    elif self.vk_event.args[1] == '1.15.1':
+                        if not self.check_command_time('minecraft 1.15.1', 30):
                             return
 
-                        do_the_linux_command('sudo systemctl start minecraft_1_15')
-                        return "Стартуем майн 1.15!"
+                        do_the_linux_command('sudo systemctl start minecraft_1_15_1')
+                        return "Стартуем майн 1.15.1!"
                     else:
                         return "Я знаю такой версии {}".format(self.vk_event.args[1])
                 else:

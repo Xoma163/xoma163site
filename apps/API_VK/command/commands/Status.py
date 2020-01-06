@@ -14,10 +14,10 @@ class Status(CommonCommand):
     # ToDo: не работает с внешним адресом
     def start(self):
         res_1_12 = get_minecraft_server_info("192.168.1.10", "25565", "1.12.2")
-        res_1_15 = get_minecraft_server_info("192.168.1.10", "25566", "1.15")
+        res_1_15_1 = get_minecraft_server_info("192.168.1.10", "25566", "1.15.1")
         terraria = get_terraria_server_info("192.168.1.10", "7777", "хз")
 
-        total_str = "{}\n\n{}\n\n{}".format(res_1_12, res_1_15, terraria)
+        total_str = "{}\n\n{}\n\n{}".format(res_1_12, res_1_15_1, terraria)
 
         return total_str
 

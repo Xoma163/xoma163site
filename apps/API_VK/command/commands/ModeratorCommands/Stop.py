@@ -7,7 +7,7 @@ class Stop(CommonCommand):
     def __init__(self):
         names = ["стоп", "stop"]
         help_text = "̲С̲т̲о̲п - останавливает работу Петровича. " \
-                    "С параметром можно отключить нужный модуль (синички, майн(1.12 1.15))"
+                    "С параметром можно отключить нужный модуль (синички, майн(1.12 1.15.1))"
         keyboard_admin = [{'text': 'Стоп', 'color': 'red', 'row': 1, 'col': 2},
                           {'text': 'Стоп синички', 'color': 'red', 'row': 1, 'col': 4}]
 
@@ -33,12 +33,12 @@ class Stop(CommonCommand):
 
                         do_the_linux_command('sudo systemctl stop minecraft')
                         return "Финишируем майн 1.12!"
-                    elif self.vk_event.args[1] == '1.15':
-                        if not self.check_command_time('minecraft 1.15', 30):
+                    elif self.vk_event.args[1] == '1.15.1':
+                        if not self.check_command_time('minecraft 1.15.1', 30):
                             return
 
-                        do_the_linux_command('sudo systemctl stop minecraft_1_15')
-                        return "Финишируем майн 1.15!"
+                        do_the_linux_command('sudo systemctl stop minecraft_1_15_1')
+                        return "Финишируем майн 1.15.1!"
                     else:
                         return "Я знаю такой версии {}".format(self.vk_event.args[1])
                 else:
