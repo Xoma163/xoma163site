@@ -99,32 +99,31 @@ class CommonCommand:
     def check_sender_admin(self):
         if self.vk_event.sender.is_admin:
             return True
-        if self.vk_event.chat_id is not None:
-            self.vk_bot.send_message(self.vk_event.chat_id, "Команда доступна только администраторам")
+        self.vk_bot.send_message(self.vk_event.peer_id, "Команда доступна только администраторам")
         return False
 
     def check_sender_moderator(self):
         if self.vk_event.sender.is_moderator or self.vk_event.sender.is_admin:
             return True
-        self.vk_bot.send_message(self.vk_event.chat_id, "Команда доступна только администраторам и модераторам")
+        self.vk_bot.send_message(self.vk_event.peer_id, "Команда доступна только администраторам и модераторам")
         return False
 
     def check_sender_student(self):
         if self.vk_event.sender.is_student:
             return True
-        self.vk_bot.send_message(self.vk_event.chat_id, "Команда доступна только студентам")
+        self.vk_bot.send_message(self.vk_event.peer_id, "Команда доступна только студентам")
         return False
 
     def check_sender_minecraft(self):
         if self.vk_event.sender.is_minecraft:
             return True
-        self.vk_bot.send_message(self.vk_event.chat_id, "Команда доступна только для игроков майна")
+        self.vk_bot.send_message(self.vk_event.peer_id, "Команда доступна только для игроков майна")
         return False
 
     def check_sender_terraria(self):
         if self.vk_event.sender.is_terraria:
             return True
-        self.vk_bot.send_message(self.vk_event.chat_id, "Команда доступна только для игроков террарии")
+        self.vk_bot.send_message(self.vk_event.peer_id, "Команда доступна только для игроков террарии")
         return False
 
     def check_args(self):
@@ -132,10 +131,10 @@ class CommonCommand:
             if len(self.vk_event.args) >= self.need_args:
                 return True
             else:
-                self.vk_bot.send_message(self.vk_event.chat_id, "Передано недостаточно аргументов")
+                self.vk_bot.send_message(self.vk_event.peer_id, "Передано недостаточно аргументов")
                 return False
 
-        self.vk_bot.send_message(self.vk_event.chat_id, "Для работы команды требуются аргументы")
+        self.vk_bot.send_message(self.vk_event.peer_id, "Для работы команды требуются аргументы")
         return False
 
     def check_int_arg_range(self, arg, val1, val2, banned_list=None):
@@ -144,13 +143,13 @@ class CommonCommand:
                 if arg not in banned_list:
                     return True
                 else:
-                    self.vk_bot.send_message(self.vk_event.chat_id,
+                    self.vk_bot.send_message(self.vk_event.peer_id,
                                              "Аргумент не может принимать это значение".format(val1, val2))
                     return False
             else:
                 return True
         else:
-            self.vk_bot.send_message(self.vk_event.chat_id,
+            self.vk_bot.send_message(self.vk_event.peer_id,
                                      "Значение может быть в диапазоне [{};{}]".format(val1, val2))
             return False
 
@@ -158,7 +157,7 @@ class CommonCommand:
         try:
             return int(arg), True
         except ValueError:
-            self.vk_bot.send_message(self.vk_event.chat_id, "Аргумент должен быть целочисленным")
+            self.vk_bot.send_message(self.vk_event.peer_id, "Аргумент должен быть целочисленным")
             return arg, False
 
     def parse_int_args(self):
@@ -170,7 +169,7 @@ class CommonCommand:
                 if len(self.vk_event.args) - 1 >= checked_arg_index:
                     self.vk_event.args[checked_arg_index] = int(self.vk_event.args[checked_arg_index])
             except ValueError:
-                self.vk_bot.send_message(self.vk_event.chat_id, "Аргумент должен быть целочисленным")
+                self.vk_bot.send_message(self.vk_event.peer_id, "Аргумент должен быть целочисленным")
                 return False
 
         return True
@@ -179,21 +178,21 @@ class CommonCommand:
         if self.vk_event.from_user:
             return True
 
-        self.vk_bot.send_message(self.vk_event.chat_id, "Команда работает только в ЛС")
+        self.vk_bot.send_message(self.vk_event.peer_id, "Команда работает только в ЛС")
         return False
 
     def check_fwd(self):
         if self.vk_event.fwd:
             return True
 
-        self.vk_bot.send_message(self.vk_event.chat_id, "Перешлите сообщения")
+        self.vk_bot.send_message(self.vk_event.peer_id, "Перешлите сообщения")
         return False
 
     def check_conversation(self):
-        if not self.vk_event.from_user:
+        if self.vk_event.from_chat:
             return True
 
-        self.vk_bot.send_message(self.vk_event.chat_id, "Команда работает только в беседах")
+        self.vk_bot.send_message(self.vk_event.peer_id, "Команда работает только в беседах")
         return False
 
     def check_command_time(self, name, seconds):
@@ -203,7 +202,7 @@ class CommonCommand:
         update_datetime = entity.update_datetime
         delta_seconds = (datetime.now() - update_datetime).seconds
         if delta_seconds < seconds:
-            self.vk_bot.send_message(self.vk_event.chat_id,
+            self.vk_bot.send_message(self.vk_event.peer_id,
                                      "Нельзя часто вызывать команды остановки и старта. Жди ещё {} секунд"
                                      .format(seconds - delta_seconds))
             return False

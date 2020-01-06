@@ -35,12 +35,13 @@ class Birds(CommonCommand):
         cameraHandler.clear_file(path)
         attachments.append('photo{}_{}'.format(photo['owner_id'], photo['id']))
 
+        # ToDo: В апи не работает, возможно что-то связано с потоками
         if frames != 0:
             try:
                 path2 = cameraHandler.get_gif(frames, quality == 1)
             except RuntimeError as e:
                 return str(e)
-            gif = self.vk_bot.upload.document_message(path2, title='Синички', peer_id=self.vk_event.chat_id)['doc']
+            gif = self.vk_bot.upload.document_message(path2, title='Синички', peer_id=self.vk_event.peer_id)['doc']
             cameraHandler.clear_file(path2)
             attachments.append('doc{}_{}'.format(gif['owner_id'], gif['id']))
         return {'msg': '', 'attachments': attachments}

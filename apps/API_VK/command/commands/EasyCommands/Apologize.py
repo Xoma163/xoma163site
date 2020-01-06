@@ -13,9 +13,9 @@ class Apologize(CommonCommand):
     def start(self):
         phrases = ["Извини", "Нет", "Сам извинись", "за что?", "КАВО", "Ты уверен?"]
         phrase = get_random_item_from_list(phrases)
-        self.vk_bot.send_message(self.vk_event.chat_id, phrase)
+        self.vk_bot.send_message(self.vk_event.peer_id, phrase)
 
         if phrase == "Извини":
             if random_probability(25):
                 time.sleep(3)
-                self.vk_bot.send_message(self.vk_event.chat_id, "сь")
+                self.vk_bot.send_message(self.vk_event.peer_id, "сь")

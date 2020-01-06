@@ -8,6 +8,10 @@ class get_conversations(CommonCommand):
         super().__init__(names, help_text, for_admin=True, need_args=1)
 
     def start(self):
+        # ToDo:
+        # for chat in chats...
         res = self.vk_bot.vk.messages.getConversationsById(
-            peer_ids=[2000000001, 2000000003], extended=1, group_id=186416119)
+            peer_ids=[2000000001, 2000000003],
+            extended=1,
+            group_id=self.vk_bot.group_id)
         return res

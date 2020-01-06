@@ -4,7 +4,6 @@ import threading
 import traceback
 
 import vk_api
-from requests.exceptions import SSLError
 from vk_api import VkUpload
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.utils import get_random_id
@@ -28,6 +27,7 @@ def parse_msg_to_me(msg, mentions):
 
 
 def parse_msg(msg):
+    # Сообщение, команда, аргументы, аргументы строкой, ключи
     msg_dict = {'msg': msg, 'command': None, 'args': None, 'original_args': None, 'keys': None}
 
     command_arg = msg.split(' ', 1)
@@ -74,12 +74,12 @@ def parse_date(date):
 class VkBotClass(threading.Thread):
 
     # ToDo: https://github.com/python273/vk_api/issues/328
-    def send_with_wrapper(self, peer_id, **kwargs):
-        try:
-            self.send_message(peer_id, **kwargs)
-        except SSLError:
-            self.send_message(peer_id, **kwargs)
-            print(SSLError)
+    # def send_with_wrapper(self, peer_id, **kwargs):
+    #     try:
+    #         self.send_message(peer_id, **kwargs)
+    #     except SSLError:
+    #         self.send_message(peer_id, **kwargs)
+    #         print(SSLError)
 
     def send_message(self, peer_id, msg="ᅠ", attachments=None, keyboard=None, **kwargs):
         if attachments is None:
@@ -98,7 +98,7 @@ class VkBotClass(threading.Thread):
                               keyboard=keyboard,
                               )
 
-    def parse_and_send_msgs(self, result, peer_id, with_wrapper=False):
+    def parse_and_send_msgs(self, peer_id, result):
         if type(result) == str:
             result = {'msg': result}
         if type(result) == dict:
@@ -108,10 +108,7 @@ class VkBotClass(threading.Thread):
                 if type(msg) == str:
                     msg = {'msg': msg}
                 if type(msg) == dict:
-                    if with_wrapper:
-                        self.send_with_wrapper(peer_id, **msg)
-                    else:
-                        self.send_message(peer_id, **msg)
+                    self.send_message(peer_id, **msg)
 
     def menu(self, vk_event):
         # debug_message = "command = {}\n" \
@@ -131,7 +128,7 @@ class VkBotClass(threading.Thread):
             if vk_event.command in ['старт']:
                 self.BOT_CAN_WORK = True
                 cameraHandler.resume()
-                self.send_message(vk_event.chat_id, "Стартуем!")
+                self.send_message(vk_event.peer_id, "Стартуем!")
                 return
             return
 
@@ -141,21 +138,21 @@ class VkBotClass(threading.Thread):
                 if command.accept(vk_event):
                     result = command.__class__().check_and_start(self, vk_event)
                     if result:
-                        self.parse_and_send_msgs(result, vk_event.peer_id)
+                        self.parse_and_send_msgs(vk_event.peer_id, result)
 
                     append_command_to_statistics(vk_event.command)
-                    return
+                    return result
             except RuntimeError as e:
-                return
+                return str(e)
         self.send_message(vk_event.peer_id, "Я не понял команды \"%s\"" % vk_event.command)
-        return
+        return "Я не понял команды \"%s\"" % vk_event.command
 
     def __init__(self):
         super().__init__()
         self._TOKEN = secrets['vk']['TOKEN']
-        self._group_id = secrets['vk']['group_id']
+        self.group_id = secrets['vk']['group_id']
         vk_session = vk_api.VkApi(token=self._TOKEN, api_version="5.101")
-        self.longpoll = MyVkBotLongPoll(vk_session, group_id=self._group_id)
+        self.longpoll = MyVkBotLongPoll(vk_session, group_id=self.group_id)
         self.upload = VkUpload(vk_session)
         self.vk = vk_session.get_api()
         self.mentions = secrets['vk']['mentions']
@@ -167,28 +164,28 @@ class VkBotClass(threading.Thread):
                 # Если пришло новое сообщение
                 if event.type == VkBotEventType.MESSAGE_NEW:
                     '''
-                    from_chat - сообщение пришло из чата
                     from_user - сообщение пришло из диалога с пользователем
                     chat_id - присутствует только в чатах
                     text - текст сообщения
                     from_id - кто отправил сообщение (если значение отрицательное, то другой бот)
+                    user_id - id пользователя
                     peer_id - откуда отправил сообщение (если там значение совпадает с from_id, то это from_user, 
                         если нет и значение начинается на 200000000*, то это конфа
                     payload - скрытая информация, которая передаётся при нажатии на кнопку
-                    
                     '''
-                    vk_event = {'from_chat': event.from_chat,
-                                'from_user': event.from_user,
-                                'chat_id': event.chat_id,
-                                'message': {
-                                    'text': event.object.text,
-                                    'full_message': event.object.text,
-                                    'user_id': event.object.from_id,
-                                    'peer_id': event.object.peer_id,
-                                    'payload': event.object.payload
-                                },
-                                'parsed': {
-                                }}
+
+                    vk_event = {
+                        'from_user': event.from_user,
+                        'chat_id': event.chat_id,
+                        'user_id': event.object.from_id,
+                        'peer_id': event.object.peer_id,
+
+                        'message': {
+                            'text': event.object.text,
+                            'payload': event.object.payload
+                        },
+                        'parsed': {
+                        }}
 
                     # Сообщение либо мне в лс, либо упоминание меня
                     if not (message_for_me(vk_event['message']['text'], self.mentions) or vk_event['from_user']):
@@ -197,23 +194,21 @@ class VkBotClass(threading.Thread):
                     vk_event['message']['text'] = parse_msg_to_me(vk_event['message']['text'], self.mentions)
                     vk_event['parsed'] = parse_msg(vk_event['message']['text'])
 
-                    if vk_event['message']['user_id'] > 0:
-                        vk_event['sender'] = self.get_user_by_id(vk_event['message']['user_id'])
+                    # Узнаём пользователя
+                    if vk_event['user_id'] > 0:
+                        vk_event['sender'] = self.get_user_by_id(vk_event['user_id'])
                     else:
-                        self.send_message(vk_event['message']['peer_id'], "Боты не могут общаться с Петровичем")
+                        self.send_message(vk_event['peer_id'], "Боты не могут общаться с Петровичем :(")
                         continue
 
-                    # Если конфа
-                    # ToDo:
-                    # if vk_event['from_chat']:
+                    # Узнаём конфу
                     if vk_event['chat_id']:
-                        vk_event['chat'] = self.get_chat_by_id(int(vk_event['message']['peer_id']))
+                        vk_event['chat'] = self.get_chat_by_id(int(vk_event['peer_id']))
                         if vk_event['sender'] and vk_event['chat']:
                             self.add_group_to_user(vk_event['sender'], vk_event['chat'])
                         else:
-                            self.send_message(vk_event['message']['peer_id'],
+                            self.send_message(vk_event['peer_id'],
                                               'Непредвиденная ошибка. Сообщите разработчику')
-
                     else:
                         vk_event['chat'] = None
 
@@ -231,7 +226,7 @@ class VkBotClass(threading.Thread):
                     thread.start()
 
             except Exception as e:
-                print('ОШИБКА ВЫПОЛНЕНИЯ ЛОНГПОЛА 1:', e)
+                print('vkbot exception\n:', e)
                 print(traceback.format_exc())
 
     def run(self):
@@ -368,12 +363,13 @@ class VkBotClass(threading.Thread):
 
 class VkEvent:
     def __init__(self, vk_event):
+        self.sender = vk_event['sender']
+        self.chat = vk_event['chat']
+        # Куда будет отправлен ответ
+        self.peer_id = vk_event['peer_id']
+
         # Если переданы скрытые параметры с кнопок
-
-        self.user_id = vk_event['message']['user_id']
-        self.peer_id = vk_event['message']['peer_id']
-
-        if vk_event['message']['payload']:
+        if 'message' in vk_event and 'payload' in vk_event['message'] and vk_event['message']['payload']:
             self.payload = json.loads(vk_event['message']['payload'])
             self.msg = None
             self.command = self.payload['command']
@@ -384,24 +380,26 @@ class VkEvent:
             self.args = vk_event['parsed']['args']
             self.original_args = vk_event['parsed']['original_args']
             self.keys = vk_event['parsed']['keys']
+        if self.chat:
+            self.from_chat = True
+            self.from_user = False
+        else:
+            self.from_user = True
+            self.from_chat = False
 
-        self.from_user = vk_event['from_user']
-        # self.from_chat = vk_event['from_chat']
-
-        self.fwd = vk_event['fwd']
+        if 'fwd' in vk_event:
+            self.fwd = vk_event['fwd']
+        else:
+            self.fwd = []
 
         # ToDo: Remove
-        if self.from_user:
-            self.chat_id = self.user_id
-        else:
-            self.chat_id = self.peer_id
-
-        self.sender = vk_event['sender']
-        self.chat = vk_event['chat']
+        # if self.from_user:
+        #     self.chat_id = self.user_id
+        # else:
+        #     self.chat_id = self.peer_id
 
     def __str__(self):
         s = []
-        s.append(self.user_id)
         s.append(self.peer_id)
         s.append(self.command)
         s.append(self.args)
@@ -420,4 +418,4 @@ class MyVkBotLongPoll(VkBotLongPoll):
                 for event in self.check():
                     yield event
             except Exception as e:
-                print('ОШИБКА ВЫПОЛНЕНИЯ ЛОНГПОЛА 2:', e)
+                print('Longpoll Error (VK):', e)

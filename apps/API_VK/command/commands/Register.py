@@ -11,9 +11,7 @@ class Register(CommonCommand):
         super().__init__(names, help_text, for_conversations=True)
 
     def start(self):
-        vk_user = self.vk_bot.get_user_by_id(self.vk_event.user_id)
-
-        p_user = PetrovichUser.objects.filter(user=vk_user, chat=self.vk_event.chat).first()
+        p_user = PetrovichUser.objects.filter(user=self.vk_event.sender, chat=self.vk_event.chat).first()
         if p_user is not None:
             if not p_user.active:
                 p_user.active = True

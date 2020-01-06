@@ -37,7 +37,7 @@ class Logs(CommonCommand):
                 output = output.replace(for_removing, '')
 
             output = "Логи:\n" + output + "\n"
-            words = ["GET", "POST", "spawned uWSGI", "Not Found:", "HEAD"]
+            words = ["GET", "POST", "spawned uWSGI", "Not Found:", "HEAD", "WSGI app 0"]
             for word in words:
                 while output.find(word) != -1:
                     word_index = output.find(word)

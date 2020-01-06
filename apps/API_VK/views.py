@@ -94,13 +94,36 @@ def where_is_me(request):
 
 
 def petrovich(request):
-    from apps.API_VK.command.commands.Games.Petrovich import Petrovich
+    from apps.API_VK.vkbot import VkEvent, parse_msg
+    msg = request.GET.get('msg', None)
+    if not msg:
+        return JsonResponse({'error': 'empty param msg'}, json_dumps_params={'ensure_ascii': False})
 
+    from_chat = request.GET.get('from_chat', True)
+
+    user = VkUser.objects.get(user_id=3379762)
     chat = VkChat.objects.get(chat_id=2000000002)
-    command = Petrovich()
-    res = command.start_real(chat)
-    vk_bot.parse_and_send_msgs(res, chat.chat_id, with_wrapper=True)
+
+    vk_event = {
+        'parsed': parse_msg(msg),
+        'sender': user
+    }
+    if from_chat:
+        vk_event['chat'] = chat
+        vk_event['peer_id'] = chat.chat_id
+    else:
+        vk_event['peer_id'] = user.chat_id
+
+    vk_event_object = VkEvent(vk_event)
+
+    vk_bot.parse_and_send_msgs(vk_event['peer_id'], "{}(Алиса):\n{}".format(user, msg))
+    res = vk_bot.menu(vk_event_object)
+
     return JsonResponse({'res': res}, json_dumps_params={'ensure_ascii': False})
+
+
+def praise(request):
+    pass
 
 
 def get_user_by_imei(imei):

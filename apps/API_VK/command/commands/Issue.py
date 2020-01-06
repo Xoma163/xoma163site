@@ -14,7 +14,7 @@ class Issue(CommonCommand):
             if not self.vk_event.original_args:
                 return "Требуется аргументы или пересылаемые сообщения"
 
-            msgs = [{'text': self.vk_event.original_args, 'from_id': self.vk_event.user_id}]
+            msgs = [{'text': self.vk_event.original_args, 'from_id': int(self.vk_event.sender.user_id)}]
         feature_text = ""
         for msg in msgs:
             text = msg['text']

@@ -24,8 +24,6 @@ class Command(BaseCommand):
 
             for user in users:
                 vk_bot.send_message(vk_bot.get_group_id(chat_id), "С Днём рождения, {}!".format(user.name))
-            # for chat_id in chat_ids:
-            #     vk_bot.send_message(chat_id, weather)
 
     def add_arguments(self, parser):
         parser.add_argument('chat_id', nargs='+', type=str,
