@@ -5,7 +5,7 @@ class update_users(CommonCommand):
     def __init__(self):
         names = ["update_users"]
         help_text = "update_users - обновляет данные о пользователях в БД"
-        super().__init__(names, help_text, for_admin=True)
+        super().__init__(names, help_text, access='admin')
 
     def start(self):
         self.vk_bot.update_users()

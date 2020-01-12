@@ -6,7 +6,7 @@ class Temperature(CommonCommand):
     def __init__(self):
         names = ["температура", "темп", "t"]
         help_text = "̲Т̲е̲м̲п̲е̲р̲а̲т̲у̲р̲а - температуры сервера"
-        super().__init__(names, help_text, for_moderator=True)
+        super().__init__(names, help_text, access='moderator')
 
     def start(self):
         command = "sensors"

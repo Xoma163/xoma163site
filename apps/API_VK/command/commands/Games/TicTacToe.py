@@ -39,49 +39,44 @@ class TicTacToe(CommonCommand):
         super().__init__(names, check_int_args=[0, 1])
 
     def start(self):
-        lock.acquire()
-        sender = self.vk_event.sender
+        with lock:
+            sender = self.vk_event.sender
 
-        if len(Gamer.objects.filter(user=sender)) == 0:
-            Gamer(**{'user': sender}).save()
+            if len(Gamer.objects.filter(user=sender)) == 0:
+                Gamer(**{'user': sender}).save()
 
-        session = TicTacToeSession.objects.filter(Q(user1=sender) | Q(user2=sender)).first()
-        # Если существует такая сессия, где игрок находится в ней
-        if session:
-            # Если оба игрока существуют в сессии
-            if session.user1 is not None and session.user2 is not None:
-                # Если переданы аргументы
-                if self.vk_event.args:
-                    # Шаг игры
-                    self.step_game(session)
-                    lock.release()
-                    return
+            session = TicTacToeSession.objects.filter(Q(user1=sender) | Q(user2=sender)).first()
+            # Если существует такая сессия, где игрок находится в ней
+            if session:
+                # Если оба игрока существуют в сессии
+                if session.user1 is not None and session.user2 is not None:
+                    # Если переданы аргументы
+                    if self.vk_event.args:
+                        # Шаг игры
+                        self.step_game(session)
+                        return
+                    else:
+                        # Возвращаем пользователю клавиатуру, если он её потерял
+                        self.vk_bot.send_message(sender.user_id, "Да держи ты свою клаву, ё-моё",
+                                                 keyboard=get_keyboard_by_board(json.loads(session.board)))
+                        return
+                # Если игрок только один и 99.9% что это user1
                 else:
-                    # Возвращаем пользователю клавиатуру, если он её потерял
-                    self.vk_bot.send_message(sender.user_id, "Да держи ты свою клаву, ё-моё",
-                                             keyboard=get_keyboard_by_board(json.loads(session.board)))
-                    lock.release()
+                    return "Ты начал игру. Подожди, когда подключится второй игрок"
+            # Если нет такой сессии, в которой есть игрок
+            else:
+                waiting_session = TicTacToeSession.objects.filter(user2=None).first()
+                # Если есть сессия, где пустует второй игрок
+                if waiting_session:
+                    # То стартуем игру
+                    self.start_game(waiting_session)
                     return
-            # Если игрок только один и 99.9% что это user1
-            else:
-                lock.release()
-                return "Ты начал игру. Подожди, когда подключится второй игрок"
-        # Если нет такой сессии, в которой есть игрок
-        else:
-            waiting_session = TicTacToeSession.objects.filter(user2=None).first()
-            # Если есть сессия, где пустует второй игрок
-            if waiting_session:
-                # То стартуем игру
-                self.start_game(waiting_session)
-                lock.release()
-                return
-            # Никаких свободных сессий нет - создаём новую
-            else:
-                new_session = TicTacToeSession()
-                new_session.user1 = sender
-                new_session.save()
-                lock.release()
-                return "Начинаем игру. Ждём второго игрока"
+                # Никаких свободных сессий нет - создаём новую
+                else:
+                    new_session = TicTacToeSession()
+                    new_session.user1 = sender
+                    new_session.save()
+                    return "Начинаем игру. Ждём второго игрока"
 
     def step_game(self, session):
 

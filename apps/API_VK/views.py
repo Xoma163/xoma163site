@@ -38,7 +38,6 @@ def where_is_me(request):
     if event == 'somewhere':
         lat = request.GET.get('lat', None)
         lon = request.GET.get('lon', None)
-        print(lat, lon)
         address = get_address(lat, lon)
         if address is not None:
             msg1 = "Я нахожусь примерно тут:\n" \

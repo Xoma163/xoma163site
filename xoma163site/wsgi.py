@@ -16,7 +16,7 @@ from xoma163site.settings import BASE_DIR
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'xoma163site.settings')
 
-# ToDo: Ёбаный костыль, испанский стыд, просто пиздец. Переделай это когда будет время. Инициализация static переменной
+# # ToDo: Ёбаный костыль, испанский стыд, просто пиздец. Переделай это когда будет время. Инициализация static переменной
 django.setup()
 
 from apps.birds.CameraHandler import CameraHandler

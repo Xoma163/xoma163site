@@ -17,7 +17,6 @@ class Stream(CommonCommand):
             else:
                 return stream_link
         else:
-            if not self.check_sender_admin():
-                return
+            self.check_sender('admin')
             Service.objects.update_or_create(name="stream", defaults={'value': self.vk_event.args[0]})
             return "Ссылка изменена на " + self.vk_event.args[0]

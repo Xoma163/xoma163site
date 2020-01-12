@@ -75,77 +75,90 @@ def get_commands():
     return commands
 
 
-def get_help_text(attr=None):
-    texts = ""
-    if attr:
-        for command in commands:
-            if getattr(command, attr):
-                if command.help_text:
-                    texts += "{}\n".format(command.help_text)
-    else:
-        for command in commands:
-            if not command.for_moderator and not command.for_admin and not command.for_student:
-                if command.help_text:
-                    texts += "{}\n".format(command.help_text)
+def get_groups():
+    return ['user', 'admin', 'moderator', 'student', 'minecraft']
+
+
+def get_help_text():
+    texts = {group: "" for group in get_groups()}
+
+    for command in commands:
+        if command.help_text:
+            help_text = command.help_text
+            if type(help_text) == str:
+                help_text = {'for': command.access, 'text': help_text}
+
+            if type(help_text) == dict:
+                help_text = [help_text]
+
+            if type(help_text) == list:
+                for text in help_text:
+                    if 'for' in text:
+                        texts[text['for']] += "{}\n".format(text['text'])
+                    else:
+                        texts[command.access] += "{}\n".format(text['text'])
+
     return texts
 
 
-def get_keyboard(attr):
-    keys = []
+def get_keyboard():
+    keys = {group: [] for group in get_groups()}
     for command in commands:
-        key = getattr(command, attr)
+        key = command.keyboard
         if key:
             if type(key) == dict:
-                keys.append(key)
-            elif type(key) == list:
+                key = [key]
+            if type(key) == list:
                 for elem in key:
-                    keys.append(elem)
+                    if 'for' in elem:
+                        keys[elem['for']].append(elem)
+                    else:
+                        keys[command.access].append(elem)
 
-    buttons = []
-    if keys is None:
-        return []
-    keys = sorted(keys, key=lambda i: (i['row'], i['col']))
+    buttons = {group: [] for group in get_groups()}
+    for k in keys:
+        keys[k] = sorted(keys[k], key=lambda i: (i['row'], i['col']))
     color_translate = {
         'red': 'negative',
         'green': 'positive',
         'blue': 'primary',
         'gray': 'secondary'
     }
-    row = []
-    current_row = 0
-    for key in keys:
-        if not current_row:
-            row = []
-            current_row = key['row']
 
-        elif key['row'] != current_row:
-            buttons.append(row)
-            current_row = key['row']
-            row = []
+    for k in keys:
+        row = []
+        current_row = 0
+        for key in keys[k]:
+            if not current_row:
+                row = []
+                current_row = key['row']
 
-        row.append(
-            {
-                "action": {
-                    "type": "text",
-                    "label": key['text']
-                },
-                "color": color_translate[key['color']]
-            }
-        )
-    if len(row) > 0:
-        buttons.append(row)
+            elif key['row'] != current_row:
+                buttons[k].append(row)
+                current_row = key['row']
+                row = []
+
+            row.append(
+                {
+                    "action": {
+                        "type": "text",
+                        "label": key['text']
+                    },
+                    "color": color_translate[key['color']]
+                }
+            )
+        if len(row) > 0:
+            buttons[k].append(row)
     return buttons
 
 
-ADMIN_TEXTS = get_help_text('for_admin')
-MODERATOR_TEXTS = get_help_text('for_moderator')
-STUDENT_TEXTS = get_help_text('for_student')
-COMMON_TEXTS = get_help_text()
+# ADMIN_TEXTS = get_help_text('for_admin')
+# MODERATOR_TEXTS = get_help_text('for_moderator')
+# STUDENT_TEXTS = get_help_text('for_student')
+# COMMON_TEXTS = get_help_text()
 
-ADMIN_BUTTONS = get_keyboard('keyboard_admin')
-MODERATOR_BUTTONS = get_keyboard('keyboard_moderator')
-STUDENT_BUTTONS = get_keyboard('keyboard_student')
-USER_BUTTONS = get_keyboard('keyboard_user')
+HELP_TEXTS = get_help_text()
+KEYBOARDS = get_keyboard()
 
 EMPTY_KEYBOARD = {
     "one_time": False,

@@ -6,7 +6,7 @@ class Words(CommonCommand):
     def __init__(self):
         names = ["слова", "get_words"]
         help_text = "̲С̲л̲о̲в̲а - принудительно затягивает слова с Google Drive"
-        super().__init__(names, help_text, for_moderator=True)
+        super().__init__(names, help_text, access='moderator')
 
     def start(self):
         command = "/var/www/xoma163.site/venv/bin/python /var/www/xoma163.site/manage.py get_words"

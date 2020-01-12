@@ -8,51 +8,43 @@ class Start(CommonCommand):
         names = ["старт", "start"]
         help_text = "̲С̲т̲а̲р̲т - возобновляет работу Петровича(только для админов). " \
                     "С параметром можно включить нужный модуль (синички, майн(1.12 1.15.1))"
-        keyboard_admin = [{'text': 'Старт', 'color': 'green', 'row': 1, 'col': 1},
-                          {'text': 'Старт синички', 'color': 'green', 'row': 1, 'col': 3}]
-        super().__init__(names, help_text, keyboard_admin=keyboard_admin)
-
+        keyboard = [{'for': 'admin', 'text': 'Старт', 'color': 'green', 'row': 1, 'col': 1},
+                    {'for': 'admin', 'text': 'Старт синички', 'color': 'green', 'row': 1, 'col': 3}]
+        super().__init__(names, help_text, keyboard=keyboard)
 
     def start(self):
         if self.vk_event.args:
 
             if self.vk_event.args[0] == "синички":
-                if not self.check_sender_moderator():
-                    return
+                self.check_sender('moderator')
                 if not cameraHandler.is_active():
                     cameraHandler.resume()
                     return "Стартуем синичек!"
                 else:
                     return "Синички уже стартовали"
             elif self.vk_event.args[0] in ["майн", "майнкрафт", "mine", "minecraft"]:
-                if not self.check_sender_minecraft():
-                    return
+                self.check_sender('minecraft')
                 if len(self.vk_event.args) >= 2 and self.vk_event.args[1] == '1.12':
-                    if not self.check_command_time('minecraft 1.12', 90):
-                        return
+                    self.check_command_time('minecraft 1.12', 90)
 
                     do_the_linux_command('sudo systemctl start minecraft')
                     return "Стартуем майн 1.12!"
                 elif (len(self.vk_event.args) >= 2 and self.vk_event.args[1] == '1.15.1') or len(
                         self.vk_event.args) == 1:
-                    if not self.check_command_time('minecraft 1.15.1', 30):
-                        return
+                    self.check_command_time('minecraft 1.15.1', 30)
 
                     do_the_linux_command('sudo systemctl start minecraft_1_15_1')
                     return "Стартуем майн 1.15.1!"
                 else:
                     return "Я знаю такой версии"
             elif self.vk_event.args[0] in ['террария', 'terraria']:
-                if not self.check_sender_terraria():
-                    return
-                if not self.check_command_time('terraria', 10):
-                    return
+                self.check_sender('terraria')
+                self.check_command_time('terraria', 10)
                 do_the_linux_command('sudo systemctl start terraria')
                 return "Стартуем террарию!"
             else:
                 return "Не найден такой модуль"
         else:
-            if not self.check_sender_admin():
-                return
+            self.check_sender('admin')
             self.vk_bot.BOT_CAN_WORK = True
             return "Стартуем!"

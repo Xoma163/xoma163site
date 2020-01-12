@@ -7,7 +7,7 @@ class Command(CommonCommand):
     def __init__(self):
         names = ["команда"]
         help_text = "̲К̲о̲м̲а̲н̲д̲а - запускает любую команду на сервере"
-        super().__init__(names, help_text, for_admin=True, need_args=1)
+        super().__init__(names, help_text, access='admin', need_args=1)
 
     def start(self):
         try:

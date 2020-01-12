@@ -22,8 +22,7 @@ class Quotes(CommonCommand):
                 page, result = self.check_int_arg(page)
                 if not result:
                     return
-                if not self.check_int_arg_range(page, 0, float('inf')):
-                    return
+                self.check_int_arg_range(page, 0, float('inf'))
 
             elif len(self.vk_event.args) == 1:
                 arg = self.vk_event.args[0]

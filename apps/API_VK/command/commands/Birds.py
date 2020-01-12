@@ -6,11 +6,11 @@ class Birds(CommonCommand):
     def __init__(self):
         names = ["с", "c", "синички"]
         help_text = "̲С̲и̲н̲и̲ч̲к̲и [N[,M]](N - количество кадров в гифке, 20 дефолт, M - качество(0 или 1), 0 дефолт) - ссылка, снапшот и гифка"
-        keyboard_user = [{'text': 'Синички 0', 'color': 'blue', 'row': 2, 'col': 1},
-                         {'text': 'Синички 20', 'color': 'blue', 'row': 2, 'col': 2},
-                         {'text': 'Синички 100', 'color': 'blue', 'row': 2, 'col': 3}]
+        keyboard = [{'text': 'Синички 0', 'color': 'blue', 'row': 2, 'col': 1},
+                    {'text': 'Синички 20', 'color': 'blue', 'row': 2, 'col': 2},
+                    {'text': 'Синички 100', 'color': 'blue', 'row': 2, 'col': 3}]
 
-        super().__init__(names, help_text, check_int_args=[0, 1], keyboard_user=keyboard_user)
+        super().__init__(names, help_text, check_int_args=[0, 1], keyboard=keyboard)
 
     def start(self):
         attachments = []
@@ -24,12 +24,10 @@ class Birds(CommonCommand):
 
         if self.vk_event.args:
             frames = self.vk_event.args[0]
-            if not self.check_int_arg_range(frames, 0, cameraHandler.MAX_FRAMES):
-                return
+            self.check_int_arg_range(frames, 0, cameraHandler.MAX_FRAMES)
             if len(self.vk_event.args) > 1:
                 quality = self.vk_event.args[1]
-                if not self.check_int_arg_range(quality, 0, 1):
-                    return
+                self.check_int_arg_range(quality, 0, 1)
 
         photo = self.vk_bot.upload.photo_messages(path)[0]
         cameraHandler.clear_file(path)

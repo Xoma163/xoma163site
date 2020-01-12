@@ -6,7 +6,7 @@ class Uptime(CommonCommand):
     def __init__(self):
         names = ["аптайм", "uptime"]
         help_text = "̲А̲п̲т̲а̲й̲м - аптайм сервера"
-        super().__init__(names, help_text, for_moderator=True)
+        super().__init__(names, help_text, access='moderator')
 
     def start(self):
         command = "uptime"

@@ -12,34 +12,29 @@ class Restart(CommonCommand):
     def start(self):
         if self.vk_event.args:
             if self.vk_event.args[0] in ["майн", "майнкрафт", "mine", "minecraft"]:
-                if not self.check_sender_minecraft():
-                    return
+                self.check_sender('minecraft')
                 if len(self.vk_event.args) >= 2 and self.vk_event.args[1] == '1.12':
-                    if not self.check_command_time('minecraft 1.12', 90):
-                        return
+                    self.check_command_time('minecraft 1.12', 90)
 
                     do_the_linux_command('sudo systemctl start minecraft')
                     return "Рестартим майн 1.12!"
                 elif (len(self.vk_event.args) >= 2 and self.vk_event.args[1] == '1.15.1') or len(
                         self.vk_event.args) == 1:
-                    if not self.check_command_time('minecraft 1.15.1', 30):
-                        return
+                    self.check_command_time('minecraft 1.15.1', 30)
 
                     do_the_linux_command('sudo systemctl start minecraft_1_15_1')
                     return "Рестартим майн 1.15.1!"
                 else:
                     return "Я знаю такой версии"
             elif self.vk_event.args[0] in ['террария', 'terraria']:
-                if not self.check_sender_terraria():
-                    return
-                if not self.check_command_time('terraria', 10):
-                    return
+                self.check_sender('terraria')
+                self.check_command_time('terraria', 10)
+
                 do_the_linux_command('sudo systemctl start terraria')
                 return "Рестартим террарию!"
             else:
                 return "Не найден такой модуль"
         else:
-            if not self.check_sender_admin():
-                return
+            self.check_sender('admin')
 
             do_the_linux_command('sudo systemctl restart xoma163site')
