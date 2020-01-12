@@ -7,4 +7,4 @@ class Discord(CommonCommand):
         super().__init__(names)
 
     def start(self):
-        return "https://discord.gg/qQKg8g"
+        return "https://discord.gg/kYGSNzv"

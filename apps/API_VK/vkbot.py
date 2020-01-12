@@ -32,7 +32,10 @@ def parse_msg(msg):
 
     command_arg = msg.split(' ', 1)
     msg_dict['command'] = command_arg[0].lower()
+
     if len(command_arg) > 1:
+        msg_dict['original_args'] = command_arg[1].strip()
+
         command_arg[1] = command_arg[1].replace(',', ' ')
         if command_arg[1].startswith('-'):
             command_arg[1] = " " + command_arg[1]
@@ -49,8 +52,8 @@ def parse_msg(msg):
             command_arg[1] = command_arg[1][:find_dash] + command_arg[1][next_space:]
             find_dash = command_arg[1].find(' -')
         msg_dict['args'] = command_arg[1].split(' ')
-        msg_dict['original_args'] = command_arg[1].strip()
-
+        # Перенёс выше. Если будут баги - раскоменть
+        # msg_dict['original_args'] = command_arg[1].strip()
     return msg_dict
 
 
