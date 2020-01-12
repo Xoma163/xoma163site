@@ -112,5 +112,21 @@ def petrovich(request):
     return JsonResponse({'res': res}, json_dumps_params={'ensure_ascii': False})
 
 
+def chat(request):
+    msg = request.GET.get('msg', None)
+
+    if not msg:
+        return JsonResponse({'error': 'empty param msg'}, json_dumps_params={'ensure_ascii': False})
+    if len(msg) == 0:
+        return JsonResponse({'error': 'empty msg'}, json_dumps_params={'ensure_ascii': False})
+
+    user = VkUser.objects.get(user_id=3379762)
+    chat = VkChat.objects.get(chat_id=2000000001)
+
+    vk_bot.parse_and_send_msgs(chat.chat_id, "{}:\n{}".format(user, msg))
+
+    return JsonResponse({'res': 'success'}, json_dumps_params={'ensure_ascii': False})
+
+
 def get_user_by_imei(imei):
     return VkUser.objects.filter(imei=imei).first()
