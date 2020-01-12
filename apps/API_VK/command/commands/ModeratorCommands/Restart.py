@@ -14,23 +14,21 @@ class Restart(CommonCommand):
             if self.vk_event.args[0] in ["майн", "майнкрафт", "mine", "minecraft"]:
                 if not self.check_sender_minecraft():
                     return
-                if len(self.vk_event.args) >= 2:
-                    if self.vk_event.args[1] == '1.12':
-                        if not self.check_command_time('minecraft 1.12', 90):
-                            return
+                if len(self.vk_event.args) >= 2 and self.vk_event.args[1] == '1.12':
+                    if not self.check_command_time('minecraft 1.12', 90):
+                        return
 
-                        do_the_linux_command('sudo systemctl start minecraft')
-                        return "Рестартим майн 1.12!"
-                    elif self.vk_event.args[1] == '1.15.1':
-                        if not self.check_command_time('minecraft 1.15.1', 30):
-                            return
+                    do_the_linux_command('sudo systemctl start minecraft')
+                    return "Рестартим майн 1.12!"
+                elif (len(self.vk_event.args) >= 2 and self.vk_event.args[1] == '1.15.1') or len(
+                        self.vk_event.args) == 1:
+                    if not self.check_command_time('minecraft 1.15.1', 30):
+                        return
 
-                        do_the_linux_command('sudo systemctl start minecraft_1_15_1')
-                        return "Рестартим майн 1.15.1!"
-                    else:
-                        return "Я знаю такой версии {}".format(self.vk_event.args[1])
+                    do_the_linux_command('sudo systemctl start minecraft_1_15_1')
+                    return "Рестартим майн 1.15.1!"
                 else:
-                    return "Не указана версия"
+                    return "Я знаю такой версии"
             elif self.vk_event.args[0] in ['террария', 'terraria']:
                 if not self.check_sender_terraria():
                     return

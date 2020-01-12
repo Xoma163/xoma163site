@@ -12,6 +12,7 @@ class Start(CommonCommand):
                           {'text': 'Старт синички', 'color': 'green', 'row': 1, 'col': 3}]
         super().__init__(names, help_text, keyboard_admin=keyboard_admin)
 
+
     def start(self):
         if self.vk_event.args:
 
@@ -26,23 +27,21 @@ class Start(CommonCommand):
             elif self.vk_event.args[0] in ["майн", "майнкрафт", "mine", "minecraft"]:
                 if not self.check_sender_minecraft():
                     return
-                if len(self.vk_event.args) >= 2:
-                    if self.vk_event.args[1] == '1.12':
-                        if not self.check_command_time('minecraft 1.12', 90):
-                            return
+                if len(self.vk_event.args) >= 2 and self.vk_event.args[1] == '1.12':
+                    if not self.check_command_time('minecraft 1.12', 90):
+                        return
 
-                        do_the_linux_command('sudo systemctl start minecraft')
-                        return "Стартуем майн 1.12!"
-                    elif self.vk_event.args[1] == '1.15.1':
-                        if not self.check_command_time('minecraft 1.15.1', 30):
-                            return
+                    do_the_linux_command('sudo systemctl start minecraft')
+                    return "Стартуем майн 1.12!"
+                elif (len(self.vk_event.args) >= 2 and self.vk_event.args[1] == '1.15.1') or len(
+                        self.vk_event.args) == 1:
+                    if not self.check_command_time('minecraft 1.15.1', 30):
+                        return
 
-                        do_the_linux_command('sudo systemctl start minecraft_1_15_1')
-                        return "Стартуем майн 1.15.1!"
-                    else:
-                        return "Я знаю такой версии {}".format(self.vk_event.args[1])
+                    do_the_linux_command('sudo systemctl start minecraft_1_15_1')
+                    return "Стартуем майн 1.15.1!"
                 else:
-                    return "Не указана версия"
+                    return "Я знаю такой версии"
             elif self.vk_event.args[0] in ['террария', 'terraria']:
                 if not self.check_sender_terraria():
                     return
@@ -55,6 +54,5 @@ class Start(CommonCommand):
         else:
             if not self.check_sender_admin():
                 return
-
             self.vk_bot.BOT_CAN_WORK = True
             return "Стартуем!"
