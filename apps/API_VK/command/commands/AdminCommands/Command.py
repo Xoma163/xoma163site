@@ -11,7 +11,7 @@ class Command(CommonCommand):
 
     def start(self):
         try:
-            command = self.vk_event.original_args.split(' ')
+            command = self.vk_event.params.split(' ')
             process = subprocess.Popen(command, stdout=subprocess.PIPE)
             output, error = process.communicate()
             output = output.decode("utf-8")

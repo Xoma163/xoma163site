@@ -9,6 +9,7 @@ from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.utils import get_random_id
 
 from apps.API_VK.command import get_commands
+from apps.API_VK.command.commands.Conference import Conference
 from apps.API_VK.models import VkUser, VkBot, VkChat
 from apps.Statistics.views import append_command_to_statistics
 from secrets.secrets import secrets
@@ -28,13 +29,22 @@ def parse_msg_to_me(msg, mentions):
 
 def parse_msg(msg):
     # Сообщение, команда, аргументы, аргументы строкой, ключи
-    msg_dict = {'msg': msg, 'command': None, 'args': None, 'original_args': None, 'keys': None}
+    """
+    msg - оригинальное сообщение
+    command - команда
+    args - список аргументов
+    original_args - строка аргументов (без ключей)
+    keys - ключи
+    params - оригинальное сообщение без команды (с аргументами и ключами)
+
+    """
+    msg_dict = {'msg': msg, 'command': None, 'args': None, 'original_args': None, 'keys': None, 'params': None}
 
     command_arg = msg.split(' ', 1)
     msg_dict['command'] = command_arg[0].lower()
 
     if len(command_arg) > 1:
-        msg_dict['original_args'] = command_arg[1].strip()
+        msg_dict['params'] = command_arg[1].strip()
 
         command_arg[1] = command_arg[1].replace(',', ' ')
         if command_arg[1].startswith('-'):
@@ -51,9 +61,9 @@ def parse_msg(msg):
                 msg_dict['keys'].append(letter)
             command_arg[1] = command_arg[1][:find_dash] + command_arg[1][next_space:]
             find_dash = command_arg[1].find(' -')
-        msg_dict['args'] = command_arg[1].split(' ')
-        # Перенёс выше. Если будут баги - раскоменть
-        # msg_dict['original_args'] = command_arg[1].strip()
+        if len(command_arg[1]) > 0:
+            msg_dict['args'] = command_arg[1].split(' ')
+            msg_dict['original_args'] = command_arg[1].strip()
     return msg_dict
 
 
@@ -114,14 +124,30 @@ class VkBotClass(threading.Thread):
                     self.send_message(peer_id, **msg)
 
     def menu(self, vk_event):
-        # debug_message = "command = {}\n" \
-        #                 "args = {}\n" \
-        #                 "original_args = {}\n" \
-        #                 "keys = {}".format(vk_event.command, vk_event.args, vk_event.original_args, vk_event.keys)
-        # self.send_message(vk_event.chat_id, debug_message)
+        debug_message = \
+            f"command = {vk_event.command}\n " \
+                f"args = {vk_event.args}\n " \
+                f"original_args = {vk_event.original_args}\n " \
+                f"keys = {vk_event.keys}\n " \
+                f"params = {vk_event.params}"
+        self.send_message(vk_event.peer_id, debug_message)
 
         if vk_event.sender.is_banned:
             return
+
+        # ToDo: ну, тут дубликат будет
+        # if vk_event.chat and (vk_event.chat.name is None or vk_event.chat.name == ""):
+        #     conference = Conference()
+        #     if conference.accept(vk_event):
+        #         try:
+        #             result = conference.__class__().check_and_start(self, vk_event)
+        #             if result:
+        #                 self.parse_and_send_msgs(vk_event.peer_id, result)
+        #         except RuntimeError as e:
+        #             return str(e)
+        #     else:
+        #         self.send_message(vk_event.peer_id, "Не задано имя конфы, задайте его командой /конфа 'Название конфы'")
+        #     return
 
         # Проверяем не остановлен ли бот, если так, то проверяем вводимая команда = старт?
         if not self.check_bot_working():
@@ -135,7 +161,15 @@ class VkBotClass(threading.Thread):
                 return
             return
 
-        commands = get_commands()
+        # ToDo: ничего умнее не придумал, может в будущем поменять
+        if vk_event.chat and (vk_event.chat.name is None or vk_event.chat.name == ""):
+            commands = [Conference()]
+            if not commands[0].accept(vk_event):
+                self.send_message(vk_event.peer_id, "Не задано имя конфы, задайте его командой /конфа 'Название конфы'")
+                return
+
+        else:
+            commands = get_commands()
         for command in commands:
             try:
                 if command.accept(vk_event):
@@ -189,6 +223,9 @@ class VkBotClass(threading.Thread):
                         },
                         'parsed': {
                         }}
+
+                    if vk_event['message']['text'] is None or vk_event['message']['text'] == "":
+                        continue
 
                     # Сообщение либо мне в лс, либо упоминание меня
                     if not (message_for_me(vk_event['message']['text'], self.mentions) or vk_event['from_user']):
@@ -383,6 +420,7 @@ class VkEvent:
             self.args = vk_event['parsed']['args']
             self.original_args = vk_event['parsed']['original_args']
             self.keys = vk_event['parsed']['keys']
+            self.params = vk_event['parsed']['params']
         if self.chat:
             self.from_chat = True
             self.from_user = False

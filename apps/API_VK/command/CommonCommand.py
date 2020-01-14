@@ -73,7 +73,7 @@ class CommonCommand:
     def check_sender(self, role):
         if getattr(self.vk_event.sender, 'is_' + role):
             return True
-        error = "Команда доступна только пользователей с уровнем прав {}".format(role)
+        error = "Команда доступна только для пользователей с уровнем прав {}".format(role_translator[role])
         self.vk_bot.send_message(self.vk_event.peer_id, error)
         raise RuntimeError(error)
 
@@ -164,3 +164,12 @@ class CommonCommand:
         entity.name = name
         entity.save()
         return True
+
+
+role_translator = {
+    'admin': "администратор",
+    'moderator': "модератор",
+    'minecraft': "майнкрафт",
+    'terraria': "террария",
+    'student': "студент",
+}

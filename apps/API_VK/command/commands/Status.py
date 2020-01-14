@@ -27,11 +27,11 @@ def get_minecraft_server_info(ip, port, v):
     command = "/var/www/xoma163.site/venv/bin/mcstatus {}:{} json".format(ip, port)
     response = json.loads(do_the_linux_command(command))
     if not response['online']:
-        result = "Майн {} - остановлен".format(v)
+        result = "Майн {} - остановлен ⛔".format(v)
     else:
         players = " ".join(player['name'] for player in response['players'])
-        result = "Майн {} - запущен ({}/{}) - {}:{}\n".format(response['version'], response['player_count'],
-                                                              response['player_max'], MAIN_DOMAIN, port)
+        result = "Майн {} - запущен ✅ ({}/{}) - {}:{}\n".format(response['version'], response['player_count'],
+                                                                response['player_max'], MAIN_DOMAIN, port)
         if len(players) > 0:
             result += "Игроки: {}".format(players)
     return result
@@ -44,8 +44,8 @@ def get_terraria_server_info(ip, port, v):
     index2 = response.find("(", index1) - 1
     status = response[index1:index2]
     if status == 'active':
-        result = "Террария запущена - {}:{}\n".format(MAIN_DOMAIN, port)
+        result = "Террария запущена ✅ - {}:{}\n".format(MAIN_DOMAIN, port)
     else:
-        result = "Террария остановлена".format(v)
+        result = "Террария остановлена ⛔".format(v)
 
     return result

@@ -98,6 +98,7 @@ class Command(BaseCommand):
                     headers = [header for header in val]
         print("Result: success")
         print("Time: {}".format(time.time() - time1))
+        # print("Total: {}",sum(list(statistics.values())))
         print("\nStatistics:\n"
               "created - {}\n"
               "updated - {}\n"

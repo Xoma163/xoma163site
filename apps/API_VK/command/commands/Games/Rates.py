@@ -18,8 +18,15 @@ class Rates(CommonCommand):
     def start(self):
         with lock:
             gamers = RateModel.objects.filter(chat=self.vk_event.chat).order_by("date")
-            if len(gamers) < MIN_GAMERS:
-                return "Минимальное количество игроков - {}".format(MIN_GAMERS)
+            if self.vk_event.keys and 'f' in self.vk_event.keys:
+                self.check_sender('admin')
+                if len(gamers) < 1:
+                    return "Ну ты ваще обалдел? Хотя бы один игрок-то пусть будет"
+
+
+            else:
+                if len(gamers) < MIN_GAMERS:
+                    return "Минимальное количество игроков - {}".format(MIN_GAMERS)
             messages = ["Ставки сделаны, ставок больше нет."]
 
             rnd = random.randint(1, 100)
