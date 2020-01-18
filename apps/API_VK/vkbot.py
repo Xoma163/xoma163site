@@ -23,8 +23,7 @@ def parse_msg_to_me(msg, mentions):
         msg = msg[1:]
     for mention in mentions:
         msg = msg.replace(mention, '')
-    msg = re.sub(" +", " ", msg)
-    return msg.lstrip().lstrip(',').lstrip().lstrip(' ').lstrip().replace(' ,', ',').replace(', ', ',')
+    return msg
 
 
 def parse_msg(msg):
@@ -38,13 +37,34 @@ def parse_msg(msg):
     params - оригинальное сообщение без команды (с аргументами и ключами)
 
     """
-    msg_dict = {'msg': msg, 'command': None, 'args': None, 'original_args': None, 'keys': None, 'params': None}
+    # new_msg_dict = {'msg': None,
+    #                 'msg_without_command': None,
+    #                 'msg_without_command_and_keys': None,
+    #                 'command': None,
+    #                 'keys': None,
+    #                 'args': None,
+    #                 'args_str':None
+    #                 }
+    msg_clear = re.sub(" +", " ", msg)
+    msg_clear = msg_clear.lstrip().lstrip(',').lstrip().lstrip(' ').lstrip().replace(' ,', ',').replace(', ', ',')
 
-    command_arg = msg.split(' ', 1)
+    msg_dict = {'msg': msg,
+                'msg_clear': msg_clear,
+                'command': None,
+                'args': None,
+                'original_args': None,
+                'keys': None,
+                'params': None,
+                'params_without_keys': None}
+
+    command_arg = msg_clear.split(' ', 1)
     msg_dict['command'] = command_arg[0].lower()
-
     if len(command_arg) > 1:
-        msg_dict['params'] = command_arg[1].strip()
+
+        msg_dict['params'] = msg.replace(msg_dict['command'] + ' ', '')
+        if len(msg_dict['params']) == 0:
+            msg_dict['params'] = None
+        msg_dict['params_without_keys'] = msg_dict['params']
 
         command_arg[1] = command_arg[1].replace(',', ' ')
         if command_arg[1].startswith('-'):
@@ -57,13 +77,18 @@ def parse_msg(msg):
             if next_space == -1:
                 next_space = len(command_arg[1])
 
-            for letter in command_arg[1][find_dash + 2:next_space]:
-                msg_dict['keys'].append(letter)
+            # for letter in command_arg[1][find_dash + 2:next_space]:
+            letter = command_arg[1][find_dash + 2:next_space]
+            msg_dict['keys'].append(letter)
             command_arg[1] = command_arg[1][:find_dash] + command_arg[1][next_space:]
             find_dash = command_arg[1].find(' -')
         if len(command_arg[1]) > 0:
             msg_dict['args'] = command_arg[1].split(' ')
             msg_dict['original_args'] = command_arg[1].strip()
+
+        if msg_dict['keys']:
+            for key in msg_dict['keys']:
+                msg_dict['params_without_keys'] = msg_dict['params_without_keys'].replace(f' -{key}', '')
     return msg_dict
 
 
@@ -124,30 +149,19 @@ class VkBotClass(threading.Thread):
                     self.send_message(peer_id, **msg)
 
     def menu(self, vk_event):
-        debug_message = \
-            f"command = {vk_event.command}\n " \
-                f"args = {vk_event.args}\n " \
-                f"original_args = {vk_event.original_args}\n " \
-                f"keys = {vk_event.keys}\n " \
-                f"params = {vk_event.params}"
-        self.send_message(vk_event.peer_id, debug_message)
+
+        if self.DEBUG:
+            debug_message = \
+                f"command = {vk_event.command}\n " \
+                    f"args = {vk_event.args}\n " \
+                    f"original_args = {vk_event.original_args}\n " \
+                    f"keys = {vk_event.keys}\n " \
+                    f"params = {vk_event.params}\n" \
+                    f"params_without_keys = {vk_event.params_without_keys}"
+            self.send_message(vk_event.peer_id, debug_message)
 
         if vk_event.sender.is_banned:
             return
-
-        # ToDo: ну, тут дубликат будет
-        # if vk_event.chat and (vk_event.chat.name is None or vk_event.chat.name == ""):
-        #     conference = Conference()
-        #     if conference.accept(vk_event):
-        #         try:
-        #             result = conference.__class__().check_and_start(self, vk_event)
-        #             if result:
-        #                 self.parse_and_send_msgs(vk_event.peer_id, result)
-        #         except RuntimeError as e:
-        #             return str(e)
-        #     else:
-        #         self.send_message(vk_event.peer_id, "Не задано имя конфы, задайте его командой /конфа 'Название конфы'")
-        #     return
 
         # Проверяем не остановлен ли бот, если так, то проверяем вводимая команда = старт?
         if not self.check_bot_working():
@@ -193,7 +207,9 @@ class VkBotClass(threading.Thread):
         self.upload = VkUpload(vk_session)
         self.vk = vk_session.get_api()
         self.mentions = secrets['vk']['mentions']
+
         self.BOT_CAN_WORK = True
+        self.DEBUG = False
 
     def listen_longpoll(self):
         for event in self.longpoll.listen():
@@ -421,6 +437,7 @@ class VkEvent:
             self.original_args = vk_event['parsed']['original_args']
             self.keys = vk_event['parsed']['keys']
             self.params = vk_event['parsed']['params']
+            self.params_without_keys = vk_event['parsed']['params_without_keys']
         if self.chat:
             self.from_chat = True
             self.from_user = False
@@ -431,7 +448,7 @@ class VkEvent:
         if 'fwd' in vk_event:
             self.fwd = vk_event['fwd']
         else:
-            self.fwd = []
+            self.fwd = None
 
         # ToDo: Remove
         # if self.from_user:

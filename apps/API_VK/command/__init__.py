@@ -19,6 +19,7 @@ from apps.API_VK.command.commands.EasyCommands.Hi import Hi
 from apps.API_VK.command.commands.EasyCommands.Nya import Nya
 from apps.API_VK.command.commands.EasyCommands.Shit import Shit
 from apps.API_VK.command.commands.EasyCommands.Sorry import Sorry
+from apps.API_VK.command.commands.EasyCommands.Start_lada import Start_lada
 from apps.API_VK.command.commands.EasyCommands.Thanks import Thanks
 from apps.API_VK.command.commands.Find import Find
 from apps.API_VK.command.commands.Fix import Fix
@@ -33,6 +34,7 @@ from apps.API_VK.command.commands.Issues import Issues
 from apps.API_VK.command.commands.Joke import Joke
 from apps.API_VK.command.commands.Keyboard import Keyboard
 from apps.API_VK.command.commands.KeyboardHide import KeyboardHide
+from apps.API_VK.command.commands.ModeratorCommands.Debug import Debug
 from apps.API_VK.command.commands.ModeratorCommands.Logs import Logs
 from apps.API_VK.command.commands.ModeratorCommands.Restart import Restart
 from apps.API_VK.command.commands.ModeratorCommands.Start import Start
@@ -67,7 +69,8 @@ commands = [
     Uyu(), Hi(), Bye(), Nya(), Shit(), Git(), Donate(), Discord(), Issue(), Issues(), Joke(),
     GoogleDrive(), Mail(), Ban(), DeBan(), Command(), Start(), Stop(), Restart(), Reboot(), Control(),
     get_user_by_id(), update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(),
-    Find(), Rate(), Rates(), Translate(), Uptime(), Counters(), Counter(), TicTacToe(), Status(), Fix()
+    Find(), Rate(), Rates(), Translate(), Uptime(), Counters(), Counter(), TicTacToe(), Status(), Fix(), Debug(),
+    Start_lada()
 ]
 
 

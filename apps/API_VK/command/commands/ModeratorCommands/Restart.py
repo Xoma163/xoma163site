@@ -25,7 +25,7 @@ class Restart(CommonCommand):
                     do_the_linux_command('sudo systemctl start minecraft_1_15_1')
                     return "Рестартим майн 1.15.1!"
                 else:
-                    return "Я знаю такой версии"
+                    return "Я не знаю такой версии"
             elif self.vk_event.args[0] in ['террария', 'terraria']:
                 self.check_sender('terraria')
                 self.check_command_time('terraria', 10)

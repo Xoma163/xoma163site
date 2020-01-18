@@ -17,11 +17,18 @@ def get_from_db(field_name):
 
 def add_phrase_before(recipient, word, field_name):
     if field_name[1] == '1':
-        return "{}, ты {}".format(recipient.capitalize(), word)
+        return "{}, ты {}".format(recipient, word)
     elif field_name[1] == 'm':
-        return "{}, вы {}".format(recipient.capitalize(), word)
+        return "{}, вы {}".format(recipient, word)
     else:
         return "EXCEPTION LOLOLOL"
+
+
+def check_key(keys, translator):
+    for key in keys:
+        if key in translator:
+            return key
+    return False
 
 
 class Scold(CommonCommand):
@@ -43,16 +50,16 @@ class Scold(CommonCommand):
             'жм': 'fm'
         }
         if self.vk_event.keys:
-            str_keys = ''.join(k for k in self.vk_event.keys)
-            if str_keys in translator:
-                translator_key = str_keys
+            key = check_key(self.vk_event.keys, translator)
+            if key:
+                translator_key = key
             else:
                 msg = "Неверные ключи определения пола и числа. Доступные: {}".format(str(list(translator.keys())))
                 return msg
         else:
-            if self.vk_event.original_args:
+            if self.vk_event.params_without_keys:
                 try:
-                    user = self.vk_bot.get_user_by_name([self.vk_event.original_args])
+                    user = self.vk_bot.get_user_by_name([self.vk_event.params_without_keys])
                     if user.gender == '1':
                         translator_key = 'ж1'
                     else:
@@ -62,8 +69,8 @@ class Scold(CommonCommand):
             else:
                 translator_key = 'м1'
 
-        if self.vk_event.original_args:
-            recipient = self.vk_event.original_args.lower()
+        if self.vk_event.params_without_keys:
+            recipient = self.vk_event.params_without_keys
             if "петрович" in recipient:
                 msg = get_random_item_from_list(get_bad_answers())
             else:

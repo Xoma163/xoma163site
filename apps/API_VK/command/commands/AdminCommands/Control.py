@@ -9,6 +9,6 @@ class Control(CommonCommand):
 
     def start(self):
         msg_chat_id = self.vk_event.args[0]
-        msg = self.vk_event.original_args.split(' ', 1)[1]
+        msg = self.vk_event.params_without_keys.split(' ', 1)[1]
 
         self.vk_bot.send_message(self.vk_bot.get_group_id(msg_chat_id), msg)

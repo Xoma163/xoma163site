@@ -13,6 +13,7 @@ class Uyu(CommonCommand):
         else:
             add_word = "бля"
         msgs = self.vk_event.fwd
+        print(self.vk_event.fwd)
         if msgs is None:
             return add_word
         if len(msgs) == 1:
