@@ -24,16 +24,18 @@ class Start(CommonCommand):
                     return "Синички уже стартовали"
             elif self.vk_event.args[0] in ["майн", "майнкрафт", "mine", "minecraft"]:
                 self.check_sender('minecraft')
-                if len(self.vk_event.args) >= 2 and self.vk_event.args[1] == '1.12':
-                    self.check_command_time('minecraft 1.12', 90)
+                if len(self.vk_event.args) >= 2 and (
+                        self.vk_event.args[1] == '1.12' or self.vk_event.args[1] == '1.12.2'):
+                    self.check_command_time('minecraft_1.12.2', 90)
 
-                    do_the_linux_command('sudo systemctl start minecraft')
+                    do_the_linux_command('sudo systemctl start minecraft_1.12.2')
                     return "Стартуем майн 1.12!"
-                elif (len(self.vk_event.args) >= 2 and self.vk_event.args[1] == '1.15.1') or len(
+                elif (len(self.vk_event.args) >= 2 and (
+                        self.vk_event.args[1] == '1.15.1' or self.vk_event.args[1] == '1.15')) or len(
                         self.vk_event.args) == 1:
-                    self.check_command_time('minecraft 1.15.1', 30)
+                    self.check_command_time('minecraft_1.15.1', 30)
 
-                    do_the_linux_command('sudo systemctl start minecraft_1_15_1')
+                    do_the_linux_command('sudo systemctl start minecraft_1.15.1')
                     return "Стартуем майн 1.15.1!"
                 else:
                     return "Я не знаю такой версии"

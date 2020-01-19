@@ -18,7 +18,9 @@ class Status(CommonCommand):
         res_1_15_1 = get_minecraft_server_info("192.168.1.10", "25566", "1.15.1")
         terraria = get_terraria_server_info("192.168.1.10", "7777", "хз")
 
-        total_str = "{}\n\n{}\n\n{}".format(res_1_12, res_1_15_1, terraria)
+        total_str = f"{res_1_12}\n\n" \
+            f"{res_1_15_1}\n\n" \
+            f"{terraria}"
 
         return total_str
 
