@@ -7,6 +7,7 @@ from apps.API_VK.command.commands.AdminCommands.Service.get_conversations import
 from apps.API_VK.command.commands.AdminCommands.Service.get_user_by_id import get_user_by_id
 from apps.API_VK.command.commands.AdminCommands.Service.update_users import update_users
 from apps.API_VK.command.commands.Birds import Birds
+from apps.API_VK.command.commands.Conference import Conference
 from apps.API_VK.command.commands.Counter import Counter
 from apps.API_VK.command.commands.Counters import Counters
 from apps.API_VK.command.commands.EasyCommands.Apologize import Apologize
@@ -64,6 +65,7 @@ from apps.API_VK.command.commands.YesNo import YesNo
 
 commands = [
     # Week(), TimeTable(),
+    Conference(),
     YesNo(), Thanks(), Stream(), Where(), Birds(), Register(), UnRegister(), Petrovich(), Statistics(),
     Random(), Sorry(), Help(), Weather(), Praise(), Scold(), Quote(), Quotes(), Keyboard(), KeyboardHide(),
     Uyu(), Hi(), Bye(), Nya(), Shit(), Git(), Donate(), Discord(), Issue(), Issues(), Joke(),

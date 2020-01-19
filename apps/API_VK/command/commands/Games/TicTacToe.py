@@ -36,7 +36,7 @@ lock = Lock()
 class TicTacToe(CommonCommand):
     def __init__(self):
         names = ["крестики", "крестики-нолики", "нолики"]
-        super().__init__(names, check_int_args=[0, 1])
+        super().__init__(names, check_int_args=[0, 1], api=False)
 
     def start(self):
         with lock:

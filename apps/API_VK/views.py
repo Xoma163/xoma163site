@@ -1,5 +1,6 @@
 import datetime
 import json
+import threading
 
 from django.http import HttpResponse, JsonResponse
 
@@ -81,22 +82,37 @@ def where_is_me(request):
     return HttpResponse(json.dumps(response_data, ensure_ascii=False), content_type="application/json")
 
 
+def check_bool(val):
+    if type(val) is bool:
+        return val
+
+    if val.lower() == 'true':
+        return True
+    return False
+
+
 def petrovich(request):
     from apps.API_VK.vkbot import VkEvent, parse_msg
     msg = request.GET.get('msg', None)
+    test = check_bool(request.GET.get('test', False))
+    send = check_bool(request.GET.get('send', True))
+    from_chat = check_bool(request.GET.get('from_chat', True))
+
     if not msg:
         return JsonResponse({'error': 'empty param msg'}, json_dumps_params={'ensure_ascii': False})
     if len(msg) == 0:
         return JsonResponse({'error': 'empty msg'}, json_dumps_params={'ensure_ascii': False})
 
-    from_chat = request.GET.get('from_chat', True)
-
     user = VkUser.objects.get(user_id=3379762)
-    chat = VkChat.objects.get(chat_id=2000000001)
+    if test:
+        chat = VkChat.objects.get(chat_id=2000000002)
+    else:
+        chat = VkChat.objects.get(chat_id=2000000001)
 
     vk_event = {
         'parsed': parse_msg(msg),
-        'sender': user
+        'sender': user,
+        'api': True
     }
     if from_chat:
         vk_event['chat'] = chat
@@ -106,10 +122,21 @@ def petrovich(request):
 
     vk_event_object = VkEvent(vk_event)
 
-    vk_bot.parse_and_send_msgs(vk_event['peer_id'], "{}(Алиса):\n{}".format(user, msg))
-    res = vk_bot.menu(vk_event_object)
+    res = vk_bot.menu(vk_event_object, send=False)
+    if send:
+        x1 = threading.Thread(target=send_messages,
+                              args=(vk_bot, vk_event['peer_id'], "{}(Алиса):\n{}".format(user, msg),))
+        x1.start()
+        x2 = threading.Thread(target=send_messages, args=(vk_bot, vk_event['peer_id'], res,))
+        x2.start()
+        # send_messages(vk_bot, vk_event['peer_id'], "{}(Алиса):\n{}".format(user, msg))
+        # send_messages(vk_bot, vk_event['peer_id'], res)
 
     return JsonResponse({'res': res}, json_dumps_params={'ensure_ascii': False})
+
+
+def send_messages(vk_bot, peer_id, msgs):
+    vk_bot.parse_and_send_msgs(peer_id, msgs)
 
 
 def chat(request):

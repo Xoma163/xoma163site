@@ -5,7 +5,7 @@ class Keyboard(CommonCommand):
     def __init__(self):
         names = ["клава", "клавиатура"]
         help_text = "̲К̲л̲а̲в̲а - показать клавиатуру"
-        super().__init__(names, help_text)
+        super().__init__(names, help_text, api=False)
 
     def start(self):
         return {"keyboard": get_keyboard(self.vk_event.sender)}

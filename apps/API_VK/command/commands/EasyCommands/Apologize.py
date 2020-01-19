@@ -8,13 +8,14 @@ class Apologize(CommonCommand):
     def __init__(self):
         names = ["извинись", "извиняйся", "извинитесь"]
 
-        super().__init__(names)
+        super().__init__(names, api=False)
 
     def start(self):
         phrases = ["Извини", "Нет", "Сам извинись", "за что?", "КАВО", "Ты уверен?"]
         phrase = get_random_item_from_list(phrases)
         self.vk_bot.send_message(self.vk_event.peer_id, phrase)
 
+        # ToDo: запускать асинхронную таску по отправке сообщения, результат ретёрнить
         if phrase == "Извини":
             if random_probability(25):
                 time.sleep(3)

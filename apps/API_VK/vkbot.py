@@ -9,11 +9,9 @@ from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.utils import get_random_id
 
 from apps.API_VK.command import get_commands
-from apps.API_VK.command.commands.Conference import Conference
 from apps.API_VK.models import VkUser, VkBot, VkChat
 from apps.Statistics.views import append_command_to_statistics
 from secrets.secrets import secrets
-from xoma163site.settings import BASE_DIR
 from xoma163site.wsgi import cameraHandler
 
 
@@ -110,15 +108,6 @@ def parse_date(date):
 
 
 class VkBotClass(threading.Thread):
-
-    # ToDo: https://github.com/python273/vk_api/issues/328
-    # def send_with_wrapper(self, peer_id, **kwargs):
-    #     try:
-    #         self.send_message(peer_id, **kwargs)
-    #     except SSLError:
-    #         self.send_message(peer_id, **kwargs)
-    #         print(SSLError)
-
     def send_message(self, peer_id, msg="ᅠ", attachments=None, keyboard=None, **kwargs):
         if attachments is None:
             attachments = []
@@ -148,9 +137,9 @@ class VkBotClass(threading.Thread):
                 if type(msg) == dict:
                     self.send_message(peer_id, **msg)
 
-    def menu(self, vk_event):
+    def menu(self, vk_event, send=True):
 
-        if self.DEBUG:
+        if self.DEBUG and send:
             debug_message = \
                 f"command = {vk_event.command}\n " \
                     f"args = {vk_event.args}\n " \
@@ -172,30 +161,26 @@ class VkBotClass(threading.Thread):
                 self.BOT_CAN_WORK = True
                 cameraHandler.resume()
                 self.send_message(vk_event.peer_id, "Стартуем!")
-                return
+                return "Стартуем!"
             return
 
-        # ToDo: ничего умнее не придумал, может в будущем поменять
-        if vk_event.chat and (vk_event.chat.name is None or vk_event.chat.name == ""):
-            commands = [Conference()]
-            if not commands[0].accept(vk_event):
-                self.send_message(vk_event.peer_id, "Не задано имя конфы, задайте его командой /конфа 'Название конфы'")
-                return
-
-        else:
-            commands = get_commands()
+        commands = get_commands()
         for command in commands:
             try:
                 if command.accept(vk_event):
                     result = command.__class__().check_and_start(self, vk_event)
                     if result:
-                        self.parse_and_send_msgs(vk_event.peer_id, result)
+                        if send:
+                            self.parse_and_send_msgs(vk_event.peer_id, result)
 
                     append_command_to_statistics(vk_event.command)
                     return result
             except RuntimeError as e:
+                if send:
+                    self.parse_and_send_msgs(vk_event.peer_id, str(e))
                 return str(e)
-        self.send_message(vk_event.peer_id, "Я не понял команды \"%s\"" % vk_event.command)
+        if send:
+            self.send_message(vk_event.peer_id, "Я не понял команды \"%s\"" % vk_event.command)
         return "Я не понял команды \"%s\"" % vk_event.command
 
     def __init__(self):
@@ -286,7 +271,6 @@ class VkBotClass(threading.Thread):
                 print(traceback.format_exc())
 
     def run(self):
-        open(BASE_DIR + '/thread.lock', 'w')
         self.listen_longpoll()
 
     def get_chat_title(self, chat_id):
@@ -449,6 +433,11 @@ class VkEvent:
             self.fwd = vk_event['fwd']
         else:
             self.fwd = None
+
+        if 'api' in vk_event:
+            self.api = vk_event['api']
+        else:
+            self.api = False
 
         # ToDo: Remove
         # if self.from_user:
