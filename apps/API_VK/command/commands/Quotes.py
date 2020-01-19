@@ -4,6 +4,12 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.models import QuoteBook
 
 
+def check_int_arg(arg):
+    try:
+        return int(arg), True
+    except ValueError:
+        return arg, False
+
 class Quotes(CommonCommand):
     def __init__(self):
         names = ["цитаты"]
@@ -16,12 +22,12 @@ class Quotes(CommonCommand):
 
         if self.vk_event.args is not None:
             if len(self.vk_event.args) >= 2:
-                text_filter = self.vk_event.args[0]
+                text_filter = " ".join(self.vk_event.args[:-1])
 
-                page = self.vk_event.args[1]
-                page, result = self.check_int_arg(page)
+                page = self.vk_event.args[-1]
+                page, result = check_int_arg(page)
                 if not result:
-                    return
+                    page = 1
                 self.check_int_arg_range(page, 0, float('inf'))
 
             elif len(self.vk_event.args) == 1:

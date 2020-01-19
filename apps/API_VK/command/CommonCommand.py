@@ -113,14 +113,6 @@ class CommonCommand:
             # self.vk_bot.send_message(self.vk_event.peer_id, error)
             raise RuntimeError(error)
 
-    def check_int_arg(self, arg):
-        try:
-            return int(arg), True
-        except ValueError:
-            error = "Аргумент должен быть целочисленным"
-            # self.vk_bot.send_message(self.vk_event.peer_id, error)
-            raise RuntimeError(error)
-
     def parse_int_args(self):
         if not self.vk_event.args:
             return True
@@ -178,6 +170,7 @@ class CommonCommand:
             # self.vk_bot.send_message(self.vk_event.peer_id, error)
             raise RuntimeError(error)
         return True
+
 
 role_translator = {
     'admin': "администратор",
