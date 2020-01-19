@@ -31,6 +31,10 @@ def stop_mine_by_version(online, no_players, version):
             if delta_seconds <= 1800 + 100:
                 obj.delete()
                 Service.objects.get_or_create(name=f"minecraft_{version}")
+
+                from apps.API_VK.command._DoTheLinuxComand import do_the_linux_command
+                do_the_linux_command(f'sudo systemctl stop minecraft_{version}')
+
                 vk_bot.send_message(chat.chat_id, f"Вырубаю майн {version}")
             else:
                 obj.delete()

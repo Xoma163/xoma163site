@@ -19,10 +19,9 @@ def dict_is_empty(_dict):
     banned_ops = ['', ' ', 'None', None]
     new_dict.pop('id')
     new_dict.pop('type')
-    _list = list(new_dict)
     flag = True
-    for item in _list:
-        flag *= item in banned_ops
+    for item in new_dict:
+        flag = flag and (new_dict[item] in banned_ops)
         if not flag:
             return flag
 
@@ -67,14 +66,19 @@ class Command(BaseCommand):
         for i, my_range in enumerate(ranges):
             if i == 0:
                 word_type = 'bad'
+                statistics['bad_words'] = len(my_range['values'])
             else:
                 word_type = 'good'
+                statistics['good_words'] = len(my_range['values'])
+
             for j, val in enumerate(my_range['values']):
                 if j != 0:
                     word_dict = {'type': word_type}
                     for k, item in enumerate(val):
                         if item != 'None' and item is not None and item != ' ' and item != '':
                             word_dict[headers[k]] = item
+                        else:
+                            word_dict[headers[k]] = None
                     if 'id' in word_dict:
                         if dict_is_empty(word_dict):
                             word_if_exist = Words.objects.filter(id=word_dict['id'])
@@ -85,11 +89,27 @@ class Command(BaseCommand):
                                 statistics['skipped'] += 1
 
                         else:
-                            word, created = Words.objects.update_or_create(id=word_dict['id'], defaults=word_dict)
-                            if word:
-                                statistics['updated'] += 1
-                            elif created:
+                            word = Words.objects.filter(id=word_dict['id'])
+                            if len(word) > 0:
+                                existed_word_dict = word.first().__dict__
+                                # for key in list(existed_word_dict):
+                                #     if existed_word_dict[key] is None:
+                                #         existed_word_dict.pop(key)
+                                existed_word_dict.pop('_state')
+                                existed_word_dict['id'] = str(existed_word_dict['id'])
+                                if word_dict == existed_word_dict:
+                                    statistics['skipped'] += 1
+                                else:
+                                    Words.objects.update_or_create(id=word_dict['id'], defaults=word_dict)
+                                    statistics['updated'] += 1
+                            else:
+                                Words(**word_dict).save()
                                 statistics['created'] += 1
+                            # word, created = Words.objects.update_or_create(id=word_dict['id'], defaults=word_dict)
+                            # if word:
+                            #     statistics['updated'] += 1
+                            # elif created:
+                            #     statistics['created'] += 1
                     else:
                         print("Слово не имеет id. Проверьте - {}. Строка - {}".format(word_dict, j))
                     # new_word = Words(**word_dict)
@@ -97,15 +117,15 @@ class Command(BaseCommand):
                 else:
                     headers = [header for header in val]
         print("Result: success")
-        print("Time: {}".format(time.time() - time1))
+        print(f"Time: {time.time() - time1}")
         # print("Total: {}",sum(list(statistics.values())))
-        print("\nStatistics:\n"
-              "created - {}\n"
-              "updated - {}\n"
-              "deleted - {}\n"
-              "skipped - {}\n"
-              "total - {}".format(statistics['created'],
-                                  statistics['updated'],
-                                  statistics['deleted'],
-                                  statistics['skipped'],
-                                  sum(list(statistics.values()))))
+        print(f"\nStatistics:\n"
+              f"created - {statistics['created']}\n"
+              f"updated - {statistics['updated']}\n"
+              f"deleted - {statistics['deleted']}\n"
+              f"skipped - {statistics['skipped']}\n"
+              f"total - {sum(list(statistics.values()))}\n"
+              f"-----\n"
+              f"bad_words - {statistics['bad_words']}\n"
+              f"good_words - {statistics['good_words']}\n"
+              )
