@@ -1,4 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.models import VkChat
 
 
 class get_conversations(CommonCommand):
@@ -8,10 +9,11 @@ class get_conversations(CommonCommand):
         super().__init__(names, help_text, access='admin', need_args=1)
 
     def start(self):
-        # ToDo:
-        # for chat in chats...
+        chats = VkChat.objects.all()
+        peer_ids = [chat.chat_id for chat in chats]
+
         res = self.vk_bot.vk.messages.getConversationsById(
-            peer_ids=[2000000001, 2000000003],
+            peer_ids=peer_ids,
             extended=1,
             group_id=self.vk_bot.group_id)
         return res

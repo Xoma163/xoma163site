@@ -6,11 +6,16 @@ from apps.Statistics.models import Service
 from xoma163site.wsgi import vk_bot
 
 
+def check_server_by_info(ip, port, version):
+    from apps.API_VK.command.commands.Status import get_minecraft_server_info
+    res = get_minecraft_server_info(ip, port, version)
+    stop_mine_by_version(res.find("запущен") != -1, res.find("Игроки") == -1, version)
+
 def stop_mine_by_version(online, no_players, version):
     # Если сервак онлайн и нет игроков
     if online and no_players:
         from apps.API_VK.models import VkChat
-        chat = VkChat.objects.get(chat_id=2000000002)
+        chat = VkChat.objects.get(chat_id=2000000001)
 
         obj, created = Service.objects.get_or_create(name=f'stop_minecraft_{version}')
 
@@ -25,6 +30,7 @@ def stop_mine_by_version(online, no_players, version):
             delta_seconds = (datetime.now() - update_datetime).seconds
             if delta_seconds <= 1800 + 100:
                 obj.delete()
+                Service.objects.get_or_create(name=f"minecraft_{version}")
                 vk_bot.send_message(chat.chat_id, f"Вырубаю майн {version}")
             else:
                 obj.delete()
@@ -37,9 +43,8 @@ def stop_mine_by_version(online, no_players, version):
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        from apps.API_VK.command.commands.Status import get_minecraft_server_info
+        check_server_by_info("192.168.1.10", "25565", "1.12.2")
+        check_server_by_info("192.168.1.10", "25566", "1.15.1")
 
-        res_1_12 = get_minecraft_server_info("192.168.1.10", "25565", "1.12.2")
-        stop_mine_by_version(res_1_12.find("запущен") != -1, res_1_12.find("Игроки") == -1, "1.12.2")
-        res_1_15_1 = get_minecraft_server_info("192.168.1.10", "25566", "1.15.1")
-        stop_mine_by_version(res_1_15_1.find("запущен") != -1, res_1_15_1.find("Игроки") == -1, "1.15.1")
+        # res_1_15_1 = get_minecraft_server_info("192.168.1.10", "25566", "1.15.1")
+        # stop_mine_by_version(res_1_15_1.find("запущен") != -1, res_1_15_1.find("Игроки") == -1, "1.15.1")
