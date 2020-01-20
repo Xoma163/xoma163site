@@ -13,7 +13,6 @@ class Temperature(CommonCommand):
         output = do_the_linux_command(command)
 
         find_text = 'Adapter: ISA adapter\nPackage id 0:'
-        output = "AVG:" + output[output.find(find_text) + len(find_text):].replace(" (high = +80.0°C, crit = +100.0°C)",
-                                                                                   '')
+        output = f"AVG:{output[output.find(find_text) + len(find_text):].replace('(high = +80.0°C, crit = +100.0°C)', '')}"
 
         return output

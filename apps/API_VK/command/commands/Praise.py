@@ -9,15 +9,15 @@ def get_from_db(field_name):
     except AttributeError:
         word = "Нет такого слова :("
     except Exception as e:
-        word = "Нет такого слова :( Ошибочка - {}".format(str(e))
+        word = f"Нет такого слова :( Ошибочка - {str(e)}"
     return word
 
 
 def add_phrase_before(recipient, word, field_name):
     if field_name[1] == '1':
-        return "{}, ты {}".format(recipient, word)
+        return f"{recipient}, ты {word}"
     elif field_name[1] == 'm':
-        return "{}, вы {}".format(recipient, word)
+        return f"{recipient}, вы {word}"
     else:
         return "EXCEPTION LOLOLOL"
 
@@ -51,7 +51,7 @@ class Praise(CommonCommand):
             if key:
                 translator_key = key
             else:
-                msg = "Неверные ключи определения пола и числа. Доступные: {}".format(str(list(translator.keys())))
+                msg = f"Неверные ключи определения пола и числа. Доступные: {str(list(translator.keys()))}"
                 return msg
         else:
             if self.vk_event.params_without_keys:

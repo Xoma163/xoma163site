@@ -22,20 +22,15 @@ class Rate(CommonCommand):
 
             rate_gamer_str = ""
             for rate_gamer in rates_gamers:
-                rate_gamer_str += "{} - {}\n".format(str(rate_gamer.user), rate_gamer.rate)
+                rate_gamer_str += f"{str(rate_gamer.user)} - {rate_gamer.rate}\n"
 
             if len(existed_rate) > 0:
-                return "Ставка уже поставлена\n" \
-                       "Игроки {}/{}:\n" \
-                       "{}".format(len(rates_gamers), MIN_GAMERS, rate_gamer_str)
+                return f"Ставка уже поставлена\n" \
+                    f"Игроки {len(rates_gamers)}/{MIN_GAMERS}:\n" \
+                    f"{rate_gamer_str}"
 
             if self.vk_event.args:
                 arg = self.vk_event.args[0]
-                # ToDo: Последствия рефакторинга непредсказуемы
-                # if not self.check_int_arg_range(arg, 1, 100):
-                #     lock.release()
-                #     print("СТАВКА СЮДА НЕ ЗАШЛА")
-                #     return
                 self.check_int_arg_range(arg, 1, 100)
             else:
                 available_list = [x for x in range(1, 101)]
@@ -54,6 +49,6 @@ class Rate(CommonCommand):
                 Gamer(**{'user': self.vk_event.sender}).save()
 
             RateModel(**{'user': self.vk_event.sender, 'chat': self.vk_event.chat, 'rate': arg}).save()
-            rate_gamer_str += "{} - {}".format(self.vk_event.sender, arg)
-            return "Игроки {}/{}:\n" \
-                   "{}".format(len(rates_gamers) + 1, MIN_GAMERS, rate_gamer_str)
+            rate_gamer_str += f"{self.vk_event.sender} - {arg}"
+            return f"Игроки {len(rates_gamers) + 1}/{MIN_GAMERS}:\n" \
+                f"{rate_gamer_str}"

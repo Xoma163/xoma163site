@@ -47,8 +47,5 @@ def stop_mine_by_version(online, no_players, version):
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        check_server_by_info("192.168.1.10", "25565", "1.12.2")
-        check_server_by_info("192.168.1.10", "25566", "1.15.1")
-
-        # res_1_15_1 = get_minecraft_server_info("192.168.1.10", "25566", "1.15.1")
-        # stop_mine_by_version(res_1_15_1.find("запущен") != -1, res_1_15_1.find("Игроки") == -1, "1.15.1")
+        check_server_by_info("localhost", "25565", "1.12.2")
+        check_server_by_info("localhost", "25566", "1.15.1")

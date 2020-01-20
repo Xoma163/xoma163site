@@ -99,9 +99,9 @@ def get_help_text():
             if type(help_text) == list:
                 for text in help_text:
                     if 'for' in text:
-                        texts[text['for']] += "{}\n".format(text['text'])
+                        texts[text['for']] += f"{text['text']}\n"
                     else:
-                        texts[command.access] += "{}\n".format(text['text'])
+                        texts[command.access] += f"{text['text']}\n"
 
     return texts
 
@@ -155,12 +155,6 @@ def get_keyboard():
         if len(row) > 0:
             buttons[k].append(row)
     return buttons
-
-
-# ADMIN_TEXTS = get_help_text('for_admin')
-# MODERATOR_TEXTS = get_help_text('for_moderator')
-# STUDENT_TEXTS = get_help_text('for_student')
-# COMMON_TEXTS = get_help_text()
 
 HELP_TEXTS = get_help_text()
 KEYBOARDS = get_keyboard()

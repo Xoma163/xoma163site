@@ -75,7 +75,7 @@
 #
 #         # Установка первой по расписанию пары
 #         if int(current_discipline) < int(self.first_discipline):
-#             vk_title = "6221|{} {} {}({})".format(
+#             vk_title = f"6221|{} {} {}({})".format(
 #                 timetable[self.first_discipline]['START'],
 #                 schedule[now_weeknumber][now_weekday][self.first_discipline]['CABINET'],
 #                 schedule[now_weeknumber][now_weekday][self.first_discipline]['TEACHER'],

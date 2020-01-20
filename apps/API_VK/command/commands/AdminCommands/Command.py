@@ -16,7 +16,7 @@ class Command(CommonCommand):
             output, error = process.communicate()
             output = output.decode("utf-8")
             if error:
-                output += "\n{}".format(error)
+                output += f"\n{error}"
             return output
         except Exception as e:
-            return "Ошибка:\n{}".format(str(e))
+            return f"Ошибка:\n{str(e)}"

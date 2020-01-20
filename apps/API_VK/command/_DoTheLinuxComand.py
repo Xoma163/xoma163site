@@ -7,7 +7,7 @@ def do_the_linux_command(command):
         output, error = process.communicate()
         output = output.decode("utf-8")
         if error:
-            output += "\nОшибка:\n{}".format(error)
+            output += f"\nОшибка:\n{error}"
     except Exception as e:
         output = str(e)
     return output

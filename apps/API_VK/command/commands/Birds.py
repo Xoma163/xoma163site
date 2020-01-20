@@ -31,9 +31,8 @@ class Birds(CommonCommand):
 
         photo = self.vk_bot.upload.photo_messages(path)[0]
         cameraHandler.clear_file(path)
-        attachments.append('photo{}_{}'.format(photo['owner_id'], photo['id']))
+        attachments.append(f"photo{photo['owner_id']}_{photo['id']}")
 
-        # ToDo: В апи не работает, возможно что-то связано с потоками
         if frames != 0:
             try:
                 path2 = cameraHandler.get_gif(frames, quality == 1)
@@ -41,7 +40,7 @@ class Birds(CommonCommand):
                 return str(e)
             gif = self.vk_bot.upload.document_message(path2, title='Синички', peer_id=self.vk_event.peer_id)['doc']
             cameraHandler.clear_file(path2)
-            attachments.append('doc{}_{}'.format(gif['owner_id'], gif['id']))
+            attachments.append(f"doc{gif['owner_id']}_{gif['id']}")
         return {'msg': '', 'attachments': attachments}
         # ToDo: баг ВКАПИ, при котором при отправке ссылки атачменты не прикрепляются. Ишю 54
         # return {'msg': "http://birds.xoma163.xyz", 'attachments': attachments}

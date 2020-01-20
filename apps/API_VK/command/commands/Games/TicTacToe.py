@@ -104,28 +104,24 @@ class TicTacToe(CommonCommand):
             session.delete()
             if res == 'x':
                 self.vk_bot.send_message(session.user1.user_id,
-                                         "Игра закончена. Победитель - {}\n{}".format(
-                                             session.user1,
-                                             print_table(table)),
+                                         f"Игра закончена. Победитель - {session.user1}\n"
+                                         f"{print_table(table)}",
                                          keyboard=MORE_HIDE_KEYBOARD)
                 self.vk_bot.send_message(session.user2.user_id,
-                                         "Игра закончена. Победитель - {}\n{}".format(
-                                             session.user1,
-                                             print_table(table)),
+                                         f"Игра закончена. Победитель - {session.user1}\n"
+                                         f"{print_table(table)}",
                                          keyboard=MORE_HIDE_KEYBOARD)
                 gamer = Gamer.objects.get(user=session.user1)
                 gamer.tic_tac_toe_points += 1
                 gamer.save()
             elif res == 'o':
                 self.vk_bot.send_message(session.user1.user_id,
-                                         "Игра закончена. Победитель - {}\n{}".format(
-                                             session.user2,
-                                             print_table(table)),
+                                         f"Игра закончена. Победитель - {session.user2}\n"
+                                         f"{print_table(table)}",
                                          keyboard=MORE_HIDE_KEYBOARD)
                 self.vk_bot.send_message(session.user2.user_id,
-                                         "Игра закончена. Победитель - {}\n{}".format(
-                                             session.user2,
-                                             print_table(table)),
+                                         f"Игра закончена. Победитель - {session.user2}\n"
+                                         f"{print_table(table)}",
                                          keyboard=MORE_HIDE_KEYBOARD)
                 gamer = Gamer.objects.get(user=session.user2)
                 gamer.tic_tac_toe_points += 1
@@ -133,9 +129,11 @@ class TicTacToe(CommonCommand):
             return
         elif check_end(table):
             session.delete()
-            self.vk_bot.send_message(session.user1.user_id, "Ничья\n{}".format(print_table(table)),
+            self.vk_bot.send_message(session.user1.user_id,
+                                     f"Ничья\n{print_table(table)}",
                                      keyboard=MORE_HIDE_KEYBOARD)
-            self.vk_bot.send_message(session.user2.user_id, "Ничья\n{}".format(print_table(table)),
+            self.vk_bot.send_message(session.user2.user_id,
+                                     f"Ничья\n{print_table(table)}",
                                      keyboard=MORE_HIDE_KEYBOARD)
             return
 
@@ -159,10 +157,10 @@ class TicTacToe(CommonCommand):
         session.save()
         keyboard = get_keyboard_by_board(json.loads(session.board))
         self.vk_bot.send_message(session.user1.user_id,
-                                 "Второй игрок - {}\n Ваш ход\nВы играете за ❌".format(session.user2),
+                                 f"Второй игрок - {session.user2}\n Ваш ход\nВы играете за ❌",
                                  keyboard=keyboard)
         self.vk_bot.send_message(session.user2.user_id,
-                                 "Второй игрок - {}\n Ход второго игрока\nВы играете за ⭕".format(session.user1),
+                                 f"Второй игрок - {session.user1}\n Ход второго игрока\nВы играете за ⭕",
                                  keyboard=keyboard)
 
 
@@ -225,13 +223,10 @@ def get_keyboard_by_board(table):
 def get_elem(elem, row, col):
     if elem == 'x':
         label = "❌"
-        # color = "negative"
     elif elem == 'o':
         label = "⭕"
-        # color = "primary"
     else:
         label = "ᅠ"
-        # color = "secondary"
 
     return {
         "action": {
@@ -240,7 +235,6 @@ def get_elem(elem, row, col):
             "payload": json.dumps({"command": "крестики", "args": {"row": row, "col": col}}, ensure_ascii=False)
         },
         "color": "secondary"
-        # "color": color
     }
 
 

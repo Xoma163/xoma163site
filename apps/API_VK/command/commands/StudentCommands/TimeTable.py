@@ -12,6 +12,6 @@
 #
 #     def start(self):
 #         attachments = []
-#         photo = {'owner_id': "-{}".format(self.vk_bot.group_id), 'id': 457239626}
-#         attachments.append('photo{}_{}'.format(photo['owner_id'], photo['id']))
+#         photo = {'owner_id': f"-{self.vk_bot.group_id}", 'id': 457239626}
+#         attachments.append(f"photo{photo['owner_id']}_{photo['id']}")
 #         return {'msg': str((datetime.datetime.now().isocalendar()[1] - 35)) + " неделя", 'attachments': attachments}

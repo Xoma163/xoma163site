@@ -10,6 +10,7 @@ def check_int_arg(arg):
     except ValueError:
         return arg, False
 
+
 class Quotes(CommonCommand):
     def __init__(self):
         names = ["цитаты"]
@@ -50,10 +51,10 @@ class Quotes(CommonCommand):
             page = p.num_pages
 
         objs_on_page = p.page(page)
-        msg = "Страница {}/{}\n\n".format(page, p.num_pages)
+        msg = f"Страница {page}/{p.num_pages}\n\n"
         for i, obj_on_page in enumerate(objs_on_page):
-            msg += "------------------------------{}------------------------------\n" \
-                   "{}\n" \
-                   "(c) {}\n".format(i + 1, obj_on_page.text, obj_on_page.date.strftime("%d.%m.%Y %H:%M:%S"))
+            msg += f"------------------------------{i + 1}------------------------------\n" \
+                f"{obj_on_page.text}\n" \
+                f"(c) {obj_on_page.date.strftime('%d.%m.%Y %H:%M:%S')}\n"
 
         return msg

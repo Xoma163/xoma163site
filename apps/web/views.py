@@ -13,7 +13,7 @@ def calc(request):
         session = Session()
         session.name = request.POST['name']
         session.save()
-        return redirect('/calc/{}'.format(session.id))
+        return redirect(f'/calc/{session.id}')
     else:
         sessions = Session.objects.all()
         return render(request, "web/sessions.html", {'sessions': sessions})

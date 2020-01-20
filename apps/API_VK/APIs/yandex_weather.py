@@ -33,9 +33,9 @@ def get_weather(city="самара"):
         lat = 59.872380
         lon = 30.370291
     else:
-        return 'Я не знаю координат города {}. Сообщите их разработчику'.format(city)
+        return f'Я не знаю координат города {city}. Сообщите их разработчику'
 
-    entity, created = Service.objects.get_or_create(name='weather_{}'.format(original_city_name))
+    entity, created = Service.objects.get_or_create(name=f'weather_{original_city_name}')
     if not created:
         update_datetime = entity.update_datetime
         delta_seconds = (datetime.now() - update_datetime).seconds
@@ -44,7 +44,7 @@ def get_weather(city="самара"):
 
     TOKEN = secrets['yandex']['weather']
 
-    URL = "https://api.weather.yandex.ru/v1/informers?lat={}&lon={}&lang=ru_RU".format(lat, lon)
+    URL = f"https://api.weather.yandex.ru/v1/informers?lat={lat}&lon={lon}&lang=ru_RU"
     HEADERS = {'X-Yandex-API-Key': TOKEN}
     response = requests.get(URL, headers=HEADERS).json()
     if 'status' in response:
@@ -104,43 +104,30 @@ def get_weather(city="самара"):
             'prec_prob': response['forecast']['parts'][i]['prec_prob'],
         }
 
-    now = 'Погода в {} сейчас:\n' \
-          '{}\n' \
-          'Температура {}°С(ощущается как {}°С)\n' \
-          'Ветер {}м/c(порывы до {}м/c)\n' \
-          'Давление  {}мм.рт.ст., влажность {}%'.format(city_name,
-                                                        weather['now']['condition'], weather['now']['temp'],
-                                                        weather['now']['temp_feels_like'],
-                                                        weather['now']['wind_speed'], weather['now']['wind_gust'],
-                                                        weather['now']['pressure'],
-                                                        weather['now']['humidity'])
+    now = f"Погода в {city_name} сейчас:\n" \
+        f"{weather['now']['condition']}\n" \
+        f"Температура {weather['now']['temp']}°С(ощущается как {weather['now']['temp_feels_like']}°С)\n" \
+        f"Ветер {weather['now']['wind_speed']}м/c(порывы до {weather['now']['wind_gust']}м/c)\n" \
+        f"Давление  {weather['now']['pressure']}мм.рт.ст., влажность {weather['now']['humidity']}%"
 
     forecast = ""
     for i in range(len(weather['forecast'])):
-        forecast += '\n\n' \
-                    'Прогноз на {}:\n' \
-                    '{}\n'.format(weather['forecast'][i]['part_name'],
-                                  weather['forecast'][i]['condition'])
+        forecast += f"\n\n" \
+            f"Прогноз на {weather['forecast'][i]['part_name']}:\n" \
+            f"{weather['forecast'][i]['condition']}\n"
 
         if weather['forecast'][i]['temp_min'] != weather['forecast'][i]['temp_max']:
-            forecast += 'Температура от {} до {}°С'.format(weather['forecast'][i]['temp_min'],
-                                                           weather['forecast'][i]['temp_max'])
+            forecast += f"Температура от {weather['forecast'][i]['temp_min']} до {weather['forecast'][i]['temp_max']}°С"
         else:
-            forecast += 'Температура {}°С'.format(weather['forecast'][i]['temp_max'])
+            forecast += f"Температура {weather['forecast'][i]['temp_max']}°С"
 
-        forecast += '(ощущается как {}°С)\n' \
-                    'Ветер {}м/c(порывы до {}м/c)\n' \
-                    'Давление {} мм.рт.ст., влажность {}%\n'.format(weather['forecast'][i]['temp_feels_like'],
-                                                                    weather['forecast'][i]['wind_speed'],
-                                                                    weather['forecast'][i]['wind_gust'],
-                                                                    weather['forecast'][i]['pressure'],
-                                                                    weather['forecast'][i]['humidity']
-                                                                    )
+        forecast += f"(ощущается как {weather['forecast'][i]['temp_feels_like']}°С)\n" \
+            f"Ветер {weather['forecast'][i]['wind_speed']}м/c(порывы до {weather['forecast'][i]['wind_gust']}м/c)\n" \
+            f"Давление {weather['forecast'][i]['pressure']} мм.рт.ст., влажность {weather['forecast'][i]['humidity']}%\n"
         if weather['forecast'][i]['prec_mm'] != 0:
-            forecast += 'Осадки {}мм на протяжении {} часов с вероятностью {}%'.format(
-                weather['forecast'][i]['prec_mm'],
-                weather['forecast'][i]['prec_period'],
-                weather['forecast'][i]['prec_prob'])
+            forecast += f"Осадки {weather['forecast'][i]['prec_mm']}мм " \
+                f"на протяжении {weather['forecast'][i]['prec_period']} часов " \
+                f"с вероятностью {weather['forecast'][i]['prec_prob']}%"
         else:
             forecast += "Без осадков"
     entity.value = now + forecast

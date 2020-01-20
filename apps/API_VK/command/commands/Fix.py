@@ -23,5 +23,5 @@ class Fix(CommonCommand):
     def start(self):
         msgs = ""
         for msg in self.vk_event.fwd:
-            msgs += "{}\n".format(fix_layout(msg['text'], has_cyrillic(msg['text'])))
+            msgs += f"{fix_layout(msg['text'], has_cyrillic(msg['text']))}\n"
         return msgs

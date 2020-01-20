@@ -23,6 +23,6 @@ def get_issues_text():
     issues = Issue.objects.all()
     features_text = "Добавленные ишю:\n\n"
     for i, feature in enumerate(issues):
-        features_text += "------------------------------{}------------------------------\n" \
-                         "{}\n".format(i + 1, feature.text)
+        features_text += f"------------------------------{i + 1}------------------------------\n" \
+            f"{feature.text}\n"
     return features_text

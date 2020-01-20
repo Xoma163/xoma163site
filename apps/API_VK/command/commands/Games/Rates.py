@@ -26,7 +26,7 @@ class Rates(CommonCommand):
 
             else:
                 if len(gamers) < MIN_GAMERS:
-                    return "Минимальное количество игроков - {}".format(MIN_GAMERS)
+                    return f"Минимальное количество игроков - {MIN_GAMERS}"
             messages = ["Ставки сделаны, ставок больше нет."]
 
             rnd = random.randint(1, 100)
@@ -41,7 +41,7 @@ class Rates(CommonCommand):
             winners_str = ""
             for winner in winners:
                 gamer = Gamer.objects.get(user=winner.user)
-                winners_str += "{}\n".format(gamer)
+                winners_str += f"{gamer}\n"
 
                 if winner.rate != rnd:
                     gamer.points += 1
@@ -52,9 +52,9 @@ class Rates(CommonCommand):
                 gamer.save()
 
             if len(winners) == 1:
-                msg = "Выпавшее число - {}\nПобедитель:\n{}".format(rnd, winners_str)
+                msg = f"Выпавшее число - {rnd}\nПобедитель:\n{winners_str}"
             else:
-                msg = "Выпавшее число - {}\nПобедители:\n{}".format(rnd, winners_str)
+                msg = f"Выпавшее число - {rnd}\nПобедители:\n{winners_str}"
 
             gamers.delete()
             messages.append(msg)

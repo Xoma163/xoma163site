@@ -11,6 +11,7 @@ class Find(CommonCommand):
 
         super().__init__(names, help_text, need_args=1)
 
+    # ToDo: вынести в APIs
     def start(self):
         import requests
 
@@ -39,7 +40,7 @@ class Find(CommonCommand):
             return "Ничего не нашёл"
         attachments = []
         for url in urls:
-            path = "{}/static/vkapi/{}.jpg".format(BASE_DIR, query)
+            path = f"{BASE_DIR}/static/vkapi/{query}.jpg"
             try:
                 img = requests.get(url)
                 img_file = open(path, "wb")
@@ -47,7 +48,7 @@ class Find(CommonCommand):
                 img_file.close()
 
                 photo = self.vk_bot.upload.photo_messages(path)[0]
-                attachments.append('photo{}_{}'.format(photo['owner_id'], photo['id']))
+                attachments.append(f"photo{photo['owner_id']}_{photo['id']}")
             except Exception as e:
                 pass
             finally:

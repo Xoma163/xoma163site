@@ -22,7 +22,7 @@ class Statistics(CommonCommand):
             return args_translator[arg]()
         msg = ""
         for val in args_translator.values():
-            msg += "{}\n".format(val())
+            msg += f"{val()}\n"
         return msg
 
     def get_petrovich(self):

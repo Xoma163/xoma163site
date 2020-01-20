@@ -24,7 +24,7 @@ class Quote(CommonCommand):
                 quote.user_id = int(msgs[0]['from_id']) * (-1)
                 quote_bot = self.vk_bot.get_bot_by_id(quote.user_id)
                 username = quote_bot.name
-            quote_text += "{}:\n{}\n\n".format(username, text)
+            quote_text += f"{username}:\n{text}\n\n"
         quote.text = quote_text
         quote.save()
         return "Цитата сохранена"

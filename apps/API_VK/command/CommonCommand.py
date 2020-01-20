@@ -4,8 +4,22 @@ from apps.Statistics.models import Service
 
 
 class CommonCommand:
+    """
+    # Имена, на которые откликается команда
+        names - Текст в помощи
+        help_text - Клавиатура
+        keyboard - Команда для ?
+        access - Команда для лс
+        for_lk - Команда для конф
+        for_conversations - Требуются пересылаемые сообщения
+        need_fwd - Требуются аргументы(число)
+        need_args - Требуются интовые аргументы (позиции)
+        check_int_args - Проверить позиционные аргументы на int
+        api - Работает ли команда для api
+    """
 
-    def __init__(self, names,
+    def __init__(self,
+                 names,
                  help_text=None,
                  keyboard=None,
                  access='user',
@@ -16,26 +30,15 @@ class CommonCommand:
                  check_int_args=None,
                  api=True,
                  ):
-        # Имена, на которые откликается команда
         self.names = names
-        # Текст в помощи
         self.help_text = help_text
-        # Клавиатура
         self.keyboard = keyboard
-        # Команда для ?
         self.access = access
-        # Команда для лс
         self.for_lk = for_lk
-        # Команда для конф
         self.for_conversations = for_conversations
-        # Требуются пересылаемые сообщения
         self.need_fwd = need_fwd
-        # Требуются аргументы(число)
         self.need_args = need_args
-        # Требуются интовые аргументы (позиции)
         self.check_int_args = check_int_args
-
-        # Работает ли команда для api
         self.api = api
 
         self.vk_bot = None
@@ -57,10 +60,8 @@ class CommonCommand:
     def checks(self):
         if not self.api:
             self.check_api()
-
         if self.access != 'user':
             self.check_sender(self.access)
-
         if self.for_lk:
             self.check_lk()
         if self.for_conversations:
@@ -80,8 +81,7 @@ class CommonCommand:
     def check_sender(self, role):
         if getattr(self.vk_event.sender, 'is_' + role):
             return True
-        error = "Команда доступна только для пользователей с уровнем прав {}".format(role_translator[role])
-        # self.vk_bot.send_message(self.vk_event.peer_id, error)
+        error = f"Команда доступна только для пользователей с уровнем прав {role_translator[role]}"
         raise RuntimeError(error)
 
     def check_args(self):
@@ -90,11 +90,9 @@ class CommonCommand:
                 return True
             else:
                 error = "Передано недостаточно аргументов"
-                # self.vk_bot.send_message(self.vk_event.peer_id, error)
                 raise RuntimeError(error)
 
         error = "Для работы команды требуются аргументы"
-        # self.vk_bot.send_message(self.vk_event.peer_id, error)
         raise RuntimeError(error)
 
     def check_int_arg_range(self, arg, val1, val2, banned_list=None):
@@ -103,14 +101,13 @@ class CommonCommand:
                 if arg not in banned_list:
                     return True
                 else:
-                    error = "Аргумент не может принимать это значение".format(val1, val2)
-                    # self.vk_bot.send_message(self.vk_event.peer_id, error)
+                    # ToDo: тут надо поправить val1 и val2 на правильные параметры
+                    error = f"Аргумент {val1} не может принимать значение {val2}"
                     raise RuntimeError(error)
             else:
                 return True
         else:
-            error = "Значение может быть в диапазоне [{};{}]".format(val1, val2)
-            # self.vk_bot.send_message(self.vk_event.peer_id, error)
+            error = f"Значение может быть в диапазоне [{val1};{val2}]"
             raise RuntimeError(error)
 
     def parse_int_args(self):
@@ -122,7 +119,6 @@ class CommonCommand:
                     self.vk_event.args[checked_arg_index] = int(self.vk_event.args[checked_arg_index])
             except ValueError:
                 error = "Аргумент должен быть целочисленным"
-                # self.vk_bot.send_message(self.vk_event.peer_id, error)
                 raise RuntimeError(error)
         return True
 
@@ -131,7 +127,6 @@ class CommonCommand:
             return True
 
         error = "Команда работает только в ЛС"
-        # self.vk_bot.send_message(self.vk_event.peer_id, error)
         raise RuntimeError(error)
 
     def check_fwd(self):
@@ -139,7 +134,6 @@ class CommonCommand:
             return True
 
         error = "Перешлите сообщения"
-        # self.vk_bot.send_message(self.vk_event.peer_id, error)
         raise RuntimeError(error)
 
     def check_conversation(self):
@@ -147,7 +141,6 @@ class CommonCommand:
             return True
 
         error = "Команда работает только в беседах"
-        # self.vk_bot.send_message(self.vk_event.peer_id, error)
         raise RuntimeError(error)
 
     def check_command_time(self, name, seconds):
@@ -157,8 +150,7 @@ class CommonCommand:
         update_datetime = entity.update_datetime
         delta_seconds = (datetime.now() - update_datetime).seconds
         if delta_seconds < seconds:
-            error = "Нельзя часто вызывать команды стоп и старта. Осталось {} секунд".format(seconds - delta_seconds)
-            # self.vk_bot.send_message(self.vk_event.peer_id, error)
+            error = f"Нельзя часто вызывать команды стоп и старта. Осталось {seconds - delta_seconds} секунд"
             raise RuntimeError(error)
         entity.name = name
         entity.save()
@@ -167,7 +159,6 @@ class CommonCommand:
     def check_api(self):
         if self.vk_event.api:
             error = "Команда не доступна для API"
-            # self.vk_bot.send_message(self.vk_event.peer_id, error)
             raise RuntimeError(error)
         return True
 

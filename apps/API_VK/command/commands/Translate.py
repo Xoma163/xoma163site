@@ -21,7 +21,7 @@ class Translate(CommonCommand):
         else:
             text = ""
             for msg in fwd:
-                text += "{}\n".format(msg['text'])
+                text += f"{msg['text']}\n"
 
         if has_cyrillic(text):
             lang = 'ru-en'
@@ -29,10 +29,9 @@ class Translate(CommonCommand):
             lang = 'en-ru'
         TOKEN = secrets['yandex']['translate']
 
-        URL = "https://translate.yandex.net/api/v1.5/tr.json/translate?lang={} &key={}&text={}".format(lang, TOKEN,
-                                                                                                       text)
+        URL = f"https://translate.yandex.net/api/v1.5/tr.json/translate?lang={lang} &key={TOKEN}&text={text}"
         response = requests.get(URL).json()
         if response['code'] == 200:
             return response['text'][0]
         else:
-            return "Ошибка:\n{}".format(response)
+            return f"Ошибка:\n{response}"

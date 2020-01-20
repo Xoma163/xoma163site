@@ -102,9 +102,9 @@ def message_for_me(message, mentions):
 def parse_date(date):
     date_arr = date.split('.')
     if len(date_arr) == 2:
-        return "{}-{}-{}".format(1970, date_arr[1], date_arr[0])
+        return f"1970-{date_arr[1]}-{date_arr[0]}"
     else:
-        return "{}-{}-{}".format(date_arr[2], date_arr[1], date_arr[0])
+        return f"{date_arr[2]}-{date_arr[1]}-{date_arr[0]}"
 
 
 class VkBotClass(threading.Thread):
@@ -355,7 +355,6 @@ class VkBotClass(threading.Thread):
         if len(vk_chat) > 0:
             vk_chat = vk_chat.first()
         else:
-            # Прозрачная регистрация
             vk_chat = VkChat()
             vk_chat.chat_id = chat_id
             vk_chat.save()
@@ -438,12 +437,6 @@ class VkEvent:
             self.api = vk_event['api']
         else:
             self.api = False
-
-        # ToDo: Remove
-        # if self.from_user:
-        #     self.chat_id = self.user_id
-        # else:
-        #     self.chat_id = self.peer_id
 
     def __str__(self):
         s = []

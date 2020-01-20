@@ -41,12 +41,12 @@ def where_is_me(request):
         lon = request.GET.get('lon', None)
         address = get_address(lat, lon)
         if address is not None:
-            msg1 = "Я нахожусь примерно тут:\n" \
-                   "{}\n".format(address)
+            msg1 = f"Я нахожусь примерно тут:\n" \
+                f"{address}\n"
         else:
             msg1 = ""
-        msg2 = "Позиция на карте:\n" \
-               "https://yandex.ru/maps/?ll={1}%2C{0}&mode=search&text={0}%2C%20{1}&z=16\n".format(lat, lon)
+        msg2 = f"Позиция на карте:\n" \
+            f"https://yandex.ru/maps/?ll={lon}%2C{lat}&mode=search&text={lat}%2C%20{lon}&z=16\n"
 
         msg = msg1 + msg2
     else:
@@ -125,12 +125,10 @@ def petrovich(request):
     res = vk_bot.menu(vk_event_object, send=False)
     if send:
         x1 = threading.Thread(target=send_messages,
-                              args=(vk_bot, vk_event['peer_id'], "{}(Алиса):\n{}".format(user, msg),))
+                              args=(vk_bot, vk_event['peer_id'], f"{user}(Алиса):\n{msg}",))
         x1.start()
         x2 = threading.Thread(target=send_messages, args=(vk_bot, vk_event['peer_id'], res,))
         x2.start()
-        # send_messages(vk_bot, vk_event['peer_id'], "{}(Алиса):\n{}".format(user, msg))
-        # send_messages(vk_bot, vk_event['peer_id'], res)
 
     return JsonResponse({'res': res}, json_dumps_params={'ensure_ascii': False})
 
@@ -150,7 +148,7 @@ def chat(request):
     user = VkUser.objects.get(user_id=3379762)
     chat = VkChat.objects.get(chat_id=2000000001)
 
-    vk_bot.parse_and_send_msgs(chat.chat_id, "{}:\n{}".format(user, msg))
+    vk_bot.parse_and_send_msgs(chat.chat_id, f"{user}:\n{msg}")
 
     return JsonResponse({'res': 'success'}, json_dumps_params={'ensure_ascii': False})
 

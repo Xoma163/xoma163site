@@ -56,8 +56,7 @@ class YesNo(CommonCommand):
                     msg_self = "сама"
                 else:
                     msg_self = "сам"
-                messages.append(
-                    "{}, {} {} {}?".format(name, "может ты", msg_self, self.vk_event.msg[min_index_bad: len_bad]))
+                messages.append(f"{name}, может ты {msg_self} {self.vk_event.msg[min_index_bad: len_bad]}?")
                 return messages
 
         if random_probability(4):

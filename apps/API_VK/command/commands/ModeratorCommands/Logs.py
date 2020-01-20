@@ -16,7 +16,7 @@ class Logs(CommonCommand):
         if self.vk_event.args:
             count = self.vk_event.args[0]
 
-        command = "systemctl status xoma163site -n{}".format(count)
+        command = f"systemctl status xoma163site -n{count}"
         try:
             output = do_the_linux_command(command)
 
@@ -37,7 +37,8 @@ class Logs(CommonCommand):
                 output = output.replace(for_removing, '')
 
             output = "Логи:\n" + output + "\n"
-            words = ["GET", "POST", "spawned uWSGI", "Not Found:", "HEAD", "WSGI app 0", "Bad Request", "HTTP_HOST"]
+            words = ["GET", "POST", "spawned uWSGI", "Not Found:", "HEAD", "pidfile", "WSGI app 0", "Bad Request",
+                     "HTTP_HOST"]
             for word in words:
                 while output.find(word) != -1:
                     word_index = output.find(word)
@@ -47,4 +48,4 @@ class Logs(CommonCommand):
 
             return output
         except Exception as e:
-            return "Ошибка:\n{}".format(str(e))
+            return f"Ошибка:\n{str(e)}"

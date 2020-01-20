@@ -33,5 +33,5 @@ def get_teachers_email():
     ]
     result_text = "Почты преподов\n\n"
     for email in emails:
-        result_text += "{} - {}\n".format(email[0], email[1])
+        result_text += f"{email[0]} - {email[1]}\n"
     return result_text

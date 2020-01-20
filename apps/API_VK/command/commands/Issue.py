@@ -25,6 +25,6 @@ class Issue(CommonCommand):
             else:
                 quote_user_id = int(msgs[0]['from_id']) * -1
                 username = self.vk_bot.get_group_name_by_id(quote_user_id)
-            feature_text += "{}:\n{}\n\n".format(username, text)
+            feature_text += f"{username}:\n{text}\n\n"
         append_feature(feature_text)
         return "Сохранено"

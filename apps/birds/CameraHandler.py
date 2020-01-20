@@ -83,7 +83,7 @@ class CameraHandler(threading.Thread):
                 self.wait()
             self.terminate()
 
-        filename = "{}/static/vkapi/birds-{}.gif".format(BASE_DIR, threading.get_ident())
+        filename = f"{BASE_DIR}/static/vkapi/birds-{threading.get_ident()}.gif"
         images = self.images.get_list_size(frames)
 
         # Высокое качество
@@ -114,7 +114,7 @@ class CameraHandler(threading.Thread):
             while self.time_on_frame.get_last() == 0:
                 self.wait()
             self.terminate()
-        filename = "{}/static/vkapi/snapshot-{}.jpg".format(BASE_DIR, threading.get_ident())
+        filename = f"{BASE_DIR}/static/vkapi/snapshot-{threading.get_ident()}.jpg"
         frame = self.images.get_last()
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         cv2.imwrite(filename, frame, [int(cv2.IMWRITE_JPEG_QUALITY), 100])

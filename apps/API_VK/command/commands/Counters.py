@@ -12,5 +12,5 @@ class Counters(CommonCommand):
         counters = CounterModel.objects.filter(chat=self.vk_event.chat).order_by('-count').values()
         msg = "Счётчики:\n"
         for counter in counters:
-            msg += "{} - {}\n".format(counter['name'], counter['count'])
+            msg += f"{counter['name']} - {counter['count']}\n"
         return msg

@@ -1,4 +1,3 @@
-# from __future__ import print_function
 import os.path
 import pickle
 import time
@@ -53,8 +52,6 @@ class Command(BaseCommand):
                 pickle.dump(creds, token)
 
         service = build('sheets', 'v4', credentials=creds)
-        # drive_service = build('drive', 'v3', credentials=creds)
-
         result = service.spreadsheets().values().batchGet(spreadsheetId=PETROVICH_ID,
                                                           ranges=RANGE_NAMES,
                                                           key=API_KEY).execute()
@@ -66,10 +63,10 @@ class Command(BaseCommand):
         for i, my_range in enumerate(ranges):
             if i == 0:
                 word_type = 'bad'
-                statistics['bad_words'] = len(my_range['values'])
+                statistics['bad_words'] = len(my_range['values']) - 1
             else:
                 word_type = 'good'
-                statistics['good_words'] = len(my_range['values'])
+                statistics['good_words'] = len(my_range['values']) - 1
 
             for j, val in enumerate(my_range['values']):
                 if j != 0:
@@ -92,9 +89,6 @@ class Command(BaseCommand):
                             word = Words.objects.filter(id=word_dict['id'])
                             if len(word) > 0:
                                 existed_word_dict = word.first().__dict__
-                                # for key in list(existed_word_dict):
-                                #     if existed_word_dict[key] is None:
-                                #         existed_word_dict.pop(key)
                                 existed_word_dict.pop('_state')
                                 existed_word_dict['id'] = str(existed_word_dict['id'])
                                 if word_dict == existed_word_dict:
@@ -105,26 +99,19 @@ class Command(BaseCommand):
                             else:
                                 Words(**word_dict).save()
                                 statistics['created'] += 1
-                            # word, created = Words.objects.update_or_create(id=word_dict['id'], defaults=word_dict)
-                            # if word:
-                            #     statistics['updated'] += 1
-                            # elif created:
-                            #     statistics['created'] += 1
                     else:
-                        print("Слово не имеет id. Проверьте - {}. Строка - {}".format(word_dict, j))
-                    # new_word = Words(**word_dict)
-                    # new_word.save()
+                        print(f"Слово не имеет id. Проверьте - {word_dict}. Строка - {j}")
+
                 else:
                     headers = [header for header in val]
         print("Result: success")
         print(f"Time: {time.time() - time1}")
-        # print("Total: {}",sum(list(statistics.values())))
         print(f"\nStatistics:\n"
               f"created - {statistics['created']}\n"
               f"updated - {statistics['updated']}\n"
               f"deleted - {statistics['deleted']}\n"
               f"skipped - {statistics['skipped']}\n"
-              f"total - {sum(list(statistics.values()))}\n"
+              f"total - {statistics['bad_words'] + statistics['good_words']}\n"
               f"-----\n"
               f"bad_words - {statistics['bad_words']}\n"
               f"good_words - {statistics['good_words']}\n"

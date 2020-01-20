@@ -134,16 +134,12 @@ def get_calculate(request):
         if i == 0:
             continue
         if user[1]['debt'] > 0:
-            rows.append("{}\t\t→\t\t{}\t{} руб".format(user[0],
-                                                       users_list[0][0],
-                                                       user[1]['debt']))
+            rows.append(f"{user[0]}\t\t→\t\t{users_list[0][0]}\t{user[1]['debt']} руб")
         elif user[1]['debt'] < 0:
-            rows.append("{}\t\t→\t\t{}\t{} руб".format(users_list[0][0],
-                                                       user[0],
-                                                       abs(user[1]['debt'])))
+            rows.append(f"{users_list[0][0]}\t\t→\t\t{user[0]}\t{abs(user[1]['debt'])} руб")
 
     rows.append("----------")
-    rows.append("Общая сумма - {}".format(total_money))
-    rows.append("Средний чек - {}".format(avg_money))
+    rows.append(f"Общая сумма - {total_money}")
+    rows.append(f"Средний чек - {avg_money}")
 
     return JsonResponse({'status': 'ok', 'result': rows}, json_dumps_params={'ensure_ascii': False})
