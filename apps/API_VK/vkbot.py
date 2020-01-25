@@ -12,7 +12,9 @@ from apps.API_VK.command import get_commands
 from apps.API_VK.models import VkUser, VkBot, VkChat
 from apps.Statistics.views import append_command_to_statistics
 from secrets.secrets import secrets
-from xoma163site.wsgi import cameraHandler
+
+
+# from xoma163site.wsgi import cameraHandler
 
 
 def parse_msg_to_me(msg, mentions):
@@ -56,10 +58,11 @@ def parse_msg(msg):
                 'params_without_keys': None}
 
     command_arg = msg_clear.split(' ', 1)
-    msg_dict['command'] = command_arg[0].lower()
+    msg_dict['command'] = command_arg[0]
     if len(command_arg) > 1:
 
         msg_dict['params'] = msg.replace(msg_dict['command'] + ' ', '')
+        msg_dict['command'] = msg_dict['command'].lower()
         if len(msg_dict['params']) == 0:
             msg_dict['params'] = None
         msg_dict['params_without_keys'] = msg_dict['params']
@@ -159,7 +162,7 @@ class VkBotClass(threading.Thread):
 
             if vk_event.command in ['старт']:
                 self.BOT_CAN_WORK = True
-                cameraHandler.resume()
+                # cameraHandler.resume()
                 self.send_message(vk_event.peer_id, "Стартуем!")
                 return "Стартуем!"
             return

@@ -11,7 +11,6 @@ class Find(CommonCommand):
 
         super().__init__(names, help_text, need_args=1)
 
-    # ToDo: вынести в APIs
     def start(self):
         import requests
 
