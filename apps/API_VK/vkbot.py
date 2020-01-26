@@ -416,8 +416,14 @@ class VkBotClass(threading.Thread):
         res = self.vk.messages.getConversations()
         print(res)
 
-    # Проверки
+    def get_short_link(self, long_link):
+        result = self.vk.utils.getShortLink(url=long_link)
+        if 'short_url' in result:
+            return result['short_url']
+        else:
+            return None
 
+    # Проверки
     def check_bot_working(self):
         return self.BOT_CAN_WORK
 
