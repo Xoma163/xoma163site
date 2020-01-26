@@ -50,6 +50,7 @@ from apps.API_VK.command.commands.Quotes import Quotes
 from apps.API_VK.command.commands.Random import Random
 from apps.API_VK.command.commands.Register import Register
 from apps.API_VK.command.commands.Scold import Scold
+from apps.API_VK.command.commands.ShortLinks import ShortLinks
 from apps.API_VK.command.commands.Status import Status
 from apps.API_VK.command.commands.Stream import Stream
 from apps.API_VK.command.commands.StudentCommands.GoogleDrive import GoogleDrive
@@ -72,7 +73,7 @@ commands = [
     GoogleDrive(), Mail(), Ban(), DeBan(), Command(), Start(), Stop(), Restart(), Reboot(), Control(),
     get_user_by_id(), update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(),
     Find(), Rate(), Rates(), Translate(), Uptime(), Counters(), Counter(), TicTacToe(), Status(), Fix(), Debug(),
-    Start_lada()
+    Start_lada(), ShortLinks()
 ]
 
 
