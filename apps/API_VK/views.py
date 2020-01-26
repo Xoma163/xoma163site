@@ -92,11 +92,19 @@ def check_bool(val):
 
 
 def petrovich(request):
+    print('petrovich')
+    print(request)
     from apps.API_VK.vkbot import VkEvent, parse_msg
-    msg = request.GET.get('msg', None)
-    test = check_bool(request.GET.get('test', False))
-    send = check_bool(request.GET.get('send', True))
-    from_chat = check_bool(request.GET.get('from_chat', True))
+    if request.method == "GET":
+        msg = request.GET.get('msg', None)
+        test = check_bool(request.GET.get('test', False))
+        send = check_bool(request.GET.get('send', True))
+        from_chat = check_bool(request.GET.get('from_chat', True))
+    elif request.method == "POST":
+        msg = request.POST.get('msg', None)
+        test = check_bool(request.POST.get('test', False))
+        send = check_bool(request.POST.get('send', True))
+        from_chat = check_bool(request.POST.get('from_chat', True))
 
     if not msg:
         return JsonResponse({'error': 'empty param msg'}, json_dumps_params={'ensure_ascii': False})

@@ -24,3 +24,7 @@ def calc_session(request, session_id):
     tares = Tare.objects.all()
     users = User.objects.filter(session_id=session_id)
     return render(request, "web/calc.html", {"order": order, "tares": tares, "users": users, "session_id": session_id})
+
+
+def chat(request):
+    return render(request, "web/chat.html")

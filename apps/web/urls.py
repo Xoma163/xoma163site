@@ -16,4 +16,6 @@ urlpatterns = [
     path('calc/save_users', api.save_users),
 
     path('calc/get_calculate', api.get_calculate),
+
+    path('chat/', views.chat)
 ]
