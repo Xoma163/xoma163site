@@ -1,3 +1,5 @@
+#!/var/www/xoma163.site/venv/bin/python -u
+
 import os
 
 from django.core.management import BaseCommand
@@ -14,7 +16,6 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         if not os.path.exists(BASE_DIR + '/thread.lock'):
             open(BASE_DIR + '/thread.lock', 'w')
-
-            cameraHandler.start()
             vk_bot.start()
+            cameraHandler.start()
             print("BOT AND CAMERA HANDLER STARTED")

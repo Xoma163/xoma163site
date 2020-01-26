@@ -1,0 +1,14 @@
+[Unit]
+Description=xoma163.bot
+
+[Service]
+User=server
+Type=simple
+SuccessExitStatus=0 1
+WorkingDirectory=/var/www/xoma163.site/
+ExecStart=/var/www/xoma163.site/venv/bin/python -u /var/www/xoma163.site/manage.py start
+ExecStop=/usr/bin/killall -s 9 xoma163bot
+ExecStopPost=/bin/rm /var/www/xoma163.site/thread.lock
+
+[Install]
+WantedBy=multi-user.target
