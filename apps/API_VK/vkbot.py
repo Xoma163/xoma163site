@@ -107,6 +107,16 @@ def parse_date(date):
         return f"{date_arr[2]}-{date_arr[1]}-{date_arr[0]}"
 
 
+def tanimoto(s1, s2):
+    a, b, c = len(s1), len(s2), 0.0
+
+    for sym in s1:
+        if sym in s2:
+            c += 1
+
+    return c / (a + b - c)
+
+
 class VkBotClass(threading.Thread):
     def send_message(self, peer_id, msg="ᅠ", attachments=None, keyboard=None, **kwargs):
         if attachments is None:
@@ -179,9 +189,21 @@ class VkBotClass(threading.Thread):
                 if send:
                     self.parse_and_send_msgs(vk_event.peer_id, str(e))
                 return str(e)
+
+        similar_command = commands[0].names[0]
+        tanimoto_max = 0
+        for command in commands:
+            for name in command.names:
+                tanimoto_current = tanimoto(vk_event.command, name)
+                if tanimoto_current > tanimoto_max:
+                    tanimoto_max = tanimoto_current
+                    similar_command = name
+
+        msg = f"Я не понял команды \"{vk_event.command}\"\n" \
+            f"Возможно вы имели ввиду {similar_command} с вероятностью {round(tanimoto_max * 100, 2)}%"
         if send:
-            self.send_message(vk_event.peer_id, "Я не понял команды \"%s\"" % vk_event.command)
-        return "Я не понял команды \"%s\"" % vk_event.command
+            self.send_message(vk_event.peer_id, msg)
+        return msg
 
     def __init__(self):
         super().__init__()
