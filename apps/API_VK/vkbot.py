@@ -57,9 +57,7 @@ def parse_msg(msg):
     command_arg = msg_clear.split(' ', 1)
     msg_dict['command'] = command_arg[0]
     if len(command_arg) > 1:
-
         msg_dict['params'] = msg.replace(msg_dict['command'] + ' ', '')
-        msg_dict['command'] = msg_dict['command'].lower()
         if len(msg_dict['params']) == 0:
             msg_dict['params'] = None
         msg_dict['params_without_keys'] = msg_dict['params']
@@ -87,6 +85,8 @@ def parse_msg(msg):
         if msg_dict['keys']:
             for key in msg_dict['keys']:
                 msg_dict['params_without_keys'] = msg_dict['params_without_keys'].replace(f' -{key}', '')
+    msg_dict['command'] = msg_dict['command'].lower()
+
     return msg_dict
 
 

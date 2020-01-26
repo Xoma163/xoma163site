@@ -8,7 +8,7 @@ class Conference(CommonCommand):
         super().__init__(names, for_conversations=True)
 
     def accept(self, vk_event):
-        if vk_event.chat and (vk_event.chat.name is None or vk_event.chat.name == ""):
+        if vk_event.chat and (vk_event.chat.name is None or vk_event.chat.name == "") or vk_event.command in self.names:
             return True
         return False
 
