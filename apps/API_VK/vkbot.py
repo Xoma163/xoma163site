@@ -14,9 +14,6 @@ from apps.Statistics.views import append_command_to_statistics
 from secrets.secrets import secrets
 
 
-# from xoma163site.wsgi import cameraHandler
-
-
 def parse_msg_to_me(msg, mentions):
     # Обрезаем палку
     if msg[0] == '/':

@@ -11,8 +11,9 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import sys
+
 from secrets.secrets import secrets
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -142,3 +143,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 FILE_UPLOAD_PERMISSIONS = 0o644
 
 APPEND_SLASH = True
+
+from time import sleep
+
+
+def sprint(text):
+    print(text)
+    sleep(0.0000000001)
