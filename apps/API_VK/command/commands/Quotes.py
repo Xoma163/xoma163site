@@ -14,8 +14,9 @@ def check_int_arg(arg):
 class Quotes(CommonCommand):
     def __init__(self):
         names = ["цитаты"]
-        help_text = "̲Ц̲и̲т̲а̲т̲ы [N[,M]]- просмотр сохранённых цитат. Возможные комбинации - N - номер страницы, N - фраза для поиска, N - фраза для поиска, M - номер страницы"
-        super().__init__(names, help_text)
+        help_text = "̲Ц̲и̲т̲а̲т̲ы - просмотр сохранённых цитат"
+        detail_help_text = "̲Ц̲и̲т̲а̲т̲ы ([N[,M]]) - просмотр сохранённых цитат. Возможные комбинации: \n1) N - номер страницы;\n2) N - фраза для поиска;\n3) N - фраза для поиска M - номер страницы"
+        super().__init__(names, help_text, detail_help_text)
 
     def start(self):
         text_filter = None

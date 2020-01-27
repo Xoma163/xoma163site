@@ -8,8 +8,9 @@ from secrets.secrets import secrets
 class Translate(CommonCommand):
     def __init__(self):
         names = ["перевод"]
-        help_text = "̲П̲е̲р̲е̲в̲о̲д [N] (N - фраза) - англо-русский переводчик"
-        super().__init__(names, help_text)
+        help_text = "̲П̲е̲р̲е̲в̲о̲д - автоматический переводчик"
+        detail_help_text = "Перевод ([N]) (N - фраза) - в зависимости от фразы переводит на нужный язык(английский или русский)"
+        super().__init__(names, help_text, detail_help_text)
 
     def start(self):
         fwd = self.vk_event.fwd

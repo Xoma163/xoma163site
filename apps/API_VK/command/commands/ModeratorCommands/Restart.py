@@ -2,12 +2,13 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command._DoTheLinuxComand import do_the_linux_command
 
 
+# ToDo: restart web, restart bot
 class Restart(CommonCommand):
     def __init__(self):
         names = ["рестарт", "restart"]
-        help_text = "̲Р̲е̲с̲т̲а̲р̲т - перезагружает веб-сервер и Петровича(только для админов). " \
-                    "С параметром можно включить грузануть модуль (синички, майн(1.12 1.15.1))"
-        super().__init__(names, help_text)
+        help_text = "̲Р̲е̲с̲т̲а̲р̲т - перезагружает бота или модуль"
+        detail_help_text = "Рестарт ([N,M]) - перезагружает бота или то, что передано в аргументах. В качестве аргумента принимает майнкрафт или террарию. Если майнкрафт, то может быть указана версия, 1.12.2 или 1.15.1"
+        super().__init__(names, help_text, detail_help_text)
 
     def start(self):
         if self.vk_event.args:
@@ -37,4 +38,4 @@ class Restart(CommonCommand):
         else:
             self.check_sender('admin')
 
-            do_the_linux_command('sudo systemctl restart xoma163site')
+            do_the_linux_command('sudo systemctl restart xoma163bot')

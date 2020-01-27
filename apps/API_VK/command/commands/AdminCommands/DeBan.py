@@ -4,8 +4,9 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 class DeBan(CommonCommand):
     def __init__(self):
         names = ["разбан"]
-        help_text = "̲Р̲а̲з̲б̲а̲н N - разбан пользователя"
-        super().__init__(names, help_text, access='admin', need_args=1)
+        help_text = "̲Р̲а̲з̲б̲а̲н - разбан пользователя"
+        detail_help_text = "Разбан (N) - разбан пользователя, где N - имя, фамилия, логин/id, никнейм"
+        super().__init__(names, help_text, detail_help_text, access='admin', need_args=1)
 
     def start(self):
         try:

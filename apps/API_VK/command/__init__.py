@@ -72,7 +72,7 @@ commands = [
     Uyu(), Hi(), Bye(), Nya(), Shit(), Git(), Donate(), Discord(), Issue(), Issues(), Joke(),
     GoogleDrive(), Mail(), Ban(), DeBan(), Command(), Start(), Stop(), Restart(), Reboot(), Control(),
     get_user_by_id(), update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(),
-    Find(), Rate(), Rates(), Translate(), Uptime(), Counters(), Counter(), TicTacToe(), Status(), Fix(), Debug(),
+    Find(), Rate(), Rates(), Translate(), Uptime(), Counter(), Counters(), TicTacToe(), Status(), Fix(), Debug(),
     Start_lada(), ShortLinks()
 ]
 

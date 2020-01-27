@@ -6,15 +6,14 @@ from xoma163site.wsgi import cameraHandler
 class Start(CommonCommand):
     def __init__(self):
         names = ["старт", "start"]
-        help_text = "̲С̲т̲а̲р̲т - возобновляет работу Петровича(только для админов). " \
-                    "С параметром можно включить нужный модуль (синички, майн(1.12 1.15.1))"
+        help_text = "̲С̲т̲а̲р̲т - возобновляет работу бота или модуля"
+        detail_help_text = "Старт ([N,M])- возобновляет работу бота или того, что передано в аргументы. В качестве аргумента принимает майнкрафт, террарию или синичек. Если майнкрафт, то может быть указана версия, 1.12.2 или 1.15.1"
         keyboard = [{'for': 'admin', 'text': 'Старт', 'color': 'green', 'row': 1, 'col': 1},
                     {'for': 'admin', 'text': 'Старт синички', 'color': 'green', 'row': 1, 'col': 3}]
-        super().__init__(names, help_text, keyboard=keyboard)
+        super().__init__(names, help_text, detail_help_text, keyboard=keyboard)
 
     def start(self):
         if self.vk_event.args:
-
             if self.vk_event.args[0] == "синички":
                 self.check_sender('moderator')
                 if not cameraHandler.is_active():
@@ -32,7 +31,7 @@ class Start(CommonCommand):
                     return "Стартуем майн 1.12!"
                 elif (len(self.vk_event.args) >= 2 and (
                         self.vk_event.args[1] == '1.15.1' or self.vk_event.args[1] == '1.15')) or len(
-                        self.vk_event.args) == 1:
+                    self.vk_event.args) == 1:
                     self.check_command_time('minecraft_1.15.1', 30)
 
                     do_the_linux_command('sudo systemctl start minecraft_1.15.1')

@@ -36,7 +36,9 @@ lock = Lock()
 class TicTacToe(CommonCommand):
     def __init__(self):
         names = ["крестики", "крестики-нолики", "нолики"]
-        super().__init__(names, check_int_args=[0, 1], api=False)
+        help_text = "̲К̲р̲е̲с̲т̲и̲к̲и - крестики-нолики."
+        detail_help_text = "̲К̲р̲е̲с̲т̲и̲к̲и - крестики-нолики. Игра проходит в лс и управляется с клавиатуры. Если она не работает, то просто передавайте 2 числа - куда хотите поставтиь."
+        super().__init__(names, help_text, detail_help_text, check_int_args=[0, 1], api=False)
 
     def start(self):
         with lock:

@@ -5,8 +5,9 @@ from apps.Statistics.views import append_feature
 class Issue(CommonCommand):
     def __init__(self):
         names = ["ишю", "ишью"]
-        help_text = "̲И̲ш̲ь̲ю + пересылаемые сообщения - добавляет проблему Петровича, которую нужно решить"
-        super().__init__(names, help_text)
+        help_text = "̲И̲ш̲ь̲ю - добавляет проблему Петровича, которую нужно решить"
+        detail_help_text = "Ишью ([N]), либо пересылаемые сообщения - добавляет проблему Петровича, которую нужно решить. Для работы требуется либо пересылаемое сообщение, либо аргумент"
+        super().__init__(names, help_text, detail_help_text)
 
     def start(self):
         msgs = self.vk_event.fwd

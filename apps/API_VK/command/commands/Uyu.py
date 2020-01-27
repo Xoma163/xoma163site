@@ -1,11 +1,13 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
 
 
+# ToDo: add_word должна быть не только словом, но и фразой
 class Uyu(CommonCommand):
     def __init__(self):
         names = ["уъу", "бля", "ъуъ"]
         help_text = "̲У̲ъ̲у - уъуфикация текста"
-        super().__init__(names, help_text)
+        detail_help_text = "Уъу ([N]) - уъуфикация текста. Для работы требует пересылаемое сообщение. Если передан аргумент, то слово поменяется"
+        super().__init__(names, help_text, detail_help_text)
 
     def start(self):
         if self.vk_event.original_args:

@@ -7,8 +7,9 @@ from apps.API_VK.models import Log
 class Where(CommonCommand):
     def __init__(self):
         names = ["где"]
-        help_text = "̲Г̲д̲е N(N - имя человека) - информация о чекточках"
-        super().__init__(names, help_text, need_args=1)
+        help_text = "̲Г̲д̲е - информация о чекточках"
+        detail_help_text = "̲Г̲д̲е (N) - информация о чекточках, где N - имя, фамилия, логин/id, никнейм"
+        super().__init__(names, help_text, detail_help_text, need_args=1)
 
     def start(self):
 

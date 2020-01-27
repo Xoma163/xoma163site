@@ -6,8 +6,9 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 class ShortLinks(CommonCommand):
     def __init__(self):
         names = ["сс", "cc"]
-        help_text = "̲С̲с N - сокращение ссылки N"
-        super().__init__(names, help_text)
+        help_text = "̲С̲с - сокращение ссылки"
+        detail_help_text = "Сс ([N]) или пересылаемое сообщение - сокращение ссылки, N - длинная ссылка"
+        super().__init__(names, help_text, detail_help_text)
 
     def start(self):
         msgs = self.vk_event.fwd

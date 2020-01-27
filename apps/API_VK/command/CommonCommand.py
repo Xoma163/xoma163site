@@ -21,6 +21,7 @@ class CommonCommand:
     def __init__(self,
                  names,
                  help_text=None,
+                 detail_help_text=None,
                  keyboard=None,
                  access='user',
                  for_lk=False,
@@ -32,6 +33,7 @@ class CommonCommand:
                  ):
         self.names = names
         self.help_text = help_text
+        self.detail_help_text = detail_help_text
         self.keyboard = keyboard
         self.access = access
         self.for_lk = for_lk
@@ -101,8 +103,7 @@ class CommonCommand:
                 if arg not in banned_list:
                     return True
                 else:
-                    # ToDo: тут надо поправить val1 и val2 на правильные параметры
-                    error = f"Аргумент {val1} не может принимать значение {val2}"
+                    error = f"Аргумент не может принимать значение {arg}"
                     raise RuntimeError(error)
             else:
                 return True

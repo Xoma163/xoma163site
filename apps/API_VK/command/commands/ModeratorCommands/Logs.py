@@ -51,11 +51,11 @@ def get_bot_logs(command):
 
 class Logs(CommonCommand):
     def __init__(self):
-        names = ["лог", "логи"]
-        help_text = "̲Л̲о̲г - логи веб-сервера"
+        names = ["лог", "логи", "logs", "log"]
+        help_text = "̲Л̲о̲г - логи"
+        detail_help_text = "̲Л̲о̲г ([N]) - логи. N - логи сервера или бота. Принимает ключ -n и количество строк в логах. Пример /лог сервер -n50"
         keyboard = {'for': 'moderator', 'text': 'Логи', 'color': 'blue', 'row': 1, 'col': 1}
-        super().__init__(names, help_text, access='moderator',  # check_int_args=[0],
-                         keyboard=keyboard)
+        super().__init__(names, help_text, detail_help_text, access='moderator', keyboard=keyboard)
 
     def start(self):
         count = 50
@@ -65,10 +65,10 @@ class Logs(CommonCommand):
                 count = self.vk_event.keys['n']
 
         if self.vk_event.args:
-            if self.vk_event.args[0] == 'сервер':
+            if self.vk_event.args[0] in ['сервер', 'веб', 'server', 'web']:
                 command = f"systemctl status xoma163site -n{count}"
                 return get_server_logs(command)
-            elif self.vk_event.args[0] == 'бот':
+            elif self.vk_event.args[0] in ['бот', 'bot']:
                 command = f"systemctl status xoma163bot -n{count}"
                 return get_bot_logs(command)
             else:

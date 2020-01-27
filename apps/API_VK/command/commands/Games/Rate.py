@@ -12,7 +12,9 @@ lock = Lock()
 class Rate(CommonCommand):
     def __init__(self):
         names = ["ставка"]
-        super().__init__(names, check_int_args=[0], for_conversations=True)
+        help_text = "̲С̲т̲а̲в̲к̲а - делает ставку"
+        detail_help_text = "Ставка ([N]) - делает ставку. N - ставка. Без параметра - случайная"
+        super().__init__(names, help_text, detail_help_text, check_int_args=[0], for_conversations=True)
 
     def start(self):
         with lock:
@@ -26,8 +28,8 @@ class Rate(CommonCommand):
 
             if len(existed_rate) > 0:
                 return f"Ставка уже поставлена\n" \
-                    f"Игроки {len(rates_gamers)}/{MIN_GAMERS}:\n" \
-                    f"{rate_gamer_str}"
+                       f"Игроки {len(rates_gamers)}/{MIN_GAMERS}:\n" \
+                       f"{rate_gamer_str}"
 
             if self.vk_event.args:
                 arg = self.vk_event.args[0]
@@ -51,4 +53,4 @@ class Rate(CommonCommand):
             RateModel(**{'user': self.vk_event.sender, 'chat': self.vk_event.chat, 'rate': arg}).save()
             rate_gamer_str += f"{self.vk_event.sender} - {arg}"
             return f"Игроки {len(rates_gamers) + 1}/{MIN_GAMERS}:\n" \
-                f"{rate_gamer_str}"
+                   f"{rate_gamer_str}"

@@ -6,7 +6,8 @@ class Stream(CommonCommand):
     def __init__(self):
         names = ["стрим", "поток"]
         help_text = "̲С̲т̲р̲и̲м - ссылка на стрим"
-        super().__init__(names, help_text)
+        detail_help_text = "Стрим ([N]) - ссылка на стрим. С параметром меняет ссылку на стрим"
+        super().__init__(names, help_text, detail_help_text)
 
     def start(self):
         if self.vk_event.args is None:

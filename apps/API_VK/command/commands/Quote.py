@@ -5,8 +5,9 @@ from apps.API_VK.models import QuoteBook
 class Quote(CommonCommand):
     def __init__(self):
         names = ["цитата", "(c)", "(с)"]
-        help_text = "̲Ц̲и̲т̲а̲т̲а + пересылаемое сообщение - сохраняет в цитатник сообщение(я)"
-        super().__init__(names, help_text, need_fwd=True)
+        help_text = "̲Ц̲и̲т̲а̲т̲а - сохраняет в цитатник сообщения"
+        detail_help_text = "Цитата + пересылаемое сообщение - сохраняет в цитатник сообщения"
+        super().__init__(names, help_text, detail_help_text, need_fwd=True)
 
     def start(self):
         msgs = self.vk_event.fwd
