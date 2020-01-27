@@ -9,7 +9,7 @@ class Find(CommonCommand):
         names = ["поиск", "найди", "найти", "ищи", "искать"]
         help_text = "̲П̲о̲и̲с̲к [N] (N - поисковый запрос) - ищет информацию по картинкам"
 
-        super().__init__(names, help_text, need_args=1)
+        super().__init__(names, help_text, need_args=1, api=False)
 
     def start(self):
         import requests
@@ -17,19 +17,20 @@ class Find(CommonCommand):
         query = self.vk_event.original_args
         count = 5
 
-        r = requests.get("https://api.qwant.com/api/search/images",
-                         params={
-                             'count': 20,
-                             'q': query,
-                             't': 'images',
-                             'safesearch': 1,
-                             'locale': 'ru_RU',
-                             'uiv': 4
-                         },
-                         headers={
-                             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
-                         }
-                         )
+        r = requests.get(
+            "https://api.qwant.com/api/search/images",
+            params={
+                'count': 20,
+                'q': query,
+                't': 'images',
+                'safesearch': 1,
+                'locale': 'ru_RU',
+                'uiv': 4
+            },
+            headers={
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
+            }
+        )
         if r.status_code == 429:
             return "Не так часто"
 

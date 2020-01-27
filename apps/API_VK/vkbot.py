@@ -43,7 +43,8 @@ def parse_msg(msg):
     #                 'args_str':None
     #                 }
     msg_clear = re.sub(" +", " ", msg)
-    msg_clear = msg_clear.lstrip().lstrip(',').lstrip().lstrip(' ').lstrip().replace(' ,', ',').replace(', ', ',')
+    # Вроде как фикс, но вроде как баг
+    msg_clear = msg_clear.lstrip().lstrip(',').lstrip().lstrip(' ').lstrip()  # .replace(' ,', ',').replace(', ', ',')
 
     msg_dict = {'msg': msg,
                 'msg_clear': msg_clear,
@@ -51,6 +52,7 @@ def parse_msg(msg):
                 'args': None,
                 'original_args': None,
                 'keys': None,
+                'keys_list': None,
                 'params': None,
                 'params_without_keys': None}
 
@@ -67,7 +69,8 @@ def parse_msg(msg):
             command_arg[1] = " " + command_arg[1]
         find_dash = command_arg[1].find(' -')
         if find_dash != -1:
-            msg_dict['keys'] = []
+            msg_dict['keys'] = {}
+            msg_dict['keys_list'] = []
         while find_dash != -1:
             next_space = command_arg[1].find(' ', find_dash + 2)
             if next_space == -1:
@@ -75,15 +78,17 @@ def parse_msg(msg):
 
             # for letter in command_arg[1][find_dash + 2:next_space]:
             letter = command_arg[1][find_dash + 2:next_space]
-            msg_dict['keys'].append(letter)
+            msg_dict['keys'].update({letter[0]: letter[1:]})
+            msg_dict['keys_list'].append(letter)
+
             command_arg[1] = command_arg[1][:find_dash] + command_arg[1][next_space:]
             find_dash = command_arg[1].find(' -')
         if len(command_arg[1]) > 0:
             msg_dict['args'] = command_arg[1].split(' ')
             msg_dict['original_args'] = command_arg[1].strip()
 
-        if msg_dict['keys']:
-            for key in msg_dict['keys']:
+        if msg_dict['keys_list']:
+            for key in msg_dict['keys_list']:
                 msg_dict['params_without_keys'] = msg_dict['params_without_keys'].replace(f' -{key}', '')
     msg_dict['command'] = msg_dict['command'].lower()
 
@@ -199,8 +204,12 @@ class VkBotClass(threading.Thread):
                     tanimoto_max = tanimoto_current
                     similar_command = name
 
-        msg = f"Я не понял команды \"{vk_event.command}\"\n" \
-            f"Возможно вы имели ввиду {similar_command} с вероятностью {round(tanimoto_max * 100, 2)}%"
+        msg = f"Я не понял команды \"{vk_event.command}\"\n"
+        if tanimoto_max >= 1:
+            tanimoto_max = 1
+        if tanimoto_max != 0:
+            msg += f"Возможно вы имели ввиду {similar_command} с вероятностью {round(tanimoto_max * 100, 2)}%"
+
         if send:
             self.send_message(vk_event.peer_id, msg)
         return msg

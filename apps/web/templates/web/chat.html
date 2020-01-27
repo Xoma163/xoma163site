@@ -6,23 +6,23 @@
 {% endblock %}
 {% block body %}
   {% csrf_token %}
-  <div class="container-fluid">
-    <div>
-      <label>Команда</label>
+    <div class="container-fluid">
+        <div>
+            <label>Команда</label>
+        </div>
+        <div>
+            <input type="text" style="width:300px;" name="command">
+        </div>
+        <div>
+            <label>Ответ</label>
+        </div>
+        <div>
+            <textarea name="result" style="width:300px;" cols="16" rows="16"></textarea>
+        </div>
+        <div>
+            <button class="btn btn-success" onclick="sendCommand()">Отправить</button>
+        </div>
     </div>
-    <div>
-      <input type="text" style="width:400px;" name="command">
-    </div>
-    <div>
-      <label>Ответ</label>
-    </div>
-    <div>
-      <textarea name="result" style="width:400px;" cols="20" rows="20"></textarea>
-    </div>
-    <div>
-      <button class="btn btn-success" onclick="sendCommand()">Отправить</button>
-    </div>
-  </div>
 {% endblock %}
 
 {% block js %}

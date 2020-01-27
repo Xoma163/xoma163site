@@ -33,7 +33,7 @@ def check_key(keys, translator):
 
 class Scold(CommonCommand):
     def __init__(self):
-        names = ["обосрать", "обосри"]
+        names = ["обосрать", "обосри", "поругать", "поругай"]
         help_text = "̲О̲б̲о̲с̲р̲а̲т̲ь [N[,M]] - рандомное оскорбление. N - что-то/род и число, M - род и число"
         super().__init__(names, help_text)
 
