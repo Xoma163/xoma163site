@@ -33,7 +33,7 @@ class Praise(CommonCommand):
     def __init__(self):
         names = ["похвалить", "похвали", "хвалить"]
         help_text = "̲П̲о̲х̲в̲а̲л̲и̲т̲ь - рандомная похвала"
-        detail_help_text = "̲П̲о̲х̲в̲а̲л̲и̲т̲ь ([N]) - рандомная похвала. N - что-то/род и число. Род и число указываются через ключи: Мужской -м, Женский -ж, Средний -с. Число: единственное -*1, множественное -*м. Т.е. доступные сочетания ключей могут быть следующими: [-м -ж -с -м1 -ж1 -с1 -мм -жм -см] "
+        detail_help_text = "̲П̲о̲х̲в̲а̲л̲и̲т̲ь ([N]) - рандомная похвала. N - что-то/род и число. Род и число указываются через ключи: Мужской -м, Женский -ж, Средний -с. Число: единственное -*1, множественное -*м. Т.е. доступные сочетания ключей могут быть следующими: [-м -ж -с -м1 -ж1 -с1 -мм -жм] "
         super().__init__(names, help_text, detail_help_text)
 
     def start(self):
@@ -47,8 +47,8 @@ class Praise(CommonCommand):
             'мм': 'mm',
             'жм': 'fm'
         }
-        if self.vk_event.keys:
-            key = check_key(self.vk_event.keys, translator)
+        if self.vk_event.keys_list:
+            key = check_key(self.vk_event.keys_list, translator)
             if key:
                 translator_key = key
             else:

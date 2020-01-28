@@ -324,7 +324,7 @@ class VkBotClass(threading.Thread):
         if len(vk_user) > 0:
             vk_user = vk_user.first()
         else:
-            # Прозрачная регистрация
+            # Прозрачная регистрация\
             user = self.vk.users.get(user_id=user_id, lang='ru', fields='sex, bdate, city, screen_name')[0]
             vk_user = VkUser()
             vk_user.user_id = user_id
@@ -333,9 +333,9 @@ class VkBotClass(threading.Thread):
             if 'sex' in user:
                 vk_user.gender = user['sex']
             if 'bdate' in user:
-                vk_user.birthday = user['bdate']
-            if 'city' in user:
                 vk_user.birthday = parse_date(user['bdate'])
+            if 'city' in user:
+                vk_user.city = user['city']['title']
             if 'screen_name' in user:
                 vk_user.nickname = user['screen_name']
             vk_user.save()
@@ -456,6 +456,7 @@ class VkEvent:
             self.args = vk_event['parsed']['args']
             self.original_args = vk_event['parsed']['original_args']
             self.keys = vk_event['parsed']['keys']
+            self.keys_list = vk_event['parsed']['keys_list']
             self.params = vk_event['parsed']['params']
             self.params_without_keys = vk_event['parsed']['params_without_keys']
         if self.chat:
