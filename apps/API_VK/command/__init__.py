@@ -57,6 +57,7 @@ from apps.API_VK.command.commands.StudentCommands.GoogleDrive import GoogleDrive
 from apps.API_VK.command.commands.StudentCommands.Mail import Mail
 # from apps.API_VK.command.commands.StudentCommands.TimeTable import TimeTable
 # from apps.API_VK.command.commands.StudentCommands.Week import Week
+from apps.API_VK.command.commands.Time import Time
 from apps.API_VK.command.commands.Translate import Translate
 from apps.API_VK.command.commands.UnRegister import UnRegister
 from apps.API_VK.command.commands.Uyu import Uyu
@@ -73,7 +74,7 @@ commands = [
     GoogleDrive(), Mail(), Ban(), DeBan(), Command(), Start(), Stop(), Restart(), Reboot(), Control(),
     get_user_by_id(), update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(),
     Find(), Rate(), Rates(), Translate(), Uptime(), Counter(), Counters(), TicTacToe(), Status(), Fix(), Debug(),
-    Start_lada(), ShortLinks()
+    Start_lada(), ShortLinks(), Time()
 ]
 
 
