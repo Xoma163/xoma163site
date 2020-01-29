@@ -12,7 +12,7 @@ lock = Lock()
 
 class Rates(CommonCommand):
     def __init__(self):
-        names = ["ставки"]
+        names = ["ставки", "казино"]
         help_text = "Ставки - играет ставки"
         detail_help_text = "Ставки - играет ставки. Если передан ключ -f, играет независимо от количества игроков"
 
@@ -54,10 +54,21 @@ class Rates(CommonCommand):
 
                 gamer.save()
 
-            if len(winners) == 1:
-                msg = f"Выпавшее число - {rnd}\nПобедитель:\n{winners_str}"
+            if self.vk_event.command == "казино":
+                attachments = []
+                photo = {'owner_id': f"-{self.vk_bot.group_id}", 'id': 457241180}
+                attachments.append(f"photo{photo['owner_id']}_{photo['id']}")
+                if len(winners) == 1:
+                    msg = {'msg': f"Выпавшее число - {rnd}\nПобедитель этого казино:\n{winners_str}",
+                           'attachments': attachments}
+                else:
+                    msg = {'msg': f"Выпавшее число - {rnd}\nПобедители этого казино:\n{winners_str}",
+                           'attachments': attachments}
             else:
-                msg = f"Выпавшее число - {rnd}\nПобедители:\n{winners_str}"
+                if len(winners) == 1:
+                    msg = f"Выпавшее число - {rnd}\nПобедитель:\n{winners_str}"
+                else:
+                    msg = f"Выпавшее число - {rnd}\nПобедители:\n{winners_str}"
 
             gamers.delete()
             messages.append(msg)
