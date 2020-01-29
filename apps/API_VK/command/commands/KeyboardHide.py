@@ -5,7 +5,7 @@ class KeyboardHide(CommonCommand):
 
     def __init__(self):
         names = ["убери", "скрыть"]
-        help_text = "̲С̲к̲р̲ы̲т̲ь - убирает клавиатуру"
+        help_text = "Скрыть - убирает клавиатуру"
         keyboard = {'text': 'Скрыть', 'color': 'gray', 'row': 3, 'col': 1}
 
         super().__init__(names, help_text, keyboard=keyboard, api=False)

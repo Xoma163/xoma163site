@@ -6,7 +6,7 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 class Command(CommonCommand):
     def __init__(self):
         names = ["команда"]
-        help_text = "̲К̲о̲м̲а̲н̲д̲а - запускает любую команду на сервере"
+        help_text = "Команда - запускает любую команду на сервере"
         detail_help_text = "Команда (N) - запускает любую команду на сервере с уровнем прав server, N - команда"
         super().__init__(names, help_text, detail_help_text, access='admin', need_args=1)
 

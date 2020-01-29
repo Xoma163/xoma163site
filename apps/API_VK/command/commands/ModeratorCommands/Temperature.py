@@ -5,7 +5,7 @@ from apps.API_VK.command._DoTheLinuxComand import do_the_linux_command
 class Temperature(CommonCommand):
     def __init__(self):
         names = ["температура", "темп", "t"]
-        help_text = "̲Т̲е̲м̲п̲е̲р̲а̲т̲у̲р̲а - температуры сервера"
+        help_text = "Температура - температуры сервера"
         super().__init__(names, help_text, access='moderator')
 
     def start(self):

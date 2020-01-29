@@ -77,6 +77,13 @@ commands = [
     Start_lada(), ShortLinks(), Time()
 ]
 
+underscore_symbol = "̲"
+for command in commands:
+    if command.help_text:
+        underscore_help_text = underscore_symbol.join(list(command.help_text[:command.help_text.find('-') - 1]))
+        other_help_text = command.help_text[command.help_text.find('-'):]
+        command.help_text = underscore_symbol + underscore_help_text + other_help_text
+
 
 def get_commands():
     return commands

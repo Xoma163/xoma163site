@@ -4,7 +4,7 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 class GoogleDrive(CommonCommand):
     def __init__(self):
         names = ["гугл", "ссылка", "учебное"]
-        help_text = "̲У̲ч̲е̲б̲н̲о̲е - ссылка на папку с учебным материалом"
+        help_text = "Учебное - ссылка на папку с учебным материалом"
         keyboard = {'for': 'student', 'text': 'Учебное', 'color': 'blue', 'row': 1, 'col': 3}
         super().__init__(names, help_text, access='student', keyboard=keyboard)
 

@@ -9,7 +9,7 @@ class Statistic(models.Model):
     count_queries = models.IntegerField(verbose_name='Количество запросов', default=0)
 
     class Meta:
-        verbose_name = "команду"
+        verbose_name = "статистику"
         verbose_name_plural = "Статистика"
 
     def __str__(self):

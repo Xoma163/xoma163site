@@ -5,7 +5,7 @@ from apps.games.models import PetrovichUser
 class UnRegister(CommonCommand):
     def __init__(self):
         names = ["дерегистрация", "дерег"]
-        help_text = "̲Д̲е̲р̲е̲г - отказ участия в петровиче дня"
+        help_text = "Дерег - отказ участия в петровиче дня"
         super().__init__(names, help_text, for_conversations=True)
 
     def start(self):

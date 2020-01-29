@@ -15,11 +15,11 @@ def parse_datetime(str_date):
 class Time(CommonCommand):
     def __init__(self):
         names = ["время"]
-        help_text = "̲Время - текущее время"
+        help_text = "Время - текущее время"
         detail_help_text = "Время [N] - текущее время в городе N, доступны Самара, Питер, Сызрань, Прибой. По умолчанию берёт город из профиля."
         super().__init__(names, help_text, detail_help_text)
 
-    #
+    # ToDo: здесь таймзоны наверное, нужно будет убирать, либо подумать, что с ними делать
     def start(self):
         if self.vk_event.args is None:
             if self.vk_event.sender.city:

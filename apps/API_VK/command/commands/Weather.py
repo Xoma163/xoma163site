@@ -4,7 +4,7 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 class Weather(CommonCommand):
     def __init__(self):
         names = ["погода"]
-        help_text = "̲П̲о̲г̲о̲д̲а - прогноз погоды"
+        help_text = "Погода - прогноз погоды"
         detail_help_text = "Погода [N] - прогноз погоды в городе N, доступны Самара, Питер, Сызрань, Прибой. По умолчанию берёт город из профиля"
         keyboard = {'text': 'Погода', 'color': 'blue', 'row': 1, 'col': 1}
         super().__init__(names, help_text, detail_help_text, keyboard=keyboard)

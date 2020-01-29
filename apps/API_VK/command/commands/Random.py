@@ -6,7 +6,7 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 class Random(CommonCommand):
     def __init__(self):
         names = ["рандом", "ранд", "random"]
-        help_text = "̲Р̲а̲н̲д̲о̲м - рандомное число в заданном диапазоне"
+        help_text = "Рандом - рандомное число в заданном диапазоне"
         detail_help_text = "Рандом ([N[,M]]) - рандомное число в заданном диапазоне. Параметры по умолчанию N=0,M=1"
         super().__init__(names, help_text, detail_help_text, check_int_args=[0, 1])
 

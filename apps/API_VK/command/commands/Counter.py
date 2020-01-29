@@ -5,7 +5,7 @@ from apps.Statistics.models import Counter as CounterModel
 class Counter(CommonCommand):
     def __init__(self):
         names = ["счётчик", "счетчик", "счёт", "счет"]
-        help_text = "̲С̲ч̲ё̲т̲ч̲и̲к - счётчик события"
+        help_text = "Счётчик - счётчик события"
         detail_help_text = "Счётчик (N) - счётчик события N. Инкремент"
         super().__init__(names, help_text, detail_help_text, need_args=1)
 

@@ -7,7 +7,7 @@ from apps.games.models import PetrovichUser
 class Register(CommonCommand):
     def __init__(self):
         names = ["регистрация", "рег"]
-        help_text = "̲Р̲е̲г - регистрация для участия в петровиче дня"
+        help_text = "Рег - регистрация для участия в петровиче дня"
         super().__init__(names, help_text, for_conversations=True)
 
     def start(self):

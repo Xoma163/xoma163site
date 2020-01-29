@@ -5,7 +5,7 @@ from apps.Statistics.models import Service
 class Stream(CommonCommand):
     def __init__(self):
         names = ["стрим", "поток"]
-        help_text = "̲С̲т̲р̲и̲м - ссылка на стрим"
+        help_text = "Стрим - ссылка на стрим"
         detail_help_text = "Стрим ([N]) - ссылка на стрим. С параметром меняет ссылку на стрим"
         super().__init__(names, help_text, detail_help_text)
 

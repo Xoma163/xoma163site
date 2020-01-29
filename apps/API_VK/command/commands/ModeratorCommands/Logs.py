@@ -9,6 +9,11 @@ def get_server_logs(command):
     index_command = output.find(command)
     if index_command != -1:
         output = output[index_command + len(command) + 1:]
+    else:
+        start_command = "/var/www/xoma163.site/venv/bin/uwsgi --ini /var/www/xoma163.site/uWSGI_nginx/uwsgi.ini"
+        index_command = output.rfind(start_command)
+        if index_command != -1:
+            output = output[index_command + len(start_command) + 1:]
 
     # Удаляем всё до старта
     start_string = "*** uWSGI is running in multiple interpreter mode ***"
@@ -52,8 +57,8 @@ def get_bot_logs(command):
 class Logs(CommonCommand):
     def __init__(self):
         names = ["лог", "логи", "logs", "log"]
-        help_text = "̲Л̲о̲г - логи"
-        detail_help_text = "̲Л̲о̲г ([N]) - логи. N - логи сервера или бота. Принимает ключ -n и количество строк в логах. Пример /лог сервер -n50"
+        help_text = "Лог - логи"
+        detail_help_text = "Лог ([N]) - логи. N - логи сервера или бота. Принимает ключ -n и количество строк в логах. Пример /лог сервер -n50"
         keyboard = {'for': 'moderator', 'text': 'Логи', 'color': 'blue', 'row': 1, 'col': 1}
         super().__init__(names, help_text, detail_help_text, access='moderator', keyboard=keyboard)
 

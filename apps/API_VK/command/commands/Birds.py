@@ -5,7 +5,7 @@ from xoma163site.wsgi import cameraHandler
 class Birds(CommonCommand):
     def __init__(self):
         names = ["с", "c", "синички"]
-        help_text = "̲С̲и̲н̲и̲ч̲к̲и - ссылка и гифка с синичками"
+        help_text = "Синички - ссылка и гифка с синичками"
         detail_help_text = "Синички ([N[,M]]) - ссылка и гифка с синичками. N - количество кадров в гифке, M - качество(0 или 1). По умолчанию N=100,M=0"
         keyboard = [{'text': 'Синички 0', 'color': 'blue', 'row': 2, 'col': 1},
                     {'text': 'Синички 20', 'color': 'blue', 'row': 2, 'col': 2},

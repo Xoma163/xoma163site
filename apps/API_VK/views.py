@@ -92,8 +92,6 @@ def check_bool(val):
 
 
 def petrovich(request):
-    print('petrovich')
-    print(request)
     from apps.API_VK.vkbot import VkEvent, parse_msg
     if request.method == "GET":
         msg = request.GET.get('msg', None)
@@ -147,6 +145,7 @@ def send_messages(vk_bot, peer_id, msgs):
 
 def chat(request):
     msg = request.GET.get('msg', None)
+    test = check_bool(request.GET.get('test', False))
 
     if not msg:
         return JsonResponse({'error': 'empty param msg'}, json_dumps_params={'ensure_ascii': False})
@@ -154,7 +153,10 @@ def chat(request):
         return JsonResponse({'error': 'empty msg'}, json_dumps_params={'ensure_ascii': False})
 
     user = VkUser.objects.get(user_id=3379762)
-    chat = VkChat.objects.get(chat_id=2000000001)
+    if test:
+        chat = VkChat.objects.get(chat_id=2000000002)
+    else:
+        chat = VkChat.objects.get(chat_id=2000000001)
 
     vk_bot.parse_and_send_msgs(chat.chat_id, f"{user}:\n{msg}")
 

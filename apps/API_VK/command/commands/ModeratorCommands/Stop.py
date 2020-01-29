@@ -7,7 +7,7 @@ from xoma163site.wsgi import cameraHandler
 class Stop(CommonCommand):
     def __init__(self):
         names = ["стоп", "stop"]
-        help_text = "̲С̲т̲о̲п - останавливает работу бота или модуля"
+        help_text = "Стоп - останавливает работу бота или модуля"
         detail_help_text = "Стоп ([N,M]) - останавливает работу бота или того, что передано в аргументы. В качестве аргумента принимает майнкрафт, террарию или синичек. Если майнкрафт, то может быть указана версия, 1.12.2 или 1.15.1"
         keyboard = [{'for': 'admin', 'text': 'Стоп', 'color': 'red', 'row': 1, 'col': 2},
                     {'for': 'admin', 'text': 'Стоп синички', 'color': 'red', 'row': 1, 'col': 4}]

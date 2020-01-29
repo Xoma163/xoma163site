@@ -6,7 +6,7 @@ from xoma163site.wsgi import cameraHandler
 class Start(CommonCommand):
     def __init__(self):
         names = ["старт", "start"]
-        help_text = "̲С̲т̲а̲р̲т - возобновляет работу бота или модуля"
+        help_text = "Старт - возобновляет работу бота или модуля"
         detail_help_text = "Старт ([N,M])- возобновляет работу бота или того, что передано в аргументы. В качестве аргумента принимает майнкрафт, террарию или синичек. Если майнкрафт, то может быть указана версия, 1.12.2 или 1.15.1"
         keyboard = [{'for': 'admin', 'text': 'Старт', 'color': 'green', 'row': 1, 'col': 1},
                     {'for': 'admin', 'text': 'Старт синички', 'color': 'green', 'row': 1, 'col': 3}]

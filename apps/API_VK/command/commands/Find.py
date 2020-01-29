@@ -7,7 +7,7 @@ from xoma163site.settings import BASE_DIR
 class Find(CommonCommand):
     def __init__(self):
         names = ["поиск", "найди", "найти", "ищи", "искать"]
-        help_text = "̲П̲о̲и̲с̲к  - ищет информацию по картинкам"
+        help_text = "Поиск  - ищет информацию по картинкам"
         detail_help_text = "Поиск ([N]) - ищет информацию по картинкам, N - поисковый запрос"
 
         super().__init__(names, help_text, detail_help_text, need_args=1, api=False)

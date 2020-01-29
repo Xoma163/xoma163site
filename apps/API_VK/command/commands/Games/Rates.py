@@ -13,7 +13,7 @@ lock = Lock()
 class Rates(CommonCommand):
     def __init__(self):
         names = ["ставки"]
-        help_text = "̲С̲т̲а̲в̲к̲и - играет ставки"
+        help_text = "Ставки - играет ставки"
         detail_help_text = "Ставки - играет ставки. Если передан ключ -f, играет независимо от количества игроков"
 
         super().__init__(names, help_text, detail_help_text, for_conversations=True)

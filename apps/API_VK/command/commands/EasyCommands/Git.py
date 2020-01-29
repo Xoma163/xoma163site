@@ -4,7 +4,7 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 class Git(CommonCommand):
     def __init__(self):
         names = ["гит", "гитхаб"]
-        help_text = "̲Г̲и̲т - ссылка на гитхаб"
+        help_text = "Гит - ссылка на гитхаб"
         super().__init__(names, help_text)
 
     def start(self):

@@ -8,8 +8,8 @@ from apps.API_VK.static_texts import get_bad_words, get_bad_answers
 class YesNo(CommonCommand):
     def __init__(self):
         names = "?"
-        help_text = "̲.̲.̲.̲? - вернёт да или нет."
-        detail_help_text = "̲.̲.̲.̲? - вернёт да или нет. Для вызова команды просто в конце нужно написать знак вопроса"
+        help_text = "...? - вернёт да или нет."
+        detail_help_text = "...? - вернёт да или нет. Для вызова команды просто в конце нужно написать знак вопроса"
         super().__init__(names, help_text, detail_help_text)
 
     def accept(self, vk_event):

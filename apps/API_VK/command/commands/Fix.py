@@ -17,7 +17,7 @@ def fix_layout(s, reverse):
 class Fix(CommonCommand):
     def __init__(self):
         names = ["фикс"]
-        help_text = "̲Ф̲и̲к̲с - исправляет раскладку текста"
+        help_text = "Фикс - исправляет раскладку текста"
         super().__init__(names, help_text, need_fwd=True)
 
     def start(self):

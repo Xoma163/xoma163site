@@ -5,7 +5,7 @@ from apps.API_VK.command._DoTheLinuxComand import do_the_linux_command
 class Words(CommonCommand):
     def __init__(self):
         names = ["слова", "get_words"]
-        help_text = "̲С̲л̲о̲в̲а - принудительно затягивает слова с Google Drive"
+        help_text = "Слова - принудительно затягивает слова с Google Drive"
         super().__init__(names, help_text, access='moderator')
 
     def start(self):

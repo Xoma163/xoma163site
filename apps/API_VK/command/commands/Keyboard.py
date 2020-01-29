@@ -4,7 +4,7 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 class Keyboard(CommonCommand):
     def __init__(self):
         names = ["клава", "клавиатура"]
-        help_text = "̲К̲л̲а̲в̲а - показать клавиатуру"
+        help_text = "Клава - показать клавиатуру"
         super().__init__(names, help_text, api=False)
 
     def start(self):

@@ -6,7 +6,7 @@ from apps.API_VK.command._DoTheLinuxComand import do_the_linux_command
 class Restart(CommonCommand):
     def __init__(self):
         names = ["рестарт", "restart"]
-        help_text = "̲Р̲е̲с̲т̲а̲р̲т - перезагружает бота или модуль"
+        help_text = "Рестарт - перезагружает бота или модуль"
         detail_help_text = "Рестарт ([N,M]) - перезагружает бота или то, что передано в аргументах. В качестве аргумента принимает майнкрафт или террарию. Если майнкрафт, то может быть указана версия, 1.12.2 или 1.15.1"
         super().__init__(names, help_text, detail_help_text)
 

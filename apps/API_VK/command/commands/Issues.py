@@ -5,7 +5,7 @@ from apps.Statistics.views import get_issues_text
 class Issues(CommonCommand):
     def __init__(self):
         names = ["ишюс", "ишьюс", "иши"]
-        help_text = "̲И̲ш̲ь̲ю̲с - список проблем"
+        help_text = "Ишьюс - список проблем"
         super().__init__(names, help_text)
 
     def start(self):

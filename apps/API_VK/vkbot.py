@@ -78,8 +78,9 @@ def parse_msg(msg):
 
             # for letter in command_arg[1][find_dash + 2:next_space]:
             letter = command_arg[1][find_dash + 2:next_space]
-            msg_dict['keys'].update({letter[0]: letter[1:]})
-            msg_dict['keys_list'].append(letter)
+            if letter:
+                msg_dict['keys'].update({letter[0]: letter[1:]})
+                msg_dict['keys_list'].append(letter)
 
             command_arg[1] = command_arg[1][:find_dash] + command_arg[1][next_space:]
             find_dash = command_arg[1].find(' -')
