@@ -7,18 +7,15 @@ from apps.API_VK.static_texts import get_bad_words, get_bad_answers
 
 class YesNo(CommonCommand):
     def __init__(self):
-        names = "?"
+        names = ["вопрос", "?"]
         help_text = "...? - вернёт да или нет."
         detail_help_text = "...? - вернёт да или нет. Для вызова команды просто в конце нужно написать знак вопроса"
         super().__init__(names, help_text, detail_help_text)
 
     def accept(self, vk_event):
-        if not vk_event.msg:
-            return False
-        if vk_event.msg[-1] != '?':
-            return False
-
-        return True
+        if vk_event.msg[-1] == '?' or vk_event.command in self.names:
+            return True
+        return False
 
     def start(self):
         bad_words = get_bad_words()
