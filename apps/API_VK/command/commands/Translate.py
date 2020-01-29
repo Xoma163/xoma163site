@@ -1,8 +1,6 @@
-import requests
-
+from apps.API_VK.APIs.yandex_translate import get_translate
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import has_cyrillic
-from secrets.secrets import secrets
 
 
 class Translate(CommonCommand):
@@ -28,11 +26,4 @@ class Translate(CommonCommand):
             lang = 'ru-en'
         else:
             lang = 'en-ru'
-        TOKEN = secrets['yandex']['translate']
-
-        URL = f"https://translate.yandex.net/api/v1.5/tr.json/translate?lang={lang} &key={TOKEN}&text={text}"
-        response = requests.get(URL).json()
-        if response['code'] == 200:
-            return response['text'][0]
-        else:
-            return f"Ошибка:\n{response}"
+        return get_translate(lang, text)

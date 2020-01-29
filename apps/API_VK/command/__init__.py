@@ -59,6 +59,7 @@ from apps.API_VK.command.commands.StudentCommands.Mail import Mail
 # from apps.API_VK.command.commands.StudentCommands.Week import Week
 from apps.API_VK.command.commands.Time import Time
 from apps.API_VK.command.commands.Translate import Translate
+from apps.API_VK.command.commands.Transliteration import Transliteration
 from apps.API_VK.command.commands.UnRegister import UnRegister
 from apps.API_VK.command.commands.Uyu import Uyu
 from apps.API_VK.command.commands.Weather import Weather
@@ -74,7 +75,7 @@ commands = [
     GoogleDrive(), Mail(), Ban(), DeBan(), Command(), Start(), Stop(), Restart(), Reboot(), Control(),
     get_user_by_id(), update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(),
     Find(), Rate(), Rates(), Translate(), Uptime(), Counter(), Counters(), TicTacToe(), Status(), Fix(), Debug(),
-    Start_lada(), ShortLinks(), Time()
+    Start_lada(), ShortLinks(), Time(), Transliteration()
 ]
 
 underscore_symbol = "̲"

@@ -5,16 +5,15 @@ from apps.Statistics.models import Service
 
 class CommonCommand:
     """
-    # Имена, на которые откликается команда
-        names - Текст в помощи
-        help_text - Клавиатура
-        keyboard - Команда для ?
-        access - Команда для лс
-        for_lk - Команда для конф
-        for_conversations - Требуются пересылаемые сообщения
-        need_fwd - Требуются аргументы(число)
-        need_args - Требуются интовые аргументы (позиции)
-        check_int_args - Проверить позиционные аргументы на int
+    # names - Имена, на которые откликается команда
+        help_text - Текст в помощи
+        keyboard - Клавиатура
+        access - Команда для ?
+        for_lk - Команда для лс
+        for_conversations - Команда для конф
+        need_fwd - Требуются пересылаемые сообщения
+        need_args - Требуются аргументы(число)
+        check_int_args - Требуются интовые аргументы (позиции)
         api - Работает ли команда для api
     """
 

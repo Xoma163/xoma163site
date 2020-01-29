@@ -77,3 +77,8 @@ class Order(models.Model):
 
     def __str__(self):
         return str(self.session) + " " + str(self.product)
+
+# class City(models.Model):
+#     id = models.AutoField(primary_key=True, verbose_name="ID")
+#     name = models.CharField(max_length=50, verbose_name="Название", null=True, blank=True, default="")
+#     timezone = models.IntegerField(verbose_name="Смещение таймзоны", default=0)
