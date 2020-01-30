@@ -43,8 +43,10 @@ def parse_msg(msg):
     #                 'args_str':None
     #                 }
     msg_clear = re.sub(" +", " ", msg)
-    # Вроде как фикс, но вроде как баг
-    msg_clear = msg_clear.lstrip().lstrip(',').lstrip().lstrip(' ').lstrip()  # .replace(' ,', ',').replace(', ', ',')
+    msg_clear = re.sub(",+", ",", msg_clear)
+    # Если всё поломалось, то вернуть
+    # msg_clear = msg_clear.lstrip().lstrip(',').lstrip().lstrip(' ').lstrip()  # .replace(' ,', ',').replace(', ', ',')
+    msg_clear = msg_clear.strip().strip(',').strip().strip(' ').strip()  # .replace(' ,', ',').replace(', ', ',')
 
     msg_dict = {'msg': msg,
                 'msg_clear': msg_clear,
