@@ -7,6 +7,7 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 
 # ToDo: создаём модель города, с полями [id,nameS,timezone,...]
 # ToDo: не отправляем запрос, если город есть уже в списке
+# ToDo: подумать, что делать с городами из других стран.
 def parse_datetime(str_date):
     date_time_obj = datetime.datetime.strptime(str_date, "%Y-%m-%dT%H:%M:%S.%f%z")
     return date_time_obj.strftime("%d.%m.%Y\n%H:%M:%S")

@@ -45,6 +45,8 @@ class YesNo(CommonCommand):
                     len_bad = self.vk_event.msg.find(' ', max_index_bad)
                     if len_bad == -1:
                         len_bad = self.vk_event.msg.find('?', max_index_bad)
+                        if len_bad == -1:
+                            len_bad = len(self.vk_event.msg)
 
                 bad_answers = get_bad_answers()
                 rand_int = random.randint(0, len(bad_answers) - 1)
