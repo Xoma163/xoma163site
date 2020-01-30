@@ -2,6 +2,15 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command._DoTheLinuxComand import do_the_linux_command
 
 
+def remove_rows_if_find_word(old_str, word):
+    while old_str.find(word) != -1:
+        word_index = old_str.find(word)
+        left_index = old_str.rfind('\n', 0, word_index - len(word))
+        right_index = old_str.find('\n', word_index)
+        old_str = old_str[:left_index] + old_str[right_index:]
+    return old_str
+
+
 def get_server_logs(command):
     output = do_the_linux_command(command)
 
@@ -28,13 +37,9 @@ def get_server_logs(command):
 
     output = "Логи:\n" + output + "\n"
     words = ["GET", "POST", "spawned uWSGI", "Not Found:", "HEAD", "pidfile", "WSGI app 0", "Bad Request",
-             "HTTP_HOST"]
+             "HTTP_HOST", "OPTIONS "]
     for word in words:
-        while output.find(word) != -1:
-            word_index = output.find(word)
-            left_index = output.rfind('\n', 0, word_index - len(word))
-            right_index = output.find('\n', word_index)
-            output = output[:left_index] + output[right_index:]
+        output = remove_rows_if_find_word(output, word)
     return output
 
 
@@ -50,6 +55,9 @@ def get_bot_logs(command):
     if index_removing != -1:
         for_removing = output[index_removing:output.find(']', index_removing + 1) + 1]
         output = output.replace(for_removing, '')
+    words = ["USER=root", "user root", "Stopped", "Started"]
+    for word in words:
+        output = remove_rows_if_find_word(output, word)
     output = "Логи:\n" + output + "\n"
     return output
 
@@ -70,7 +78,7 @@ class Logs(CommonCommand):
                 count = self.vk_event.keys['n']
 
         if self.vk_event.args:
-            if self.vk_event.args[0] in ['сервер', 'веб', 'server', 'web']:
+            if self.vk_event.args[0] in ['веб', 'web', 'сайт', 'site']:
                 command = f"systemctl status xoma163site -n{count}"
                 return get_server_logs(command)
             elif self.vk_event.args[0] in ['бот', 'bot']:
