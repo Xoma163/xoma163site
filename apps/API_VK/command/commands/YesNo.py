@@ -13,7 +13,7 @@ class YesNo(CommonCommand):
         super().__init__(names, help_text, detail_help_text)
 
     def accept(self, vk_event):
-        if vk_event.msg[-1] == '?' or vk_event.command in self.names:
+        if (vk_event.msg and vk_event.msg[-1] == '?') or vk_event.command in self.names:
             return True
         return False
 

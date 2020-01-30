@@ -60,59 +60,63 @@ class Command(BaseCommand):
         time1 = time.time()
         statistics = {'created': 0, 'updated': 0, 'deleted': 0, 'skipped': 0}
 
-        for i, my_range in enumerate(ranges):
-            if i == 0:
-                word_type = 'bad'
-                statistics['bad_words'] = len(my_range['values']) - 1
-            else:
-                word_type = 'good'
-                statistics['good_words'] = len(my_range['values']) - 1
-
-            for j, val in enumerate(my_range['values']):
-                if j != 0:
-                    word_dict = {'type': word_type}
-                    for k, item in enumerate(val):
-                        if item != 'None' and item is not None and item != ' ' and item != '':
-                            word_dict[headers[k]] = item
-                        else:
-                            word_dict[headers[k]] = None
-                    if 'id' in word_dict:
-                        if dict_is_empty(word_dict):
-                            word_if_exist = Words.objects.filter(id=word_dict['id'])
-                            if word_if_exist:
-                                word_if_exist.delete()
-                                statistics['deleted'] += 1
-                            else:
-                                statistics['skipped'] += 1
-
-                        else:
-                            word = Words.objects.filter(id=word_dict['id'])
-                            if len(word) > 0:
-                                existed_word_dict = word.first().__dict__
-                                existed_word_dict.pop('_state')
-                                existed_word_dict['id'] = str(existed_word_dict['id'])
-                                if word_dict == existed_word_dict:
-                                    statistics['skipped'] += 1
-                                else:
-                                    Words.objects.update_or_create(id=word_dict['id'], defaults=word_dict)
-                                    statistics['updated'] += 1
-                            else:
-                                Words(**word_dict).save()
-                                statistics['created'] += 1
-                    else:
-                        print(f"Слово не имеет id. Проверьте - {word_dict}. Строка - {j}")
-
+        # ToDo: fix it
+        try:
+            for i, my_range in enumerate(ranges):
+                if i == 0:
+                    word_type = 'bad'
+                    statistics['bad_words'] = len(my_range['values']) - 1
                 else:
-                    headers = [header for header in val]
-        print("Result: success")
-        print(f"Time: {time.time() - time1}")
-        print(f"\nStatistics:\n"
-              f"created - {statistics['created']}\n"
-              f"updated - {statistics['updated']}\n"
-              f"deleted - {statistics['deleted']}\n"
-              f"skipped - {statistics['skipped']}\n"
-              f"total - {statistics['bad_words'] + statistics['good_words']}\n"
-              f"-----\n"
-              f"bad_words - {statistics['bad_words']}\n"
-              f"good_words - {statistics['good_words']}\n"
-              )
+                    word_type = 'good'
+                    statistics['good_words'] = len(my_range['values']) - 1
+
+                for j, val in enumerate(my_range['values']):
+                    if j != 0:
+                        word_dict = {'type': word_type}
+                        for k, item in enumerate(val):
+                            if item != 'None' and item is not None and item != ' ' and item != '':
+                                word_dict[headers[k]] = item
+                            else:
+                                word_dict[headers[k]] = None
+                        if 'id' in word_dict:
+                            if dict_is_empty(word_dict):
+                                word_if_exist = Words.objects.filter(id=word_dict['id'])
+                                if word_if_exist:
+                                    word_if_exist.delete()
+                                    statistics['deleted'] += 1
+                                else:
+                                    statistics['skipped'] += 1
+
+                            else:
+                                word = Words.objects.filter(id=word_dict['id'])
+                                if len(word) > 0:
+                                    existed_word_dict = word.first().__dict__
+                                    existed_word_dict.pop('_state')
+                                    existed_word_dict['id'] = str(existed_word_dict['id'])
+                                    if word_dict == existed_word_dict:
+                                        statistics['skipped'] += 1
+                                    else:
+                                        Words.objects.update_or_create(id=word_dict['id'], defaults=word_dict)
+                                        statistics['updated'] += 1
+                                else:
+                                    Words(**word_dict).save()
+                                    statistics['created'] += 1
+                        else:
+                            print(f"Слово не имеет id. Проверьте - {word_dict}. Строка - {j}")
+
+                    else:
+                        headers = [header for header in val]
+            print("Result: success")
+            print(f"Time: {time.time() - time1}")
+            print(f"\nStatistics:\n"
+                  f"created - {statistics['created']}\n"
+                  f"updated - {statistics['updated']}\n"
+                  f"deleted - {statistics['deleted']}\n"
+                  f"skipped - {statistics['skipped']}\n"
+                  f"total - {statistics['bad_words'] + statistics['good_words']}\n"
+                  f"-----\n"
+                  f"bad_words - {statistics['bad_words']}\n"
+                  f"good_words - {statistics['good_words']}\n"
+                  )
+        except Exception as e:
+            print("error: " + str(e))
