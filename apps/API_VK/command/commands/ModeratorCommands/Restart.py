@@ -33,9 +33,17 @@ class Restart(CommonCommand):
 
                 do_the_linux_command('sudo systemctl start terraria')
                 return "Рестартим террарию!"
+            elif self.vk_event.args[0] in ['бот', 'bot']:
+                self.check_sender('admin')
+                do_the_linux_command('sudo systemctl restart xoma163bot')
+                return 'Рестартим бота'
+            elif self.vk_event.args[0] in ['веб', 'web', 'сайт', 'site']:
+                self.check_sender('admin')
+                do_the_linux_command('sudo systemctl restart xoma163site')
+                return 'Рестартим веб'
             else:
                 return "Не найден такой модуль"
         else:
             self.check_sender('admin')
-
             do_the_linux_command('sudo systemctl restart xoma163bot')
+            return 'Рестартим бота'
