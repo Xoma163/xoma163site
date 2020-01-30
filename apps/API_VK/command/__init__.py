@@ -81,8 +81,9 @@ commands = [
 underscore_symbol = "̲"
 for command in commands:
     if command.help_text:
-        underscore_help_text = underscore_symbol.join(list(command.help_text[:command.help_text.find('-') - 1]))
-        other_help_text = command.help_text[command.help_text.find('-'):]
+        find_dash = command.help_text.find('-') - 1
+        underscore_help_text = underscore_symbol.join(list(command.help_text[:find_dash]))
+        other_help_text = command.help_text[find_dash:]
         command.help_text = underscore_symbol + underscore_help_text + other_help_text
 
 
@@ -94,9 +95,11 @@ def get_groups():
     return ['user', 'admin', 'moderator', 'student', 'minecraft']
 
 
-def get_help_text():
-    texts = {group: "" for group in get_groups()}
+HELP_TEXT = {group: "" for group in get_groups()}
+API_HELP_TEXT = {group: "" for group in get_groups()}
 
+
+def generate_help_text():
     for command in commands:
         if command.help_text:
             help_text = command.help_text
@@ -108,12 +111,9 @@ def get_help_text():
 
             if type(help_text) == list:
                 for text in help_text:
-                    if 'for' in text:
-                        texts[text['for']] += f"{text['text']}\n"
-                    else:
-                        texts[command.access] += f"{text['text']}\n"
-
-    return texts
+                    HELP_TEXT[text['for']] += f"{text['text']}\n"
+                    if command.api:
+                        API_HELP_TEXT[text['for']] += f"{text['text']}\n"
 
 
 def get_keyboard():
@@ -166,7 +166,8 @@ def get_keyboard():
             buttons[k].append(row)
     return buttons
 
-HELP_TEXTS = get_help_text()
+
+generate_help_text()
 KEYBOARDS = get_keyboard()
 
 EMPTY_KEYBOARD = {

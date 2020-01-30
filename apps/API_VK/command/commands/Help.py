@@ -31,18 +31,23 @@ class Help(CommonCommand):
     def start(self):
         if self.vk_event.args:
             return get_help_for_command(self.vk_event.args[0].lower())
-        from apps.API_VK.command import HELP_TEXTS
-        help_text = "\n— общие команды —\n"
-        help_text += HELP_TEXTS['user']
-        help_text += "\n"
-        if self.vk_event.sender.is_student:
-            help_text += "\n— команды для группы 6221 —\n"
-            help_text += HELP_TEXTS['student']
-        if self.vk_event.sender.is_moderator:
-            help_text += "\n— команды для модераторов —\n"
-            help_text += HELP_TEXTS['moderator']
-        if self.vk_event.sender.is_admin:
-            help_text += "\n— команды для администраторов —\n"
-            help_text += HELP_TEXTS['admin']
+        from apps.API_VK.command import HELP_TEXT, API_HELP_TEXT
 
-        return help_text
+        if self.vk_event.api:
+            help_texts = API_HELP_TEXT
+        else:
+            help_texts = HELP_TEXT
+        output = "\n— общие команды —\n"
+        output += help_texts['user']
+        output += "\n"
+        if self.vk_event.sender.is_student:
+            output += "\n— команды для группы 6221 —\n"
+            output += help_texts['student']
+        if self.vk_event.sender.is_moderator:
+            output += "\n— команды для модераторов —\n"
+            output += help_texts['moderator']
+        if self.vk_event.sender.is_admin:
+            output += "\n— команды для администраторов —\n"
+            output += help_texts['admin']
+
+        return output
