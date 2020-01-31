@@ -26,14 +26,21 @@ class Rate(models.Model):
     chat = models.ForeignKey(VkChat, verbose_name="Чат", on_delete=models.SET_NULL, null=True)
     rate = models.IntegerField(verbose_name="Ставка")
     date = models.DateTimeField(verbose_name="Дата", auto_now_add=True, blank=True)
+    random = models.BooleanField(verbose_name="Случайная", default=False)
 
     class Meta:
         verbose_name = "Ставка"
         verbose_name_plural = "Ставки"
-        ordering = ["chat", "user"]
+        ordering = ["chat", "date"]
 
     def __str__(self):
         return str(self.chat) + " " + str(self.user)
+
+
+# class RateDelete(models.Model):
+#     id = models.AutoField(primary_key=True, verbose_name='ID')
+#     chat = models.ForeignKey(VkChat, verbose_name="Чат", on_delete=models.SET_NULL, null=True)
+#     message_id = models.IntegerField(verbose_name="ID сообщения")
 
 
 class PetrovichUser(models.Model):

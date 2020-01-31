@@ -1,17 +1,24 @@
 from django.contrib import admin
 
-from apps.games.models import Rate, Gamer, PetrovichUser, PetrovichGames, TicTacToeSession
+from apps.games.models import Rate, Gamer, PetrovichUser, PetrovichGames, TicTacToeSession  # , RateDelete
 
 
 @admin.register(Gamer)
-class FeatureAdmin(admin.ModelAdmin):
+class GamerAdmin(admin.ModelAdmin):
     list_display = ('user', 'points', 'tic_tac_toe_points')
 
 
 @admin.register(Rate)
-class VkUserAdmin(admin.ModelAdmin):
+class RateAdmin(admin.ModelAdmin):
     list_display = ('user', 'chat', 'rate')
     ordering = ('-chat',)
+
+
+#
+# @admin.register(RateDelete)
+# class RateDeleteAdmin(admin.ModelAdmin):
+#     list_display = ('chat', 'message_id')
+#     ordering = ('-chat',)
 
 
 @admin.register(PetrovichUser)

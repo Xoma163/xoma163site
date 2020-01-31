@@ -160,11 +160,11 @@ class VkBotClass(threading.Thread):
         if self.DEBUG and send:
             debug_message = \
                 f"command = {vk_event.command}\n " \
-                    f"args = {vk_event.args}\n " \
-                    f"original_args = {vk_event.original_args}\n " \
-                    f"keys = {vk_event.keys}\n " \
-                    f"params = {vk_event.params}\n" \
-                    f"params_without_keys = {vk_event.params_without_keys}"
+                f"args = {vk_event.args}\n " \
+                f"original_args = {vk_event.original_args}\n " \
+                f"keys = {vk_event.keys}\n " \
+                f"params = {vk_event.params}\n" \
+                f"params_without_keys = {vk_event.params_without_keys}"
             self.send_message(vk_event.peer_id, debug_message)
 
         if vk_event.sender.is_banned:
@@ -221,7 +221,7 @@ class VkBotClass(threading.Thread):
         super().__init__()
         self._TOKEN = secrets['vk']['TOKEN']
         self.group_id = secrets['vk']['group_id']
-        vk_session = vk_api.VkApi(token=self._TOKEN, api_version="5.101")
+        vk_session = vk_api.VkApi(token=self._TOKEN, api_version="5.103")
         self.longpoll = MyVkBotLongPoll(vk_session, group_id=self.group_id)
         self.upload = VkUpload(vk_session)
         self.vk = vk_session.get_api()
@@ -249,12 +249,12 @@ class VkBotClass(threading.Thread):
                     vk_event = {
                         'from_user': event.from_user,
                         'chat_id': event.chat_id,
-                        'user_id': event.object.from_id,
-                        'peer_id': event.object.peer_id,
-
+                        'user_id': event.message.from_id,
+                        'peer_id': event.message.peer_id,
                         'message': {
-                            'text': event.object.text,
-                            'payload': event.object.payload
+                            # 'id': event.message.id,
+                            'text': event.message.text,
+                            'payload': event.message.payload
                         },
                         'parsed': {
                         }}
@@ -288,13 +288,12 @@ class VkBotClass(threading.Thread):
                         vk_event['chat'] = None
 
                     # Обработка вложенных сообщений в vk_event['fwd']. reply и fwd для вк это разные вещи.
-                    if 'reply_message' in event.object:
-                        vk_event['fwd'] = [event.object['reply_message']]
-                    elif 'fwd_messages' in event.object:
-                        if len(event.object['fwd_messages']) != 0:
-                            vk_event['fwd'] = event.object['fwd_messages']
-                        else:
-                            vk_event['fwd'] = None
+                    if event.message.reply_message:
+                        vk_event['fwd'] = [event.message.reply_message]
+                    elif len(event.message.fwd_messages) != 0:
+                        vk_event['fwd'] = event.message.fwd_messages
+                    else:
+                        vk_event['fwd'] = None
 
                     vk_event_object = VkEvent(vk_event)
                     thread = threading.Thread(target=self.menu, args=(vk_event_object,))
