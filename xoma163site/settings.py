@@ -150,3 +150,36 @@ from time import sleep
 def sprint(text):
     print(text)
     sleep(0.0000000001)
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s %(name)-12s --> %(funcName)-20s --> %(lineno)-4d  %(levelname)-8s %(message)s',
+        },
+        'simple': {
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        },
+        'commands': {
+            'format': '%(asctime)s %(message)s',
+            # 'datefmt': '%d.%m.%Y %H:%M:%S'
+        }
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'commands.log'),
+            'formatter': 'commands',
+        },
+    },
+    'loggers': {
+        'commands': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}

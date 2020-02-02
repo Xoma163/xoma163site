@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import re
 import threading
@@ -13,6 +14,8 @@ from apps.API_VK.command import get_commands
 from apps.API_VK.models import VkUser, VkBot, VkChat
 from apps.Statistics.views import append_command_to_statistics
 from secrets.secrets import secrets
+
+logger = logging.getLogger('commands')
 
 
 def parse_msg_to_me(msg, mentions):
@@ -157,7 +160,7 @@ class VkBotClass(threading.Thread):
                     self.send_message(peer_id, **msg)
 
     def menu(self, vk_event, send=True):
-
+        logger.debug(vk_event)
         if self.DEBUG and send:
             debug_message = \
                 f"command = {vk_event.command}\n " \
@@ -179,8 +182,10 @@ class VkBotClass(threading.Thread):
             if vk_event.command in ['старт']:
                 self.BOT_CAN_WORK = True
                 # cameraHandler.resume()
-                self.send_message(vk_event.peer_id, "Стартуем!")
-                return "Стартуем!"
+                msg = "Стартуем!"
+                self.send_message(vk_event.peer_id, msg)
+                logger.debug(f"{{result: {msg}}}")
+                return msg
             return
 
         commands = get_commands()
@@ -188,15 +193,16 @@ class VkBotClass(threading.Thread):
             try:
                 if command.accept(vk_event):
                     result = command.__class__().check_and_start(self, vk_event)
-                    if result:
-                        if send:
-                            self.parse_and_send_msgs(vk_event.peer_id, result)
-
+                    # if result:
+                    if send:
+                        self.parse_and_send_msgs(vk_event.peer_id, result)
                     append_command_to_statistics(vk_event.command)
+                    logger.debug(f"{{result: {result}}}")
                     return result
             except RuntimeError as e:
                 if send:
                     self.parse_and_send_msgs(vk_event.peer_id, str(e))
+                logger.debug(f"{{exception: {str(e)}}}")
                 return str(e)
 
         similar_command = commands[0].names[0]
@@ -216,6 +222,7 @@ class VkBotClass(threading.Thread):
 
         if send:
             self.send_message(vk_event.peer_id, msg)
+        logger.debug(f"{{result: {msg}}}")
         return msg
 
     def __init__(self):
@@ -455,6 +462,18 @@ class VkBotClass(threading.Thread):
         return f"doc{doc['owner_id']}_{doc['id']}"
 
 
+def auto_str(cls):
+    def __str__(self):
+        return '%s(%s)' % (
+            type(self).__name__,
+            ', '.join('%s=%s' % item for item in vars(self).items())
+        )
+
+    cls.__str__ = __str__
+    return cls
+
+
+@auto_str
 class VkEvent:
     def __init__(self, vk_event):
         self.sender = vk_event['sender']

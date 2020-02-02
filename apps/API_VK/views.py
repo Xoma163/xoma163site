@@ -42,11 +42,11 @@ def where_is_me(request):
         address = get_address(lat, lon)
         if address is not None:
             msg1 = f"Я нахожусь примерно тут:\n" \
-                f"{address}\n"
+                   f"{address}\n"
         else:
             msg1 = ""
         msg2 = f"Позиция на карте:\n" \
-            f"https://yandex.ru/maps/?ll={lon}%2C{lat}&mode=search&text={lat}%2C%20{lon}&z=16\n"
+               f"https://yandex.ru/maps/?ll={lon}%2C{lat}&mode=search&text={lat}%2C%20{lon}&z=16\n"
 
         msg = msg1 + msg2
     else:
@@ -103,6 +103,8 @@ def petrovich(request):
         test = check_bool(request.POST.get('test', False))
         send = check_bool(request.POST.get('send', True))
         from_chat = check_bool(request.POST.get('from_chat', True))
+    else:
+        return JsonResponse({'error': 'only get or post'}, json_dumps_params={'ensure_ascii': False})
 
     if not msg:
         return JsonResponse({'error': 'empty param msg'}, json_dumps_params={'ensure_ascii': False})
