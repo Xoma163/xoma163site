@@ -64,6 +64,7 @@ from apps.API_VK.command.commands.UnRegister import UnRegister
 from apps.API_VK.command.commands.Uyu import Uyu
 from apps.API_VK.command.commands.Weather import Weather
 from apps.API_VK.command.commands.Where import Where
+from apps.API_VK.command.commands.Who import Who
 from apps.API_VK.command.commands.YesNo import YesNo
 
 commands = [
@@ -75,7 +76,7 @@ commands = [
     GoogleDrive(), Mail(), Ban(), DeBan(), Command(), Start(), Stop(), Restart(), Reboot(), Control(),
     get_user_by_id(), update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(),
     Find(), Rate(), Rates(), Translate(), Uptime(), Counter(), Counters(), TicTacToe(), Status(), Fix(), Debug(),
-    Start_lada(), ShortLinks(), Time(), Transliteration()
+    Start_lada(), ShortLinks(), Time(), Transliteration(), Who()
 ]
 
 underscore_symbol = "̲"
