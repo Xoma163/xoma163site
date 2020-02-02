@@ -18,7 +18,7 @@ class Who(CommonCommand):
         arg = self.vk_event.args[0]
         if arg in ['moderators', 'moderator', 'moders', 'moder', 'модераторы', 'модератор', 'модеры', 'модер']:
             who = 'moderator'
-        elif arg in ['administrations', 'administration', 'администрация', 'админы', 'админ']:
+        elif arg in ['administrations', 'administration', 'администрация', 'админы', 'админ', 'главный', 'власть']:
             who = 'admin'
         elif arg in ['students', 'student', 'студенты', 'студент']:
             who = 'student'
