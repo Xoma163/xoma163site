@@ -17,5 +17,6 @@ urlpatterns = [
 
     path('calc/get_calculate', api.get_calculate),
 
-    path('chat/', views.chat)
+    path('chat/', views.chat),
+    path('eugene/', views.eugene)
 ]

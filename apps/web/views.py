@@ -28,3 +28,7 @@ def calc_session(request, session_id):
 
 def chat(request):
     return render(request, "web/chat.html")
+
+
+def eugene(request):
+    return render(request, "web/eugene.html")
