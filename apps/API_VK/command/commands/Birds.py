@@ -30,18 +30,16 @@ class Birds(CommonCommand):
                 quality = self.vk_event.args[1]
                 self.check_int_arg_range(quality, 0, 1)
 
-        photo = self.vk_bot.upload.photo_messages(path)[0]
-        cameraHandler.clear_file(path)
-        attachments.append(f"photo{photo['owner_id']}_{photo['id']}")
-
+        photo = self.vk_bot.upload_photo(path)
+        attachments.append(photo)
         if frames != 0:
             try:
                 path2 = cameraHandler.get_gif(frames, quality == 1)
             except RuntimeError as e:
                 return str(e)
-            gif = self.vk_bot.upload.document_message(path2, title='Синички', peer_id=self.vk_event.peer_id)['doc']
-            cameraHandler.clear_file(path2)
-            attachments.append(f"doc{gif['owner_id']}_{gif['id']}")
+            gif = self.vk_bot.upload_document(path2, self.vk_event.peer_id, "Синички")
+            attachments.append(gif)
         return {'msg': '', 'attachments': attachments}
         # ToDo: баг ВКАПИ, при котором при отправке ссылки атачменты не прикрепляются. Ишю 54
+        # https://github.com/python273/vk_api/issues/329
         # return {'msg': "http://birds.xoma163.xyz", 'attachments': attachments}

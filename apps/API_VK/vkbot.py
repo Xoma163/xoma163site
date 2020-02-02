@@ -1,4 +1,5 @@
 import json
+import os
 import re
 import threading
 import traceback
@@ -438,6 +439,21 @@ class VkBotClass(threading.Thread):
     def check_bot_working(self):
         return self.BOT_CAN_WORK
 
+    def upload_photo(self, path):
+        photo = self.upload.photo_messages(path)[0]
+        os.remove(path)
+        return f"photo{photo['owner_id']}_{photo['id']}"
+
+    def get_photo_by_id(self, photo_id, group_id=None):
+        if group_id is None:
+            group_id = f'-{self.group_id}'
+        return f"photo{group_id}_{photo_id}"
+
+    def upload_document(self, path, peer_id, title='Документ'):
+        doc = self.upload.document_message(path, title=title, peer_id=peer_id)['doc']
+        os.remove(path)
+        return f"doc{doc['owner_id']}_{doc['id']}"
+
 
 class VkEvent:
     def __init__(self, vk_event):
@@ -477,18 +493,6 @@ class VkEvent:
             self.api = vk_event['api']
         else:
             self.api = False
-
-    def __str__(self):
-        s = []
-        s.append(self.peer_id)
-        s.append(self.command)
-        s.append(self.args)
-        s.append(self.original_args)
-        s.append(self.keys)
-        s.append(self.fwd)
-        s.append(self.from_user)
-        s.append(self.sender)
-        return str(s)
 
 
 class MyVkBotLongPoll(VkBotLongPoll):

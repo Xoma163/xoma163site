@@ -48,10 +48,10 @@ class Find(CommonCommand):
                 img_file.write(img.content)
                 img_file.close()
 
-                photo = self.vk_bot.upload.photo_messages(path)[0]
-                attachments.append(f"photo{photo['owner_id']}_{photo['id']}")
+                photo = self.vk_bot.upload_photo(path)
+                attachments.append(photo)
             except Exception as e:
-                pass
+                print(str(e))
             finally:
                 if os.path.exists(path):
                     os.remove(path)
