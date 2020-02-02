@@ -85,9 +85,11 @@ class CommonCommand:
         error = f"Команда доступна только для пользователей с уровнем прав {role_translator[role]}"
         raise RuntimeError(error)
 
-    def check_args(self):
+    def check_args(self, need_args=None):
+        if need_args is None:
+            need_args = self.need_args
         if self.vk_event.args:
-            if len(self.vk_event.args) >= self.need_args:
+            if len(self.vk_event.args) >= need_args:
                 return True
             else:
                 error = "Передано недостаточно аргументов"

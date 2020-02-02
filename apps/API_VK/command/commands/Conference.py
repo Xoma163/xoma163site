@@ -15,8 +15,7 @@ class Conference(CommonCommand):
     def start(self):
 
         if self.vk_event.command in self.names:
-            self.need_args = 1
-            self.check_args()
+            self.check_args(1)
             self.vk_event.chat.name = self.vk_event.args[0]
             self.vk_event.chat.save()
             return f"Поменял название беседы на {self.vk_event.args[0]}"

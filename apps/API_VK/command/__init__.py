@@ -44,7 +44,6 @@ from apps.API_VK.command.commands.ModeratorCommands.Stop import Stop
 from apps.API_VK.command.commands.ModeratorCommands.Temperature import Temperature
 from apps.API_VK.command.commands.ModeratorCommands.Uptime import Uptime
 from apps.API_VK.command.commands.ModeratorCommands.Words import Words
-from apps.API_VK.command.commands.Permissions import Permissions
 from apps.API_VK.command.commands.Praise import Praise
 from apps.API_VK.command.commands.Quote import Quote
 from apps.API_VK.command.commands.Quotes import Quotes
@@ -77,7 +76,7 @@ commands = [
     GoogleDrive(), Mail(), Ban(), DeBan(), Command(), Start(), Stop(), Restart(), Reboot(), Control(),
     get_user_by_id(), update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(),
     Find(), Rate(), Rates(), Translate(), Uptime(), Counter(), Counters(), TicTacToe(), Status(), Fix(), Debug(),
-    Start_lada(), ShortLinks(), Time(), Transliteration(), Who(), Permissions()
+    Start_lada(), ShortLinks(), Time(), Transliteration(), Who()
 ]
 
 underscore_symbol = "̲"
