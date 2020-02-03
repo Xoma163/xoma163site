@@ -14,7 +14,7 @@ class Joke(CommonCommand):
             a_type = 1
         else:
             a_type = self.vk_event.args[0]
-            self.check_int_arg_range(a_type, 0, 19, [9, 10])
+            self.check_int_arg_range(a_type, 0, 19, [9, 10, 17, 19])
 
         joke = get_joke(a_type)
         return joke
