@@ -352,20 +352,22 @@ class VkBotClass(threading.Thread):
         return vk_user
 
     @staticmethod
-    def get_user_by_name(args):
+    def get_user_by_name(args, filter_chat=None):
         if not args:
             raise RuntimeError("Отсутствуют аргументы")
-
+        vk_users = VkUser.objects
+        if filter_chat:
+            vk_users = vk_users.filter(chats=filter_chat)
         if len(args) >= 2:
-            user = VkUser.objects.filter(name=args[0].capitalize(), surname=args[1].capitalize())
+            user = vk_users.filter(name=args[0].capitalize(), surname=args[1].capitalize())
         else:
-            user = VkUser.objects.filter(nickname_real=args[0].capitalize())
+            user = vk_users.filter(nickname_real=args[0].capitalize())
             if len(user) == 0:
-                user = VkUser.objects.filter(name=args[0].capitalize())
+                user = vk_users.filter(name=args[0].capitalize())
                 if len(user) == 0:
-                    user = VkUser.objects.filter(surname=args[0].capitalize())
+                    user = vk_users.filter(surname=args[0].capitalize())
                     if len(user) == 0:
-                        user = VkUser.objects.filter(nickname=args[0])
+                        user = vk_users.filter(nickname=args[0])
 
         if len(user) > 1:
             raise RuntimeError("2 и более пользователей подходит под поиск")

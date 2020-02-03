@@ -61,7 +61,7 @@ class Scold(CommonCommand):
         else:
             if self.vk_event.params_without_keys:
                 try:
-                    user = self.vk_bot.get_user_by_name([self.vk_event.params_without_keys])
+                    user = self.vk_bot.get_user_by_name([self.vk_event.params_without_keys], self.vk_event.chat)
                     if user.gender == '1':
                         translator_key = 'ж1'
                     else:

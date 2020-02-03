@@ -10,7 +10,7 @@ class DeBan(CommonCommand):
 
     def start(self):
         try:
-            user = self.vk_bot.get_user_by_name(self.vk_event.args)
+            user = self.vk_bot.get_user_by_name(self.vk_event.args, self.vk_event.chat)
         except RuntimeError as e:
             return str(e)
         user.is_banned = False
