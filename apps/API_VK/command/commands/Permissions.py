@@ -15,7 +15,9 @@ class Permissions(CommonCommand):
     def __init__(self):
         names = ["права"]
         help_text = "Права - присылает список ваших прав"
-        super().__init__(names, help_text)
+        detail_help_text = "Права [(N)] - присылает ваши права. Если передать аргументы, где N - имя, фамилия, логин/id, никнейм, то выведутся права конкретного пользователя в беседе."
+
+        super().__init__(names, help_text, detail_help_text)
 
     def start(self):
 

@@ -29,6 +29,7 @@ class CommonCommand:
                  args=False,
                  int_args=None,
                  api=True,
+                 attachments=None
                  ):
         self.names = names
         self.help_text = help_text
@@ -41,6 +42,7 @@ class CommonCommand:
         self.args = args
         self.int_args = int_args
         self.api = api
+        self.attachments = attachments
 
         self.vk_bot = None
         self.vk_event = None
@@ -59,6 +61,7 @@ class CommonCommand:
         return self.start()
 
     def checks(self):
+        # Если команда не для api
         if not self.api:
             self.check_api()
         if self.access != 'user':
@@ -73,6 +76,8 @@ class CommonCommand:
             self.check_args()
         if self.int_args:
             self.parse_int_args()
+        if self.attachments:
+            self.check_attachments()
 
     def start(self):
         pass
@@ -159,10 +164,18 @@ class CommonCommand:
         return True
 
     def check_api(self):
+        # Если запрос пришёл через api
         if self.vk_event.api:
-            error = "Команда не доступна для API"
+            error = "Команда недоступна для API"
             raise RuntimeError(error)
         return True
+
+    def check_attachments(self):
+        if self.vk_event.attachments:
+            return True
+
+        error = "Пришлите вложения"
+        raise RuntimeError(error)
 
 
 role_translator = {

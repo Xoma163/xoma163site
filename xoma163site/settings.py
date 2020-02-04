@@ -25,7 +25,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = secrets['django']['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+MAIN_PROTOCOL = 'https'
 MAIN_DOMAIN = "xoma163.xyz"
+MAIN_SITE = f'{MAIN_PROTOCOL}://{MAIN_DOMAIN}'
 ALLOWED_HOSTS = [
     # ips
     '192.168.1.10', '85.113.60.5',

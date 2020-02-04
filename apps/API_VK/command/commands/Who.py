@@ -21,11 +21,11 @@ class Who(CommonCommand):
     def __init__(self):
         names = ["кто"]
         help_text = "Кто - присылает список людей с определённой ролью в конфе"
-        detail_help_text = "Кто [(N)] - присылает список людей с ролью N в данной конфе. Доступные роли: админ, модератор, студент, майнкрафт, террария, забанен. Если передать аргумент 'я' или не указывать, то выведутся роли пользователя"
+        detail_help_text = "Кто [(N)] - присылает список людей с ролью N в данной конфе. Доступные роли: админ, модератор, студент, майнкрафт, террария, забанен. Чтобы узнать свои права существует команда /права"
         super().__init__(names, help_text, detail_help_text, conversation=True, args=1)
 
     def start(self):
-        arg = self.vk_event.args[0]
+        arg = self.vk_event.args[0].lower()
         if arg in ['moderators', 'moderator', 'moders', 'moder', 'модераторы', 'модератор', 'модеры', 'модер']:
             who = 'moderator'
         elif arg in ['administrations', 'administration', 'администрация', 'админы', 'админ', 'главный', 'власть']:

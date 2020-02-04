@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.Statistics.models import Statistic, Issue, Service, Counter
+from apps.Statistics.models import Statistic, Issue, Service, Counter, Cat
 
 
 @admin.register(Statistic)
@@ -20,3 +20,8 @@ admin.site.register(Service)
 @admin.register(Counter)
 class FeatureAdmin(admin.ModelAdmin):
     list_display = ('name', 'count', 'chat')
+
+
+@admin.register(Cat)
+class CatAdmin(admin.ModelAdmin):
+    list_display = ('id', 'image', 'preview')

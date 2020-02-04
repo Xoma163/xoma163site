@@ -1,3 +1,7 @@
+from tempfile import NamedTemporaryFile
+from urllib.request import urlopen
+
+from django.core.files import File
 from django.db import models
 
 from apps.API_VK.models import VkChat
@@ -42,7 +46,6 @@ class Service(models.Model):
 
 
 class Counter(models.Model):
-    pass
     id = models.AutoField(primary_key=True)
     name = models.CharField(verbose_name="Имя", max_length=50, blank=True)
     count = models.IntegerField(verbose_name="Количество", default=0)
@@ -54,3 +57,31 @@ class Counter(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Cat(models.Model):
+    id = models.AutoField(primary_key=True)
+    image = models.ImageField(upload_to='service/cats/', verbose_name="Изображение")
+
+    class Meta:
+        verbose_name = "кот"
+        verbose_name_plural = "коты"
+
+    def __str__(self):
+        return str(self.id)
+
+    def get_remote_image(self, url):
+        if url and not self.image:
+            format = url.split('.')[-1]
+            img_temp = NamedTemporaryFile(delete=True)
+            img_temp.write(urlopen(url).read())
+            img_temp.flush()
+            self.image.save(f"cat.{format}", File(img_temp))
+        self.save()
+
+    def preview(self):
+        if self.image:
+            from django.utils.safestring import mark_safe
+            return mark_safe(u'<img src="{0}" width="150"/>'.format(self.image.url))
+        else:
+            return '(Нет изображения)'

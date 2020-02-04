@@ -102,6 +102,21 @@ def parse_msg(msg):
     return msg_dict
 
 
+# ToDo: походу работает только для картинок
+def parse_attachments(vk_attachments):
+    attachments = []
+
+    if vk_attachments:
+        for attachment in vk_attachments:
+            if attachment['type'] == 'photo':
+                attachment_type = attachment[attachment['type']]
+                attachments.append({'type': attachment['type'], 'url': attachment_type['sizes'][-1]['url'],
+                                    'size': {'width': attachment_type['sizes'][-1]['width'],
+                                             'height': attachment_type['sizes'][-1]['height']}})
+
+    return attachments
+
+
 def message_for_me(message, mentions):
     if message[0] == '/':
         return True
@@ -262,7 +277,8 @@ class VkBotClass(threading.Thread):
                         'message': {
                             # 'id': event.message.id,
                             'text': event.message.text,
-                            'payload': event.message.payload
+                            'payload': event.message.payload,
+                            'attachments': event.message.attachments
                         },
                         'parsed': {
                         }}
@@ -276,6 +292,7 @@ class VkBotClass(threading.Thread):
 
                     vk_event['message']['text'] = parse_msg_to_me(vk_event['message']['text'], self.mentions)
                     vk_event['parsed'] = parse_msg(vk_event['message']['text'])
+                    vk_event['attachments'] = parse_attachments(vk_event['message']['attachments'])
 
                     # Узнаём пользователя
                     if vk_event['user_id'] > 0:
@@ -504,6 +521,9 @@ class VkEvent:
         else:
             self.from_user = True
             self.from_chat = False
+
+        if 'attachments' in vk_event:
+            self.attachments = vk_event['attachments']
 
         if 'fwd' in vk_event:
             self.fwd = vk_event['fwd']
