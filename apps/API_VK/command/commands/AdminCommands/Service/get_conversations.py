@@ -6,7 +6,7 @@ class get_conversations(CommonCommand):
     def __init__(self):
         names = ["get_conversations"]
         help_text = "get_conversations - получить данные о всех беседах"
-        super().__init__(names, help_text, access='admin', need_args=1)
+        super().__init__(names, help_text, access='admin', args=1)
 
     def start(self):
         chats = VkChat.objects.all()

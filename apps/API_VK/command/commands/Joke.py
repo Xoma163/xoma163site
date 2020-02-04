@@ -7,7 +7,7 @@ class Joke(CommonCommand):
         names = ["анекдот", "анек", "а", "a"]
         help_text = "Анекдот - присылает случайный анекдот"
         detail_help_text = "Анекдот ([N]) - присылает случайный анекдот. N=;\n1-Анекдот;\n2-Рассказы;\n3-Стишки;\n4-Афоризмы;\n5-Цитаты;\n6-Тосты;\n8-Статусы.\nДобавляем 10, тогда будет (+18)]"
-        super().__init__(names, help_text, detail_help_text, check_int_args=[0])
+        super().__init__(names, help_text, detail_help_text, int_args=[0])
 
     def start(self):
         if self.vk_event.args is None:

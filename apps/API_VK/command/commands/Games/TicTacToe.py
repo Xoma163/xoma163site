@@ -38,7 +38,7 @@ class TicTacToe(CommonCommand):
         names = ["крестики", "крестики-нолики", "нолики"]
         help_text = "Крестики - крестики-нолики."
         detail_help_text = "Крестики - крестики-нолики. Игра проходит в лс и управляется с клавиатуры. Если она не работает, то просто передавайте 2 числа - куда хотите поставтиь."
-        super().__init__(names, help_text, detail_help_text, check_int_args=[0, 1], api=False)
+        super().__init__(names, help_text, detail_help_text, int_args=[0, 1], api=False)
 
     def start(self):
         with lock:

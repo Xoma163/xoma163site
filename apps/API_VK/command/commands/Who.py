@@ -22,7 +22,7 @@ class Who(CommonCommand):
         names = ["кто"]
         help_text = "Кто - присылает список людей с определённой ролью в конфе"
         detail_help_text = "Кто [(N)] - присылает список людей с ролью N в данной конфе. Доступные роли: админ, модератор, студент, майнкрафт, террария, забанен. Если передать аргумент 'я' или не указывать, то выведутся роли пользователя"
-        super().__init__(names, help_text, detail_help_text, for_conversations=True, need_args=1)
+        super().__init__(names, help_text, detail_help_text, conversation=True, args=1)
 
     def start(self):
         arg = self.vk_event.args[0]

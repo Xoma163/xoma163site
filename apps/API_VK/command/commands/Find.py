@@ -10,7 +10,7 @@ class Find(CommonCommand):
         help_text = "Поиск  - ищет информацию по картинкам"
         detail_help_text = "Поиск ([N]) - ищет информацию по картинкам, N - поисковый запрос"
 
-        super().__init__(names, help_text, detail_help_text, need_args=1, api=False)
+        super().__init__(names, help_text, detail_help_text, args=1, api=False)
 
     def start(self):
         import requests

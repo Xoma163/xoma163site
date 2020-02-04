@@ -7,7 +7,7 @@ class Quote(CommonCommand):
         names = ["цитата", "(c)", "(с)"]
         help_text = "Цитата - сохраняет в цитатник сообщения"
         detail_help_text = "Цитата + пересылаемое сообщение - сохраняет в цитатник сообщения"
-        super().__init__(names, help_text, detail_help_text, need_fwd=True)
+        super().__init__(names, help_text, detail_help_text, fwd=True)
 
     def start(self):
         msgs = self.vk_event.fwd

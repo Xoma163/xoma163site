@@ -6,7 +6,7 @@ class Ban(CommonCommand):
         names = ["бан"]
         help_text = "Бан - бан пользователя"
         detail_help_text = "Бан (N) - бан пользователя, где N - имя, фамилия, логин/id, никнейм"
-        super().__init__(names, help_text, detail_help_text, access='admin', need_args=1)
+        super().__init__(names, help_text, detail_help_text, access='admin', args=1)
 
     def start(self):
         try:

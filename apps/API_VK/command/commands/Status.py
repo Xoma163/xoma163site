@@ -10,7 +10,7 @@ class Status(CommonCommand):
         names = ["статус", "ранд"]
         help_text = "Статус - статус серверов по играм"
         keyboard = {'for': 'minecraft', 'text': 'Статус', 'color': 'green', 'row': 1, 'col': 1}
-        super().__init__(names, help_text, check_int_args=[0, 1], keyboard=keyboard)
+        super().__init__(names, help_text, int_args=[0, 1], keyboard=keyboard)
 
     # ToDo: не работает с внешним адресом
     def start(self):

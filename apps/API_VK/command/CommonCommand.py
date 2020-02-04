@@ -9,11 +9,11 @@ class CommonCommand:
         help_text - Текст в помощи
         keyboard - Клавиатура
         access - Команда для ?
-        for_lk - Команда для лс
-        for_conversations - Команда для конф
-        need_fwd - Требуются пересылаемые сообщения
-        need_args - Требуются аргументы(число)
-        check_int_args - Требуются интовые аргументы (позиции)
+        pm - Команда для лс
+        conversation - Команда для конф
+        fwd - Требуются пересылаемые сообщения
+        args - Требуются аргументы(число)
+        int_args - Требуются интовые аргументы (позиции)
         api - Работает ли команда для api
     """
 
@@ -23,11 +23,11 @@ class CommonCommand:
                  detail_help_text=None,
                  keyboard=None,
                  access='user',
-                 for_lk=False,
-                 for_conversations=False,
-                 need_fwd=False,
-                 need_args=False,
-                 check_int_args=None,
+                 pm=False,
+                 conversation=False,
+                 fwd=False,
+                 args=False,
+                 int_args=None,
                  api=True,
                  ):
         self.names = names
@@ -35,11 +35,11 @@ class CommonCommand:
         self.detail_help_text = detail_help_text
         self.keyboard = keyboard
         self.access = access
-        self.for_lk = for_lk
-        self.for_conversations = for_conversations
-        self.need_fwd = need_fwd
-        self.need_args = need_args
-        self.check_int_args = check_int_args
+        self.pm = pm
+        self.conversation = conversation
+        self.fwd = fwd
+        self.args = args
+        self.int_args = int_args
         self.api = api
 
         self.vk_bot = None
@@ -63,15 +63,15 @@ class CommonCommand:
             self.check_api()
         if self.access != 'user':
             self.check_sender(self.access)
-        if self.for_lk:
-            self.check_lk()
-        if self.for_conversations:
+        if self.pm:
+            self.check_pm()
+        if self.conversation:
             self.check_conversation()
-        if self.need_fwd:
+        if self.fwd:
             self.check_fwd()
-        if self.need_args:
+        if self.args:
             self.check_args()
-        if self.check_int_args:
+        if self.int_args:
             self.parse_int_args()
 
     def start(self):
@@ -85,11 +85,11 @@ class CommonCommand:
         error = f"Команда доступна только для пользователей с уровнем прав {role_translator[role]}"
         raise RuntimeError(error)
 
-    def check_args(self, need_args=None):
-        if need_args is None:
-            need_args = self.need_args
+    def check_args(self, args=None):
+        if args is None:
+            args = self.args
         if self.vk_event.args:
-            if len(self.vk_event.args) >= need_args:
+            if len(self.vk_event.args) >= args:
                 return True
             else:
                 error = "Передано недостаточно аргументов"
@@ -115,7 +115,7 @@ class CommonCommand:
     def parse_int_args(self):
         if not self.vk_event.args:
             return True
-        for checked_arg_index in self.check_int_args:
+        for checked_arg_index in self.int_args:
             try:
                 if len(self.vk_event.args) - 1 >= checked_arg_index:
                     self.vk_event.args[checked_arg_index] = int(self.vk_event.args[checked_arg_index])
@@ -124,7 +124,7 @@ class CommonCommand:
                 raise RuntimeError(error)
         return True
 
-    def check_lk(self):
+    def check_pm(self):
         if self.vk_event.from_user:
             return True
 

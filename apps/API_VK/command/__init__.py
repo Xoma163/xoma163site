@@ -1,9 +1,10 @@
+from apps.API_VK.command.commands.AdminCommands.Service.get_conversation import get_conversation
+
 from apps.API_VK.command.commands.AdminCommands.Ban import Ban
 from apps.API_VK.command.commands.AdminCommands.Command import Command
 from apps.API_VK.command.commands.AdminCommands.Control import Control
 from apps.API_VK.command.commands.AdminCommands.DeBan import DeBan
 from apps.API_VK.command.commands.AdminCommands.Reboot import Reboot
-from apps.API_VK.command.commands.AdminCommands.Service.get_conversations import get_conversations
 from apps.API_VK.command.commands.AdminCommands.Service.get_user_by_id import get_user_by_id
 from apps.API_VK.command.commands.AdminCommands.Service.update_users import update_users
 from apps.API_VK.command.commands.Birds import Birds
@@ -75,7 +76,7 @@ commands = [
     Random(), Sorry(), Help(), Weather(), Praise(), Scold(), Quote(), Quotes(), Keyboard(), KeyboardHide(),
     Uyu(), Hi(), Bye(), Nya(), Shit(), Git(), Donate(), Discord(), Issue(), Issues(), Joke(),
     GoogleDrive(), Mail(), Ban(), DeBan(), Command(), Start(), Stop(), Restart(), Reboot(), Control(),
-    get_user_by_id(), update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(),
+    get_user_by_id(), update_users(), get_conversation(), Logs(), Words(), Temperature(), Apologize(), Clear(),
     Find(), Rate(), Rates(), Translate(), Uptime(), Counter(), Counters(), TicTacToe(), Status(), Fix(), Debug(),
     Start_lada(), ShortLinks(), Time(), Transliteration(), Who(), Permissions()
 ]

@@ -6,7 +6,7 @@ class UnRegister(CommonCommand):
     def __init__(self):
         names = ["дерегистрация", "дерег"]
         help_text = "Дерег - отказ участия в петровиче дня"
-        super().__init__(names, help_text, for_conversations=True)
+        super().__init__(names, help_text, conversation=True)
 
     def start(self):
         p_user = PetrovichUser.objects.filter(user=self.vk_event.sender, chat=self.vk_event.chat).first()

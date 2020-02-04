@@ -6,7 +6,7 @@ class DeBan(CommonCommand):
         names = ["разбан"]
         help_text = "Разбан - разбан пользователя"
         detail_help_text = "Разбан (N) - разбан пользователя, где N - имя, фамилия, логин/id, никнейм"
-        super().__init__(names, help_text, detail_help_text, access='admin', need_args=1)
+        super().__init__(names, help_text, detail_help_text, access='admin', args=1)
 
     def start(self):
         try:

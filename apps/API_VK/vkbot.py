@@ -315,14 +315,14 @@ class VkBotClass(threading.Thread):
         self.listen_longpoll()
 
     def get_chat_title(self, chat_id):
-        return self.vk.messages.getConversationsById(peer_ids=2000000000 + chat_id)['items'][0]['chat_settings'][
+        return self.vk.messages.getconversationById(peer_ids=2000000000 + chat_id)['items'][0]['chat_settings'][
             'title']
 
     def set_chat_title(self, chat_id, title):
         self.vk.messages.editChat(chat_id=chat_id, title=title)
 
     def set_chat_title_if_not_equals(self, chat_id, title):
-        if title != self.vk.messages.getConversationsById(peer_ids=2000000000 + chat_id)['items'][0]['chat_settings'][
+        if title != self.vk.messages.getconversationById(peer_ids=2000000000 + chat_id)['items'][0]['chat_settings'][
             'title']:
             self.vk.messages.editChat(chat_id=chat_id, title=title)
             print('set title to', title)
@@ -433,8 +433,8 @@ class VkBotClass(threading.Thread):
                 vk_user.nickname = user['screen_name']
             vk_user.save()
 
-    def get_conversations(self):
-        res = self.vk.messages.getConversations()
+    def get_conversation(self):
+        res = self.vk.messages.getconversation()
         print(res)
 
     def get_short_link(self, long_link):

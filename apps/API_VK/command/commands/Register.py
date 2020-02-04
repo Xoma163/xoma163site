@@ -8,7 +8,7 @@ class Register(CommonCommand):
     def __init__(self):
         names = ["регистрация", "рег"]
         help_text = "Рег - регистрация для участия в петровиче дня"
-        super().__init__(names, help_text, for_conversations=True)
+        super().__init__(names, help_text, conversation=True)
 
     def start(self):
         p_user = PetrovichUser.objects.filter(user=self.vk_event.sender, chat=self.vk_event.chat).first()

@@ -7,7 +7,7 @@ class Counter(CommonCommand):
         names = ["счётчик", "счетчик", "счёт", "счет"]
         help_text = "Счётчик - счётчик события"
         detail_help_text = "Счётчик (N) - счётчик события N. Инкремент"
-        super().__init__(names, help_text, detail_help_text, need_args=1)
+        super().__init__(names, help_text, detail_help_text, args=1)
 
     def start(self):
         name = self.vk_event.original_args.capitalize()

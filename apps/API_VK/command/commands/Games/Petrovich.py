@@ -12,7 +12,7 @@ class Petrovich(CommonCommand):
         names = ["петрович", "женя"]
         help_text = "Петрович - мини-игра, определяющая кто Петрович Дня"
         detail_help_text = "Петрович - мини-игра, определяющая кто Петрович дня. Для участия нужно зарегистрироваться /рег"
-        super().__init__(names, help_text, detail_help_text, for_conversations=True)
+        super().__init__(names, help_text, detail_help_text, conversation=True)
 
     def start(self):
         with lock:

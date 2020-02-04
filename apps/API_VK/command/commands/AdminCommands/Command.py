@@ -8,7 +8,7 @@ class Command(CommonCommand):
         names = ["команда"]
         help_text = "Команда - запускает любую команду на сервере"
         detail_help_text = "Команда (N) - запускает любую команду на сервере с уровнем прав server, N - команда"
-        super().__init__(names, help_text, detail_help_text, access='admin', need_args=1)
+        super().__init__(names, help_text, detail_help_text, access='admin', args=1)
 
     def start(self):
         try:

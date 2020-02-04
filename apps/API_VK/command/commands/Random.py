@@ -8,7 +8,7 @@ class Random(CommonCommand):
         names = ["рандом", "ранд", "random"]
         help_text = "Рандом - рандомное число в заданном диапазоне"
         detail_help_text = "Рандом ([N[,M]]) - рандомное число в заданном диапазоне. Параметры по умолчанию N=0,M=1"
-        super().__init__(names, help_text, detail_help_text, check_int_args=[0, 1])
+        super().__init__(names, help_text, detail_help_text, int_args=[0, 1])
 
     def start(self):
         if self.vk_event.args:

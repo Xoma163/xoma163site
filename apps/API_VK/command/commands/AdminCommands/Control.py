@@ -6,7 +6,7 @@ class Control(CommonCommand):
         names = ["управление", "сообщение"]
         help_text = "Управление - отправление сообщение в любую конфу"
         detail_help_text = "Управление (N,M) - N - chat_id, M - сообщение"
-        super().__init__(names, help_text, detail_help_text, access='admin', need_args=2, check_int_args=[0])
+        super().__init__(names, help_text, detail_help_text, access='admin', args=2, int_args=[0])
 
     def start(self):
         msg_chat_id = self.vk_event.args[0]
