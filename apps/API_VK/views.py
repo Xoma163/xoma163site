@@ -126,7 +126,8 @@ def petrovich(request):
         vk_event['chat'] = chat
         vk_event['peer_id'] = chat.chat_id
     else:
-        vk_event['peer_id'] = user.chat_id
+        vk_event['chat'] = None
+        vk_event['peer_id'] = user.user_id
 
     vk_event_object = VkEvent(vk_event)
 

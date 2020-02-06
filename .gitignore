@@ -109,4 +109,6 @@ secrets/
 .docs/
 
 migrations
-
+INFO.md
+.clocignore
+cloc.exe
