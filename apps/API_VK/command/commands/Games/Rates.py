@@ -2,10 +2,9 @@ import random
 from threading import Lock
 
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.models import VkUser
 from apps.games.models import Gamer
 from apps.games.models import Rate as RateModel
-
-MIN_GAMERS = 4
 
 lock = Lock()
 
@@ -20,6 +19,11 @@ class Rates(CommonCommand):
 
     def start(self):
         with lock:
+
+            MIN_GAMERS = int(len(VkUser.objects.filter(chats=self.vk_event.chat)) / 2)
+            if MIN_GAMERS < 2:
+                MIN_GAMERS = 2
+
             gamers = RateModel.objects.filter(chat=self.vk_event.chat).order_by("date")
             if self.vk_event.keys and 'f' in self.vk_event.keys:
                 self.check_sender('admin')

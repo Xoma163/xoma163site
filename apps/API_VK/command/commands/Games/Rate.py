@@ -2,7 +2,7 @@ from threading import Lock
 
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import get_random_item_from_list
-from apps.API_VK.command.commands.Games.Rates import MIN_GAMERS
+from apps.API_VK.models import VkUser
 from apps.games.models import Gamer  # , RateDelete
 from apps.games.models import Rate as RateModel
 
@@ -18,7 +18,9 @@ class Rate(CommonCommand):
 
     def start(self):
         with lock:
-
+            MIN_GAMERS = int(len(VkUser.objects.filter(chats=self.vk_event.chat)) / 2)
+            if MIN_GAMERS < 2:
+                MIN_GAMERS = 2
             rates_gamers = RateModel.objects.filter(chat=self.vk_event.chat)
             existed_rate = rates_gamers.filter(user=self.vk_event.sender)
 
