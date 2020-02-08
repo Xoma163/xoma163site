@@ -94,3 +94,22 @@ class TicTacToeSession(models.Model):
 
     def __str__(self):
         return str(self.user1) + " " + str(self.user2)
+
+#
+# class CodenamesUser(models.Model):
+#     id = models.AutoField(primary_key=True, verbose_name='ID')
+#     user = models.ForeignKey(VkUser, verbose_name="Пользователь", on_delete=models.SET_NULL, null=True)
+#     chat = models.ForeignKey(VkChat, verbose_name="Чат", on_delete=models.SET_NULL, null=True)
+#     command_list = [('blue', "Синие"), ('red', "Красные")]
+#     command = models.CharField('Команда', choices=command_list, max_length=4, null=True, blank=True)
+#     role_list = [('captain', "Капитан"), ('player', "Игрок")]
+#     role = models.CharField('Команда', choices=role_list, default='player', max_length=7)
+#
+#     class Meta:
+#         verbose_name = "Игрок коднеймса"
+#         verbose_name_plural = "Игроки коднеймса"
+#         ordering = ["chat"]
+#
+#     def __str__(self):
+#         return str(self.chat) + " " + str(self.user)
+#

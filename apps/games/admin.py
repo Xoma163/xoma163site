@@ -1,6 +1,9 @@
 from django.contrib import admin
 
-from apps.games.models import Rate, Gamer, PetrovichUser, PetrovichGames, TicTacToeSession  # , RateDelete
+from apps.games.models import Rate, Gamer, PetrovichUser, PetrovichGames, TicTacToeSession
+
+
+# CodenamesUser  # , RateDelete
 
 
 @admin.register(Gamer)
@@ -36,3 +39,10 @@ class PetrovichGamesAdmin(admin.ModelAdmin):
 @admin.register(TicTacToeSession)
 class TicTacToeSessionAdmin(admin.ModelAdmin):
     list_display = ('user1', 'user2', 'board',)
+
+#
+# @admin.register(CodenamesUser)
+# class CodenamesUserAdmin(admin.ModelAdmin):
+#     list_display = ('user', 'chat', 'command', 'role')
+#     list_filter = ('user', 'chat',)
+#

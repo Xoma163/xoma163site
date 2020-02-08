@@ -366,7 +366,7 @@ class VkBot(threading.Thread):
         if len(vk_user) > 0:
             vk_user = vk_user.first()
         else:
-            # Прозрачная регистрация\
+            # Прозрачная регистрация
             user = self.vk.users.get(user_id=user_id, lang='ru', fields='sex, bdate, city, screen_name')[0]
             vk_user = VkUser()
             vk_user.user_id = user_id
