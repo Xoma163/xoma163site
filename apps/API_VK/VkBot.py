@@ -10,6 +10,7 @@ from vk_api import VkUpload
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.utils import get_random_id
 
+from apps.API_VK.VkEvent import VkEvent
 from apps.API_VK.command import get_commands
 from apps.API_VK.models import VkUser, VkBot, VkChat
 from apps.Statistics.views import append_command_to_statistics
@@ -105,7 +106,7 @@ def parse_msg(msg):
     return msg_dict
 
 
-# ToDo: походу работает только для картинок
+# ToDo: походу работает только для картинок пока что
 def parse_attachments(vk_attachments):
     attachments = []
 
@@ -113,11 +114,22 @@ def parse_attachments(vk_attachments):
         for attachment in vk_attachments:
             if attachment['type'] == 'photo':
                 attachment_type = attachment[attachment['type']]
-                attachments.append({'type': attachment['type'], 'url': attachment_type['sizes'][-1]['url'],
-                                    'size': {'width': attachment_type['sizes'][-1]['width'],
-                                             'height': attachment_type['sizes'][-1]['height']}})
+                max_size_image = attachment_type['sizes'][0]
+                max_size_width = max_size_image['width']
+                for size in attachment_type['sizes']:
+                    if size['width'] > max_size_width:
+                        max_size_image = size
+                        max_size_width = size['width']
+                attachments.append({
+                    'type': attachment['type'], 'url': max_size_image['url'],
+                    'size': {
+                        'width': max_size_image['width'],
+                        'height': max_size_image['height']}})
 
-    return attachments
+    if attachments and len(attachments) > 0:
+        return attachments
+    else:
+        return None
 
 
 def message_for_me(message, mentions):
@@ -147,7 +159,7 @@ def tanimoto(s1, s2):
     return c / (a + b - c)
 
 
-class VkBotClass(threading.Thread):
+class VkBot(threading.Thread):
     def send_message(self, peer_id, msg="ᅠ", attachments=None, keyboard=None, **kwargs):
         if attachments is None:
             attachments = []
@@ -328,7 +340,7 @@ class VkBotClass(threading.Thread):
                     thread.start()
 
             except Exception as e:
-                print('vkbot exception\n:', e)
+                print('VkBot exception\n:', e)
                 print(traceback.format_exc())
 
     def run(self):
@@ -482,61 +494,6 @@ class VkBotClass(threading.Thread):
         doc = self.upload.document_message(path, title=title, peer_id=peer_id)['doc']
         os.remove(path)
         return f"doc{doc['owner_id']}_{doc['id']}"
-
-
-def auto_str(cls):
-    def __str__(self):
-        return '%s(%s)' % (
-            type(self).__name__,
-            ', '.join('%s=%s' % item for item in vars(self).items())
-        )
-
-    cls.__str__ = __str__
-    return cls
-
-
-@auto_str
-class VkEvent:
-    def __init__(self, vk_event):
-        self.sender = vk_event['sender']
-        self.chat = vk_event['chat']
-        # Куда будет отправлен ответ
-        self.peer_id = vk_event['peer_id']
-
-        # Если переданы скрытые параметры с кнопок
-        if 'message' in vk_event and 'payload' in vk_event['message'] and vk_event['message']['payload']:
-            self.payload = json.loads(vk_event['message']['payload'])
-            self.msg = None
-            self.command = self.payload['command']
-            self.args = [arg for arg in self.payload['args'].values()]
-        else:
-            self.msg = vk_event['parsed']['msg']
-            self.command = vk_event['parsed']['command']
-            self.args = vk_event['parsed']['args']
-            self.original_args = vk_event['parsed']['original_args']
-            self.keys = vk_event['parsed']['keys']
-            self.keys_list = vk_event['parsed']['keys_list']
-            self.params = vk_event['parsed']['params']
-            self.params_without_keys = vk_event['parsed']['params_without_keys']
-        if self.chat:
-            self.from_chat = True
-            self.from_user = False
-        else:
-            self.from_user = True
-            self.from_chat = False
-
-        if 'attachments' in vk_event:
-            self.attachments = vk_event['attachments']
-
-        if 'fwd' in vk_event:
-            self.fwd = vk_event['fwd']
-        else:
-            self.fwd = None
-
-        if 'api' in vk_event:
-            self.api = vk_event['api']
-        else:
-            self.api = False
 
 
 class MyVkBotLongPoll(VkBotLongPoll):

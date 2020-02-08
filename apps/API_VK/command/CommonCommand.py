@@ -26,10 +26,10 @@ class CommonCommand:
                  pm=False,
                  conversation=False,
                  fwd=False,
-                 args=False,
+                 args=None,
                  int_args=None,
                  api=True,
-                 attachments=None
+                 attachments=False
                  ):
         self.names = names
         self.help_text = help_text

@@ -24,4 +24,4 @@ class FeatureAdmin(admin.ModelAdmin):
 
 @admin.register(Cat)
 class CatAdmin(admin.ModelAdmin):
-    list_display = ('id', 'image', 'preview')
+    list_display = ('id', 'image', 'preview', 'author')

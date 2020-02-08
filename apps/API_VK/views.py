@@ -92,7 +92,9 @@ def check_bool(val):
 
 
 def petrovich(request):
-    from apps.API_VK.vkbot import VkEvent, parse_msg
+    from apps.API_VK.VkBot import parse_msg
+    from apps.API_VK.VkEvent import VkEvent
+
     if request.method == "GET":
         msg = request.GET.get('msg', None)
         test = check_bool(request.GET.get('test', False))

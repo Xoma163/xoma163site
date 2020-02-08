@@ -3,6 +3,14 @@ from apps.Statistics.models import Cat as CatModel
 from xoma163site.settings import MAIN_SITE
 
 
+def add_cat(cat_image):
+    cat = CatModel()
+    cat.get_remote_image(cat_image['url'])
+    cat.author = cat_image['author']
+    cat.save()
+    return MAIN_SITE + cat.image.url
+
+
 class Cat(CommonCommand):
     def __init__(self):
         names = ["кот"]
@@ -11,12 +19,32 @@ class Cat(CommonCommand):
         super().__init__(names, help_text, detail_help_text)
 
     def start(self):
-        self.check_attachments()
+        from apps.API_VK.VkBot import parse_attachments
 
-        urls = []
-        for attachment in self.vk_event.attachments:
-            cat = CatModel()
-            cat.get_remote_image(attachment['url'])
-            cat.save()
-            urls.append(MAIN_SITE + cat.image.url)
-        return "\n".join(urls)
+        if not (self.vk_event.attachments or self.vk_event.fwd):
+            return "Пришлите фотографии или перешлите сообщения с фотографиями"
+
+        cat_images = []
+        if self.vk_event.attachments:
+            for attachment in self.vk_event.attachments:
+                cat_images.append({'url': attachment['url'], 'author': self.vk_event.sender})
+
+        if self.vk_event.fwd:
+            for msg in self.vk_event.fwd:
+                attachments = parse_attachments(msg['attachments'])
+                if attachments:
+                    for attachment in attachments:
+                        if msg['from_id'] > 0:
+                            msg_user_id = int(msg['from_id'])
+                            author = self.vk_bot.get_user_by_id(msg_user_id)
+                        else:
+                            author = None
+                        cat_images.append({'url': attachment['url'], 'author': author})
+        if len(cat_images) > 0:
+            new_urls = []
+            for cat_image in cat_images:
+                new_url = add_cat(cat_image)
+                new_urls.append(new_url)
+            return "\n".join(new_urls)
+        else:
+            return "В пересланных сообщениях нет фотографий"

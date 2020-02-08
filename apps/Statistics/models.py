@@ -1,10 +1,14 @@
+import os
 from tempfile import NamedTemporaryFile
 from urllib.request import urlopen
 
 from django.core.files import File
 from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
-from apps.API_VK.models import VkChat
+from apps.API_VK.models import VkChat, VkUser
+from xoma163site.settings import MEDIA_ROOT
 
 
 class Statistic(models.Model):
@@ -62,6 +66,7 @@ class Counter(models.Model):
 class Cat(models.Model):
     id = models.AutoField(primary_key=True)
     image = models.ImageField(upload_to='service/cats/', verbose_name="Изображение")
+    author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
 
     class Meta:
         verbose_name = "кот"
@@ -85,3 +90,12 @@ class Cat(models.Model):
             return mark_safe(u'<img src="{0}" width="150"/>'.format(self.image.url))
         else:
             return '(Нет изображения)'
+
+
+@receiver(pre_delete, sender=Cat, dispatch_uid='question_delete_signal')
+def log_deleted_question(sender, instance, using, **kwargs):
+    delete_path = f'{MEDIA_ROOT}/{instance.image}'
+    try:
+        os.remove(delete_path)
+    except FileNotFoundError:
+        print("Warn: Кот удалён, но файл картинки не найден")

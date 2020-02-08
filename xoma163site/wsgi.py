@@ -17,9 +17,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'xoma163site.settings')
 django.setup()
 
 from apps.birds.CameraHandler import CameraHandler
+
 cameraHandler = CameraHandler()
-from apps.API_VK.vkbot import VkBotClass
-vk_bot = VkBotClass()
+from apps.API_VK.VkBot import VkBot
+
+vk_bot = VkBot()
 # if not os.path.exists(BASE_DIR + '/thread.lock'):
 #     open(BASE_DIR + '/thread.lock', 'w')
 #
