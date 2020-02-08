@@ -96,7 +96,10 @@ def parse_msg(msg):
 
         if msg_dict['keys_list']:
             for key in msg_dict['keys_list']:
-                msg_dict['params_without_keys'] = msg_dict['params_without_keys'].replace(f' -{key}', '')
+                if msg_dict['params_without_keys'][0] == '-':
+                    msg_dict['params_without_keys'] = msg_dict['params_without_keys'].replace(f'-{key}', '')
+                else:
+                    msg_dict['params_without_keys'] = msg_dict['params_without_keys'].replace(f' -{key}', '')
     msg_dict['command'] = msg_dict['command'].lower()
 
     return msg_dict

@@ -50,7 +50,7 @@ class Rates(CommonCommand):
                     gamer.points += 1
                 else:
                     gamer.points += 5
-                    winners_str += "\nБонус +4 за точное попадание\n"
+                    winners_str += "\nБонус x5 за точное попадание\n"
 
                 gamer.save()
 
