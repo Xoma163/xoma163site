@@ -8,9 +8,12 @@ from apps.API_VK.models import Log, VkUser, QuoteBook, VkBot, VkChat, Words
 class VkUserAdmin(admin.ModelAdmin):
     list_display = (
         'user_id', 'name', 'surname', 'nickname', 'nickname_real', 'gender', 'birthday', 'city',
-        'is_admin', 'is_moderator', 'is_student', 'is_banned', 'is_minecraft', 'is_terraria')
+        # 'is_admin', 'is_moderator', 'is_student', 'is_banned', 'is_minecraft', 'is_terraria'
+    )
     list_filter = (
-        'gender', 'is_admin', 'is_moderator', 'is_student', 'is_banned', 'city', 'is_minecraft', 'is_terraria')
+        'gender',
+        'city'  # 'is_admin', 'is_moderator', 'is_student', 'is_banned', 'city', 'is_minecraft', 'is_terraria')
+    )
 
 
 @admin.register(VkChat)

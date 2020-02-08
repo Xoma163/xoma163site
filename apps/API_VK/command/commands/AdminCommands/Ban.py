@@ -1,4 +1,7 @@
+from django.contrib.auth.models import Group
+
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import check_user_role
 
 
 class Ban(CommonCommand):
@@ -14,9 +17,10 @@ class Ban(CommonCommand):
         except RuntimeError as e:
             return str(e)
 
-        if user.is_admin:
+        if check_user_role(user, 'admin'):
             return "Нельзя банить админа"
-        user.is_banned = True
+        group_banned = Group.objects.get(name='banned')
+        user.groups.add(group_banned)
         user.save()
 
         return "Забанен"

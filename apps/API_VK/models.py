@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from django.db import models
 
 
@@ -31,12 +32,14 @@ class VkUser(models.Model):
 
     imei = models.CharField(verbose_name='IMEI', max_length=20, null=True, blank=True)
 
-    is_admin = models.BooleanField(verbose_name='Админ', default=False)
-    is_moderator = models.BooleanField(verbose_name='Модератор', default=False)
-    is_student = models.BooleanField(verbose_name='Студент', default=False)
-    is_banned = models.BooleanField(verbose_name='Забанен', default=False)
-    is_minecraft = models.BooleanField(verbose_name='Майнкрафт', default=False)
-    is_terraria = models.BooleanField(verbose_name='Террария', default=False)
+    groups = models.ManyToManyField(Group, verbose_name="Группы")
+
+    # is_admin = models.BooleanField(verbose_name='Админ', default=False)
+    # is_moderator = models.BooleanField(verbose_name='Модератор', default=False)
+    # is_student = models.BooleanField(verbose_name='Студент', default=False)
+    # is_banned = models.BooleanField(verbose_name='Забанен', default=False)
+    # is_minecraft = models.BooleanField(verbose_name='Майнкрафт', default=False)
+    # is_terraria = models.BooleanField(verbose_name='Террария', default=False)
 
     send_notify_to = models.ManyToManyField('self', verbose_name="Отправление уведомлений", blank=True)
 

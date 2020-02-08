@@ -201,7 +201,8 @@ class VkBot(threading.Thread):
                 f"params_without_keys = {vk_event.params_without_keys}"
             self.send_message(vk_event.peer_id, debug_message)
 
-        if vk_event.sender.is_banned:
+        group = vk_event.sender.groups.filter(name='banned')
+        if len(group) > 0:
             return
 
         # Проверяем не остановлен ли бот, если так, то проверяем вводимая команда = старт?

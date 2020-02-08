@@ -1,3 +1,5 @@
+from django.contrib.auth.models import Group
+
 from apps.API_VK.command.CommonCommand import CommonCommand
 
 
@@ -13,6 +15,7 @@ class DeBan(CommonCommand):
             user = self.vk_bot.get_user_by_name(self.vk_event.args, self.vk_event.chat)
         except RuntimeError as e:
             return str(e)
-        user.is_banned = False
+        group_banned = Group.objects.get(name='banned')
+        user.groups.remove(group_banned)
         user.save()
         return "Разбанен"

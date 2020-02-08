@@ -22,3 +22,8 @@ def random_probability(probability):
 
 def has_cyrillic(text):
     return bool(re.search('[а-яА-Я]', text))
+
+
+def check_user_role(user, role):
+    group = user.groups.filter(name=role)
+    return group.exists()

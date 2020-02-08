@@ -1,7 +1,7 @@
 import random
 
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command.CommonMethods import random_probability
+from apps.API_VK.command.CommonMethods import random_probability, check_user_role
 from apps.API_VK.static_texts import get_bad_words, get_bad_answers
 
 
@@ -20,7 +20,7 @@ class YesNo(CommonCommand):
     def start(self):
         bad_words = get_bad_words()
 
-        if not self.vk_event.sender.is_admin:
+        if not check_user_role(self.vk_event.sender, 'admin'):
             min_index_bad = len(self.vk_event.msg)
             max_index_bad = -1
             for word in bad_words:

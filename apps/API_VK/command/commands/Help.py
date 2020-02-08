@@ -1,4 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import check_user_role
 
 
 def get_help_for_command(help_command):
@@ -40,13 +41,14 @@ class Help(CommonCommand):
         output = "\n— общие команды —\n"
         output += help_texts['user']
         output += "\n"
-        if self.vk_event.sender.is_student:
+
+        if check_user_role(self.vk_event.sender, 'student'):
             output += "\n— команды для группы 6221 —\n"
             output += help_texts['student']
-        if self.vk_event.sender.is_moderator:
+        if check_user_role(self.vk_event.sender, 'moderator'):
             output += "\n— команды для модераторов —\n"
             output += help_texts['moderator']
-        if self.vk_event.sender.is_admin:
+        if check_user_role(self.vk_event.sender, 'admin'):
             output += "\n— команды для администраторов —\n"
             output += help_texts['admin']
 
