@@ -32,7 +32,7 @@ ALLOWED_HOSTS = [
     # ips
     '192.168.1.10', '85.113.60.5',
     # old site
-    # 'xoma163.site', 'api.xoma163.site', 'www.xoma163.site', 'birds.xoma163.site',
+    'xoma163.site', 'api.xoma163.site', 'www.xoma163.site', 'birds.xoma163.site',
     # new site
     'xoma163.xyz', 'api.xoma163.xyz', 'www.xoma163.xyz', 'birds.xoma163.xyz',
 ]

@@ -20,6 +20,7 @@ from apps.API_VK.command.commands.EasyCommands.Git import Git
 from apps.API_VK.command.commands.EasyCommands.Hi import Hi
 from apps.API_VK.command.commands.EasyCommands.Nya import Nya
 from apps.API_VK.command.commands.EasyCommands.Shit import Shit
+from apps.API_VK.command.commands.EasyCommands.Sho import Sho
 from apps.API_VK.command.commands.EasyCommands.Sorry import Sorry
 from apps.API_VK.command.commands.EasyCommands.Start_lada import Start_lada
 from apps.API_VK.command.commands.EasyCommands.Thanks import Thanks
@@ -79,7 +80,7 @@ commands = [
     GoogleDrive(), Mail(), Ban(), DeBan(), Command(), Start(), Stop(), Restart(), Reboot(), Control(),
     get_user_by_id(), update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(),
     Find(), Rate(), Rates(), Translate(), Uptime(), Counter(), Counters(), TicTacToe(), Status(), Fix(), Debug(),
-    Start_lada(), ShortLinks(), Time(), Transliteration(), Who(), Permissions(), Cat(),
+    Start_lada(), ShortLinks(), Time(), Transliteration(), Who(), Permissions(), Cat(), Sho(),
 ]
 
 underscore_symbol = "̲"

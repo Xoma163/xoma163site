@@ -18,9 +18,6 @@ def stop_mine_by_version(online, no_players, version):
 
     # Если сервак онлайн и нет игроков
     if online and no_players:
-        from apps.API_VK.models import VkChat
-        chat = VkChat.objects.get(chat_id=2000000001)
-
         obj, created = Service.objects.get_or_create(name=f'stop_minecraft_{version}')
 
         # Создание событие. Уведомление, что мы скоро всё отрубим
@@ -40,7 +37,9 @@ def stop_mine_by_version(online, no_players, version):
                 from apps.API_VK.command._DoTheLinuxComand import do_the_linux_command
                 do_the_linux_command(f'sudo systemctl stop minecraft_{version}')
 
-                vk_bot.send_message(chat.chat_id, f"Вырубаю майн {version}")
+                message = f"Вырубаю майн {version}"
+                users_notify = VkUser.objects.filter(groups__name='minecraft_notify')
+                send_messages(vk_bot, users_notify, message)
             else:
                 obj.delete()
 
