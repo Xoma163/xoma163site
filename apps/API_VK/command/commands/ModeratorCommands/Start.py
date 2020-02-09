@@ -1,5 +1,7 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import send_messages
 from apps.API_VK.command._DoTheLinuxComand import do_the_linux_command
+from apps.API_VK.models import VkUser
 from xoma163site.wsgi import cameraHandler
 
 
@@ -28,14 +30,25 @@ class Start(CommonCommand):
                     self.check_command_time('minecraft_1.12.2', 90)
 
                     do_the_linux_command('sudo systemctl start minecraft_1.12.2')
-                    return "Стартуем майн 1.12!"
+
+                    message = "Стартуем майн 1.12!"
+                    users_notify = VkUser.objects.filter(groups__name='minecraft_notify') \
+                        .exclude(id=self.vk_event.sender.id)
+                    send_messages(self.vk_bot, users_notify, message + f"\nИнициатор - {self.vk_event.sender}")
+
+                    return message
                 elif (len(self.vk_event.args) >= 2 and (
                         self.vk_event.args[1] == '1.15.1' or self.vk_event.args[1] == '1.15')) or len(
                     self.vk_event.args) == 1:
                     self.check_command_time('minecraft_1.15.1', 30)
 
                     do_the_linux_command('sudo systemctl start minecraft_1.15.1')
-                    return "Стартуем майн 1.15.1!"
+
+                    message = "Стартуем майн 1.15.1"
+                    users_notify = VkUser.objects.filter(groups__name='minecraft_notify') \
+                        .exclude(id=self.vk_event.sender.id)
+                    send_messages(self.vk_bot, users_notify, message + f"\nИнициатор - {self.vk_event.sender}")
+                    return message
                 else:
                     return "Я не знаю такой версии"
             elif self.vk_event.args[0] in ['террария', 'terraria']:

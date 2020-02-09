@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.core.management.base import BaseCommand
 
+from apps.API_VK.models import VkUser
 from apps.Statistics.models import Service
 from xoma163site.wsgi import vk_bot
 
@@ -11,7 +12,10 @@ def check_server_by_info(ip, port, version):
     res = get_minecraft_server_info(ip, port, version)
     stop_mine_by_version(res.find("запущен") != -1, res.find("Игроки") == -1, version)
 
+
 def stop_mine_by_version(online, no_players, version):
+    from apps.API_VK.command.CommonMethods import send_messages
+
     # Если сервак онлайн и нет игроков
     if online and no_players:
         from apps.API_VK.models import VkChat
@@ -21,8 +25,9 @@ def stop_mine_by_version(online, no_players, version):
 
         # Создание событие. Уведомление, что мы скоро всё отрубим
         if created:
-            vk_bot.send_message(chat.chat_id,
-                                f"Если никто не зайдёт на сервак по майну {version}, то через полчаса я его остановлю")
+            message = f"Если никто не зайдёт на сервак по майну {version}, то через полчаса я его остановлю"
+            users_notify = VkUser.objects.filter(groups__name='minecraft_notify')
+            send_messages(vk_bot, users_notify, message)
 
         # Если событие уже было создано, значит пора отрубать
         else:

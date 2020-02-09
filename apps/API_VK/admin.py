@@ -11,8 +11,8 @@ class VkUserAdmin(admin.ModelAdmin):
         # 'is_admin', 'is_moderator', 'is_student', 'is_banned', 'is_minecraft', 'is_terraria'
     )
     list_filter = (
-        'gender',
-        'city'  # 'is_admin', 'is_moderator', 'is_student', 'is_banned', 'city', 'is_minecraft', 'is_terraria')
+        'gender', 'city', 'groups',
+        # 'is_admin', 'is_moderator', 'is_student', 'is_banned', 'city', 'is_minecraft', 'is_terraria')
     )
 
 
