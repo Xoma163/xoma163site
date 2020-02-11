@@ -2,12 +2,9 @@ from apps.API_VK.command.CommonCommand import CommonCommand, role_translator
 
 
 def get_roles(user):
-    roles = role_translator.keys()
     active_roles = []
-    for role in roles:
-        role_true = getattr(user, f'is_{role}')
-        if role_true:
-            active_roles.append(role_translator[role])
+    for group in user.groups.all():
+        active_roles.append(role_translator[group.name])
     return active_roles
 
 

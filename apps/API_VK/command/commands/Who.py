@@ -1,20 +1,20 @@
-from apps.API_VK.command.CommonCommand import CommonCommand, role_translator
+from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.models import VkUser
 
 
-def get_users(chat_id, who):
-    params = {'chats__chat_id': chat_id, f'is_{who}': True}
+def get_users(chat, who):
+    params = {'chats': chat, 'groups__name': who}
     return list(VkUser.objects.filter(**params))
 
 
-def get_roles(user):
-    roles = role_translator.keys()
-    active_roles = []
-    for role in roles:
-        role_true = getattr(user, f'is_{role}')
-        if role_true:
-            active_roles.append(role_translator[role])
-    return active_roles
+# def get_roles(user):
+#     roles = role_translator.keys()
+#     active_roles = []
+#     for role in roles:
+#         role_true = getattr(user, f'is_{role}')
+#         if role_true:
+#             active_roles.append(role_translator[role])
+#     return active_roles
 
 
 class Who(CommonCommand):
@@ -41,7 +41,7 @@ class Who(CommonCommand):
             who = 'banned'
         else:
             return "Не знаю такой роли"
-        users = get_users(self.vk_event.chat.chat_id, who)
+        users = get_users(self.vk_event.chat, who)
         if len(users) > 0:
             users_list = [str(user) for user in users]
             result = "\n".join(users_list)
