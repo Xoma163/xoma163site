@@ -25,7 +25,10 @@ class VkEvent:
             self.payload = json.loads(vk_event['message']['payload'])
             self.msg = None
             self.command = self.payload['command']
-            self.args = [arg for arg in self.payload['args'].values()]
+            if 'args' in self.payload:
+                self.args = [arg for arg in self.payload['args'].values()]
+            else:
+                self.args = None
         else:
             self.msg = vk_event['parsed']['msg']
             self.command = vk_event['parsed']['command']
@@ -35,6 +38,8 @@ class VkEvent:
             self.keys_list = vk_event['parsed']['keys_list']
             self.params = vk_event['parsed']['params']
             self.params_without_keys = vk_event['parsed']['params_without_keys']
+
+            self.payload = None
         if self.chat:
             self.from_chat = True
             self.from_user = False

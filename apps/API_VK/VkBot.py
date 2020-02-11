@@ -191,14 +191,24 @@ class VkBot(threading.Thread):
 
     def menu(self, vk_event, send=True):
         logger.debug(vk_event)
+
         if self.DEBUG and send:
-            debug_message = \
-                f"command = {vk_event.command}\n " \
-                f"args = {vk_event.args}\n " \
-                f"original_args = {vk_event.original_args}\n " \
-                f"keys = {vk_event.keys}\n " \
-                f"params = {vk_event.params}\n" \
-                f"params_without_keys = {vk_event.params_without_keys}"
+            if hasattr(vk_event, 'payload') and vk_event.payload:
+                debug_message = \
+                    f"msg = {vk_event.msg}\n " \
+                    f"command = {vk_event.command}\n " \
+                    f"args = {vk_event.args}\n " \
+                    f"payload = {vk_event.payload}\n "
+            else:
+                debug_message = \
+                    f"msg = {vk_event.msg}\n " \
+                    f"command = {vk_event.command}\n " \
+                    f"args = {vk_event.args}\n " \
+                    f"original_args = {vk_event.original_args}\n " \
+                    f"keys = {vk_event.keys}\n " \
+                    f"keys_list = {vk_event.keys_list}\n " \
+                    f"params = {vk_event.params}\n" \
+                    f"params_without_keys = {vk_event.params_without_keys}"
             self.send_message(vk_event.peer_id, debug_message)
 
         group = vk_event.sender.groups.filter(name='banned')
