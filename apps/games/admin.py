@@ -1,9 +1,10 @@
 from django.contrib import admin
 
-from apps.games.models import Rate, Gamer, PetrovichUser, PetrovichGames, TicTacToeSession
+from apps.games.models import Rate, Gamer, PetrovichUser, PetrovichGames, TicTacToeSession, CodenamesUser, \
+    CodenamesSession
 
 
-# CodenamesUser  # , RateDelete
+# RateDelete
 
 
 @admin.register(Gamer)
@@ -15,13 +16,6 @@ class GamerAdmin(admin.ModelAdmin):
 class RateAdmin(admin.ModelAdmin):
     list_display = ('user', 'chat', 'rate')
     ordering = ('-chat',)
-
-
-#
-# @admin.register(RateDelete)
-# class RateDeleteAdmin(admin.ModelAdmin):
-#     list_display = ('chat', 'message_id')
-#     ordering = ('-chat',)
 
 
 @admin.register(PetrovichUser)
@@ -40,9 +34,13 @@ class PetrovichGamesAdmin(admin.ModelAdmin):
 class TicTacToeSessionAdmin(admin.ModelAdmin):
     list_display = ('user1', 'user2', 'board',)
 
-#
-# @admin.register(CodenamesUser)
-# class CodenamesUserAdmin(admin.ModelAdmin):
-#     list_display = ('user', 'chat', 'command', 'role')
-#     list_filter = ('user', 'chat',)
-#
+
+@admin.register(CodenamesUser)
+class CodenamesUserAdmin(admin.ModelAdmin):
+    list_display = ('user', 'chat', 'command', 'role')
+    list_filter = ('user', 'chat',)
+
+
+@admin.register(CodenamesSession)
+class CodenamesSessionAdmin(admin.ModelAdmin):
+    list_display = ('chat', 'next_step', 'board',)

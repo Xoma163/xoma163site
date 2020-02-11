@@ -47,12 +47,11 @@ class PetrovichUser(models.Model):
     user = models.ForeignKey(VkUser, on_delete=models.SET_NULL, null=True, verbose_name="Пользователь")
     chat = models.ForeignKey(VkChat, verbose_name='Чат', null=True, blank=True, on_delete=models.SET_NULL)
     wins = models.IntegerField(verbose_name="Побед в Петровиче", default=0)
-
     active = models.BooleanField(verbose_name="Активность", default=True)
 
     class Meta:
-        verbose_name = "Игрок Петровича"
-        verbose_name_plural = "Игроки Петровича"
+        verbose_name = "Петрович игрок"
+        verbose_name_plural = "Петрович игроки"
         ordering = ["user"]
 
     def __str__(self):
@@ -65,8 +64,8 @@ class PetrovichGames(models.Model):
     date = models.DateTimeField(verbose_name="Дата", auto_now_add=True, editable=True)
 
     class Meta:
-        verbose_name = "Игра Петровича"
-        verbose_name_plural = "Игры Петровича"
+        verbose_name = "Петровича игра"
+        verbose_name_plural = "Петрович игры"
         ordering = ['-date']
 
     def __str__(self):
@@ -88,28 +87,49 @@ class TicTacToeSession(models.Model):
     board = JSONField(null=True, verbose_name="Поле", default=get_default_board)
 
     class Meta:
-        verbose_name = "Крестики-нолики"
-        verbose_name_plural = "Крестики-нолики"
+        verbose_name = "Крестики-нолики сессия"
+        verbose_name_plural = "Крестики-нолики сессии"
         ordering = ['-next_step']
 
     def __str__(self):
         return str(self.user1) + " " + str(self.user2)
 
-#
-# class CodenamesUser(models.Model):
-#     id = models.AutoField(primary_key=True, verbose_name='ID')
-#     user = models.ForeignKey(VkUser, verbose_name="Пользователь", on_delete=models.SET_NULL, null=True)
-#     chat = models.ForeignKey(VkChat, verbose_name="Чат", on_delete=models.SET_NULL, null=True)
-#     command_list = [('blue', "Синие"), ('red', "Красные")]
-#     command = models.CharField('Команда', choices=command_list, max_length=4, null=True, blank=True)
-#     role_list = [('captain', "Капитан"), ('player', "Игрок")]
-#     role = models.CharField('Команда', choices=role_list, default='player', max_length=7)
-#
-#     class Meta:
-#         verbose_name = "Игрок коднеймса"
-#         verbose_name_plural = "Игроки коднеймса"
-#         ordering = ["chat"]
-#
-#     def __str__(self):
-#         return str(self.chat) + " " + str(self.user)
-#
+
+class CodenamesUser(models.Model):
+    id = models.AutoField(primary_key=True, verbose_name='ID')
+    user = models.ForeignKey(VkUser, verbose_name="Пользователь", on_delete=models.SET_NULL, null=True)
+    chat = models.ForeignKey(VkChat, verbose_name="Чат", on_delete=models.SET_NULL, null=True)
+    command_list = [('blue', "Синие"), ('red', "Красные")]
+    command = models.CharField('Команда', choices=command_list, max_length=4, null=True, blank=True)
+    role_list = [('captain', "Капитан"), ('player', "Игрок")]
+    role = models.CharField('Команда', choices=role_list, default='player', max_length=7)
+
+    class Meta:
+        verbose_name = "Коднеймс игрок"
+        verbose_name_plural = "Коднеймс игроки"
+        ordering = ["chat"]
+
+    def __str__(self):
+        return str(self.user)
+
+
+class CodenamesSession(models.Model):
+    id = models.AutoField(primary_key=True, verbose_name='ID')
+    chat = models.ForeignKey(VkChat, verbose_name="Чат", on_delete=models.SET_NULL, null=True)
+    # red, blue, red_wait, blue_wait, red_extra, blue_extra
+    next_step_list = [('red', "Синие"), ('blue', "Красные"), ('blue_wait', "Капитан синих"),
+                      ('red_extra', "Капитан красных")]
+    next_step = models.CharField(verbose_name="Следующий шаг", null=True, blank=True, choices=next_step_list,
+                                 default="blue_wait", max_length=10)
+    count = models.IntegerField(verbose_name="Загадано слов", null=True, blank=True)
+    word = models.CharField(verbose_name="Загаданное слово", null=True, blank=True, max_length=20)
+    # [[{"Слово":"type"},{"Слово":"type"},...],...] type='red','blue','neutral','death'
+    board = JSONField(null=True, verbose_name="Поле", default=get_default_board)
+
+    class Meta:
+        verbose_name = "Коднеймс сессия"
+        verbose_name_plural = "Коднеймс сессии"
+        ordering = ["chat"]
+
+    def __str__(self):
+        return str(self.id)

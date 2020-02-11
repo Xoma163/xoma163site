@@ -16,6 +16,7 @@ from apps.API_VK.command.commands.EasyCommands.Bye import Bye
 from apps.API_VK.command.commands.EasyCommands.Clear import Clear
 from apps.API_VK.command.commands.EasyCommands.Discord import Discord
 from apps.API_VK.command.commands.EasyCommands.Donate import Donate
+from apps.API_VK.command.commands.EasyCommands.GameConference import GameConference
 from apps.API_VK.command.commands.EasyCommands.Git import Git
 from apps.API_VK.command.commands.EasyCommands.Hi import Hi
 from apps.API_VK.command.commands.EasyCommands.Nya import Nya
@@ -26,7 +27,7 @@ from apps.API_VK.command.commands.EasyCommands.Start_lada import Start_lada
 from apps.API_VK.command.commands.EasyCommands.Thanks import Thanks
 from apps.API_VK.command.commands.Find import Find
 from apps.API_VK.command.commands.Fix import Fix
-# from apps.API_VK.command.commands.Games.Codenames import Codenames
+from apps.API_VK.command.commands.Games.Codenames import Codenames
 from apps.API_VK.command.commands.Games.Petrovich import Petrovich
 from apps.API_VK.command.commands.Games.Rate import Rate
 from apps.API_VK.command.commands.Games.Rates import Rates
@@ -72,7 +73,7 @@ from apps.API_VK.command.commands.Who import Who
 from apps.API_VK.command.commands.YesNo import YesNo
 
 commands = [
-    # Week(), TimeTable(),Codenames()
+    # Week(), TimeTable(),
     Conference(),
     YesNo(), Thanks(), Stream(), Where(), Birds(), Register(), UnRegister(), Petrovich(), Statistics(),
     Random(), Sorry(), Help(), Weather(), Praise(), Scold(), Quote(), Quotes(), Keyboard(), KeyboardHide(),
@@ -81,6 +82,7 @@ commands = [
     get_user_by_id(), update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(),
     Find(), Rate(), Rates(), Translate(), Uptime(), Counter(), Counters(), TicTacToe(), Status(), Fix(), Debug(),
     Start_lada(), ShortLinks(), Time(), Transliteration(), Who(), Permissions(), Cat(), Sho(),
+    Codenames(), GameConference()
 ]
 
 underscore_symbol = "̲"

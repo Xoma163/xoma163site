@@ -191,4 +191,5 @@ role_translator = {
     'minecraft': "майнкрафт",
     'terraria': "террария",
     'student': "студент",
+    'minecraft_notify': "уведомления майна",
 }
