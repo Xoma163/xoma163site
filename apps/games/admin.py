@@ -37,7 +37,7 @@ class TicTacToeSessionAdmin(admin.ModelAdmin):
 
 @admin.register(CodenamesUser)
 class CodenamesUserAdmin(admin.ModelAdmin):
-    list_display = ('user', 'chat', 'command', 'role')
+    list_display = ('user', 'chat', 'command', 'role', 'role_preference')
     list_filter = ('user', 'chat',)
 
 

@@ -103,7 +103,9 @@ class CodenamesUser(models.Model):
     command_list = [('blue', "Синие"), ('red', "Красные")]
     command = models.CharField('Команда', choices=command_list, max_length=4, null=True, blank=True)
     role_list = [('captain', "Капитан"), ('player', "Игрок")]
-    role = models.CharField('Команда', choices=role_list, default='player', max_length=7)
+    role = models.CharField('Роль', choices=role_list, default='player', max_length=7, null=True, blank=True)
+    role_preference = models.CharField('Предпочтения(роль)', choices=role_list, default=None, max_length=7, null=True,
+                                       blank=True)
 
     class Meta:
         verbose_name = "Коднеймс игрок"

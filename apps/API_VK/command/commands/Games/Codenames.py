@@ -61,6 +61,11 @@ translator_commands = {
     'blue': 'синей'
 }
 
+translator_role = {
+    'captain': "Капитан",
+    'player': "Игрок"
+}
+
 
 def check_player_captain(player):
     if player.role == 'captain':
@@ -100,13 +105,18 @@ def get_another_command(command):
         return 'red'
 
 
+def get_str_players(players):
+    codenames_users_list = [f"{str(player.user)} ({translator_role[player.role_preference]})" for player in players]
+    return "\n".join(codenames_users_list)
+
+
 class Codenames(CommonCommand):
     def __init__(self):
         names = ["коднеймс", "codenames", "кн", "км"]
         help_text = "Коднеймс - игра коднеймс"
         detail_help_text = "Коднеймс - игра коднеймс.\n" \
                            "Правила: https://ru.wikipedia.org/wiki/Codenames\n\n" \
-                           "Коднеймс рег - регистрация в игре\n" \
+                           "Коднеймс рег ([N]) - регистрация в игре. N - необязательный параметр, выбор роли, капитан или игрок\n" \
                            "Коднеймс дерег - дерегистрация в игре\n" \
                            "Коднеймс старт - старт игры\n" \
                            "Коднеймс клава - текущая клавиатура игры\n" \
@@ -144,17 +154,23 @@ class Codenames(CommonCommand):
                     if len(CodenamesUser.objects.filter(user=self.vk_event.sender)) > 0:
                         return 'Нельзя участвовать сразу в двух играх'
 
+                    role_preference = None
+                    if len(self.vk_event.args) >= 2:
+                        if self.vk_event.args[1] in ["кэп", "капитан"]:
+                            role_preference = "captain"
+                        elif self.vk_event.args[1] in ["игрок"]:
+                            role_preference = "player"
+                        else:
+                            return "Не знаю такой роли для регистрации"
+
                     codenames_user = CodenamesUser()
                     codenames_user.user = self.vk_event.sender
                     codenames_user.chat = self.vk_event.chat
+                    codenames_user.role_preference = role_preference
                     if not self.session:
                         codenames_user.save()
-
-                        codenames_users_list = [str(player.user) for player in self.players]
-                        codenames_users_str = "\n".join(codenames_users_list)
-
                         return "Зарегистрировал. Сейчас зарегистрированы:\n" \
-                               f"{codenames_users_str}\n"
+                               f"{get_str_players(self.players)}\n"
                     else:
                         if len(self.players) % 2 == 0:
                             codenames_user.command = 'blue'
@@ -162,7 +178,6 @@ class Codenames(CommonCommand):
                             codenames_user.command = 'red'
                         codenames_user.save()
                         return f"Зарегистрировал. Ты в {translator_commands[codenames_user.command]} команде"
-
                 if self.vk_event.args[0].lower() in ['дерег']:
                     self.check_conversation()
                     check_not_session(self.session)
@@ -173,7 +188,7 @@ class Codenames(CommonCommand):
 
                     # ToDo: возможно здесь вывод пользователя будет, надо заново
                     return "Дерегнул. Сейчас зарегистрированы:\n" \
-                           f"{codenames_users_str}\n"
+                           f"{get_str_players(self.players)}\n"
                 elif self.vk_event.args[0].lower() in ['старт']:
                     self.check_conversation()
                     check_not_session(self.session)
@@ -182,10 +197,8 @@ class Codenames(CommonCommand):
                     codenames_users_str = "\n".join(codenames_users_list)
                     if len(self.players) < MIN_USERS:
                         return f"Минимальное количество игроков - {MIN_USERS}. Сейчас зарегистрированы:\n" \
-                               f"{codenames_users_str}"
-
-                    self.prepare_game()
-                    return
+                               f"{get_str_players(self.players)}\n"
+                    return self.prepare_game()
                 elif self.vk_event.args[0].lower() in ['загадать']:
                     check_session(self.session)
                     check_player(self.player)
@@ -235,8 +248,6 @@ class Codenames(CommonCommand):
 
                         find_row = None
                         find_col = None
-
-                        flag_break = False
                         for i, row in enumerate(board):
                             if find_row is not None:
                                 break
@@ -275,7 +286,11 @@ class Codenames(CommonCommand):
 
                         # ToDo: возможно здесь вывод пользователя будет, надо заново
                         return "Сейчас зарегистрированы:\n" \
-                               f"{codenames_users_str}\n"
+                               f"{get_str_players(self.players)}\n"
+                elif self.vk_event.args[0].lower() in ['удалить']:
+                    self.check_sender('admin')
+                    self.session.delete()
+                    return
                 else:
                     return "Не знаю такого аргумента. /ман коднеймс"
             # Регистрация
@@ -311,35 +326,42 @@ class Codenames(CommonCommand):
 
             return words_table
 
-        def set_commands(codenames_users):
-            def set_team(team, color):
-                for codenames_user in team:
-                    codenames_user.command = color
-                    codenames_user.save()
+        preference_captain = self.players.filter(role_preference='captain')
 
-            def set_captain(team):
-                team[0].role = 'captain'
-                team[0].save()
+        if len(preference_captain) < 2:
+            captains = preference_captain | self.players.filter(role_preference=None).order_by('?')[
+                                            :len(preference_captain)]
+        else:
+            captains = preference_captain.order_by('?')[:2]
 
-            codenames_users_shuffled = sorted(codenames_users, key=lambda x: random.random())
+        if len(captains) < 2:
+            return "Недостаточно игроков на роль капитана"
 
-            half_users = int(len(codenames_users_shuffled) / 2)
-            if len(codenames_users_shuffled) % 2 == 1:
-                half_users += 1
+        for captain in captains:
+            captain.role = 'captain'
 
-            blue_team = codenames_users_shuffled[:half_users]
-            red_team = codenames_users_shuffled[half_users:]
+        players = self.players.exclude(pk__in=captains)
+        for player in players:
+            player.role = 'player'
 
-            set_team(blue_team, 'blue')
-            set_team(red_team, 'red')
+        players = sorted(players, key=lambda x: random.random())
+        self.players = CodenamesUser.objects.filter(chat=self.vk_event.chat)
+        half_users = int(len(players) / 2)
+        if len(players) % 2 == 1:
+            half_users += 1
 
-            set_captain(blue_team)
-            set_captain(red_team)
+        commands = {'blue': [], 'red': []}
+        commands['blue'].append(captains[0])
+        commands['red'].append(captains[1])
+        commands['blue'] += players[:half_users]
+        commands['red'] += players[half_users:]
 
-        set_commands(self.players)
+        for command in commands:
+            for user in commands[command]:
+                user.command = command
+                user.save()
 
         board = get_random_words()
-
         session = CodenamesSession()
         session.chat = self.vk_event.chat
         session.board = json.dumps(board)
@@ -349,9 +371,9 @@ class Codenames(CommonCommand):
         self.send_keyboard(board)
         self.vk_bot.send_message(self.vk_event.peer_id, msg=self.get_info())
 
-        for captain in self.players_captains:
+        for captain in captains:
             self.send_captain_keyboard(board, captain,
-                                       msg=f"Вы играете за {translator_commands[captain.command]} команду")
+                                       msg=f"Вы капитан {translator_commands[captain.command]} команды")
 
     # Тык игрока
     def select_word(self, row, col):
@@ -507,7 +529,6 @@ class Codenames(CommonCommand):
     @staticmethod
     # Врап элемента клавиатуры
     def get_elem(elem, for_captain=False, game_over=False):
-
         def get_color():
             if for_captain:
                 captain_color_translate = {
