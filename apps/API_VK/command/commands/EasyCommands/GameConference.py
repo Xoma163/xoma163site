@@ -3,7 +3,7 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 
 class GameConference(CommonCommand):
     def __init__(self):
-        names = ["игровая"]
+        names = ["игровая", "ставошная"]
         help_text = "Игровая - ссылка-приглашение в игровую конфу"
         super().__init__(names, help_text)
 

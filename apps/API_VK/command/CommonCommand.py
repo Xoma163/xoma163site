@@ -110,7 +110,8 @@ class CommonCommand:
         error = "Для работы команды требуются аргументы"
         raise RuntimeError(error)
 
-    def check_int_arg_range(self, arg, val1, val2, banned_list=None):
+    @staticmethod
+    def check_int_arg_range(arg, val1, val2, banned_list=None):
         if val1 <= arg <= val2:
             if banned_list:
                 if arg not in banned_list:

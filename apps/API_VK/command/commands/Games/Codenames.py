@@ -5,7 +5,7 @@ import random
 from threading import Lock
 
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.games.models import CodenamesUser, CodenamesSession
+from apps.games.models import CodenamesUser, CodenamesSession, Gamer
 
 lock = Lock()
 
@@ -112,8 +112,8 @@ class Codenames(CommonCommand):
                            "Коднеймс клава - текущая клавиатура игры\n" \
                            "Коднеймс инфо - команды, кол-во слов, чей ход, загаданное слово\n" \
                            "Коднеймс загадать (N,M) - N - количество слов, M - загадываемое слово, \n" \
-                           "Угадывание происходит путём нажатия на кнопки"
-        super().__init__(names, help_text, detail_help_text)
+                           "Коднеймс слово - (N) - N - слово, которое выбирает команда. (Либо тык в клаву)"
+        super().__init__(names, help_text, detail_help_text, api=False)
 
     def init_var(self):
 
@@ -135,22 +135,36 @@ class Codenames(CommonCommand):
 
             if self.vk_event.args:
                 if self.vk_event.args[0].lower() in ['рег', 'регистрация']:
-                    check_not_session(self.session)
+                    if len(Gamer.objects.filter(user=self.vk_event.sender)) == 0:
+                        Gamer(**{'user': self.vk_event.sender}).save()
+
+                    self.check_conversation()
                     if len(CodenamesUser.objects.filter(chat=self.vk_event.chat, user=self.vk_event.sender)) > 0:
                         return 'Ты уже зарегистрирован'
                     if len(CodenamesUser.objects.filter(user=self.vk_event.sender)) > 0:
                         return 'Нельзя участвовать сразу в двух играх'
+
                     codenames_user = CodenamesUser()
                     codenames_user.user = self.vk_event.sender
                     codenames_user.chat = self.vk_event.chat
-                    codenames_user.save()
+                    if not self.session:
+                        codenames_user.save()
 
-                    codenames_users_list = [str(player.user) for player in self.players]
-                    codenames_users_str = "\n".join(codenames_users_list)
+                        codenames_users_list = [str(player.user) for player in self.players]
+                        codenames_users_str = "\n".join(codenames_users_list)
 
-                    return "Зарегистрировал. Сейчас зарегистрированы:\n" \
-                           f"{codenames_users_str}\n"
+                        return "Зарегистрировал. Сейчас зарегистрированы:\n" \
+                               f"{codenames_users_str}\n"
+                    else:
+                        if len(self.players) % 2 == 0:
+                            codenames_user.command = 'blue'
+                        else:
+                            codenames_user.command = 'red'
+                        codenames_user.save()
+                        return f"Зарегистрировал. Ты в {translator_commands[codenames_user.command]} команде"
+
                 if self.vk_event.args[0].lower() in ['дерег']:
+                    self.check_conversation()
                     check_not_session(self.session)
                     self.player.delete()
 
@@ -182,30 +196,59 @@ class Codenames(CommonCommand):
                     if len(self.vk_event.args) < 3:
                         return "Недостаточно аргументов"
                     self.int_args = [1]
-                    self.parse_int_args()
+                    try:
+                        self.parse_int_args()
+                        count = self.vk_event.args[1]
+                        word = self.vk_event.args[2]
+                    except:
+                        self.int_args = [2]
+                        self.parse_int_args()
+                        word = self.vk_event.args[1]
+                        count = self.vk_event.args[2]
 
-                    count = int(self.vk_event.args[1])
+                    # count = int(self.vk_event.args[1])
                     if count > 9:
                         count = 9
                     elif count < 1:
                         return "Число загадываемых слов не может быть меньше 1"
-                    word = self.vk_event.args[2]
+                    # word = self.vk_event.args[2]
                     self.do_the_riddle(command, count, word)
                     return 'Отправил в конфу'
-                elif self.vk_event.payload:
-                    check_session(self.session)
+                elif self.vk_event.args[0].lower() in ['слово'] or self.vk_event.payload:
                     self.check_conversation()
+                    check_session(self.session)
                     check_player(self.player)
-                    if self.vk_event.payload['args']['action'] in ['слово']:
-                        if self.player.role == 'captain':
-                            return "Капитан не может угадывать"
-                        if self.vk_event.payload['args']['state'] == 'open':
-                            return "Слово уже открыто"
-                        check_next_step(self.session, self.player.command)
+                    if self.player.role == 'captain':
+                        return "Капитан не может угадывать"
+                    check_next_step(self.session, self.player.command)
+                    if self.vk_event.payload:
+                        if self.vk_event.payload['args']['action'] in ['слово']:
+                            if self.vk_event.payload['args']['state'] == 'open':
+                                return "Слово уже открыто"
+                            self.select_word(self.vk_event.payload['args']['row'], self.vk_event.payload['args']['col'])
+                            return
+                        return "Внутренняя ошибка. Неизвестный action в payload"
+                    elif self.vk_event.args[0].lower() in ['слово']:
+                        self.check_args(2)
+                        word = self.vk_event.args[1].capitalize()
+                        board = json.loads(self.session.board)
 
-                        self.select_word(self.vk_event.payload['args']['row'], self.vk_event.payload['args']['col'])
+                        find_row = None
+                        find_col = None
+
+                        flag_break = False
+                        for i, row in enumerate(board):
+                            if find_row is not None:
+                                break
+                            for j, elem in enumerate(row):
+                                if elem['name'] == word:
+                                    find_row = i
+                                    find_col = j
+                                    if elem['state'] == 'open':
+                                        return "Слово уже открыто"
+                                    break
+                        self.select_word(find_row, find_col)
                         return
-                    return "Внутренняя ошибка. Неизвестный action в payload"
                 elif self.vk_event.args[0].lower() in ['клава']:
                     check_session(self.session)
                     check_player(self.player)
@@ -222,11 +265,17 @@ class Codenames(CommonCommand):
                         self.send_keyboard(board)
                     return
                 elif self.vk_event.args[0].lower() in ['инфо', 'инфа', 'информация']:
-                    check_session(self.session)
                     self.check_conversation()
+                    if self.session:
+                        msg = self.get_info()
+                        return msg
+                    else:
+                        codenames_users_list = [str(player.user) for player in self.players]
+                        codenames_users_str = "\n".join(codenames_users_list)
 
-                    msg = self.get_info()
-                    return msg
+                        # ToDo: возможно здесь вывод пользователя будет, надо заново
+                        return "Сейчас зарегистрированы:\n" \
+                               f"{codenames_users_str}\n"
                 else:
                     return "Не знаю такого аргумента. /ман коднеймс"
             # Регистрация
@@ -237,7 +286,6 @@ class Codenames(CommonCommand):
 
     # Подготовка и старт игры
     def prepare_game(self):
-
         def get_random_words():
             words_shuffled = sorted(WORDS, key=lambda x: random.random())[:DIMENSION * DIMENSION]
             team_words_shuffled = []
@@ -302,7 +350,8 @@ class Codenames(CommonCommand):
         self.vk_bot.send_message(self.vk_event.peer_id, msg=self.get_info())
 
         for captain in self.players_captains:
-            self.send_captain_keyboard(board, captain)
+            self.send_captain_keyboard(board, captain,
+                                       msg=f"Вы играете за {translator_commands[captain.command]} команду")
 
     # Тык игрока
     def select_word(self, row, col):
@@ -321,8 +370,9 @@ class Codenames(CommonCommand):
                 self.vk_bot.send_message(self.session.chat.chat_id,
                                          f"Угадали!\nПередаём ход капитану {translator_commands[another_command]} команды ")
 
-                another_captain = self.players_captains.filter(command=another_command).first()
-                self.send_captain_keyboard(board, another_captain)
+                for captain in self.players_captains:
+                    # another_captain = self.players_captains.filter(command=another_command).first()
+                    self.send_captain_keyboard(board, captain)
 
             else:
                 self.vk_bot.send_message(self.session.chat.chat_id,
@@ -336,17 +386,18 @@ class Codenames(CommonCommand):
 
             self.vk_bot.send_message(self.session.chat.chat_id,
                                      f"Не угадали :(\nПередаём ход капитану {translator_commands[another_command]} команды")
-            another_captain = self.players_captains.filter(command=another_command).first()
-            self.send_captain_keyboard(board, another_captain)
+            for captain in self.players_captains:
+                # another_captain = self.players_captains.filter(command=another_command).first()
+                self.send_captain_keyboard(board, captain)
 
         elif selected_word['type'] == 'death':
             self.vk_bot.send_message(self.session.chat.chat_id, f"Смэрт")
-            self.game_over(winner=another_command)
+            self.game_over(another_command, board)
             return
 
         is_game_over = self.check_game_over(board)
         if is_game_over:
-            self.game_over(is_game_over)
+            self.game_over(is_game_over, board)
             return
 
         self.send_keyboard(board)
@@ -388,12 +439,23 @@ class Codenames(CommonCommand):
             return None
 
     # Конец игры
-    def game_over(self, winner):
+    def game_over(self, winner, board):
         from apps.API_VK.command import EMPTY_KEYBOARD
-
+        keyboard = self.get_keyboard(board, for_captain=True, game_over=True)
         self.vk_bot.send_message(self.session.chat.chat_id,
                                  f'Игра закончена.\nПобеда {translator_commands[winner]} команды',
-                                 keyboard=EMPTY_KEYBOARD)
+                                 keyboard=keyboard)
+
+        for captain in self.players_captains:
+            self.vk_bot.send_message(captain.user.user_id,
+                                     "Игра закончена",
+                                     keyboard=EMPTY_KEYBOARD)
+
+        winners = self.players.filter(command=winner)
+        for winner in winners:
+            gamer = Gamer.objects.get(user=winner.user)
+            gamer.codenames_points += 1
+            gamer.save()
 
         self.session.delete()
         self.players.delete()
@@ -444,7 +506,7 @@ class Codenames(CommonCommand):
     # Работа с клавиатурами
     @staticmethod
     # Врап элемента клавиатуры
-    def get_elem(elem, for_captain=False):
+    def get_elem(elem, for_captain=False, game_over=False):
 
         def get_color():
             if for_captain:
@@ -472,11 +534,14 @@ class Codenames(CommonCommand):
                 return color_translate[elem['state']][elem['type']]
 
         def get_name():
-            name_translate = {
-                'open': "".join(["ᅠ" for i in range(2)]),
-                'close': elem['name']
-            }
-            return name_translate[elem['state']]
+            if game_over:
+                return elem['name']
+            else:
+                name_translate = {
+                    'open': "".join(["ᅠ" for i in range(2)]),
+                    'close': elem['name']
+                }
+                return name_translate[elem['state']]
 
         return {
             "action": {
@@ -512,12 +577,12 @@ class Codenames(CommonCommand):
         return keyboards
 
     # Обычная клава
-    def get_keyboard(self, table, for_captain=False):
+    def get_keyboard(self, table, for_captain=False, game_over=False):
         buttons = []
         for i, row in enumerate(table):
             rows = []
             for j, elem in enumerate(row):
-                rows.append(self.get_elem(elem, for_captain))
+                rows.append(self.get_elem(elem, for_captain, game_over))
             buttons.append(rows)
 
         keyboard = {
@@ -528,26 +593,26 @@ class Codenames(CommonCommand):
 
     def send_keyboard(self, board):
         keyboard = self.get_keyboard(board)
-        self.vk_bot.send_message(self.session.chat.chat_id, msg="&#13;", keyboard=keyboard)
+        self.vk_bot.send_message(self.session.chat.chat_id, msg="Лови клаву", keyboard=keyboard)
 
-        keyboards = self.get_inline_keyboard(board)
-        for keyboard in keyboards:
-            labels = [button['action']['label'] for button in keyboard['buttons'][0]]
-            keyboard_str = ", ".join(labels)
-            self.vk_bot.send_message(self.session.chat.chat_id, msg=keyboard_str, keyboard=keyboard)
+        # keyboards = self.get_inline_keyboard(board)
+        # for keyboard in keyboards:
+        #     labels = [button['action']['label'] for button in keyboard['buttons'][0]]
+        #     keyboard_str = ", ".join(labels)
+        #     self.vk_bot.send_message(self.session.chat.chat_id, msg=keyboard_str, keyboard=keyboard)
 
-    def send_captain_keyboard(self, board, captain=None):
+    def send_captain_keyboard(self, board, captain=None, msg="Лови клаву"):
         if captain:
             peer_id = captain.user.user_id
         else:
             peer_id = self.vk_event.peer_id
 
         keyboard = self.get_keyboard(board, for_captain=True)
-        self.vk_bot.send_message(peer_id, msg="&#13;", keyboard=keyboard)
+        self.vk_bot.send_message(peer_id, msg=msg, keyboard=keyboard)
 
-        keyboards = self.get_inline_keyboard(board, for_captain=True)
-
-        for keyboard in keyboards:
-            labels = [button['action']['label'] for button in keyboard['buttons'][0]]
-            keyboard_str = ", ".join(labels)
-            self.vk_bot.send_message(peer_id, msg=keyboard_str, keyboard=keyboard)
+        # keyboards = self.get_inline_keyboard(board, for_captain=True)
+        #
+        # for keyboard in keyboards:
+        #     labels = [button['action']['label'] for button in keyboard['buttons'][0]]
+        #     keyboard_str = ", ".join(labels)
+        #     self.vk_bot.send_message(peer_id, msg=keyboard_str, keyboard=keyboard)

@@ -13,7 +13,8 @@ class Statistics(CommonCommand):
     def start(self):
         args_translator = {'петрович': self.get_petrovich,
                            'ставки': self.get_rates,
-                           'крестики': self.get_tic_tac_toe}
+                           'крестики': self.get_tic_tac_toe,
+                           'коднеймс': self.get_codenames}
 
         if self.vk_event.args:
             arg = self.vk_event.args[0].lower()
@@ -59,6 +60,19 @@ class Statistics(CommonCommand):
             result_list.append([gamer, gamer.tic_tac_toe_points])
 
         msg = "Победители крестиков-ноликов:\n"
+        for result in result_list:
+            msg += "%s - %s\n" % (result[0], result[1])
+
+        return msg
+
+    @staticmethod
+    def get_codenames():
+        gamers = Gamer.objects.exclude(codenames_points=0).order_by('-codenames_points')
+        result_list = []
+        for gamer in gamers:
+            result_list.append([gamer, gamer.tic_tac_toe_points])
+
+        msg = "Победители коднеймса:\n"
         for result in result_list:
             msg += "%s - %s\n" % (result[0], result[1])
 

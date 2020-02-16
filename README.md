@@ -116,13 +116,13 @@ A: В CommonCommand есть следующие методы:
 - check_command_time(name,time) - Проверяет, не вышло ли время для повторного использования какого-либо функционала (см Start/Stop/Restart в ModeratorCommand)
 - check_attachments - Проверяет, есть ли вложения
 
-
-
-
+---
 
 Q: **Как работать с API?**
 
-A: https://api.xoma163.xyz/
+A: 
+
+https://api.xoma163.xyz/
 
 Обязательные параметры
 - msg - сообщение боту

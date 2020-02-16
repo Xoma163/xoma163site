@@ -10,6 +10,7 @@ class Gamer(models.Model):
     user = models.ForeignKey(VkUser, verbose_name="Игрок", on_delete=models.SET_NULL, null=True)
     points = models.IntegerField(verbose_name="Очки", default=0)
     tic_tac_toe_points = models.IntegerField(verbose_name="Очки крестики-нолики", default=0)
+    codenames_points = models.IntegerField(verbose_name="Очки коднеймса", default=0)
 
     class Meta:
         verbose_name = "Игрок"
