@@ -241,10 +241,8 @@ class Codenames(CommonCommand):
                     check_next_step(self.session, self.player.command)
                     if self.vk_event.payload:
                         if self.vk_event.payload['args']['action'] in ['слово']:
-                            if self.vk_event.payload['args']['state'] == 'open':
-                                return "Слово уже открыто"
-                            self.select_word(self.vk_event.payload['args']['row'], self.vk_event.payload['args']['col'])
-                            return
+                            return self.select_word(self.vk_event.payload['args']['row'],
+                                                    self.vk_event.payload['args']['col'])
                         return "Внутренняя ошибка. Неизвестный action в payload"
                     elif self.vk_event.args[0].lower() in ['слово']:
                         self.check_args(2)
@@ -334,8 +332,8 @@ class Codenames(CommonCommand):
         preference_captain = self.players.filter(role_preference='captain')
 
         if len(preference_captain) < 2:
-            captains = preference_captain | self.players.filter(role_preference=None).order_by('?')[
-                                            :len(preference_captain)]
+            preference_none = self.players.filter(role_preference=None).order_by('?')[:(2 - len(preference_captain))]
+            captains = preference_captain | preference_none
         else:
             captains = preference_captain.order_by('?')[:2]
 
@@ -344,10 +342,15 @@ class Codenames(CommonCommand):
 
         for captain in captains:
             captain.role = 'captain'
+            # ToDo: по-моему это необязательно
+            # captain.save()
 
-        players = self.players.exclude(pk__in=captains)
+        # ToDo вот этот эксклюд можно как-то покрасивее наверное сделать
+        players = self.players.exclude(id__in=[captain.id for captain in captains])
         for player in players:
             player.role = 'player'
+            # ToDo: по-моему это необязательно
+            # player.save()
 
         players = sorted(players, key=lambda x: random.random())
         self.players = CodenamesUser.objects.filter(chat=self.vk_event.chat)
@@ -383,6 +386,8 @@ class Codenames(CommonCommand):
     # Тык игрока
     def select_word(self, row, col):
         board = json.loads(self.session.board)
+        if board[row][col]['state'] == 'open':
+            return "Слово уже открыто"
 
         command = self.player.command
         another_command = get_another_command(command)
@@ -428,6 +433,7 @@ class Codenames(CommonCommand):
             return
 
         self.send_keyboard(board)
+        return
 
     # Загадка капитана
     def do_the_riddle(self, command, count, word):
@@ -516,8 +522,9 @@ class Codenames(CommonCommand):
 
         riddle = None
         if self.session.next_step == 'red' or self.session.next_step == 'blue':
-            riddle = f"{translator[self.session.next_step + '_wait'].capitalize()}:\n{self.session.count} - {self.session.word}"
-
+            riddle = f"{translator[self.session.next_step + '_wait'].capitalize()}:\n" \
+                     f"{self.session.count} - {self.session.word}\n" \
+ \
         step = f'Сейчас ходит {translator[self.session.next_step]}'
 
         spacer = "-----------------------------------------------------------"

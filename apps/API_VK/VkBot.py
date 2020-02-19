@@ -259,7 +259,7 @@ class VkBot(threading.Thread):
         if tanimoto_max >= 1:
             tanimoto_max = 1
         if tanimoto_max != 0:
-            msg += f"Возможно вы имели ввиду {similar_command} с вероятностью {round(tanimoto_max * 100, 2)}%"
+            msg += f"Возможно вы имели в виду {similar_command} с вероятностью {round(tanimoto_max * 100, 2)}%"
 
         if send:
             self.send_message(vk_event.peer_id, msg)
