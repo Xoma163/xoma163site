@@ -523,8 +523,7 @@ class Codenames(CommonCommand):
         riddle = None
         if self.session.next_step == 'red' or self.session.next_step == 'blue':
             riddle = f"{translator[self.session.next_step + '_wait'].capitalize()}:\n" \
-                     f"{self.session.count} - {self.session.word}\n" \
- \
+                     f"{self.session.count} - {self.session.word}\n"
         step = f'Сейчас ходит {translator[self.session.next_step]}'
 
         spacer = "-----------------------------------------------------------"
