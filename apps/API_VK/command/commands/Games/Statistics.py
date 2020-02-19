@@ -70,7 +70,7 @@ class Statistics(CommonCommand):
         gamers = Gamer.objects.exclude(codenames_points=0).order_by('-codenames_points')
         result_list = []
         for gamer in gamers:
-            result_list.append([gamer, gamer.tic_tac_toe_points])
+            result_list.append([gamer, gamer.codenames_points])
 
         msg = "Победители коднеймса:\n"
         for result in result_list:

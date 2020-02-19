@@ -106,7 +106,12 @@ def get_another_command(command):
 
 
 def get_str_players(players):
-    codenames_users_list = [f"{str(player.user)} ({translator_role[player.role_preference]})" for player in players]
+    codenames_users_list = []
+    for player in players:
+        if player.role_preference:
+            codenames_users_list.append(f"{str(player.user)} ({translator_role[player.role_preference]})")
+        else:
+            codenames_users_list.append(f"{str(player.user)}")
     return "\n".join(codenames_users_list)
 
 
@@ -115,7 +120,7 @@ class Codenames(CommonCommand):
         names = ["коднеймс", "codenames", "кн", "км"]
         help_text = "Коднеймс - игра коднеймс"
         detail_help_text = "Коднеймс - игра коднеймс.\n" \
-                           "Правила: https://ru.wikipedia.org/wiki/Codenames\n\n" \
+                           "Правила: https://tesera.ru/images/items/657300/codenames_rules_ru_1_5.pdf\n\n" \
                            "Коднеймс рег ([N]) - регистрация в игре. N - необязательный параметр, выбор роли, капитан или игрок\n" \
                            "Коднеймс дерег - дерегистрация в игре\n" \
                            "Коднеймс старт - старт игры\n" \

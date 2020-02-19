@@ -9,7 +9,7 @@ from apps.games.models import Rate, Gamer, PetrovichUser, PetrovichGames, TicTac
 
 @admin.register(Gamer)
 class GamerAdmin(admin.ModelAdmin):
-    list_display = ('user', 'points', 'tic_tac_toe_points')
+    list_display = ('user', 'points', 'tic_tac_toe_points', 'codenames_points')
 
 
 @admin.register(Rate)
