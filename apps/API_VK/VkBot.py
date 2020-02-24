@@ -6,6 +6,7 @@ import threading
 import traceback
 
 import vk_api
+from django.contrib.auth.models import Group
 from vk_api import VkUpload
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.utils import get_random_id
@@ -391,6 +392,8 @@ class VkBot(threading.Thread):
                 vk_user.city = user['city']['title']
             if 'screen_name' in user:
                 vk_user.nickname = user['screen_name']
+            group_user = Group.objects.get(name='user')
+            vk_user.groups.add(group_user)
             vk_user.save()
         return vk_user
 

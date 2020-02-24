@@ -284,16 +284,15 @@ class Codenames(CommonCommand):
                         msg = self.get_info()
                         return msg
                     else:
-                        codenames_users_list = [str(player.user) for player in self.players]
-                        codenames_users_str = "\n".join(codenames_users_list)
-
-                        # ToDo: возможно здесь вывод пользователя будет, надо заново
                         return "Сейчас зарегистрированы:\n" \
                                f"{get_str_players(self.players)}\n"
                 elif self.vk_event.args[0].lower() in ['удалить']:
                     self.check_sender('admin')
-                    self.session.delete()
-                    return
+                    if self.session is None:
+                        return "Нечего удалять"
+                    else:
+                        self.session.delete()
+                        return "Удалил"
                 else:
                     return "Не знаю такого аргумента. /ман коднеймс"
             # Регистрация

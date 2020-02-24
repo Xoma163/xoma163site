@@ -159,10 +159,10 @@ class TicTacToe(CommonCommand):
         session.save()
         keyboard = get_keyboard_by_board(json.loads(session.board))
         self.vk_bot.send_message(session.user1.user_id,
-                                 f"Второй игрок - {session.user2}\n Ваш ход\nВы играете за ❌",
+                                 f"Второй игрок - {session.user2}\nВаш ход\nВы играете за ❌",
                                  keyboard=keyboard)
         self.vk_bot.send_message(session.user2.user_id,
-                                 f"Второй игрок - {session.user1}\n Ход второго игрока\nВы играете за ⭕",
+                                 f"Второй игрок - {session.user1}\nХод второго игрока\nВы играете за ⭕",
                                  keyboard=keyboard)
 
 

@@ -1,5 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command.CommonMethods import check_user_role
+from apps.API_VK.command.CommonMethods import check_user_group
 
 
 def get_help_for_command(help_command):
@@ -40,16 +40,27 @@ class Help(CommonCommand):
             help_texts = HELP_TEXT
         output = "\n— общие команды —\n"
         output += help_texts['user']
-        output += "\n"
 
-        if check_user_role(self.vk_event.sender, 'student'):
-            output += "\n— команды для группы 6221 —\n"
+        if check_user_group(self.vk_event.sender, 'student'):
+            output += "\n\n— команды для группы 6221 —\n"
             output += help_texts['student']
-        if check_user_role(self.vk_event.sender, 'moderator'):
-            output += "\n— команды для модераторов —\n"
+        if check_user_group(self.vk_event.sender, 'moderator'):
+            output += "\n\n— команды для модераторов —\n"
             output += help_texts['moderator']
-        if check_user_role(self.vk_event.sender, 'admin'):
-            output += "\n— команды для администраторов —\n"
+        if check_user_group(self.vk_event.sender, 'admin'):
+            output += "\n\n— команды для администраторов —\n"
+            output += help_texts['admin']
+        if check_user_group(self.vk_event.sender, 'banned'):
+            output += "\n\n— команды для забаненных —\n"
+            output += help_texts['admin']
+        if check_user_group(self.vk_event.sender, 'minecraft'):
+            output += "\n\n— команды для игроков майнкрафта —\n"
+            output += help_texts['admin']
+        if check_user_group(self.vk_event.sender, 'minecraft_notify'):
+            output += "\n\n— команды для уведомлённых майнкрафтеров —\n"
+            output += help_texts['admin']
+        if check_user_group(self.vk_event.sender, 'terraria'):
+            output += "\n\n— команды для игроков террарии —\n"
             output += help_texts['admin']
 
         return output

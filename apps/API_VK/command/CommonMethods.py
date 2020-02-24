@@ -26,9 +26,14 @@ def has_cyrillic(text):
     return bool(re.search('[а-яА-Я]', text))
 
 
-def check_user_role(user, role):
+def check_user_group(user, role):
     group = user.groups.filter(name=role)
     return group.exists()
+
+
+def get_user_groups(user):
+    groups = user.groups.all().values()
+    return [group['name'] for group in groups]
 
 
 def _send_messages_thread(vk_bot, users, message):

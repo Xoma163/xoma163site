@@ -1,5 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command.CommonMethods import check_user_role
+from apps.API_VK.command.CommonMethods import get_user_groups
 
 
 class Keyboard(CommonCommand):
@@ -17,15 +17,10 @@ def get_keyboard(sender):
 
     buttons = []
 
-    if check_user_role(sender, 'admin'):
-        buttons += KEYBOARDS['admin']
-    if check_user_role(sender, 'moderator'):
-        buttons += KEYBOARDS['moderator']
-    if check_user_role(sender, 'student'):
-        buttons += KEYBOARDS['student']
-    if check_user_role(sender, 'minecraft'):
-        buttons += KEYBOARDS['minecraft']
-    buttons += KEYBOARDS['user']
+    user_groups = get_user_groups(sender)
+
+    for group in user_groups:
+        buttons += KEYBOARDS[group]
 
     keyboard = {
         "one_time": False,

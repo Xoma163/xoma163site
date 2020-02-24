@@ -1,3 +1,5 @@
+from django.contrib.auth.models import Group
+
 from apps.API_VK.command.commands.AdminCommands.Ban import Ban
 from apps.API_VK.command.commands.AdminCommands.Command import Command
 from apps.API_VK.command.commands.AdminCommands.Control import Control
@@ -85,13 +87,14 @@ commands = [
     Codenames(), GameConference()
 ]
 
-underscore_symbol = "̲"
-for command in commands:
-    if command.help_text:
-        find_dash = command.help_text.find('-') - 1
-        underscore_help_text = underscore_symbol.join(list(command.help_text[:find_dash]))
-        other_help_text = command.help_text[find_dash:]
-        command.help_text = underscore_symbol + underscore_help_text + other_help_text
+
+# underscore_symbol = "̲"
+# for command in commands:
+#     if command.help_text:
+#         find_dash = command.help_text.find('-') - 1
+#         underscore_help_text = underscore_symbol.join(list(command.help_text[:find_dash]))
+#         other_help_text = command.help_text[find_dash:]
+#         command.help_text = underscore_symbol + underscore_help_text + other_help_text
 
 
 def get_commands():
@@ -99,14 +102,20 @@ def get_commands():
 
 
 def get_groups():
-    return ['user', 'admin', 'moderator', 'student', 'minecraft']
+    groups = Group.objects.all().values('name')
+    groups_names = [group['name'] for group in groups]
+    return groups_names
 
 
-HELP_TEXT = {group: "" for group in get_groups()}
-API_HELP_TEXT = {group: "" for group in get_groups()}
+GROUPS = get_groups()
+
+HELP_TEXT = {group: "" for group in GROUPS}
+API_HELP_TEXT = {group: "" for group in GROUPS}
 
 
 def generate_help_text():
+    help_text_list = {group: [] for group in GROUPS}
+    api_help_text_list = {group: [] for group in GROUPS}
     for command in commands:
         if command.help_text:
             help_text = command.help_text
@@ -118,13 +127,20 @@ def generate_help_text():
 
             if type(help_text) == list:
                 for text in help_text:
-                    HELP_TEXT[text['for']] += f"{text['text']}\n"
+                    help_text_list[text['for']].append(text['text'])
                     if command.api:
-                        API_HELP_TEXT[text['for']] += f"{text['text']}\n"
+                        api_help_text_list[text['for']].append(text['text'])
+
+    for group in GROUPS:
+        help_text_list[group].sort()
+        HELP_TEXT[group] = "\n".join(help_text_list[group])
+
+        api_help_text_list[group].sort()
+        API_HELP_TEXT[group] = "\n".join(api_help_text_list[group])
 
 
 def get_keyboard():
-    keys = {group: [] for group in get_groups()}
+    keys = {group: [] for group in GROUPS}
     for command in commands:
         key = command.keyboard
         if key:
@@ -137,7 +153,7 @@ def get_keyboard():
                     else:
                         keys[command.access].append(elem)
 
-    buttons = {group: [] for group in get_groups()}
+    buttons = {group: [] for group in GROUPS}
     for k in keys:
         keys[k] = sorted(keys[k], key=lambda i: (i['row'], i['col']))
     color_translate = {

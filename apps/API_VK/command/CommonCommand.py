@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from apps.API_VK.command.CommonMethods import check_user_role
+from apps.API_VK.command.CommonMethods import check_user_group
 from apps.Statistics.models import Service
 
 
@@ -92,7 +92,7 @@ class CommonCommand:
     #     raise RuntimeError(error)
 
     def check_sender(self, role):
-        if check_user_role(self.vk_event.sender, role):
+        if check_user_group(self.vk_event.sender, role):
             return True
         error = f"Команда доступна только для пользователей с уровнем прав {role_translator[role]}"
         raise RuntimeError(error)
