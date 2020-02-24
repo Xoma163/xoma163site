@@ -8,6 +8,7 @@ from apps.API_VK.command.commands.AdminCommands.Reboot import Reboot
 from apps.API_VK.command.commands.AdminCommands.Service.get_conversations import get_conversations
 from apps.API_VK.command.commands.AdminCommands.Service.get_user_by_id import get_user_by_id
 from apps.API_VK.command.commands.AdminCommands.Service.update_users import update_users
+from apps.API_VK.command.commands.Bash import Bash
 from apps.API_VK.command.commands.Birds import Birds
 from apps.API_VK.command.commands.Cat import Cat
 from apps.API_VK.command.commands.Conference import Conference
@@ -84,7 +85,7 @@ commands = [
     get_user_by_id(), update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(),
     Find(), Rate(), Rates(), Translate(), Uptime(), Counter(), Counters(), TicTacToe(), Status(), Fix(), Debug(),
     Start_lada(), ShortLinks(), Time(), Transliteration(), Who(), Permissions(), Cat(), Sho(),
-    Codenames(), GameConference()
+    Codenames(), GameConference(), Bash()
 ]
 
 
