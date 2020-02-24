@@ -13,6 +13,7 @@ from vk_api.utils import get_random_id
 
 from apps.API_VK.VkEvent import VkEvent
 from apps.API_VK.command import get_commands
+from apps.API_VK.command.CommonMethods import check_user_group
 from apps.API_VK.models import VkUser, VkBot, VkChat
 from apps.Statistics.views import append_command_to_statistics
 from secrets.secrets import secrets
@@ -218,7 +219,7 @@ class VkBot(threading.Thread):
 
         # Проверяем не остановлен ли бот, если так, то проверяем вводимая команда = старт?
         if not self.check_bot_working():
-            if not vk_event.sender.is_admin:
+            if not check_user_group(vk_event.sender, 'admin'):
                 return
 
             if vk_event.command in ['старт']:
