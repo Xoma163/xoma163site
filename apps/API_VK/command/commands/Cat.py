@@ -19,7 +19,7 @@ class Cat(CommonCommand):
         super().__init__(names, help_text, detail_help_text, api=False)
 
     def start(self):
-        from apps.API_VK.VkBot import parse_attachments
+        from apps.API_VK.VkBotClass import parse_attachments
 
         if not (self.vk_event.attachments or self.vk_event.fwd):
             return "Пришлите фотографии или перешлите сообщения с фотографиями"

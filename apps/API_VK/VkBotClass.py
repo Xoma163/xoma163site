@@ -14,7 +14,7 @@ from vk_api.utils import get_random_id
 from apps.API_VK.VkEvent import VkEvent
 from apps.API_VK.command import get_commands
 from apps.API_VK.command.CommonMethods import check_user_group
-from apps.API_VK.models import VkUser, VkBot, VkChat
+from apps.API_VK.models import VkUser, VkChat, VkBot
 from apps.Statistics.views import append_command_to_statistics
 from secrets.secrets import secrets
 
@@ -161,7 +161,7 @@ def tanimoto(s1, s2):
     return c / (a + b - c)
 
 
-class VkBot(threading.Thread):
+class VkBotClass(threading.Thread):
     def send_message(self, peer_id, msg="ᅠ", attachments=None, keyboard=None, **kwargs):
         if attachments is None:
             attachments = []

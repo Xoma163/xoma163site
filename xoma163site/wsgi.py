@@ -19,9 +19,9 @@ django.setup()
 from apps.birds.CameraHandler import CameraHandler
 
 cameraHandler = CameraHandler()
-from apps.API_VK.VkBot import VkBot
+from apps.API_VK.VkBotClass import VkBotClass
 
-vk_bot = VkBot()
+vk_bot = VkBotClass()
 # if not os.path.exists(BASE_DIR + '/thread.lock'):
 #     open(BASE_DIR + '/thread.lock', 'w')
 #
