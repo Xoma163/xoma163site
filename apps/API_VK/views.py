@@ -98,7 +98,7 @@ def petrovich(request):
     if request.method == "GET":
         msg = request.GET.get('msg', None)
         test = check_bool(request.GET.get('test', False))
-        send = check_bool(request.GET.get('send', True))
+        send = check_bool(request.GET.get('send', False))
         from_chat = check_bool(request.GET.get('from_chat', True))
     elif request.method == "POST":
         msg = request.POST.get('msg', None)

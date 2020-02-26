@@ -49,6 +49,8 @@ class VkEvent:
 
         if 'attachments' in vk_event:
             self.attachments = vk_event['attachments']
+        else:
+            self.attachments = None
 
         if 'fwd' in vk_event:
             self.fwd = vk_event['fwd']

@@ -26,9 +26,9 @@ def parse_bash(quotes_count):
         bash_quotes = []
         for i in range(quotes_count):
             html_quote = "\n".join(html_quotes[i].xpath('text()'))
-            bash_quotes.append(html_quote)
+            bash_quotes.append(html_quote.strip('\n').strip(' ').strip('\n'))
 
-        return "——————————————————".join(bash_quotes)
+        return "\n——————————————————\n".join(bash_quotes)
     except Exception as e:
         print(e)
         return "Ошибка"

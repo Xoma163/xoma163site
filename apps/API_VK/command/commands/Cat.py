@@ -16,7 +16,7 @@ class Cat(CommonCommand):
         names = ["кот"]
         help_text = "Кот - добавить всратого кота в базу"
         detail_help_text = "Кот + вложение/пересылаемое сообщение с вложением - добавляет кота в БД"
-        super().__init__(names, help_text, detail_help_text)
+        super().__init__(names, help_text, detail_help_text, api=False)
 
     def start(self):
         from apps.API_VK.VkBot import parse_attachments
