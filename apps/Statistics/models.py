@@ -63,6 +63,15 @@ class Counter(models.Model):
         return self.name
 
 
+def get_image_from_url(url):
+    if url:
+        ext = url.split('.')[-1]
+        img_temp = NamedTemporaryFile(delete=True)
+        img_temp.write(urlopen(url).read())
+        img_temp.flush()
+        return ext, img_temp
+
+
 class Cat(models.Model):
     id = models.AutoField(primary_key=True)
     image = models.ImageField(upload_to='service/cats/', verbose_name="Изображение")
@@ -75,13 +84,10 @@ class Cat(models.Model):
     def __str__(self):
         return str(self.id)
 
-    def get_remote_image(self, url):
-        if url and not self.image:
-            format = url.split('.')[-1]
-            img_temp = NamedTemporaryFile(delete=True)
-            img_temp.write(urlopen(url).read())
-            img_temp.flush()
-            self.image.save(f"cat.{format}", File(img_temp))
+    def save_remote_image(self, url):
+        if not self.image:
+            ext, image = get_image_from_url(url)
+            self.image.save(f"cat.{ext}", File(image))
         self.save()
 
     def preview(self):
@@ -99,3 +105,32 @@ def log_deleted_question(sender, instance, using, **kwargs):
         os.remove(delete_path)
     except FileNotFoundError:
         print("Warn: Кот удалён, но файл картинки не найден")
+
+
+class Meme(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(verbose_name="Название", max_length=1000, default="")
+    link = models.CharField(verbose_name="Ссылка", max_length=1000, default="", null=True, blank=True)
+    image = models.ImageField(upload_to='service/memes/', verbose_name="Изображение", null=True, blank=True)
+    author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
+
+    class Meta:
+        verbose_name = "мем"
+        verbose_name_plural = "мемы"
+        ordering = ["name"]
+
+    def __str__(self):
+        return str(self.name)
+
+    def save_remote_image(self, url):
+        if not self.image:
+            ext, image = get_image_from_url(url)
+            self.image.save(f"{self.name}.{ext}", File(image))
+        self.save()
+
+    def preview(self):
+        if self.image:
+            from django.utils.safestring import mark_safe
+            return mark_safe(u'<img src="{0}" width="150"/>'.format(self.image.url))
+        else:
+            return '(Нет изображения)'

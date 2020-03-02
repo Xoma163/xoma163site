@@ -5,7 +5,7 @@ from xoma163site.settings import MAIN_SITE
 
 def add_cat(cat_image):
     cat = CatModel()
-    cat.get_remote_image(cat_image['url'])
+    cat.save_remote_image(cat_image['url'])
     cat.author = cat_image['author']
     cat.save()
     return MAIN_SITE + cat.image.url

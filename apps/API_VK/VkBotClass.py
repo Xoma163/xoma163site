@@ -180,7 +180,7 @@ class VkBotClass(threading.Thread):
                               )
 
     def parse_and_send_msgs(self, peer_id, result):
-        if type(result) == str:
+        if type(result) == str or type(result) == int:
             result = {'msg': result}
         if type(result) == dict:
             result = [result]
@@ -495,9 +495,10 @@ class VkBotClass(threading.Thread):
     def check_bot_working(self):
         return self.BOT_CAN_WORK
 
-    def upload_photo(self, path):
+    def upload_photo(self, path, delete=True):
         photo = self.upload.photo_messages(path)[0]
-        os.remove(path)
+        if delete:
+            os.remove(path)
         return f"photo{photo['owner_id']}_{photo['id']}"
 
     def get_photo_by_id(self, photo_id, group_id=None):
@@ -505,9 +506,10 @@ class VkBotClass(threading.Thread):
             group_id = f'-{self.group_id}'
         return f"photo{group_id}_{photo_id}"
 
-    def upload_document(self, path, peer_id, title='Документ'):
+    def upload_document(self, path, peer_id, title='Документ', delete=True):
         doc = self.upload.document_message(path, title=title, peer_id=peer_id)['doc']
-        os.remove(path)
+        if delete:
+            os.remove(path)
         return f"doc{doc['owner_id']}_{doc['id']}"
 
 

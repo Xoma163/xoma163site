@@ -42,6 +42,8 @@ from apps.API_VK.command.commands.Issues import Issues
 from apps.API_VK.command.commands.Joke import Joke
 from apps.API_VK.command.commands.Keyboard import Keyboard
 from apps.API_VK.command.commands.KeyboardHide import KeyboardHide
+from apps.API_VK.command.commands.Meme import Meme
+from apps.API_VK.command.commands.Memes import Memes
 from apps.API_VK.command.commands.ModeratorCommands.Debug import Debug
 from apps.API_VK.command.commands.ModeratorCommands.Logs import Logs
 from apps.API_VK.command.commands.ModeratorCommands.Restart import Restart
@@ -85,7 +87,7 @@ commands = [
     get_user_by_id(), update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(),
     Find(), Rate(), Rates(), Translate(), Uptime(), Counter(), Counters(), TicTacToe(), Status(), Fix(), Debug(),
     Start_lada(), ShortLinks(), Time(), Transliteration(), Who(), Permissions(), Cat(), Sho(),
-    Codenames(), GameConference(), Bash()
+    Codenames(), GameConference(), Bash(), Meme(), Memes()
 ]
 
 
