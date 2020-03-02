@@ -193,4 +193,6 @@ role_translator = {
     'terraria': "террария",
     'student': "студент",
     'minecraft_notify': "уведомления майна",
+    'user': 'пользователь',
+    'ban': 'забанен'
 }

@@ -8,7 +8,7 @@ class ShortLinks(CommonCommand):
         names = ["сс", "cc"]
         help_text = "Сс - сокращение ссылки"
         detail_help_text = "Сс (N) или пересылаемое сообщение - сокращение ссылки, N - длинная ссылка"
-        super().__init__(names, help_text, detail_help_text)
+        super().__init__(names, help_text, detail_help_text, args=1)
 
     def start(self):
         msgs = self.vk_event.fwd

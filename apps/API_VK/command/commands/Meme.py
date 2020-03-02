@@ -61,7 +61,10 @@ class Meme(CommonCommand):
             else:
                 return "Не передан url видео или не прикреплена картинка"
         else:
-            memes = MemeModel.objects.filter(name__icontains=self.vk_event.original_args)[:10]
+            # memes = MemeModel.objects.filter(name__icontains=self.vk_event.original_args)[:10]
+            memes = MemeModel.objects.all()
+            for arg in self.vk_event.args:
+                memes = memes.filter(name__icontains=arg)
             if len(memes) == 0:
                 # ToDo: Тонимото?
                 return "Не нашёл :("
