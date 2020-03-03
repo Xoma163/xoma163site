@@ -1,4 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
+
 from apps.Statistics.models import Meme as MemeModel
 
 IMAGE_EXTS = ['jpg', 'jpeg', 'png']
@@ -37,9 +38,17 @@ class Meme(CommonCommand):
                 new_meme = {'name': self.vk_event.original_args.split(' ', 1)[1], 'author': self.vk_event.sender}
                 if check_name_exists(new_meme['name']):
                     return "Мем с таким названием уже есть"
-                meme = MemeModel(**new_meme)
-                meme.save()
-                meme.save_remote_image(self.vk_event.attachments[0]['url'])
+                attachment = self.vk_event.attachments[0]
+                if attachment['type'] == 'photo':
+                    meme = MemeModel(**new_meme)
+                    meme.save()
+                    meme.save_remote_image(attachment['url'])
+                elif attachment['type'] == 'video':
+                    new_meme['link'] = attachment['url']
+                    meme = MemeModel(**new_meme)
+                    meme.save()
+                else:
+                    return "Не знаю такого типа вложения"
                 return "Сохранил"
             elif len(self.vk_event.args) >= 3:
                 new_meme = {'link': self.vk_event.args[-1], 'author': self.vk_event.sender}
@@ -72,9 +81,10 @@ class Meme(CommonCommand):
                 return self.send_1_meme(memes.first())
             else:
                 for meme in memes:
-                    if check_name_exists(meme.name):
+                    if meme.name == self.vk_event.original_args:
+                        # if check_name_exists(self.vk_event.original_args):
                         return self.send_1_meme(meme)
                 meme_names = [meme.name for meme in memes]
                 meme_names_str = "\n".join(meme_names)
-                return f"Нашёл сразу несколько, уточните:\n" \
+                return f"Нашёл сразу несколько, уточните:\n\n" \
                        f"{meme_names_str}"

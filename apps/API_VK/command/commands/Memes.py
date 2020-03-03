@@ -11,7 +11,10 @@ class Memes(CommonCommand):
 
     def start(self):
         if self.vk_event.args:
-            memes = MemeModel.objects.filter(name__icontains=self.vk_event.original_args)
+            memes = MemeModel.objects.all()
+            for arg in self.vk_event.args:
+                memes = memes.filter(name__icontains=arg)
+            # memes = MemeModel.objects.filter(name__icontains=self.vk_event.original_args)
         else:
             memes = MemeModel.objects.all()
         meme_names = [meme.name for meme in memes]
@@ -19,4 +22,4 @@ class Memes(CommonCommand):
             meme_names = meme_names[:20]
             meme_names.append('...')
         meme_names_str = "\n".join(meme_names)
-        return f"{meme_names_str}\n Всего - {len(memes)}"
+        return f"{meme_names_str}\n\nВсего - {len(memes)}"

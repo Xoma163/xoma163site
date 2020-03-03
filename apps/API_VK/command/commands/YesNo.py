@@ -1,7 +1,7 @@
 import random
 
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command.CommonMethods import random_probability, check_user_group
+from apps.API_VK.command.CommonMethods import check_user_group, random_event
 from apps.API_VK.static_texts import get_bad_words, get_bad_answers
 
 
@@ -59,9 +59,4 @@ class YesNo(CommonCommand):
                 messages.append(f"{name}, может ты {msg_self} {self.vk_event.msg[min_index_bad: len_bad]}?")
                 return messages
 
-        if random_probability(4):
-            return "Ну тут даже я хз"
-        elif random_probability(50):
-            return "Да"
-        else:
-            return "Нет"
+        return random_event(["Да", "Нет", "Ну тут даже я хз"], [48, 48, 4])

@@ -13,13 +13,26 @@ def get_random_item_from_list(my_list, arg=None):
     return msg
 
 
+'''
+DEPRECATED
+'''
+
+
 # Вероятность события в процентах
 def random_probability(probability):
+    if 1 > probability > 99:
+        raise RuntimeError("Вероятность события должна быть от 1 до 99")
     rand_int = random.randint(1, 100)
     if rand_int <= probability:
         return True
     else:
         return False
+
+
+def random_event(events, weights):
+    if sum(weights) != 100:
+        raise RuntimeError("Сумма вероятности событий должна равняться 100")
+    return random.choices(events, weights=weights)
 
 
 def has_cyrillic(text):

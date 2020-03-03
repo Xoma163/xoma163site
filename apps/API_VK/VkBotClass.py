@@ -123,10 +123,18 @@ def parse_attachments(vk_attachments):
                         max_size_image = size
                         max_size_width = size['width']
                 attachments.append({
-                    'type': attachment['type'], 'url': max_size_image['url'],
+                    'type': attachment['type'],
+                    'url': max_size_image['url'],
                     'size': {
                         'width': max_size_image['width'],
                         'height': max_size_image['height']}})
+            elif attachment['type'] == 'video':
+                attachment_type = attachment[attachment['type']]
+                attachments.append({
+                    'type': attachment['type'],
+                    'url': f"https://vk.com/video{attachment_type['owner_id']}_{attachment_type['id']}",
+                    'title': attachment_type['title']
+                })
 
     if attachments and len(attachments) > 0:
         return attachments
