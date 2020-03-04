@@ -1,7 +1,6 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
 
 
-# ToDo: add_word должна быть не только словом, но и фразой
 class Uyu(CommonCommand):
     def __init__(self):
         names = ["уъу", "бля", "ъуъ"]

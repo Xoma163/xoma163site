@@ -12,7 +12,6 @@ class Status(CommonCommand):
         keyboard = {'for': 'minecraft', 'text': 'Статус', 'color': 'green', 'row': 1, 'col': 1}
         super().__init__(names, help_text, int_args=[0, 1], keyboard=keyboard)
 
-    # ToDo: не работает с внешним адресом
     def start(self):
         res_1_12 = get_minecraft_server_info("localhost", "25565", "1.12.2")
         res_1_15_1 = get_minecraft_server_info("localhost", "25566", "1.15.1")

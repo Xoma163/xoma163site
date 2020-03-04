@@ -60,7 +60,6 @@ class Command(BaseCommand):
         time1 = time.time()
         statistics = {'created': 0, 'updated': 0, 'deleted': 0, 'skipped': 0}
 
-        # ToDo: fix it
         try:
             for i, my_range in enumerate(ranges):
                 if i == 0:

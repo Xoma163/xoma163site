@@ -108,14 +108,13 @@ def parse_msg(msg):
     return msg_dict
 
 
-# ToDo: походу работает только для картинок пока что
 def parse_attachments(vk_attachments):
     attachments = []
 
     if vk_attachments:
         for attachment in vk_attachments:
+            attachment_type = attachment[attachment['type']]
             if attachment['type'] == 'photo':
-                attachment_type = attachment[attachment['type']]
                 max_size_image = attachment_type['sizes'][0]
                 max_size_width = max_size_image['width']
                 for size in attachment_type['sizes']:
@@ -129,7 +128,6 @@ def parse_attachments(vk_attachments):
                         'width': max_size_image['width'],
                         'height': max_size_image['height']}})
             elif attachment['type'] == 'video':
-                attachment_type = attachment[attachment['type']]
                 attachments.append({
                     'type': attachment['type'],
                     'url': f"https://vk.com/video{attachment_type['owner_id']}_{attachment_type['id']}",

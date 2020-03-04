@@ -1,5 +1,3 @@
-# ToDo: возможно в будущем связать CodenamesUser и CodenamesSession
-
 import json
 import random
 from threading import Lock
@@ -191,7 +189,6 @@ class Codenames(CommonCommand):
                     codenames_users_list = [str(player.user) for player in self.players]
                     codenames_users_str = "\n".join(codenames_users_list)
 
-                    # ToDo: возможно здесь вывод пользователя будет, надо заново
                     return "Дерегнул. Сейчас зарегистрированы:\n" \
                            f"{get_str_players(self.players)}\n"
                 elif self.vk_event.args[0].lower() in ['старт']:
@@ -341,15 +338,11 @@ class Codenames(CommonCommand):
 
         for captain in captains:
             captain.role = 'captain'
-            # ToDo: по-моему это необязательно
-            # captain.save()
 
         # ToDo вот этот эксклюд можно как-то покрасивее наверное сделать
         players = self.players.exclude(id__in=[captain.id for captain in captains])
         for player in players:
             player.role = 'player'
-            # ToDo: по-моему это необязательно
-            # player.save()
 
         players = sorted(players, key=lambda x: random.random())
         self.players = CodenamesUser.objects.filter(chat=self.vk_event.chat)

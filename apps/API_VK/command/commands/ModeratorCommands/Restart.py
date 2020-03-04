@@ -2,7 +2,6 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command._DoTheLinuxComand import do_the_linux_command
 
 
-# ToDo: restart web, restart bot
 class Restart(CommonCommand):
     def __init__(self):
         names = ["рестарт", "restart"]
