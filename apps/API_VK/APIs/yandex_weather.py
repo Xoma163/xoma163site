@@ -2,7 +2,7 @@ from datetime import datetime
 
 import requests
 
-from apps.Statistics.models import Service
+from apps.service.models import Service
 from secrets.secrets import secrets
 
 

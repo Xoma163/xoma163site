@@ -15,7 +15,7 @@ from apps.API_VK.VkEvent import VkEvent
 from apps.API_VK.command import get_commands
 from apps.API_VK.command.CommonMethods import check_user_group
 from apps.API_VK.models import VkUser, VkChat, VkBot
-from apps.Statistics.views import append_command_to_statistics
+from apps.service.views import append_command_to_statistics
 from secrets.secrets import secrets
 
 logger = logging.getLogger('commands')

@@ -1,5 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.Statistics.views import append_feature
+from apps.service.views import append_feature
 
 
 class Issue(CommonCommand):

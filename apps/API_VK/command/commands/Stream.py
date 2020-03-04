@@ -1,5 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.Statistics.models import Service
+from apps.service.models import Service
 
 
 class Stream(CommonCommand):

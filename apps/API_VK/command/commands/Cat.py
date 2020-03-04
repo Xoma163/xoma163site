@@ -1,5 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.Statistics.models import Cat as CatModel
+from apps.service.models import Cat as CatModel
 from xoma163site.settings import MAIN_SITE
 
 

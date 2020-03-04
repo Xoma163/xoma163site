@@ -1,5 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.Statistics.models import Meme as MemeModel
+from apps.service.models import Meme as MemeModel
 
 
 class Memes(CommonCommand):

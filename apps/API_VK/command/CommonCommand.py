@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from apps.API_VK.command.CommonMethods import check_user_group
-from apps.Statistics.models import Service
+from apps.service.models import Service
 
 
 class CommonCommand:

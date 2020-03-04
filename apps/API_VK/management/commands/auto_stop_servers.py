@@ -3,7 +3,7 @@ from datetime import datetime
 from django.core.management.base import BaseCommand
 
 from apps.API_VK.models import VkUser
-from apps.Statistics.models import Service
+from apps.service.models import Service
 from xoma163site.wsgi import vk_bot
 
 

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.Statistics.models import Statistic, Issue, Service, Counter, Cat, Meme
+from apps.service.models import Statistic, Issue, Service, Counter, Cat, Meme
 
 
 @admin.register(Statistic)

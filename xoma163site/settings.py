@@ -52,7 +52,7 @@ INSTALLED_APPS = [
 
     'apps.API_VK',
     'apps.birds',
-    'apps.Statistics',
+    'apps.service',
     'apps.games',
     'apps.web'
 ]

@@ -1,5 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.Statistics.models import Counter as CounterModel
+from apps.service.models import Counter as CounterModel
 
 
 class Counter(CommonCommand):

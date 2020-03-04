@@ -1,5 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.Statistics.views import get_issues_text
+from apps.service.views import get_issues_text
 
 
 class Issues(CommonCommand):

@@ -1,4 +1,4 @@
-from apps.Statistics.models import Statistic, Issue
+from apps.service.models import Statistic, Issue
 
 
 def append_command_to_statistics(command):

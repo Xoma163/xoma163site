@@ -2,7 +2,7 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import send_messages
 from apps.API_VK.command._DoTheLinuxComand import do_the_linux_command
 from apps.API_VK.models import VkUser
-from apps.Statistics.models import Service
+from apps.service.models import Service
 from xoma163site.wsgi import cameraHandler
 
 
