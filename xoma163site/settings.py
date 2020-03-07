@@ -49,6 +49,8 @@ INSTALLED_APPS = [
 
     'django_hosts',
     'static_autocollect',
+    'oauth2_provider',
+    'corsheaders',
 
     'apps.API_VK',
     'apps.birds',
@@ -67,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_hosts.middleware.HostsResponseMiddleware',
+    'corsheaders.middleware.CorsMiddleware'
 ]
 DEFAULT_HOST = 'www'
 ROOT_HOSTCONF = 'xoma163site.hosts'
@@ -185,3 +188,5 @@ LOGGING = {
         },
     },
 }
+
+CORS_ORIGIN_ALLOW_ALL = True

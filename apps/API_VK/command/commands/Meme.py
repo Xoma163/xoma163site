@@ -31,6 +31,10 @@ class Meme(CommonCommand):
             return "Какая-то хрень с мемом"
 
     def start(self):
+        for i in range(len(self.vk_event.args)):
+            self.vk_event.args[i] = self.vk_event.args[i].lower()
+        self.vk_event.original_args = self.vk_event.original_args.lower()
+
         if self.vk_event.args[0] == 'добавить':
             self.check_args(2)
 
@@ -70,8 +74,9 @@ class Meme(CommonCommand):
             else:
                 return "Не передан url видео или не прикреплена картинка"
         else:
-            # memes = MemeModel.objects.filter(name__icontains=self.vk_event.original_args)[:10]
+
             memes = MemeModel.objects.all()
+
             for arg in self.vk_event.args:
                 memes = memes.filter(name__icontains=arg)
             if len(memes) == 0:

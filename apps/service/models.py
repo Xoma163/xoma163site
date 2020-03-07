@@ -66,7 +66,7 @@ class Counter(models.Model):
 def get_image_from_url(url):
     if url:
         ext = url.split('.')[-1]
-        img_temp = NamedTemporaryFile(delete=True)
+        img_temp = NamedTemporaryFile()
         img_temp.write(urlopen(url).read())
         img_temp.flush()
         return ext, img_temp
