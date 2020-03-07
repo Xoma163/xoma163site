@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class StatisticsConfig(AppConfig):
+class ServiceConfig(AppConfig):
     name = 'apps.service'
-    verbose_name = "Статистика"
+    verbose_name = "Сервисное приложение"

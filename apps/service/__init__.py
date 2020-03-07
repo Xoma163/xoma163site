@@ -1,1 +1,1 @@
-default_app_config = "apps.service.apps.StatisticsConfig"
+default_app_config = "apps.service.apps.ServiceConfig"
