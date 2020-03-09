@@ -22,11 +22,11 @@ class Meme(CommonCommand):
         if meme.link:
             if meme.link.find('vk.com') > 0 and meme.link.find('video'):
                 att = meme.link[meme.link.find('video'):]
-                return {'msg': '', 'attachments': [att]}
+                return {'msg': meme.name, 'attachments': [att]}
             return meme.link
         elif meme.image:
             photo = self.vk_bot.upload_photo(meme.image.path, False)
-            return {'msg': '', 'attachments': [photo]}
+            return {'msg': meme.name, 'attachments': [photo]}
         else:
             return "Какая-то хрень с мемом"
 
@@ -73,6 +73,9 @@ class Meme(CommonCommand):
                 return "Сохранил"
             else:
                 return "Не передан url видео или не прикреплена картинка"
+        elif self.vk_event.args[0] in ['рандом', 'р']:
+            meme = MemeModel.objects.all().order_by('?').first()
+            return self.send_1_meme(meme)
         else:
 
             memes = MemeModel.objects.all()
