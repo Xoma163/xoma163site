@@ -16,6 +16,7 @@ class Command(BaseCommand):
             if not chat:
                 print(f"Чата с id = {chat_id} не существует")
                 break
+            chat = chat.first()
 
             today = datetime.now()
             users = VkUser.objects.filter(chats__in=chat,
@@ -23,7 +24,7 @@ class Command(BaseCommand):
                                           birthday__month=today.month)
 
             for user in users:
-                vk_bot.send_message(vk_bot.get_group_id(chat_id), f"С Днём рождения, {user.name}!")
+                vk_bot.send_message(chat.chat_id, f"С Днём рождения, {user.name}!")
 
     def add_arguments(self, parser):
         parser.add_argument('chat_id', nargs='+', type=str,
