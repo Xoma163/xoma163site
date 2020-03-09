@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.service.models import Statistic, Issue, Service, Counter, Cat, Meme
+from apps.service.models import Statistic, Issue, Service, Counter, Cat, Meme, Notify
 
 
 @admin.register(Statistic)
@@ -32,3 +32,8 @@ class MemeAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'link', 'preview', 'author')
     search_fields = ['name', 'link']
     list_filter = ('author',)
+
+
+@admin.register(Notify)
+class NotifyAdmin(admin.ModelAdmin):
+    list_display = ('id', 'date', 'text', 'author', 'chat', 'from_chat')

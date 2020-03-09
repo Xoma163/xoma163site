@@ -134,3 +134,20 @@ class Meme(models.Model):
             return mark_safe(u'<img src="{0}" width="150"/>'.format(self.image.url))
         else:
             return '(Нет изображения)'
+
+
+class Notify(models.Model):
+    id = models.AutoField(primary_key=True)
+    date = models.DateTimeField(verbose_name="Дата создания")
+    text = models.CharField(verbose_name="Напоминашка", max_length=1000, default="")
+    chat = models.ForeignKey(VkChat, verbose_name='Чат', null=True, on_delete=models.SET_NULL, blank=True)
+    author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
+    from_chat = models.BooleanField(verbose_name="Из чата", default=False)
+
+    class Meta:
+        verbose_name = "оповещение"
+        verbose_name_plural = "оповещения"
+        ordering = ["text"]
+
+    def __str__(self):
+        return str(self.text)
