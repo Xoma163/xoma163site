@@ -12,8 +12,7 @@ class Quote(CommonCommand):
     def start(self):
         msgs = self.vk_event.fwd
 
-        quote = QuoteBook()
-        quote.peer_id = self.vk_event.peer_id
+        quote = QuoteBook(peer_id=self.vk_event.peer_id)
         quote_text = ""
         for msg in msgs:
             text = msg['text']

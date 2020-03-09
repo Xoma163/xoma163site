@@ -32,12 +32,10 @@ class Notify(CommonCommand):
             return "Нельзя указывать дату в прошлом"
         text = self.vk_event.original_args.split(' ', args_count)[args_count]
 
-        notify = NotifyModel()
-        notify.date = date
-        notify.text = text
-        notify.author = self.vk_event.sender
-        notify.chat = self.vk_event.chat
-        notify.from_chat = self.vk_event.from_chat
-        notify.save()
+        NotifyModel(date=date,
+                    text=text,
+                    author=self.vk_event.sender,
+                    chat=self.vk_event.chat,
+                    from_chat=self.vk_event.from_chat).save()
 
         return f'Сохранил на дату {str(date.strftime("%d.%m.%Y %H:%M"))}'

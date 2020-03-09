@@ -21,10 +21,10 @@ class Register(CommonCommand):
                 return "Ты уже зарегистрирован :)"
         min_wins = PetrovichUser.objects.filter(chat=self.vk_event.chat).aggregate(Min('wins'))['wins__min']
 
-        p_user = PetrovichUser()
-        p_user.user = self.vk_event.sender
-        p_user.chat = self.vk_event.chat
-        p_user.active = True
+        p_user = PetrovichUser(user=self.vk_event.sender,
+                               chat=self.vk_event.chat,
+                               active=True)
+
         if min_wins:
             p_user.wins = min_wins
         p_user.save()

@@ -35,12 +35,9 @@ class Petrovich(CommonCommand):
                 return "Нет участников игры. Зарегистрируйтесь! /рег"
 
             PetrovichGames.objects.filter(chat=self.vk_event.chat).delete()
-            new_winner = PetrovichGames()
-            new_winner.user = winner
-            new_winner.chat = self.vk_event.chat
-            new_winner.save()
+            PetrovichGames(user=winner, chat=self.vk_event.chat).save()
             winner_petrovich = PetrovichUser.objects.filter(user=winner, chat=self.vk_event.chat).first()
-            winner_petrovich.wins = int(winner_petrovich.wins) + 1
+            winner_petrovich.wins += 1
             winner_petrovich.save()
             messages = ["Такс такс такс, кто тут у нас"]
             who = "Петрович"

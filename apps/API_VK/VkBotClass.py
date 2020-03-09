@@ -451,8 +451,7 @@ class VkBotClass(threading.Thread):
         if len(vk_chat) > 0:
             vk_chat = vk_chat.first()
         else:
-            vk_chat = VkChat()
-            vk_chat.chat_id = chat_id
+            vk_chat = VkChat(chat_id=chat_id)
             vk_chat.save()
         return vk_chat
 

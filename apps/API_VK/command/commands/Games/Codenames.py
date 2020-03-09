@@ -149,7 +149,7 @@ class Codenames(CommonCommand):
             if self.vk_event.args:
                 if self.vk_event.args[0].lower() in ['рег', 'регистрация']:
                     if len(Gamer.objects.filter(user=self.vk_event.sender)) == 0:
-                        Gamer(**{'user': self.vk_event.sender}).save()
+                        Gamer(user=self.vk_event.sender).save()
 
                     self.check_conversation()
                     if len(CodenamesUser.objects.filter(chat=self.vk_event.chat, user=self.vk_event.sender)) > 0:
@@ -166,10 +166,9 @@ class Codenames(CommonCommand):
                         else:
                             return "Не знаю такой роли для регистрации"
 
-                    codenames_user = CodenamesUser()
-                    codenames_user.user = self.vk_event.sender
-                    codenames_user.chat = self.vk_event.chat
-                    codenames_user.role_preference = role_preference
+                    codenames_user = CodenamesUser(user=self.vk_event.sender,
+                                                   chat=self.vk_event.chat,
+                                                   role_preference=role_preference)
                     if not self.session:
                         codenames_user.save()
                         return "Зарегистрировал. Сейчас зарегистрированы:\n" \
@@ -185,18 +184,11 @@ class Codenames(CommonCommand):
                     self.check_conversation()
                     check_not_session(self.session)
                     self.player.delete()
-
-                    codenames_users_list = [str(player.user) for player in self.players]
-                    codenames_users_str = "\n".join(codenames_users_list)
-
                     return "Дерегнул. Сейчас зарегистрированы:\n" \
                            f"{get_str_players(self.players)}\n"
                 elif self.vk_event.args[0].lower() in ['старт']:
                     self.check_conversation()
                     check_not_session(self.session)
-
-                    codenames_users_list = [str(player.user) for player in self.players]
-                    codenames_users_str = "\n".join(codenames_users_list)
                     if len(self.players) < MIN_USERS:
                         return f"Минимальное количество игроков - {MIN_USERS}. Сейчас зарегистрированы:\n" \
                                f"{get_str_players(self.players)}\n"

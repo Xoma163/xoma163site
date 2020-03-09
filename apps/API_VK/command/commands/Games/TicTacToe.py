@@ -45,7 +45,7 @@ class TicTacToe(CommonCommand):
             sender = self.vk_event.sender
 
             if len(Gamer.objects.filter(user=sender)) == 0:
-                Gamer(**{'user': sender}).save()
+                Gamer(user=sender).save()
 
             session = TicTacToeSession.objects.filter(Q(user1=sender) | Q(user2=sender)).first()
             # Если существует такая сессия, где игрок находится в ней
@@ -75,9 +75,7 @@ class TicTacToe(CommonCommand):
                     return
                 # Никаких свободных сессий нет - создаём новую
                 else:
-                    new_session = TicTacToeSession()
-                    new_session.user1 = sender
-                    new_session.save()
+                    TicTacToeSession(user1=sender).save()
                     return "Начинаем игру. Ждём второго игрока"
 
     def step_game(self, session):
