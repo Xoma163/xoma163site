@@ -1,20 +1,44 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.service.models import Notify as NotifyModel
 
+time_translator = {
+    'понедельник': 1, 'пн': 1,
+    'вторник': 2, 'вт': 2,
+    'среда': 3, 'ср': 3,
+    'четверг': 4, 'чт': 4,
+    'пятница': 5, 'пт': 5,
+    'суббота': 6, 'сб': 6,
+    'воскресенье': 7, 'воскресение': 7, 'вс': 7,
+}
+
 
 def get_time(arg1, arg2):
+    if arg1 == "завтра":
+        arg1 = (datetime.today().date() + timedelta(days=1)).strftime("%d.%m.%Y")
+    if arg1 == "послезавтра":
+        arg1 = (datetime.today().date() + timedelta(days=2)).strftime("%d.%m.%Y")
+
+    if arg1 in time_translator:
+        delta_days = time_translator[arg1] - datetime.today().isoweekday()
+        if delta_days < 0:
+            delta_days += 7
+        arg1 = (datetime.today().date() + timedelta(days=delta_days)).strftime("%d.%m.%Y")
     try:
         date = datetime.strptime(str(datetime.today().date()) + " " + arg1, "%Y-%m-%d %H:%M")
-        return 1, date
+        return date, 1
     except:
         try:
             date = datetime.strptime(arg1 + " " + arg2, "%d.%m.%Y %H:%M")
-            return 2, date
+            return date, 2
         except:
-            pass
-    return None
+            try:
+                date = datetime.strptime(arg1 + " 10:00", "%d.%m.%Y %H:%M")
+                return date, 1
+            except:
+                pass
+    return None, None
 
 
 class Notify(CommonCommand):
@@ -25,7 +49,7 @@ class Notify(CommonCommand):
         super().__init__(names, help_text, detail_help_text, args=2)
 
     def start(self):
-        args_count, date = get_time(self.vk_event.args[0], self.vk_event.args[1])
+        date, args_count = get_time(self.vk_event.args[0], self.vk_event.args[1])
         if not date:
             return "Не смог распарсить дату"
         datetime_now = datetime.now()
