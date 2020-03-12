@@ -18,15 +18,19 @@ class Meme(CommonCommand):
                            "Добавление мема - /мем добавить ...(название) (картинка)\n"
         super().__init__(names, help_text, detail_help_text, args=1)
 
-    def send_1_meme(self, meme):
+    def send_1_meme(self, meme, print_name=True):
+        if print_name:
+            meme_name = meme.name
+        else:
+            meme_name = None
         if meme.link:
             if meme.link.find('vk.com') > 0 and meme.link.find('video'):
                 att = meme.link[meme.link.find('video'):]
-                return {'msg': meme.name, 'attachments': [att]}
+                return {'msg': meme_name, 'attachments': [att]}
             return meme.link
         elif meme.image:
             photo = self.vk_bot.upload_photo(meme.image.path, False)
-            return {'msg': meme.name, 'attachments': [photo]}
+            return {'msg': meme_name, 'attachments': [photo]}
         else:
             return "Какая-то хрень с мемом"
 
@@ -91,7 +95,7 @@ class Meme(CommonCommand):
                 for meme in memes:
                     if meme.name == self.vk_event.original_args:
                         # if check_name_exists(self.vk_event.original_args):
-                        return self.send_1_meme(meme)
+                        return self.send_1_meme(meme, False)
                 meme_names = [meme.name for meme in memes]
                 meme_names_str = "\n".join(meme_names)
                 return f"Нашёл сразу несколько, уточните:\n\n" \
