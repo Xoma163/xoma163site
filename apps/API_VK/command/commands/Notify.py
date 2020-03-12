@@ -28,8 +28,11 @@ class Notify(CommonCommand):
         args_count, date = get_time(self.vk_event.args[0], self.vk_event.args[1])
         if not date:
             return "Не смог распарсить дату"
-        if (date - datetime.now()).days < 0 or (datetime.now() - date).seconds < 0:
+        datetime_now = datetime.now()
+        if (date - datetime_now).days < 0 or (datetime_now - date).seconds < 0:
             return "Нельзя указывать дату в прошлом"
+        if (date - datetime_now).seconds < 60:
+            return "Нельзя добавлять напоминание на ближайшую минуту"
         text = self.vk_event.original_args.split(' ', args_count)[args_count]
 
         NotifyModel(date=date,

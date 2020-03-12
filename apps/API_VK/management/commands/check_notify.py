@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.core.management.base import BaseCommand
 
@@ -13,8 +13,8 @@ class Command(BaseCommand):
 
         for notify in notifies:
             print((notify.date - datetime.now()).seconds)
-            if (notify.date - datetime.now()).seconds <= 300:
-                message = f"Напоминалка на {notify.date.hour}:{notify.date.minute}\n" \
+            if (notify.date - datetime.now() + timedelta(minutes=1)).seconds <= 60:
+                message = f"Напоминалка на {notify.date.strftime('%H:%M')}\n" \
                           f"{notify.author}:\n" \
                           f"{notify.text}"
                 if notify.from_chat:
