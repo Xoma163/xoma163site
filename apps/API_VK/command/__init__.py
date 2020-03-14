@@ -54,6 +54,7 @@ from apps.API_VK.command.commands.ModeratorCommands.Stop import Stop
 from apps.API_VK.command.commands.ModeratorCommands.Temperature import Temperature
 from apps.API_VK.command.commands.ModeratorCommands.Uptime import Uptime
 from apps.API_VK.command.commands.ModeratorCommands.Words import Words
+from apps.API_VK.command.commands.Notifies import Notifies
 from apps.API_VK.command.commands.Notify import Notify
 from apps.API_VK.command.commands.Permissions import Permissions
 from apps.API_VK.command.commands.Praise import Praise
@@ -89,7 +90,7 @@ commands = [
     get_user_by_id(), update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(),
     Find(), Rate(), Rates(), Translate(), Uptime(), Counter(), Counters(), TicTacToe(), Status(), Fix(), Debug(),
     Start_lada(), ShortLinks(), Time(), Transliteration(), Who(), Permissions(), Cat(), Sho(),
-    Codenames(), GameConference(), Bash(), Meme(), Memes(), Notify(), City()
+    Codenames(), GameConference(), Bash(), Meme(), Memes(), Notify(), Notifies(), City()
 ]
 
 
