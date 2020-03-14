@@ -15,10 +15,10 @@ def auto_str(cls):
 @auto_str
 class VkEvent:
     def __init__(self, vk_event):
-        self.sender = vk_event['sender']
-        self.chat = vk_event['chat']
+        self.sender = vk_event.get('sender')
+        self.chat = vk_event.get('chat')
         # Куда будет отправлен ответ
-        self.peer_id = vk_event['peer_id']
+        self.peer_id = vk_event.get('peer_id')
 
         # Если переданы скрытые параметры с кнопок
         if 'message' in vk_event and 'payload' in vk_event['message'] and vk_event['message']['payload']:
@@ -30,14 +30,16 @@ class VkEvent:
             else:
                 self.args = None
         else:
-            self.msg = vk_event['parsed']['msg']
-            self.command = vk_event['parsed']['command']
-            self.args = vk_event['parsed']['args']
-            self.original_args = vk_event['parsed']['original_args']
-            self.keys = vk_event['parsed']['keys']
-            self.keys_list = vk_event['parsed']['keys_list']
-            self.params = vk_event['parsed']['params']
-            self.params_without_keys = vk_event['parsed']['params_without_keys']
+            parsed = vk_event.get('parsed')
+            if parsed:
+                self.msg = parsed.get('msg')
+                self.command = parsed.get('command')
+                self.args = parsed.get('args')
+                self.original_args = parsed.get('original_args')
+                self.keys = parsed.get('keys')
+                self.keys_list = parsed.get('keys_list')
+                self.params = parsed.get('params')
+                self.params_without_keys = parsed.get('params_without_keys')
 
             self.payload = None
         if self.chat:
