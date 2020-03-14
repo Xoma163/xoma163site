@@ -22,7 +22,7 @@ class Meme(CommonCommand):
         if print_name:
             meme_name = meme.name
         else:
-            meme_name = None
+            meme_name = ""
         if meme.link:
             if meme.link.find('vk.com') > 0 and meme.link.find('video'):
                 att = meme.link[meme.link.find('video'):]

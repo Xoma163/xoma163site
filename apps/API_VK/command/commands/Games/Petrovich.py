@@ -43,6 +43,10 @@ class Petrovich(CommonCommand):
             who = "Петрович"
             if winner.name in ["Евгений", "Женя"]:
                 who = "Женя"
-            messages.append(
-                f"Наш сегодняшний {who} дня - [{winner.nickname}|{winner.name} {winner.surname}]")
+            if winner.name == "Светлана":
+                messages.append(
+                    f"Наш сегодняшняя лапушка дня - [{winner.nickname}|{winner.name} {winner.surname}]")
+            else:
+                messages.append(
+                    f"Наш сегодняшний {who} дня - [{winner.nickname}|{winner.name} {winner.surname}]")
             return messages

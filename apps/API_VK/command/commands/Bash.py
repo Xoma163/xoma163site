@@ -1,5 +1,6 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
 
+MAX_QUOTES = 20
 
 class Bash(CommonCommand):
     def __init__(self):
@@ -11,9 +12,9 @@ class Bash(CommonCommand):
     def start(self):
         quotes_count = 5
         if self.vk_event.args:
-            self.parse_int_args()
+            self.parse_args('int')
             quotes_count = self.vk_event.args[0]
-            self.check_number_arg_range(quotes_count, 1, 25)
+            self.check_number_arg_range(quotes_count, 1, MAX_QUOTES)
         return parse_bash(quotes_count)
 
 

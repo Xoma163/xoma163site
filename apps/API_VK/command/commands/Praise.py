@@ -69,7 +69,7 @@ class Praise(CommonCommand):
 
         if self.vk_event.params_without_keys:
             recipient = self.vk_event.params_without_keys
-            if "петрович" in recipient:
+            if "петрович" in recipient.lower():
                 msg = "спс))"
             else:
                 word = get_from_db(translator[translator_key])

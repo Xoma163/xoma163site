@@ -7,7 +7,8 @@ class Notifies(CommonCommand):
     def __init__(self):
         names = ["напоминания", "оповещения"]
         help_text = "Напоминания - список напоминаний"
-        super().__init__(names, help_text)
+        detail_help_text = "Напоминания - список напоминаний. Отправляет в лс все напоминания, когда либо созданные, в группу - только напоминания внутри группы"
+        super().__init__(names, help_text, detail_help_text)
 
     def start(self):
         if self.vk_event.from_chat:

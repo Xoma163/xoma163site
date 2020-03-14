@@ -73,8 +73,10 @@ class Scold(CommonCommand):
 
         if self.vk_event.params_without_keys:
             recipient = self.vk_event.params_without_keys
-            if "петрович" in recipient:
+            if "петрович" in recipient.lower():
                 msg = get_random_item_from_list(get_bad_answers())
+            elif "света" in recipient.lower():
+                msg = "ты чё сука"
             else:
                 word = get_from_db(translator[translator_key])
                 msg = add_phrase_before(recipient, word, translator[translator_key])
