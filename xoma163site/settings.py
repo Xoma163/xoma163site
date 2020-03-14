@@ -49,8 +49,6 @@ INSTALLED_APPS = [
 
     'django_hosts',
     'static_autocollect',
-    'oauth2_provider',
-    'corsheaders',
 
     'apps.API_VK',
     'apps.birds',

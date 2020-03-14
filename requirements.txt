@@ -14,5 +14,3 @@ google-auth-oauthlib
 mcstatus
 transliterate
 lxml
-django-oauth-toolkit
-django-cors-middleware

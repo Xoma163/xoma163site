@@ -9,6 +9,10 @@ from apps.API_VK.models import VkUser, Log, VkChat, YandexUser, YandexTempUser
 from xoma163site.wsgi import vk_bot
 
 
+def send_json(message):
+    return JsonResponse(message, json_dumps_params={'ensure_ascii': False})
+
+
 def where_is_me(request):
     from apps.API_VK.command.CommonMethods import localize_datetime
 
@@ -138,17 +142,16 @@ def petrovich(request):
         send = check_bool(request.POST.get('send', True))
         # from_chat = check_bool(request.POST.get('from_chat', True))
     else:
-        return JsonResponse({'error': 'only get or post'}, json_dumps_params={'ensure_ascii': False})
+        return send_json({'error': 'only get or post'})
 
     if not msg:
-        return JsonResponse({'error': 'empty param msg'}, json_dumps_params={'ensure_ascii': False})
+        return send_json({'error': 'empty param msg'})
     if len(msg) == 0:
-        return JsonResponse({'error': 'empty msg'}, json_dumps_params={'ensure_ascii': False})
-    print(request.headers)
-    if 'Client-Id' in request.headers:
-        client_id = request.headers['Client-Id']
-    else:
-        return JsonResponse({'error': 'empty header "Client-Id"'}, json_dumps_params={'ensure_ascii': False})
+        return send_json({'error': 'empty msg'})
+    if 'Client-Id' not in request.headers:
+        return send_json({'error': 'empty header "Client-Id"'})
+    client_id = request.headers['Client-Id']
+
     yandex_user = YandexUser.objects.filter(user_id=client_id).first()
 
     if not yandex_user:
@@ -157,9 +160,9 @@ def petrovich(request):
             msg[i] = msg[i].lower()
         if msg and len(msg) >= 2:
             if msg[0] == 'вк':
-                return JsonResponse({'res': register(msg[1])}, json_dumps_params={'ensure_ascii': False})
+                return send_json({'res': register(msg[1])})
             elif msg[0] == 'код':
-                return JsonResponse({'res': confirm(msg[1])}, json_dumps_params={'ensure_ascii': False})
+                return send_json({'res': confirm(msg[1])})
         return JsonResponse({'res': "Вы не зарегистрированны. Пришлите ВК {ваш ид}"},
                             json_dumps_params={'ensure_ascii': False})
     else:
@@ -192,8 +195,7 @@ def petrovich(request):
         x1.start()
         x2 = threading.Thread(target=send_messages, args=(vk_bot, vk_event['peer_id'], res,))
         x2.start()
-
-    return JsonResponse({'res': res}, json_dumps_params={'ensure_ascii': False})
+    return send_json({'res': res})
 
 
 def send_messages(vk_bot, peer_id, msgs):
