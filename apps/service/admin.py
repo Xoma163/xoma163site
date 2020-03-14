@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.service.models import Statistic, Issue, Service, Counter, Cat, Meme, Notify
+from apps.service.models import Statistic, Issue, Service, Counter, Cat, Meme, Notify, City
 
 
 @admin.register(Statistic)
@@ -37,3 +37,8 @@ class MemeAdmin(admin.ModelAdmin):
 @admin.register(Notify)
 class NotifyAdmin(admin.ModelAdmin):
     list_display = ('id', 'date', 'text', 'author', 'chat', 'from_chat')
+
+
+@admin.register(City)
+class CityAdmin(admin.ModelAdmin):
+    list_display = ('name', 'synonyms', 'timezone', 'lat', 'lon')

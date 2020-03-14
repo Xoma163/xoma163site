@@ -396,7 +396,14 @@ class VkBotClass(threading.Thread):
             if 'bdate' in user:
                 vk_user.birthday = parse_date(user['bdate'])
             if 'city' in user:
-                vk_user.city = user['city']['title']
+
+                from apps.service.models import City
+                city = City.objects.filter(name=user['city']['title'])
+                if len(city) > 0:
+                    city = city.first()
+                vk_user.city = city
+            else:
+                user.city = None
             if 'screen_name' in user:
                 vk_user.nickname = user['screen_name']
             group_user = Group.objects.get(name='user')

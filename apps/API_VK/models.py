@@ -26,20 +26,13 @@ class VkUser(models.Model):
     nickname_real = models.CharField(verbose_name="Прозвище", max_length=40, blank=True, default="")
     gender = models.CharField(verbose_name='Пол', max_length=2, blank=True, default="")
     birthday = models.DateField(verbose_name='Дата рождения', null=True, blank=True)
-    city = models.CharField(verbose_name='Город', max_length=40, blank=True, default="")
-
+    # Здесь такой странный ForeignKey потому что проблема импортов
+    city = models.ForeignKey('service.City', verbose_name='Город', null=True, blank=True, on_delete=models.SET_NULL)
     chats = models.ManyToManyField(VkChat, verbose_name="Чаты", blank=True)
 
     imei = models.CharField(verbose_name='IMEI', max_length=20, null=True, blank=True)
 
     groups = models.ManyToManyField(Group, verbose_name="Группы")
-
-    # is_admin = models.BooleanField(verbose_name='Админ', default=False)
-    # is_moderator = models.BooleanField(verbose_name='Модератор', default=False)
-    # is_student = models.BooleanField(verbose_name='Студент', default=False)
-    # is_banned = models.BooleanField(verbose_name='Забанен', default=False)
-    # is_minecraft = models.BooleanField(verbose_name='Майнкрафт', default=False)
-    # is_terraria = models.BooleanField(verbose_name='Террария', default=False)
 
     send_notify_to = models.ManyToManyField('self', verbose_name="Отправление уведомлений", blank=True)
 
