@@ -10,7 +10,10 @@ class Notifies(CommonCommand):
         super().__init__(names, help_text)
 
     def start(self):
-        notifies = Notify.objects.filter(author=self.vk_event.sender)
+        if self.vk_event.from_chat:
+            notifies = Notify.objects.filter(author=self.vk_event.sender, chat=self.vk_event.chat)
+        else:
+            notifies = Notify.objects.filter(author=self.vk_event.sender)
         if len(notifies) == 0:
             return "Нет напоминаний"
         result = ""
@@ -19,7 +22,9 @@ class Notifies(CommonCommand):
         for notify in notifies:
             notify_datetime = localize_datetime(remove_tz(notify.date), user_timezone)
 
-            result += f"{str(notify_datetime.strftime('%d.%m.%Y %H:%M'))}\n" \
-                      f"{notify.text}\n\n"
+            result += f"{str(notify_datetime.strftime('%d.%m.%Y %H:%M'))}"
+            if notify.from_chat:
+                result += f" (Конфе - {notify.chat.name})"
+            result += f"\n{notify.text}\n\n"
 
         return result

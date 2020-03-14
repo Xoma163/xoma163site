@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
                 notify_datetime = localize_datetime(remove_tz(notify.date), notify.author.city.timezone)
                 message = f"Напоминалка на {notify_datetime.strftime('%H:%M')}\n" \
-                          f"{notify.author}:\n" \
+                          f"[id{notify.author.user_id}|{notify.author}]:\n" \
                           f"{notify.text}"
                 if notify.from_chat:
                     vk_bot.send_message(notify.chat.chat_id, message)

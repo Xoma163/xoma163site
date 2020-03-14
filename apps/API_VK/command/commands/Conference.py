@@ -13,11 +13,15 @@ class Conference(CommonCommand):
         return False
 
     def start(self):
-
         if self.vk_event.command in self.names:
-            self.check_args(1)
-            self.vk_event.chat.name = self.vk_event.args[0]
-            self.vk_event.chat.save()
-            return f"Поменял название беседы на {self.vk_event.args[0]}"
+            if self.vk_event.args:
+                self.vk_event.chat.name = self.vk_event.original_args
+                self.vk_event.chat.save()
+            else:
+                if self.vk_event.chat.name and self.vk_event.chat.name != "":
+                    return self.vk_event.chat.name
+                else:
+                    return "Конфа не имеет названия"
+            return f"Поменял название беседы на {self.vk_event.original_args}"
         else:
             return "Не задано имя конфы, задайте его командой /конфа 'Название конфы'"
