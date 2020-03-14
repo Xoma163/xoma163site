@@ -30,7 +30,7 @@ class CommonCommand:
                  args=None,
                  int_args=None,
                  float_args=None,
-                 api=True,
+                 api=None,
                  attachments=False
                  ):
         self.names = names
@@ -65,8 +65,7 @@ class CommonCommand:
 
     def checks(self):
         # Если команда не для api
-        if not self.api:
-            self.check_api()
+        self.check_api()
         if self.access != 'user':
             self.check_sender(self.access)
         if self.pm:
@@ -186,8 +185,15 @@ class CommonCommand:
     def check_api(self):
         # Если запрос пришёл через api
         if self.vk_event.api:
-            error = "Команда недоступна для API"
-            raise RuntimeError(error)
+            if self.api == False:
+                error = "Команда недоступна для API"
+                raise RuntimeError(error)
+
+        if not self.vk_event.api:
+            if self.api:
+                error = "Команда недоступна для VK"
+                raise RuntimeError(error)
+
         return True
 
     def check_attachments(self):

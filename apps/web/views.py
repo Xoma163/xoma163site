@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 
-# Create your views here.
 from apps.web.models import Order, Tare, User, Session
 
 

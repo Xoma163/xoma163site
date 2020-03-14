@@ -1,3 +1,5 @@
+import random
+
 from django.contrib.auth.models import Group
 from django.db import models
 
@@ -120,3 +122,22 @@ class Words(models.Model):
 
     def __str__(self):
         return str(self.m1)
+
+
+class YandexUser(models.Model):
+    id = models.AutoField(primary_key=True, verbose_name='ID')
+    user_id = models.CharField(verbose_name="ID пользователя", max_length=100)
+    vk_user = models.ForeignKey(VkUser, verbose_name="Вк юзер", on_delete=models.SET_NULL, null=True)
+
+
+def random_digits():
+    digits_count = 6
+    return str(random.randint(10 ** (digits_count - 1), 10 ** digits_count - 1))
+
+
+class YandexTempUser(models.Model):
+    id = models.AutoField(primary_key=True, verbose_name='ID')
+    user_id = models.CharField(verbose_name="ID пользователя", max_length=100)
+    vk_user = models.ForeignKey(VkUser, verbose_name="Вк юзер", on_delete=models.SET_NULL, null=True)
+    code = models.CharField(verbose_name="Код подтверждения", default=random_digits, max_length=6)
+    tries = models.IntegerField(verbose_name="Кол-во попыток", default=5)
