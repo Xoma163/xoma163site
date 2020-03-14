@@ -115,7 +115,7 @@ def get_str_players(players):
 
 class Codenames(CommonCommand):
     def __init__(self):
-        names = ["коднеймс", "codenames", "кн", "км"]
+        names = ["коднеймс", "codenames", "кн"]
         help_text = "Коднеймс - игра коднеймс"
         detail_help_text = "Коднеймс - игра коднеймс.\n" \
                            "Правила: https://tesera.ru/images/items/657300/codenames_rules_ru_1_5.pdf\n\n" \
@@ -144,7 +144,10 @@ class Codenames(CommonCommand):
 
     def start(self):
         with lock:
-            self.init_var()
+            if self.vk_event.from_user and CodenamesUser.objects.filter(user=self.vk_event.sender).first():
+                self.init_var()
+            else:
+                return "Вы не зарегистрировались в игре"
 
             if self.vk_event.args:
                 if self.vk_event.args[0].lower() in ['рег', 'регистрация']:

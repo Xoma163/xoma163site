@@ -2,6 +2,7 @@ import datetime
 
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.models import Log
+from xoma163site.settings import TIME_ZONE
 
 
 class Where(CommonCommand):
@@ -18,7 +19,10 @@ class Where(CommonCommand):
         except RuntimeError as e:
             return str(e)
 
-        today = datetime.datetime.now()
+        if user.city and user.city.timezone:
+            today = datetime.datetime.utcnow() + datetime.timedelta(hours=user.city.timezone)
+        else:
+            today = datetime.datetime.utcnow().replace(tzinfo=datetime.tzinfo(TIME_ZONE))
         log = Log.objects.filter(success=True,
                                  date__year=today.year,
                                  date__month=today.month,

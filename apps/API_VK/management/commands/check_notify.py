@@ -9,12 +9,15 @@ from xoma163site.wsgi import vk_bot
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        from apps.API_VK.command.CommonMethods import remove_tz, localize_datetime
+
         notifies = Notify.objects.all()
 
         for notify in notifies:
-            print((notify.date - datetime.now()).seconds)
-            if (notify.date - datetime.now() + timedelta(minutes=1)).seconds <= 60:
-                message = f"Напоминалка на {notify.date.strftime('%H:%M')}\n" \
+            if (remove_tz(notify.date) - datetime.utcnow() + timedelta(minutes=1)).seconds <= 60:
+
+                notify_datetime = localize_datetime(remove_tz(notify.date), notify.author.city.timezone)
+                message = f"Напоминалка на {notify_datetime.strftime('%H:%M')}\n" \
                           f"{notify.author}:\n" \
                           f"{notify.text}"
                 if notify.from_chat:

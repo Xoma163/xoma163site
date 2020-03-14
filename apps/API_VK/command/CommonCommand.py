@@ -29,6 +29,7 @@ class CommonCommand:
                  fwd=False,
                  args=None,
                  int_args=None,
+                 float_args=None,
                  api=True,
                  attachments=False
                  ):
@@ -42,6 +43,7 @@ class CommonCommand:
         self.fwd = fwd
         self.args = args
         self.int_args = int_args
+        self.float_args = float_args
         self.api = api
         self.attachments = attachments
 
@@ -76,7 +78,9 @@ class CommonCommand:
         if self.args:
             self.check_args()
         if self.int_args:
-            self.parse_int_args()
+            self.parse_args('int')
+        if self.float_args:
+            self.parse_args('float')
         if self.attachments:
             self.check_attachments()
 
@@ -111,7 +115,7 @@ class CommonCommand:
         raise RuntimeError(error)
 
     @staticmethod
-    def check_int_arg_range(arg, val1, val2, banned_list=None):
+    def check_number_arg_range(arg, val1, val2, banned_list=None):
         if val1 <= arg <= val2:
             if banned_list:
                 if arg not in banned_list:
@@ -125,13 +129,21 @@ class CommonCommand:
             error = f"Значение может быть в диапазоне [{val1};{val2}]"
             raise RuntimeError(error)
 
-    def parse_int_args(self):
+    def parse_args(self, arg_type):
         if not self.vk_event.args:
             return True
-        for checked_arg_index in self.int_args:
+        if arg_type == 'int':
+            args = self.int_args
+        elif arg_type == 'float':
+            args = self.float_args
+        for checked_arg_index in args:
             try:
                 if len(self.vk_event.args) - 1 >= checked_arg_index:
-                    self.vk_event.args[checked_arg_index] = int(self.vk_event.args[checked_arg_index])
+                    if arg_type == 'int':
+                        self.vk_event.args[checked_arg_index] = int(self.vk_event.args[checked_arg_index])
+                    elif arg_type == 'float':
+                        self.vk_event.args[checked_arg_index] = int(self.vk_event.args[checked_arg_index])
+
             except ValueError:
                 error = "Аргумент должен быть целочисленным"
                 raise RuntimeError(error)
@@ -163,9 +175,9 @@ class CommonCommand:
         if created:
             return True
         update_datetime = entity.update_datetime
-        delta_seconds = (datetime.now() - update_datetime).seconds
+        delta_seconds = (datetime.utcnow() - update_datetime.replace(tzinfo=None)).seconds
         if delta_seconds < seconds:
-            error = f"Нельзя часто вызывать команды стоп и старта. Осталось {seconds - delta_seconds} секунд"
+            error = f"Нельзя часто вызывать данную команду. Осталось {seconds - delta_seconds} секунд"
             raise RuntimeError(error)
         entity.name = name
         entity.save()

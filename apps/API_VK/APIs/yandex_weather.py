@@ -6,45 +6,18 @@ from apps.service.models import Service
 from secrets.secrets import secrets
 
 
-def get_weather(city="самара"):
-    if city in ["Самара", "Самаре"]:
-        original_city_name = "Самара"
-        city_name = "Самаре"
-        lat = 53.212273
-        lon = 50.169435
-    elif city in ['Питер', 'Питере', 'Санкт-петербург', 'Санкт-петербурге', 'Спб']:
-        original_city_name = "Питер"
-        city_name = "Питере"
-        lat = 59.939095
-        lon = 30.315868
-    elif city in ['Сызрань', 'Сызрани']:
-        original_city_name = "Сызрань"
-        city_name = "Сызрани"
-        lat = 53.155782
-        lon = 48.474485
-    elif city in ['Прибой', 'Прибое']:
-        original_city_name = "Прибой"
-        city_name = "Прибое"
-        lat = 52.8689435
-        lon = 49.6516931
-    elif city in ['Купчино']:
-        original_city_name = "Купчино"
-        city_name = "Купчино"
-        lat = 59.872380
-        lon = 30.370291
-    else:
-        return f'Я не знаю координат города {city}. Сообщите их разработчику'
-
-    entity, created = Service.objects.get_or_create(name=f'weather_{original_city_name}')
+def get_weather(city):
+    entity, created = Service.objects.get_or_create(name=f'weather_{city.name}')
     if not created:
         update_datetime = entity.update_datetime
-        delta_seconds = (datetime.now() - update_datetime).seconds
+
+        delta_seconds = (datetime.utcnow() - update_datetime.replace(tzinfo=None)).seconds
         if delta_seconds < 3600:
             return entity.value
 
     TOKEN = secrets['yandex']['weather']
 
-    URL = f"https://api.weather.yandex.ru/v1/informers?lat={lat}&lon={lon}&lang=ru_RU"
+    URL = f"https://api.weather.yandex.ru/v1/informers?lat={city.lat}&lon={city.lon}&lang=ru_RU"
     HEADERS = {'X-Yandex-API-Key': TOKEN}
     response = requests.get(URL, headers=HEADERS).json()
     if 'status' in response:
@@ -104,11 +77,11 @@ def get_weather(city="самара"):
             'prec_prob': response['forecast']['parts'][i]['prec_prob'],
         }
 
-    now = f"Погода в {city_name} сейчас:\n" \
-        f"{weather['now']['condition']}\n" \
-        f"Температура {weather['now']['temp']}°С(ощущается как {weather['now']['temp_feels_like']}°С)\n" \
-        f"Ветер {weather['now']['wind_speed']}м/c(порывы до {weather['now']['wind_gust']}м/c)\n" \
-        f"Давление  {weather['now']['pressure']}мм.рт.ст., влажность {weather['now']['humidity']}%"
+    now = f"Погода в городе {city.name} сейчас:\n" \
+          f"{weather['now']['condition']}\n" \
+          f"Температура {weather['now']['temp']}°С(ощущается как {weather['now']['temp_feels_like']}°С)\n" \
+          f"Ветер {weather['now']['wind_speed']}м/c(порывы до {weather['now']['wind_gust']}м/c)\n" \
+          f"Давление  {weather['now']['pressure']}мм.рт.ст., влажность {weather['now']['humidity']}%"
 
     forecast = ""
     for i in range(len(weather['forecast'])):

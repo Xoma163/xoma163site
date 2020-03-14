@@ -157,7 +157,7 @@ class City(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(verbose_name="Название", max_length=100)
     synonyms = models.CharField(verbose_name="Похожие названия", max_length=300)
-    timezone = models.IntegerField(verbose_name="Временная зона UTC", null=True)
+    timezone = models.CharField(verbose_name="Временная зона UTC", null=True, max_length=30)
     lat = models.FloatField(verbose_name="Широта", null=True)
     lon = models.FloatField(verbose_name="Долгота", null=True)
 

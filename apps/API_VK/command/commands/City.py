@@ -9,8 +9,9 @@ class City(CommonCommand):
         help_text = "Город - добавляет город в базу или устанавливает город пользователю"
         detail_help_text = "Город - устанавливает пользователю город, смотря его в профиле\n" \
                            "Город (N) - устанавливает пользователю город из аргумента\n" \
-                           "Город добавить {название} {временная зона}(напр +3, -4) {широта} {долгота}"
-        super().__init__(names, help_text, detail_help_text, int_args=[2], float_args=[3, 4])
+                           "Город добавить {название} {временная зона}(например Europe/Moscow, Europe/Samara) {широта} {долгота} \n" \
+                           "Пример: /город добавить Самара Europe/Samara 53.212273 50.169435"
+        super().__init__(names, help_text, detail_help_text, float_args=[3, 4])
 
     def start(self):
 

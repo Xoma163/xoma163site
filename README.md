@@ -108,8 +108,8 @@ Q: **Какие существуют методы для упрощения ра
 A: В CommonCommand есть следующие методы:
 - check_sender(role) - Проверяет роль пользователя
 - check_args(count) - Проверяет количество аргументов
-- check_int_arg_range(arg,val1,val2,banned_list) - Проверяет вхождение аргумента в диапазон [val1;val2] и также проверяет, чтобы значение не входило в banned_list 
-- parse_int_args - Проверяет на int выбранные позиции аргументов (параметр int_args)
+- check_number_arg_range(arg,val1,val2,banned_list) - Проверяет вхождение аргумента в диапазон [val1;val2] и также проверяет, чтобы значение не входило в banned_list 
+- parse_args(type) - Проверяет на type(int/float) выбранные позиции аргументов (параметр int_args/float_args)
 - check_pm - Проверяет на личные сообщения боту
 - check_conversation - Проверяет на беседу
 - check_fwd - Проверяет, есть ли пересланные сообщения 

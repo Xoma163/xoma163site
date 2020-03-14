@@ -25,10 +25,10 @@ class Birds(CommonCommand):
 
         if self.vk_event.args:
             frames = self.vk_event.args[0]
-            self.check_int_arg_range(frames, 0, cameraHandler.MAX_FRAMES)
+            self.check_number_arg_range(frames, 0, cameraHandler.MAX_FRAMES)
             if len(self.vk_event.args) > 1:
                 quality = self.vk_event.args[1]
-                self.check_int_arg_range(quality, 0, 1)
+                self.check_number_arg_range(quality, 0, 1)
 
         photo = self.vk_bot.upload_photo(path)
         attachments.append(photo)

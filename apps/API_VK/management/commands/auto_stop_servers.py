@@ -29,7 +29,7 @@ def stop_mine_by_version(online, no_players, version):
         # Если событие уже было создано, значит пора отрубать
         else:
             update_datetime = obj.update_datetime
-            delta_seconds = (datetime.now() - update_datetime).seconds
+            delta_seconds = (datetime.utcnow() - update_datetime.replace(tzinfo=None)).seconds
             if delta_seconds <= 1800 + 100:
                 obj.delete()
                 Service.objects.get_or_create(name=f"minecraft_{version}")

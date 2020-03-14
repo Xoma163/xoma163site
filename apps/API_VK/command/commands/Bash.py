@@ -13,7 +13,7 @@ class Bash(CommonCommand):
         if self.vk_event.args:
             self.parse_int_args()
             quotes_count = self.vk_event.args[0]
-            self.check_int_arg_range(quotes_count, 1, 25)
+            self.check_number_arg_range(quotes_count, 1, 25)
         return parse_bash(quotes_count)
 
 

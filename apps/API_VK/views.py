@@ -5,6 +5,7 @@ import threading
 from django.http import HttpResponse, JsonResponse
 
 from apps.API_VK.APIs.yandex_geo import get_address
+from apps.API_VK.command.CommonMethods import localize_datetime
 from apps.API_VK.models import VkUser, Log, VkChat
 from xoma163site.wsgi import vk_bot
 
@@ -56,7 +57,7 @@ def where_is_me(request):
             "university": {0: "Я в универе", 1: "Выхожу из универа", "count": 0},
         }
 
-        today = datetime.datetime.now()
+        today = localize_datetime(datetime.datetime.utcnow(), author.city.timezone)
         today_logs = Log.objects.filter(date__year=today.year, date__month=today.month, date__day=today.day,
                                         author=author)
         for today_log in today_logs:

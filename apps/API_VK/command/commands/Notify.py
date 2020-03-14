@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import localize_datetime, normalize_datetime, remove_tz
 from apps.service.models import Notify as NotifyModel
 
 time_translator = {
@@ -49,10 +50,15 @@ class Notify(CommonCommand):
         super().__init__(names, help_text, detail_help_text, args=2)
 
     def start(self):
+        if self.vk_event.sender.city is None:
+            return "Не знаю ваш город. /город"
+        user_timezone = self.vk_event.sender.city.timezone
+
         date, args_count = get_time(self.vk_event.args[0], self.vk_event.args[1])
         if not date:
             return "Не смог распарсить дату"
-        datetime_now = datetime.now()
+        date = normalize_datetime(date, user_timezone)
+        datetime_now = localize_datetime(datetime.utcnow(), "UTC")
         if (date - datetime_now).days < 0 or (datetime_now - date).seconds < 0:
             return "Нельзя указывать дату в прошлом"
         if (date - datetime_now).seconds < 60:
@@ -65,4 +71,5 @@ class Notify(CommonCommand):
                     chat=self.vk_event.chat,
                     from_chat=self.vk_event.from_chat).save()
 
-        return f'Сохранил на дату {str(date.strftime("%d.%m.%Y %H:%M"))}'
+        notify_datetime = localize_datetime(remove_tz(date), user_timezone)
+        return f'Сохранил на дату {str(notify_datetime.strftime("%d.%m.%Y %H:%M"))}'

@@ -1,4 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.service.models import City
 
 
 class Weather(CommonCommand):
@@ -10,15 +11,21 @@ class Weather(CommonCommand):
         super().__init__(names, help_text, detail_help_text, keyboard=keyboard)
 
     def start(self):
-        if self.vk_event.args is None:
-            if self.vk_event.sender.city:
-                city = self.vk_event.sender.city.capitalize()
-            else:
-                city = 'Самара'
-        else:
-            city = self.vk_event.args[0].capitalize()
         from apps.API_VK.APIs.yandex_weather import get_weather
 
-        weather = get_weather(city)
+        if self.vk_event.args:
+            city = City.objects.filter(synonyms__icontains=self.vk_event.args[0])
+            if len(city) == 0:
+                return "Не нашёл такой город. /город"
+            city = city.first()
+        else:
+            city = self.vk_event.sender.city
+            if not city:
+                return "Не указан город в профиле. /город"
+
+        if city.lat and city.lon:
+            weather = get_weather(city)
+        else:
+            return "У города не указаны широта и долгота"
 
         return weather

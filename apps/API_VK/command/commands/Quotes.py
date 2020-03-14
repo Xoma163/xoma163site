@@ -30,7 +30,7 @@ class Quotes(CommonCommand):
                 page, result = check_int_arg(page)
                 if not result:
                     page = 1
-                self.check_int_arg_range(page, 0, float('inf'))
+                self.check_number_arg_range(page, 0, float('inf'))
 
             elif len(self.vk_event.args) == 1:
                 arg = self.vk_event.args[0]

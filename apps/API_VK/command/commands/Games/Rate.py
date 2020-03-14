@@ -38,7 +38,7 @@ class Rate(CommonCommand):
             if self.vk_event.args:
                 random = False
                 arg = self.vk_event.args[0]
-                self.check_int_arg_range(arg, 1, 100)
+                self.check_number_arg_range(arg, 1, 100)
             else:
                 random = True
                 available_list = [x for x in range(1, 101)]
