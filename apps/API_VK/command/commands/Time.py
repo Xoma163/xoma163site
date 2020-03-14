@@ -10,10 +10,13 @@ class Time(CommonCommand):
         names = ["время"]
         help_text = "Время - текущее время"
         detail_help_text = "Время [N] - текущее время в городе N, доступны Самара, Питер, Сызрань, Прибой. По умолчанию берёт город из профиля."
-        super().__init__(names, help_text, detail_help_text, args=1)
+        super().__init__(names, help_text, detail_help_text)
 
     def start(self):
-        city = City.objects.filter(synonyms__icontains=self.vk_event.args[0]).first()
+        if self.vk_event.args:
+            city = City.objects.filter(synonyms__icontains=self.vk_event.args[0]).first()
+        else:
+            city = self.vk_event.sender.city
         if not city:
             return "Город не найден. /город добавить"
 
