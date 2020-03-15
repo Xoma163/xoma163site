@@ -63,14 +63,13 @@ class YandexChat(CommonCommand):
                 yandex_temp_user.tries -= 1
                 yandex_temp_user.save()
                 return f"Неверный код. Осталось попыток - {yandex_temp_user.tries}"
-            yandex_user = YandexUser.objects.filter(
-                user_id=yandex_temp_user.user_id,
-                vk_user=yandex_temp_user.vk_user).first()
-            if not yandex_user:
-                return "Не нашёл пользователя YandexUser, оч странная хрень. Напишите разрабу"
 
-            yandex_user.vk_chat = yandex_temp_user.vk_chat
-            yandex_user.save()
+            yandex_users = YandexUser.objects.filter(vk_user=yandex_temp_user.vk_user)
+            if len(yandex_users) == 0:
+                return "Не нашёл пользователя YandexUser, оч странная хрень. Напишите разрабу"
+            for yandex_user in yandex_users:
+                yandex_user.vk_chat = yandex_temp_user.vk_chat
+                yandex_user.save()
             yandex_temp_user.delete()
             return "Успешно привязал"
         else:
