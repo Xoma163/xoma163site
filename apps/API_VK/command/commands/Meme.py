@@ -90,7 +90,7 @@ class Meme(CommonCommand):
                 # ToDo: Тонимото?
                 return "Не нашёл :("
             elif len(memes) == 1:
-                return self.send_1_meme(memes.first())
+                return self.send_1_meme(memes.first(), False)
             else:
                 for meme in memes:
                     if meme.name == self.vk_event.original_args:

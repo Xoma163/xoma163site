@@ -127,7 +127,8 @@ class Words(models.Model):
 class YandexUser(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
     user_id = models.CharField(verbose_name="ID пользователя", max_length=100)
-    vk_user = models.ForeignKey(VkUser, verbose_name="Вк юзер", on_delete=models.SET_NULL, null=True)
+    vk_user = models.ForeignKey(VkUser, verbose_name="Вк юзер", on_delete=models.SET_NULL, null=True, blank=True)
+    vk_chat = models.ForeignKey(VkChat, verbose_name="Вк чат", on_delete=models.SET_NULL, null=True, blank=True)
 
 
 def random_digits():
@@ -138,6 +139,7 @@ def random_digits():
 class YandexTempUser(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
     user_id = models.CharField(verbose_name="ID пользователя", max_length=100)
-    vk_user = models.ForeignKey(VkUser, verbose_name="Вк юзер", on_delete=models.SET_NULL, null=True)
+    vk_user = models.ForeignKey(VkUser, verbose_name="Вк юзер", on_delete=models.SET_NULL, null=True, blank=True)
+    vk_chat = models.ForeignKey(VkChat, verbose_name="Вк чат", on_delete=models.SET_NULL, null=True, blank=True)
     code = models.CharField(verbose_name="Код подтверждения", default=random_digits, max_length=6)
     tries = models.IntegerField(verbose_name="Кол-во попыток", default=5)

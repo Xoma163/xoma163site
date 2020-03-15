@@ -41,7 +41,6 @@ class Command(BaseCommand):
                     print(f"Чата с id = {chat_id} не существует")
                     break
                 chat = chat.first()
-                print(chat.chat_id)
                 vk_bot.send_message(chat.chat_id, result_str)
 
     def add_arguments(self, parser):

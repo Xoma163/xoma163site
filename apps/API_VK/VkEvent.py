@@ -63,3 +63,8 @@ class VkEvent:
             self.api = vk_event['api']
         else:
             self.api = False
+
+        if 'yandex' in vk_event:
+            self.yandex = vk_event['yandex']
+        else:
+            self.yandex = None

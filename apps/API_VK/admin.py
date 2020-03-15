@@ -48,9 +48,9 @@ class WordsAdmin(admin.ModelAdmin):
 
 @admin.register(YandexUser)
 class YandexUserAdmin(admin.ModelAdmin):
-    list_display = ('user_id', 'vk_user')
+    list_display = ('user_id', 'vk_user', 'vk_chat')
 
 
 @admin.register(YandexTempUser)
 class YandexTempUserAdmin(admin.ModelAdmin):
-    list_display = ('user_id', 'vk_user', 'code', 'tries')
+    list_display = ('user_id', 'vk_user', 'vk_chat', 'code', 'tries')

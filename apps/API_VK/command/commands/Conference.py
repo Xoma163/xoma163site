@@ -3,7 +3,7 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 
 class Conference(CommonCommand):
     def __init__(self):
-        names = ["конфа", "конференция", "беседа", "чат"]
+        names = ["конфа", "конференция", "беседа"]
 
         super().__init__(names, conversation=True)
 

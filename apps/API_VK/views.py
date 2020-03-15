@@ -5,7 +5,7 @@ import threading
 from django.http import HttpResponse, JsonResponse
 
 from apps.API_VK.APIs.yandex_geo import get_address
-from apps.API_VK.models import VkUser, Log, VkChat, YandexUser, YandexTempUser
+from apps.API_VK.models import VkUser, Log, YandexUser, YandexTempUser
 from xoma163site.wsgi import vk_bot
 
 
@@ -136,14 +136,8 @@ def petrovich(request):
         # test = check_bool(request.GET.get('test', False))
         send = check_bool(request.GET.get('send', False))
         # from_chat = check_bool(request.GET.get('from_chat', True))
-    elif request.method == "POST":
-        msg = request.POST.get('msg', None)
-        # test = check_bool(request.POST.get('test', False))
-        send = check_bool(request.POST.get('send', True))
-        # from_chat = check_bool(request.POST.get('from_chat', True))
     else:
-        return send_json({'error': 'only get or post'})
-
+        return send_json({'error': 'GET request required'})
     if not msg:
         return send_json({'error': 'empty param msg'})
     if len(msg) == 0:
@@ -151,7 +145,6 @@ def petrovich(request):
     if 'Client-Id' not in request.headers:
         return send_json({'error': 'empty header "Client-Id"'})
     client_id = request.headers['Client-Id']
-
     yandex_user = YandexUser.objects.filter(user_id=client_id).first()
 
     if not yandex_user:
@@ -167,19 +160,15 @@ def petrovich(request):
                             json_dumps_params={'ensure_ascii': False})
     else:
         user = yandex_user.vk_user
-    # ToDo: хрень
-    # if test:
-    #     chat = VkChat.objects.get(chat_id=2000000002)
-    # else:
-    #     chat = VkChat.objects.get(chat_id=2000000001)
-    chat = None
-    from_chat = False
+    chat = yandex_user.vk_chat
+
     vk_event = {
         'parsed': parse_msg(msg),
         'sender': user,
-        'api': True
+        'api': True,
+        'yandex': {'client_id': client_id}
     }
-    if from_chat:
+    if chat:
         vk_event['chat'] = chat
         vk_event['peer_id'] = chat.chat_id
     else:
@@ -187,7 +176,6 @@ def petrovich(request):
         vk_event['peer_id'] = user.user_id
 
     vk_event_object = VkEvent(vk_event)
-
     res = vk_bot.menu(vk_event_object, send=False)
     if send:
         x1 = threading.Thread(target=send_messages,
@@ -204,18 +192,23 @@ def send_messages(vk_bot, peer_id, msgs):
 
 def chat(request):
     msg = request.GET.get('msg', None)
-    test = check_bool(request.GET.get('test', False))
-
     if not msg:
-        return JsonResponse({'error': 'empty param msg'}, json_dumps_params={'ensure_ascii': False})
+        return send_json({'error': 'empty param msg'})
     if len(msg) == 0:
-        return JsonResponse({'error': 'empty msg'}, json_dumps_params={'ensure_ascii': False})
+        return send_json({'error': 'empty msg'})
+    if 'Client-Id' not in request.headers:
+        return send_json({'error': 'empty header "Client-Id"'})
 
-    user = VkUser.objects.get(user_id=3379762)
-    if test:
-        chat = VkChat.objects.get(chat_id=2000000002)
-    else:
-        chat = VkChat.objects.get(chat_id=2000000001)
+    client_id = request.headers['Client-Id']
+
+    yandex_user = YandexUser.objects.filter(user_id=client_id).first()
+    if not yandex_user:
+        return send_json({'error': 'user not registered'})
+
+    user = yandex_user.vk_user
+    chat = yandex_user.vk_chat
+    if not chat:
+        return send_json({'error': 'User chat is not registered'})
 
     vk_bot.parse_and_send_msgs(chat.chat_id, f"{user}:\n{msg}")
 
