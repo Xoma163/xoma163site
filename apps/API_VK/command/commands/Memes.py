@@ -7,7 +7,7 @@ class Memes(CommonCommand):
         names = ["мемы"]
         help_text = "Мемы - список мемов"
         detail_help_text = "Мемы ([N]) - присылает список мемов. N = фильтр для поиска"
-        super().__init__(names, help_text, detail_help_text)
+        super().__init__(names, help_text, detail_help_text, api=False)
 
     def start(self):
         if self.vk_event.args:
