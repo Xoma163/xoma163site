@@ -72,6 +72,14 @@ class YandexChat(CommonCommand):
                 yandex_user.save()
             yandex_temp_user.delete()
             return "Успешно привязал"
+        elif self.vk_event.args[0] == 'отвязать':
+            yandex_users = YandexUser.objects.filter(vk_user=self.vk_event.sender)
+            if len(yandex_users) == 0:
+                return "Не нашёл пользователя YandexUser, оч странная хрень. Напишите разрабу"
+            for yandex_user in yandex_users:
+                yandex_user.vk_chat = None
+                yandex_user.save()
+            return "Успешно отвязал"
         else:
-            return "Не понял. Доступно: Чат привязать/код."
+            return "Не понял. Доступно: Чат привязать/код/отвязать."
         return
