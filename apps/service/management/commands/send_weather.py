@@ -8,7 +8,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         chat_ids = options['chat_id'][0].split(',')
-        city = options['city'][0].capitalize()
+        city_name = options['city'][0]
+        from apps.service.models import City
+        city = City.objects.filter(synonyms__icontains=city_name).first()
+        if not city:
+            return "Не нашёл город"
         weather = get_weather(city)
 
         for chat_id in chat_ids:
