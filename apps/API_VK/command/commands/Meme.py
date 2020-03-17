@@ -13,10 +13,39 @@ class Meme(CommonCommand):
     def __init__(self):
         names = ["мем"]
         help_text = "Мем - присылает нужный мем"
-        detail_help_text = "Мем (N) - присылает нужный мем. N = название мема.\n" \
-                           "Добавление мема - /мем добавить ...(название) url\n" \
-                           "Добавление мема - /мем добавить ...(название) (картинка)\n"
+        detail_help_text = "Мем (название) - присылает нужный мем.\n" \
+                           "Добавление мема - /мем добавить ...(название) (url)\n" \
+                           "Добавление мема - /мем добавить ...(название) (картинка)\n" \
+                           "Отправка мема в конфу - /мем конфа (название конфы) (название)\n"
         super().__init__(names, help_text, detail_help_text, args=1)
+
+    def get_1_meme(self, filter_list):
+        memes = MemeModel.objects.all()
+
+        for _filter in filter_list:
+            memes = memes.filter(name__icontains=_filter)
+        if len(memes) == 0:
+            # ToDo: Тонимото?
+            raise RuntimeError("Не нашёл :(")
+        elif len(memes) == 1:
+            return memes.first()
+        else:
+            for meme in memes:
+                if meme.name == self.vk_event.original_args:
+                    # if check_name_exists(self.vk_event.original_args):
+                    return meme, False
+            meme_names = [meme.name for meme in memes]
+            meme_names_str = "\n".join(meme_names)
+            raise RuntimeError(f"Нашёл сразу несколько, уточните:\n\n"
+                               f"{meme_names_str}")
+
+    def send_1_meme_to_chat(self, meme, chat, print_name=True):
+        meme = self.send_1_meme(meme, print_name)
+        if type(meme) == dict:
+            self.vk_bot.parse_and_send_msgs(chat.chat_id, meme)
+            return "Отправил"
+        else:
+            return "Не нашёл мем :("
 
     def send_1_meme(self, meme, print_name=True):
         if print_name:
@@ -35,6 +64,8 @@ class Meme(CommonCommand):
             return "Какая-то хрень с мемом"
 
     def start(self):
+        from apps.API_VK.command.CommonMethods import get_one_chat_with_user
+
         for i in range(len(self.vk_event.args)):
             self.vk_event.args[i] = self.vk_event.args[i].lower()
         self.vk_event.original_args = self.vk_event.original_args.lower()
@@ -80,23 +111,13 @@ class Meme(CommonCommand):
         elif self.vk_event.args[0] in ['рандом', 'р']:
             meme = MemeModel.objects.all().order_by('?').first()
             return self.send_1_meme(meme)
+        elif self.vk_event.args[0] in ['конфа', 'конференция', 'чат']:
+            self.check_args(3)
+            chat = get_one_chat_with_user(self.vk_event.args[1], self.vk_event.sender.user_id)
+            meme_name_filter = self.vk_event.args[2:]
+            meme = self.get_1_meme(meme_name_filter)
+            return self.send_1_meme_to_chat(meme, chat, False)
+
         else:
-
-            memes = MemeModel.objects.all()
-
-            for arg in self.vk_event.args:
-                memes = memes.filter(name__icontains=arg)
-            if len(memes) == 0:
-                # ToDo: Тонимото?
-                return "Не нашёл :("
-            elif len(memes) == 1:
-                return self.send_1_meme(memes.first(), False)
-            else:
-                for meme in memes:
-                    if meme.name == self.vk_event.original_args:
-                        # if check_name_exists(self.vk_event.original_args):
-                        return self.send_1_meme(meme, False)
-                meme_names = [meme.name for meme in memes]
-                meme_names_str = "\n".join(meme_names)
-                return f"Нашёл сразу несколько, уточните:\n\n" \
-                       f"{meme_names_str}"
+            meme = self.get_1_meme(self.vk_event.args)
+            return self.send_1_meme(meme, False)

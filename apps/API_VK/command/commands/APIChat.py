@@ -1,5 +1,6 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.models import VkUser, VkChat, APITempUser, APIUser
+from apps.API_VK.command.CommonMethods import get_one_chat_with_user
+from apps.API_VK.models import VkUser, APITempUser, APIUser
 
 
 def get_users(chat, who):
@@ -19,36 +20,37 @@ class APIChat(CommonCommand):
     def start(self):
         if self.vk_event.args[0] == 'привязать':
             chat_name = self.vk_event.original_args.split(' ', 1)[1]
-            chats = VkChat.objects.filter(name__icontains=chat_name)
-            if len(chats) == 0:
-                return "Не нашёл такого чата"
+            chat_with_user = get_one_chat_with_user(chat_name, self.vk_event.sender.user_id)
+            # chats = VkChat.objects.filter(name__icontains=chat_name)
+            # if len(chats) == 0:
+            #     return "Не нашёл такого чата"
+            #
+            # chats_with_user = []
+            # for chat in chats:
+            #     user_contains = chat.vkuser_set.filter(user_id=self.vk_event.sender.user_id)
+            #     if user_contains:
+            #         chats_with_user.append(chat)
+            #
+            # if len(chats_with_user) == 0:
+            #     return "Не нашёл доступного чата с пользователем в этом чате"
+            # elif len(chats_with_user) > 1:
+            #     chats_str = '\n'.join(chats_with_user)
+            #     return "Нашёл несколько чатов. Уточните какой:\n" \
+            #            f"{chats_str}"
+            # elif len(chats_with_user) == 1:
+            #     chat_with_user = chats_with_user[0]
+            APITempUser.objects.filter(user_id=self.vk_event.yandex['client_id']).delete()
+            yandex_temp_user = APITempUser(
+                user_id=self.vk_event.yandex['client_id'],
+                vk_user=self.vk_event.sender,
+                vk_chat=chat_with_user,
+            )
+            yandex_temp_user.save()
+            msg = f"Код для пользователя {self.vk_event.sender}\n" \
+                  f"{yandex_temp_user.code}"
 
-            chats_with_user = []
-            for chat in chats:
-                user_contains = chat.vkuser_set.filter(user_id=self.vk_event.sender.user_id)
-                if user_contains:
-                    chats_with_user.append(chat)
-
-            if len(chats_with_user) == 0:
-                return "Не нашёл доступного чата с пользователем в этом чате"
-            elif len(chats_with_user) > 1:
-                chats_str = '\n'.join(chats_with_user)
-                return "Нашёл несколько чатов. Уточните какой:\n" \
-                       f"{chats_str}"
-            elif len(chats_with_user) == 1:
-                chat_with_user = chats_with_user[0]
-                APITempUser.objects.filter(user_id=self.vk_event.yandex['client_id']).delete()
-                yandex_temp_user = APITempUser(
-                    user_id=self.vk_event.yandex['client_id'],
-                    vk_user=self.vk_event.sender,
-                    vk_chat=chat_with_user,
-                )
-                yandex_temp_user.save()
-                msg = f"Код для пользователя {self.vk_event.sender}\n" \
-                      f"{yandex_temp_user.code}"
-
-                self.vk_bot.send_message(chat_with_user.chat_id, msg)
-                return "Отправил код. Пришлите мне его. Чат код {код}"
+            self.vk_bot.send_message(chat_with_user.chat_id, msg)
+            return "Отправил код. Пришлите мне его. Чат код {код}"
         elif self.vk_event.args[0] == 'код':
             code = self.vk_event.args[1]
             yandex_temp_user = APITempUser.objects.filter(user_id=self.vk_event.yandex['client_id'],
