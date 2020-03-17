@@ -99,7 +99,7 @@ def check_bool(val):
 
 def petrovich(request):
     def register(vk_id):
-        vk_id = "".join(vk_id.split(' '))
+        vk_id = vk_id.replace('-', '').replace(' ', '')
         user_id = int(vk_id)
         vk_user = VkUser.objects.filter(user_id=user_id).first()
         if vk_user:
@@ -116,7 +116,7 @@ def petrovich(request):
             return "Вы не зарегистрированы. Напишите боту в ВК любое сообщение"
 
     def confirm(code):
-        code = "".join(code.split(' '))
+        code = code.replace('-', '').replace(' ', '')
 
         yandex_temp_user = APITempUser.objects.filter(user_id=client_id).first()
         if not yandex_temp_user:
