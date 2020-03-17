@@ -1,5 +1,6 @@
 from django.contrib.auth.models import Group
 
+from apps.API_VK.command.commands.APIChat import APIChat
 from apps.API_VK.command.commands.AdminCommands.Ban import Ban
 from apps.API_VK.command.commands.AdminCommands.Command import Command
 from apps.API_VK.command.commands.AdminCommands.Control import Control
@@ -78,7 +79,6 @@ from apps.API_VK.command.commands.Uyu import Uyu
 from apps.API_VK.command.commands.Weather import Weather
 from apps.API_VK.command.commands.Where import Where
 from apps.API_VK.command.commands.Who import Who
-from apps.API_VK.command.commands.YandexChat import YandexChat
 from apps.API_VK.command.commands.YesNo import YesNo
 
 commands = [
@@ -91,7 +91,7 @@ commands = [
     get_user_by_id(), update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(),
     Find(), Rate(), Rates(), Translate(), Uptime(), Counter(), Counters(), TicTacToe(), Status(), Fix(), Debug(),
     Start_lada(), ShortLinks(), Time(), Transliteration(), Who(), Permissions(), Cat(), Sho(),
-    Codenames(), GameConference(), Bash(), Meme(), Memes(), Notify(), Notifies(), City(), YandexChat()
+    Codenames(), GameConference(), Bash(), Meme(), Memes(), Notify(), Notifies(), City(), APIChat()
 ]
 
 

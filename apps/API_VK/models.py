@@ -124,22 +124,35 @@ class Words(models.Model):
         return str(self.m1)
 
 
-class YandexUser(models.Model):
+class APIUser(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
     user_id = models.CharField(verbose_name="ID пользователя", max_length=100)
     vk_user = models.ForeignKey(VkUser, verbose_name="Вк юзер", on_delete=models.SET_NULL, null=True, blank=True)
     vk_chat = models.ForeignKey(VkChat, verbose_name="Вк чат", on_delete=models.SET_NULL, null=True, blank=True)
 
+    class Meta:
+        verbose_name = "API Пользователь"
+        verbose_name_plural = "API Пользователи"
+
+    def __str__(self):
+        return str(self.vk_user)
 
 def random_digits():
     digits_count = 6
     return str(random.randint(10 ** (digits_count - 1), 10 ** digits_count - 1))
 
 
-class YandexTempUser(models.Model):
+class APITempUser(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
     user_id = models.CharField(verbose_name="ID пользователя", max_length=100)
     vk_user = models.ForeignKey(VkUser, verbose_name="Вк юзер", on_delete=models.SET_NULL, null=True, blank=True)
     vk_chat = models.ForeignKey(VkChat, verbose_name="Вк чат", on_delete=models.SET_NULL, null=True, blank=True)
     code = models.CharField(verbose_name="Код подтверждения", default=random_digits, max_length=6)
     tries = models.IntegerField(verbose_name="Кол-во попыток", default=5)
+
+    class Meta:
+        verbose_name = "API Временный пользователь"
+        verbose_name_plural = "API Временные пользователи"
+
+    def __str__(self):
+        return str(self.vk_user)

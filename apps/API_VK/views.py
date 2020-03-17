@@ -5,7 +5,7 @@ import threading
 from django.http import HttpResponse, JsonResponse
 
 from apps.API_VK.APIs.yandex_geo import get_address
-from apps.API_VK.models import VkUser, Log, YandexUser, YandexTempUser
+from apps.API_VK.models import VkUser, Log, APIUser, APITempUser
 from xoma163site.wsgi import vk_bot
 
 
@@ -99,15 +99,16 @@ def check_bool(val):
 
 def petrovich(request):
     def register(vk_id):
+        vk_id = "".join(vk_id.split(' '))
         user_id = int(vk_id)
         vk_user = VkUser.objects.filter(user_id=user_id).first()
         if vk_user:
-            yandex_temp_user = YandexTempUser.objects.filter(vk_user=vk_user).first()
+            yandex_temp_user = APITempUser.objects.filter(vk_user=vk_user).first()
             if yandex_temp_user:
                 vk_bot.send_message(vk_user.user_id, yandex_temp_user.code)
                 return "Отправил код повторно"
             else:
-                yandex_temp_user = YandexTempUser(vk_user=vk_user, user_id=client_id)
+                yandex_temp_user = APITempUser(vk_user=vk_user, user_id=client_id)
                 yandex_temp_user.save()
                 vk_bot.send_message(vk_user.user_id, yandex_temp_user.code)
                 return "Отправил код подтверждения в ВК. Пришлите мне его. Код {код}"
@@ -115,7 +116,9 @@ def petrovich(request):
             return "Вы не зарегистрированы. Напишите боту в ВК любое сообщение"
 
     def confirm(code):
-        yandex_temp_user = YandexTempUser.objects.filter(user_id=client_id).first()
+        code = "".join(code.split(' '))
+
+        yandex_temp_user = APITempUser.objects.filter(user_id=client_id).first()
         if not yandex_temp_user:
             return "Вы не зарегистрированны. Пришлите ВК {ваш ид}"
         if yandex_temp_user.tries <= 0:
@@ -124,7 +127,7 @@ def petrovich(request):
             yandex_temp_user.tries -= 1
             yandex_temp_user.save()
             return f"Неверный код. Осталось попыток - {yandex_temp_user.tries}"
-        YandexUser(vk_user=yandex_temp_user.vk_user, user_id=yandex_temp_user.user_id).save()
+        APIUser(vk_user=yandex_temp_user.vk_user, user_id=yandex_temp_user.user_id).save()
         yandex_temp_user.delete()
         return "Успешно зарегистрировал. Можете пользоваться функционалом"
 
@@ -145,17 +148,20 @@ def petrovich(request):
     if 'Client-Id' not in request.headers:
         return send_json({'error': 'empty header "Client-Id"'})
     client_id = request.headers['Client-Id']
-    yandex_user = YandexUser.objects.filter(user_id=client_id).first()
+    yandex_user = APIUser.objects.filter(user_id=client_id).first()
 
     if not yandex_user:
-        msg = msg.split(' ')
-        for i in range(len(msg)):
-            msg[i] = msg[i].lower()
-        if msg and len(msg) >= 2:
-            if msg[0] == 'вк':
-                return send_json({'res': register(msg[1])})
-            elif msg[0] == 'код':
-                return send_json({'res': confirm(msg[1])})
+        msg_list = msg.split(' ')
+        for i in range(len(msg_list)):
+            msg_list[i] = msg_list[i].lower()
+        if msg_list and len(msg_list) >= 2:
+            if msg_list[0] == 'вк':
+                print(msg)
+                print(msg_list)
+                print(msg.split(' ', 1)[1])
+                return send_json({'res': register(msg.split(' ', 1)[1])})
+            elif msg_list[0] == 'код':
+                return send_json({'res': confirm(msg.split(' ', 1)[1])})
         return JsonResponse({'res': "Вы не зарегистрированны. Пришлите ВК {ваш ид}"},
                             json_dumps_params={'ensure_ascii': False})
     else:
@@ -201,7 +207,7 @@ def chat(request):
 
     client_id = request.headers['Client-Id']
 
-    yandex_user = YandexUser.objects.filter(user_id=client_id).first()
+    yandex_user = APIUser.objects.filter(user_id=client_id).first()
     if not yandex_user:
         return send_json({'error': 'user not registered'})
 

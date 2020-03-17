@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from apps.API_VK.models import Log, VkUser, QuoteBook, VkBot, VkChat, Words, YandexTempUser, YandexUser
+from apps.API_VK.models import Log, VkUser, QuoteBook, VkBot, VkChat, Words, APITempUser, APIUser
 
 
 @admin.register(VkUser)
@@ -46,11 +46,11 @@ class WordsAdmin(admin.ModelAdmin):
     search_fields = ['id', 'm1', 'f1', 'n1', 'mm', 'fm', 'type']
 
 
-@admin.register(YandexUser)
-class YandexUserAdmin(admin.ModelAdmin):
+@admin.register(APIUser)
+class APIUserAdmin(admin.ModelAdmin):
     list_display = ('user_id', 'vk_user', 'vk_chat')
 
 
-@admin.register(YandexTempUser)
-class YandexTempUserAdmin(admin.ModelAdmin):
+@admin.register(APITempUser)
+class APITempUserAdmin(admin.ModelAdmin):
     list_display = ('user_id', 'vk_user', 'vk_chat', 'code', 'tries')
