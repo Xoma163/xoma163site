@@ -14,9 +14,10 @@ class Meme(CommonCommand):
         names = ["мем"]
         help_text = "Мем - присылает нужный мем"
         detail_help_text = "Мем (название) - присылает нужный мем.\n" \
+                           "Мем р(рандом) - присылает рандомный мем.\n" \
                            "Добавление мема - /мем добавить ...(название) (url)\n" \
                            "Добавление мема - /мем добавить ...(название) (картинка)\n" \
-                           "Отправка мема в конфу - /мем конфа (название конфы) (название)\n"
+                           "Отправка мема в конфу - /мем конфа (название конфы) (название/рандом)\n"
         super().__init__(names, help_text, detail_help_text, args=1)
 
     def get_1_meme(self, filter_list):
@@ -112,10 +113,15 @@ class Meme(CommonCommand):
             meme = MemeModel.objects.all().order_by('?').first()
             return self.send_1_meme(meme)
         elif self.vk_event.args[0] in ['конфа', 'конференция', 'чат']:
+
             self.check_args(3)
+            if self.vk_event.args[-1] in ['рандом', 'р']:
+                meme = MemeModel.objects.all().order_by('?').first()
+            else:
+                meme_name_filter = self.vk_event.args[2:]
+                meme = self.get_1_meme(meme_name_filter)
             chat = get_one_chat_with_user(self.vk_event.args[1], self.vk_event.sender.user_id)
-            meme_name_filter = self.vk_event.args[2:]
-            meme = self.get_1_meme(meme_name_filter)
+
             return self.send_1_meme_to_chat(meme, chat, False)
 
         else:
