@@ -147,3 +147,11 @@ class RouletteRate(models.Model):
 
     rate_on = JSONField(verbose_name="Ставка")
     rate = models.IntegerField(verbose_name="Ставка")
+
+    class Meta:
+        verbose_name = "Ставка рулеток"
+        verbose_name_plural = "Ставки рулеток"
+        ordering = ["chat"]
+
+    def __str__(self):
+        return str(self.id)

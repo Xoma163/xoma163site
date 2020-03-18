@@ -172,6 +172,8 @@ class VkBotClass(threading.Thread):
     def send_message(self, peer_id, msg="ᅠ", attachments=None, keyboard=None, **kwargs):
         if attachments is None:
             attachments = []
+        if type(attachments) == str:
+            attachments = [attachments]
         if keyboard:
             keyboard = json.dumps(keyboard)
         msg = str(msg)
@@ -416,6 +418,8 @@ class VkBotClass(threading.Thread):
     def get_user_by_name(args, filter_chat=None):
         if not args:
             raise RuntimeError("Отсутствуют аргументы")
+        if type(args) == str:
+            args = [args]
         vk_users = VkUser.objects
         if filter_chat:
             vk_users = vk_users.filter(chats=filter_chat)

@@ -31,6 +31,7 @@ def random_probability(probability):
 
 
 def random_event(events, weights):
+    # В принципе это необязательно
     if sum(weights) != 100:
         raise RuntimeError("Сумма вероятности событий должна равняться 100")
     return random.choices(events, weights=weights)
