@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from apps.games.models import Rate, Gamer, PetrovichUser, PetrovichGames, TicTacToeSession, CodenamesUser, \
-    CodenamesSession
+    CodenamesSession, RouletteRate
 
 
 # RateDelete
@@ -9,7 +9,7 @@ from apps.games.models import Rate, Gamer, PetrovichUser, PetrovichGames, TicTac
 
 @admin.register(Gamer)
 class GamerAdmin(admin.ModelAdmin):
-    list_display = ('user', 'points', 'tic_tac_toe_points', 'codenames_points')
+    list_display = ('user', 'points', 'tic_tac_toe_points', 'codenames_points', 'roulette_points')
 
 
 @admin.register(Rate)
@@ -44,3 +44,8 @@ class CodenamesUserAdmin(admin.ModelAdmin):
 @admin.register(CodenamesSession)
 class CodenamesSessionAdmin(admin.ModelAdmin):
     list_display = ('chat', 'next_step', 'board',)
+
+
+@admin.register(RouletteRate)
+class RouletteRateAdmin(admin.ModelAdmin):
+    list_display = ('gamer', 'chat', 'rate_on', 'rate',)

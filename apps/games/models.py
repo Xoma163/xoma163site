@@ -11,6 +11,7 @@ class Gamer(models.Model):
     points = models.IntegerField(verbose_name="Очки", default=0)
     tic_tac_toe_points = models.IntegerField(verbose_name="Очки крестики-нолики", default=0)
     codenames_points = models.IntegerField(verbose_name="Очки коднеймса", default=0)
+    roulette_points = models.IntegerField(verbose_name="Очки рулетки", default=0)
 
     class Meta:
         verbose_name = "Игрок"
@@ -136,3 +137,13 @@ class CodenamesSession(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+
+class RouletteRate(models.Model):
+    id = models.AutoField(primary_key=True, verbose_name='ID')
+
+    gamer = models.ForeignKey(Gamer, verbose_name="Игрок", on_delete=models.SET_NULL, null=True)
+    chat = models.ForeignKey(VkChat, verbose_name="Чат", on_delete=models.SET_NULL, null=True)
+
+    rate_on = JSONField(verbose_name="Ставка")
+    rate = models.IntegerField(verbose_name="Ставка")

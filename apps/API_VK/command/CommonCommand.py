@@ -135,6 +135,8 @@ class CommonCommand:
             args = self.int_args
         elif arg_type == 'float':
             args = self.float_args
+        else:
+            raise RuntimeError("Неверный тип в parse_args")
         for checked_arg_index in args:
             try:
                 if len(self.vk_event.args) - 1 >= checked_arg_index:

@@ -36,6 +36,7 @@ from apps.API_VK.command.commands.Games.Codenames import Codenames
 from apps.API_VK.command.commands.Games.Petrovich import Petrovich
 from apps.API_VK.command.commands.Games.Rate import Rate
 from apps.API_VK.command.commands.Games.Rates import Rates
+from apps.API_VK.command.commands.Games.Roulette import Roulette
 from apps.API_VK.command.commands.Games.Statistics import Statistics
 from apps.API_VK.command.commands.Games.TicTacToe import TicTacToe
 from apps.API_VK.command.commands.Help import Help
@@ -91,7 +92,7 @@ commands = [
     get_user_by_id(), update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(),
     Find(), Rate(), Rates(), Translate(), Uptime(), Counter(), Counters(), TicTacToe(), Status(), Fix(), Debug(),
     Start_lada(), ShortLinks(), Time(), Transliteration(), Who(), Permissions(), Cat(), Sho(),
-    Codenames(), GameConference(), Bash(), Meme(), Memes(), Notify(), Notifies(), City(), APIChat()
+    Codenames(), GameConference(), Bash(), Meme(), Memes(), Notify(), Notifies(), City(), APIChat(), Roulette()
 ]
 
 
