@@ -2,6 +2,7 @@ import datetime
 from threading import Lock
 
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import localize_datetime
 from apps.games.models import PetrovichGames, PetrovichUser
 
 lock = Lock()
@@ -16,16 +17,18 @@ class Petrovich(CommonCommand):
 
     def start(self):
         with lock:
-            today = datetime.datetime.now()
+            today = localize_datetime(datetime.datetime.utcnow(), self.vk_event.sender.city.timezone)
             winner_today = PetrovichGames.objects.filter(date__year=today.year,
                                                          date__month=today.month,
                                                          date__day=today.day,
                                                          chat=self.vk_event.chat).last()
             if winner_today is not None:
                 if winner_today.user.name in ["Евгений", "Женя"]:
-                    return "Женя дня - %s" % winner_today.user
+                    return f"Женя дня - {winner_today.user}"
+                elif winner_today.user.name in ["Света"]:
+                    return f"Лапушка дня - {winner_today.user}"
                 else:
-                    return "Петрович дня - %s" % winner_today.user
+                    return f"Петрович дня - {winner_today.user}"
 
             # order_by ? = random
             winner = PetrovichUser.objects.filter(chat=self.vk_event.chat, active=True).order_by("?").first()
@@ -45,7 +48,7 @@ class Petrovich(CommonCommand):
                 who = "Женя"
             if winner.name == "Светлана":
                 messages.append(
-                    f"Наш сегодняшняя лапушка дня - [{winner.nickname}|{winner.name} {winner.surname}]")
+                    f"Наша сегодняшняя лапушка дня - [{winner.nickname}|{winner.name} {winner.surname}]")
             else:
                 messages.append(
                     f"Наш сегодняшний {who} дня - [{winner.nickname}|{winner.name} {winner.surname}]")

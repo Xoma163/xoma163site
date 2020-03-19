@@ -1,6 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
 
-# ToDo: get chat by id or name
 class Control(CommonCommand):
     def __init__(self):
         names = ["управление", "сообщение"]

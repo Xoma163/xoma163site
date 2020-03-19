@@ -4,7 +4,7 @@ import random
 from threading import Lock
 
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command.CommonMethods import random_event, localize_datetime
+from apps.API_VK.command.CommonMethods import random_event, localize_datetime, remove_tz
 from apps.games.models import RouletteRate, Gamer
 
 # Кратно трём
@@ -94,14 +94,18 @@ class Roulette(CommonCommand):
                     [self.vk_bot.get_photo_by_id(457242125), self.vk_bot.get_photo_by_id(457242126)], [90, 10])
                 return {'attachments': attachment}
             if self.vk_event.args[0] == 'бонус':
-                if (localize_datetime(datetime.datetime.utcnow(),
-                                      self.vk_event.sender.city.timezone).date() - gamer.roulette_points_today.date()).days > 0:
+                # ПРИМЕР ПРАВИЛЬНОЙ РАБОТЫ С ВРЕМЕНЕМ. ПРИБАВЛЯЕМ И К ТОМУ, ЧТО В БАЗЕ И К ТОМУ, ЧТО СЕЙЧАС
+
+                datetime_now = localize_datetime(datetime.datetime.utcnow(), self.vk_event.sender.city.timezone)
+                datetime_last = localize_datetime(remove_tz(gamer.roulette_points_today),
+                                                  self.vk_event.sender.city.timezone)
+                if (datetime_now.date() - datetime_last.date()).days > 0:
                     gamer.roulette_points += 500
-                    gamer.roulette_points_today = datetime.datetime.utcnow()
+                    gamer.roulette_points_today = datetime_now
                     gamer.save()
                     return "Выдал пособие по безработице"
                 else:
-                    return "Сегодня ты уже получал. Приходи завтра"
+                    return "Приходи завтра"
             if self.vk_event.args[0] == 'передать':
                 self.args = 3
                 self.int_args = [-1]

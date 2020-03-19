@@ -48,13 +48,13 @@ class City(CommonCommand):
 
             else:
                 city_name = self.vk_event.args[0]
-                city = CityModel.objects.filter(synonyms__icontains=city_name)
-                if len(city) == 0:
+                city = CityModel.objects.filter(synonyms__icontains=city_name).first()
+                if not city:
                     return "Не нашёл такого города. /город добавить {название} {часовой пояс} {длина} {широта}"
                 else:
-                    self.vk_event.sender.city = city.first()
+                    self.vk_event.sender.city = city
                     self.vk_event.sender.save()
-                    return f"Изменил город на {city_name.capitalize()}"
+                    return f"Изменил город на {city.name}"
 
         else:
             user = self.vk_bot.vk.users.get(user_id=self.vk_event.sender.user_id,
@@ -62,10 +62,10 @@ class City(CommonCommand):
                                             fields='sex, bdate, city, screen_name')[0]
             if 'city' not in user:
                 return "Город в профиле скрыт или не установлен. Пришлите название в аргументах"
-            city = CityModel.objects.filter(synonyms__icontains=user['city']['title'])
-            if len(city) == 0:
+            city = CityModel.objects.filter(synonyms__icontains=user['city']['title']).first()
+            if not city:
                 return "Не нашёл такого города. /город добавить {название} {часовой пояс} {длина} {широта}"
             else:
-                self.vk_event.sender.city = city.first()
+                self.vk_event.sender.city = city
                 self.vk_event.sender.save()
-                return f"Изменил город на {user['city']['title'].capitalize()}"
+                return f"Изменил город на {city.name}"
