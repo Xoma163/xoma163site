@@ -14,7 +14,9 @@ class Statistics(CommonCommand):
         args_translator = {'петрович': self.get_petrovich,
                            'ставки': self.get_rates,
                            'крестики': self.get_tic_tac_toe,
-                           'коднеймс': self.get_codenames}
+                           'коднеймс': self.get_codenames,
+                           'рулетка': self.get_roulettes,
+                           }
 
         if self.vk_event.args:
             arg = self.vk_event.args[0].lower()
@@ -73,6 +75,19 @@ class Statistics(CommonCommand):
             result_list.append([gamer, gamer.codenames_points])
 
         msg = "Победители коднеймса:\n"
+        for result in result_list:
+            msg += "%s - %s\n" % (result[0], result[1])
+
+        return msg
+
+    def get_roulettes(self):
+        gamers = Gamer.objects.exclude(roulette_points=0).filter(user__chats=self.vk_event.chat).order_by(
+            '-roulette_points')
+        result_list = []
+        for gamer in gamers:
+            result_list.append([gamer, gamer.roulette_points])
+
+        msg = "Очки рулетки:\n"
         for result in result_list:
             msg += "%s - %s\n" % (result[0], result[1])
 

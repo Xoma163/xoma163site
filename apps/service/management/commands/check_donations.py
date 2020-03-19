@@ -32,7 +32,7 @@ class Command(BaseCommand):
                 donation = response['data'][i]
                 result_str += f"{donation['username']} - {donation['amount']} {donation['currency']}:\n" \
                               f"{donation['message']}\n\n"
-
+                result_str += f"\n\n {secrets['vk']['mention_me']}"
             chat_ids = options['chat_id'][0].split(',')
             for chat_id in chat_ids:
                 chat = VkChat.objects.filter(chat_id=vk_bot.get_group_id(chat_id))

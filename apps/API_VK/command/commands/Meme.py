@@ -34,7 +34,7 @@ class Meme(CommonCommand):
             for meme in memes:
                 if meme.name == self.vk_event.original_args:
                     # if check_name_exists(self.vk_event.original_args):
-                    return meme, False
+                    return meme
             meme_names = [meme.name for meme in memes]
             meme_names_str = "\n".join(meme_names)
             raise RuntimeError(f"Нашёл сразу несколько, уточните:\n\n"

@@ -406,7 +406,7 @@ class VkBotClass(threading.Thread):
                     city = city.first()
                 vk_user.city = city
             else:
-                user.city = None
+                vk_user.city = None
             if 'screen_name' in user:
                 vk_user.nickname = user['screen_name']
             group_user = Group.objects.get(name='user')

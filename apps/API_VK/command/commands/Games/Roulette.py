@@ -1,9 +1,10 @@
+import datetime
 import json
 import random
 from threading import Lock
 
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command.CommonMethods import random_event
+from apps.API_VK.command.CommonMethods import random_event, localize_datetime
 from apps.games.models import RouletteRate, Gamer
 
 # Кратно трём
@@ -72,7 +73,11 @@ class Roulette(CommonCommand):
                            "/рулетка строка (1,2,3) - ставка на строку\n" \
                            "/рулетка красное/чёрное - ставка на цвет\n" \
                            "/рулетка чётное/нечётное - ставка на кратность\n" \
-                           "/рулетка первая/вторая - ставка на 1/2 части стола\n"
+                           "/рулетка первая/вторая - ставка на 1/2 части стола\n" \
+                           "\n" \
+                           "рулетка баланс [игрок] - баланс [игрока]\n" \
+                           "рулетка картинка - картинка рулетки\n" \
+                           "рулетка бонус - получение пособия по безработице\n"
 
         super().__init__(names, help_text, detail_help_text, conversation=True)
 
@@ -97,20 +102,29 @@ class Roulette(CommonCommand):
                 attachment = random_event(
                     [self.vk_bot.get_photo_by_id(457242125), self.vk_bot.get_photo_by_id(457242126)], [90, 10])
                 return {'attachments': attachment}
-
-            self.int_args = [-1]
-            self.args = 2
-            self.check_args()
-            self.parse_args('int')
+            if self.vk_event.args[0] == 'бонус':
+                if (localize_datetime(datetime.datetime.utcnow(),
+                                      self.vk_event.sender.city.timezone) - gamer.roulette_points_today).days > 0:
+                    gamer.roulette_points += 500
+                    gamer.roulette_points_today = datetime.date.today()
+                    gamer.save()
+                    return "Выдал пособие по безработице"
+                else:
+                    return "Сегодня ты уже получал. Приходи завтра"
 
             rate_on = self.vk_event.args[0]
-            rate = self.vk_event.args[-1]
-            if rate <= 0:
-                return "Ставка не может быть ⩽0"
-            if rate > gamer.roulette_points:
-                return f"Ставка не может быть больше ваших очков - {gamer.roulette_points}"
 
             if rate_on in TRANSLATOR:
+                self.int_args = [-1]
+                self.args = 2
+                self.check_args()
+                self.parse_args('int')
+                rate = self.vk_event.args[-1]
+                if rate <= 0:
+                    return "Ставка не может быть ⩽0"
+                if rate > gamer.roulette_points:
+                    return f"Ставка не может быть больше ваших очков - {gamer.roulette_points}"
+
                 if rate_on in ['строка', 'столбец']:
                     self.args = 3
                     self.int_args = [1, 2]
