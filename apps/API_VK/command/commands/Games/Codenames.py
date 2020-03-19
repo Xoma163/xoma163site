@@ -144,10 +144,7 @@ class Codenames(CommonCommand):
 
     def start(self):
         with lock:
-            if self.vk_event.from_user and CodenamesUser.objects.filter(user=self.vk_event.sender).first():
-                self.init_var()
-            else:
-                return "Вы не зарегистрировались в игре"
+            self.init_var()
 
             if self.vk_event.args:
                 if self.vk_event.args[0].lower() in ['рег', 'регистрация']:
@@ -183,7 +180,7 @@ class Codenames(CommonCommand):
                             codenames_user.command = 'red'
                         codenames_user.save()
                         return f"Зарегистрировал. Ты в {translator_commands[codenames_user.command]} команде"
-                if self.vk_event.args[0].lower() in ['дерег']:
+                elif self.vk_event.args[0].lower() in ['дерег']:
                     self.check_conversation()
                     check_not_session(self.session)
                     self.player.delete()

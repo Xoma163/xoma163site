@@ -27,8 +27,8 @@ def is_red(n):
 def generate_translator():
     translator_numbers = {str(i): {'win_numbers': [i], 'coefficient': MAX_NUMBERS} for i in range(MAX_NUMBERS + 1)}
     translator = {
-        'красное': {'win_numbers': [], 'coefficient': 2},
-        'черное': {'win_numbers': [], 'coefficient': 2},
+        'красное': {'win_numbers': [i for i in range(1, MAX_NUMBERS + 1) if is_red(i)], 'coefficient': 2},
+        'черное': {'win_numbers': [i for i in range(1, MAX_NUMBERS + 1) if not is_red(i)], 'coefficient': 2},
         'строка': {1: {'win_numbers': [i for i in range(3, MAX_NUMBERS + 1, 3)], 'coefficient': 3},
                    2: {'win_numbers': [i for i in range(2, MAX_NUMBERS, 3)], 'coefficient': 3},
                    3: {'win_numbers': [i for i in range(1, MAX_NUMBERS, 3)], 'coefficient': 3},
@@ -45,16 +45,6 @@ def generate_translator():
     }
 
     translator.update(translator_numbers)
-
-    red_numbers = []
-    black_numbers = []
-    for i in range(1, MAX_NUMBERS + 1):
-        if is_red(i):
-            red_numbers.append(i)
-        else:
-            black_numbers.append(i)
-    translator['красное']['win_numbers'] = red_numbers
-    translator['черное']['win_numbers'] = black_numbers
 
     return translator
 
@@ -77,7 +67,8 @@ class Roulette(CommonCommand):
                            "\n" \
                            "рулетка баланс [игрок] - баланс [игрока]\n" \
                            "рулетка картинка - картинка рулетки\n" \
-                           "рулетка бонус - получение пособия по безработице\n"
+                           "рулетка бонус - получение пособия по безработице\n" \
+                           "рулетка передать [игрок] очки - передача очков другому игроку\n"
 
         super().__init__(names, help_text, detail_help_text, conversation=True)
 
@@ -104,13 +95,33 @@ class Roulette(CommonCommand):
                 return {'attachments': attachment}
             if self.vk_event.args[0] == 'бонус':
                 if (localize_datetime(datetime.datetime.utcnow(),
-                                      self.vk_event.sender.city.timezone) - gamer.roulette_points_today).days > 0:
+                                      self.vk_event.sender.city.timezone).date() - gamer.roulette_points_today.date()).days > 0:
                     gamer.roulette_points += 500
-                    gamer.roulette_points_today = datetime.date.today()
+                    gamer.roulette_points_today = datetime.datetime.utcnow()
                     gamer.save()
                     return "Выдал пособие по безработице"
                 else:
                     return "Сегодня ты уже получал. Приходи завтра"
+            if self.vk_event.args[0] == 'передать':
+                self.args = 3
+                self.int_args = [-1]
+                self.check_args()
+                self.parse_args('int')
+
+                points_transfer = self.vk_event.args[-1]
+                if points_transfer > gamer.roulette_points:
+                    return "Недостаточно очков"
+                username = " ".join(self.vk_event.args[1:-1])
+                vk_user = self.vk_bot.get_user_by_name(username, self.vk_event.chat)
+                vk_user_gamer = Gamer.objects.filter(user=vk_user).first()
+                if not vk_user_gamer:
+                    return "Не нашёл такого игрока"
+
+                gamer.roulette_points -= points_transfer
+                gamer.save()
+                vk_user_gamer.roulette_points += points_transfer
+                vk_user_gamer.save()
+                return f"Передал игроку {vk_user_gamer.user} {points_transfer} очков"
 
             rate_on = self.vk_event.args[0]
 
