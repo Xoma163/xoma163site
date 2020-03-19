@@ -2,7 +2,7 @@ import datetime
 from threading import Lock
 
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command.CommonMethods import localize_datetime
+from apps.API_VK.command.CommonMethods import localize_datetime, remove_tz
 from apps.games.models import PetrovichGames, PetrovichUser
 
 lock = Lock()
@@ -17,20 +17,19 @@ class Petrovich(CommonCommand):
 
     def start(self):
         with lock:
-            today = localize_datetime(datetime.datetime.utcnow(), self.vk_event.sender.city.timezone)
-            winner_today = PetrovichGames.objects.filter(date__year=today.year,
-                                                         date__month=today.month,
-                                                         date__day=today.day,
-                                                         chat=self.vk_event.chat).last()
-            if winner_today is not None:
+
+            winner_today = PetrovichGames.objects.filter(chat=self.vk_event.chat).last()
+
+            datetime_now = localize_datetime(datetime.datetime.utcnow(), self.vk_event.sender.city.timezone)
+            datetime_last = localize_datetime(remove_tz(winner_today.date), self.vk_event.sender.city.timezone)
+            if (datetime_now.date() - datetime_last.date()).days == 0:
                 if winner_today.user.name in ["Евгений", "Женя"]:
                     return f"Женя дня - {winner_today.user}"
-                elif winner_today.user.name in ["Света"]:
+                elif winner_today.user.name in ["Светлана"]:
                     return f"Лапушка дня - {winner_today.user}"
                 else:
                     return f"Петрович дня - {winner_today.user}"
 
-            # order_by ? = random
             winner = PetrovichUser.objects.filter(chat=self.vk_event.chat, active=True).order_by("?").first()
             if winner:
                 winner = winner.user
@@ -46,7 +45,7 @@ class Petrovich(CommonCommand):
             who = "Петрович"
             if winner.name in ["Евгений", "Женя"]:
                 who = "Женя"
-            if winner.name == "Светлана":
+            if winner.name in ["Светлана"]:
                 messages.append(
                     f"Наша сегодняшняя лапушка дня - [{winner.nickname}|{winner.name} {winner.surname}]")
             else:

@@ -115,11 +115,16 @@ class Roulette(CommonCommand):
                 points_transfer = self.vk_event.args[-1]
                 if points_transfer > gamer.roulette_points:
                     return "Недостаточно очков"
+                if points_transfer <= 0:
+                    return "Очков должно быть >0"
                 username = " ".join(self.vk_event.args[1:-1])
                 vk_user = self.vk_bot.get_user_by_name(username, self.vk_event.chat)
                 vk_user_gamer = Gamer.objects.filter(user=vk_user).first()
                 if not vk_user_gamer:
                     return "Не нашёл такого игрока"
+
+                if gamer == vk_user_gamer:
+                    return "))"
 
                 gamer.roulette_points -= points_transfer
                 gamer.save()
