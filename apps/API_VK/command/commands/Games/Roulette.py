@@ -7,7 +7,7 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import random_event, localize_datetime, remove_tz
 from apps.games.models import RouletteRate, Gamer
 
-# Кратно трём
+# Кратно 12
 MAX_NUMBERS = 36
 
 lock = Lock()

@@ -14,7 +14,8 @@ class Command(BaseCommand):
         notifies = Notify.objects.all()
 
         for notify in notifies:
-            if (remove_tz(notify.date) - datetime.utcnow() + timedelta(minutes=1)).seconds <= 60:
+            delta_time = remove_tz(notify.date) - datetime.utcnow() + timedelta(minutes=1)
+            if delta_time.days == 0 and delta_time.seconds <= 60:
 
                 notify_datetime = localize_datetime(remove_tz(notify.date), notify.author.city.timezone)
                 message = f"Напоминалка на {notify_datetime.strftime('%H:%M')}\n" \
