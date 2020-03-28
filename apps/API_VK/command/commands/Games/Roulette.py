@@ -94,11 +94,8 @@ class Roulette(CommonCommand):
                     [self.vk_bot.get_photo_by_id(457242125), self.vk_bot.get_photo_by_id(457242126)], [90, 10])
                 return {'attachments': attachment}
             if self.vk_event.args[0] == 'бонус':
-                # ПРИМЕР ПРАВИЛЬНОЙ РАБОТЫ С ВРЕМЕНЕМ. ПРИБАВЛЯЕМ И К ТОМУ, ЧТО В БАЗЕ И К ТОМУ, ЧТО СЕЙЧАС
-
-                datetime_now = localize_datetime(datetime.datetime.utcnow(), self.vk_event.sender.city.timezone)
-                datetime_last = localize_datetime(remove_tz(gamer.roulette_points_today),
-                                                  self.vk_event.sender.city.timezone)
+                datetime_now = localize_datetime(datetime.datetime.utcnow(), "Europe/Moscow")
+                datetime_last = localize_datetime(remove_tz(gamer.roulette_points_today), "Europe/Moscow")
                 if (datetime_now.date() - datetime_last.date()).days > 0:
                     gamer.roulette_points += 500
                     gamer.roulette_points_today = datetime_now

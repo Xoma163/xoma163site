@@ -17,18 +17,17 @@ class Petrovich(CommonCommand):
 
     def start(self):
         with lock:
-
             winner_today = PetrovichGames.objects.filter(chat=self.vk_event.chat).last()
-
-            datetime_now = localize_datetime(datetime.datetime.utcnow(), self.vk_event.sender.city.timezone)
-            datetime_last = localize_datetime(remove_tz(winner_today.date), self.vk_event.sender.city.timezone)
-            if (datetime_now.date() - datetime_last.date()).days == 0:
-                if winner_today.user.name in ["Евгений", "Женя"]:
-                    return f"Женя дня - {winner_today.user}"
-                elif winner_today.user.name in ["Светлана"]:
-                    return f"Лапушка дня - {winner_today.user}"
-                else:
-                    return f"Петрович дня - {winner_today.user}"
+            if winner_today:
+                datetime_now = localize_datetime(datetime.datetime.utcnow(), "Europe/Moscow")
+                datetime_last = localize_datetime(remove_tz(winner_today.date), "Europe/Moscow")
+                if (datetime_now.date() - datetime_last.date()).days <= 0:
+                    if winner_today.user.name in ["Евгений", "Женя"]:
+                        return f"Женя дня - {winner_today.user}"
+                    elif winner_today.user.name in ["Светлана"]:
+                        return f"Лапушка дня - {winner_today.user}"
+                    else:
+                        return f"Петрович дня - {winner_today.user}"
 
             winner = PetrovichUser.objects.filter(chat=self.vk_event.chat, active=True).order_by("?").first()
             if winner:
