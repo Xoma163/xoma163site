@@ -19,6 +19,7 @@ from apps.API_VK.command.commands.Counters import Counters
 from apps.API_VK.command.commands.EasyCommands.Apologize import Apologize
 from apps.API_VK.command.commands.EasyCommands.Bye import Bye
 from apps.API_VK.command.commands.EasyCommands.Clear import Clear
+from apps.API_VK.command.commands.EasyCommands.Diary import Diary
 from apps.API_VK.command.commands.EasyCommands.Discord import Discord
 from apps.API_VK.command.commands.EasyCommands.Donate import Donate
 from apps.API_VK.command.commands.EasyCommands.GameConference import GameConference
@@ -81,7 +82,6 @@ from apps.API_VK.command.commands.Weather import Weather
 from apps.API_VK.command.commands.Where import Where
 from apps.API_VK.command.commands.Who import Who
 from apps.API_VK.command.commands.YesNo import YesNo
-from apps.API_VK.command.commands.EasyCommands.Diary
 
 commands = [
     # Week(), TimeTable(),

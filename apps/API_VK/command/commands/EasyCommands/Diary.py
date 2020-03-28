@@ -3,8 +3,8 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 
 class Diary(CommonCommand):
     def __init__(self):
-        names = ["ежедневник"]
-        help_text = "Ежедневник - ссылка на ежедневник"
+        names = ["РµР¶РµРґРЅРµРІРЅРёРє"]
+        help_text = "Р•Р¶РµРґРЅРµРІРЅРёРє - СЃСЃС‹Р»РєР° РЅР° РµР¶РµРґРЅРµРІРЅРёРє"
         super().__init__(names, help_text)
 
     def start(self):
