@@ -4,11 +4,11 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import has_cyrillic
 
 
-def get_en_translate(msg):
+def get_en_transliterate(msg):
     return transliterate.translit(msg, reversed=True)
 
 
-def get_ru_translate(msg):
+def get_ru_transliterate(msg):
     return transliterate.translit(msg, 'ru')
 
 
@@ -32,15 +32,6 @@ class Transliteration(CommonCommand):
             translite_text += f"{text}\n\n"
 
         if has_cyrillic(translite_text):
-            return get_en_translate(translite_text)
+            return get_en_transliterate(translite_text)
         else:
-            return get_ru_translate(translite_text)
-
-        get_en_translate()
-
-        get_ru_translate()
-        print()
-        print()
-        # print(transliterate.translit('Privet'))
-        return transliterate.translit('Привет', reversed=True)
-        pass
+            return get_ru_transliterate(translite_text)

@@ -14,6 +14,7 @@ from apps.API_VK.command.commands.Birds import Birds
 from apps.API_VK.command.commands.Cat import Cat
 from apps.API_VK.command.commands.City import City
 from apps.API_VK.command.commands.Conference import Conference
+from apps.API_VK.command.commands.Coronavirus import Coronavirus
 from apps.API_VK.command.commands.Counter import Counter
 from apps.API_VK.command.commands.Counters import Counters
 from apps.API_VK.command.commands.EasyCommands.Apologize import Apologize
@@ -93,7 +94,8 @@ commands = [
     get_user_by_id(), update_users(), get_conversations(), Logs(), Words(), Temperature(), Apologize(), Clear(),
     Find(), Rate(), Rates(), Translate(), Uptime(), Counter(), Counters(), TicTacToe(), Status(), Fix(), Debug(),
     Start_lada(), ShortLinks(), Time(), Transliteration(), Who(), Permissions(), Cat(), Sho(),
-    Codenames(), GameConference(), Bash(), Meme(), Memes(), Notify(), Notifies(), City(), APIChat(), Roulette(), Diary()
+    Codenames(), GameConference(), Bash(), Meme(), Memes(), Notify(), Notifies(), City(), APIChat(), Roulette(),
+    Diary(), Coronavirus()
 ]
 
 
