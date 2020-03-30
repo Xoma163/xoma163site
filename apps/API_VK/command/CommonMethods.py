@@ -99,3 +99,9 @@ def get_one_chat_with_user(chat_name, user_id):
 
     elif len(chats_with_user) == 1:
         return chats_with_user[0]
+
+
+def get_mention(user, name=None):
+    if not name:
+        name = user.name
+    return f"[id{user.user_id}|{name}]"

@@ -3,7 +3,7 @@ from apps.service.models import Statistic, Issue
 
 def append_command_to_statistics(command):
     if command[-1] == '?':
-        return
+        command = "?"
     statistics = Statistic.objects.filter(command=command).first()
     if statistics:
         statistics.count_queries += 1

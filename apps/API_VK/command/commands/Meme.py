@@ -35,10 +35,15 @@ class Meme(CommonCommand):
                 if meme.name == self.vk_event.original_args:
                     # if check_name_exists(self.vk_event.original_args):
                     return meme
-            meme_names = [meme.name for meme in memes]
+            memes10 = memes[:10]
+            meme_names = [meme.name for meme in memes10]
             meme_names_str = "\n".join(meme_names)
-            raise RuntimeError(f"Нашёл сразу несколько, уточните:\n\n"
-                               f"{meme_names_str}")
+
+            msg = f"Нашёл сразу несколько, уточните:\n\n" \
+                  f"{meme_names_str}"
+            if len(memes) > 10:
+                msg += "\n..."
+            raise RuntimeError(msg)
 
     def send_1_meme_to_chat(self, meme, chat, print_name=True):
         meme = self.send_1_meme(meme, print_name)

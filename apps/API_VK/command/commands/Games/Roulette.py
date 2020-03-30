@@ -25,23 +25,35 @@ def is_red(n):
 
 
 def generate_translator():
-    translator_numbers = {str(i): {'win_numbers': [i], 'coefficient': MAX_NUMBERS} for i in range(MAX_NUMBERS + 1)}
+    translator_numbers = {str(i): {'win_numbers': [i], 'coefficient': MAX_NUMBERS, 'verbose_name': i} for i in
+                          range(MAX_NUMBERS + 1)}
     translator = {
-        'красное': {'win_numbers': [i for i in range(1, MAX_NUMBERS + 1) if is_red(i)], 'coefficient': 2},
-        'черное': {'win_numbers': [i for i in range(1, MAX_NUMBERS + 1) if not is_red(i)], 'coefficient': 2},
-        'строка': {1: {'win_numbers': [i for i in range(3, MAX_NUMBERS + 1, 3)], 'coefficient': 3},
-                   2: {'win_numbers': [i for i in range(2, MAX_NUMBERS, 3)], 'coefficient': 3},
-                   3: {'win_numbers': [i for i in range(1, MAX_NUMBERS, 3)], 'coefficient': 3},
+        'красное': {'win_numbers': [i for i in range(1, MAX_NUMBERS + 1) if is_red(i)], 'coefficient': 2,
+                    'verbose_name': "красное"},
+        'черное': {'win_numbers': [i for i in range(1, MAX_NUMBERS + 1) if not is_red(i)], 'coefficient': 2,
+                   'verbose_name': "чёрное"},
+        'строка': {1: {'win_numbers': [i for i in range(3, MAX_NUMBERS + 1, 3)], 'coefficient': 3,
+                       'verbose_name': "1я строка"},
+                   2: {'win_numbers': [i for i in range(2, MAX_NUMBERS, 3)], 'coefficient': 3,
+                       'verbose_name': "2 строка"},
+                   3: {'win_numbers': [i for i in range(1, MAX_NUMBERS, 3)], 'coefficient': 3,
+                       'verbose_name': "3 строка"},
                    },
-        'столбец': {1: {'win_numbers': [i for i in range(1, MAX_NUMBERS // 3 + 1)], 'coefficient': 3},
+        'столбец': {1: {'win_numbers': [i for i in range(1, MAX_NUMBERS // 3 + 1)], 'coefficient': 3,
+                        'verbose_name': "1 столбец"},
                     2: {'win_numbers': [i for i in range(MAX_NUMBERS // 3 + 1, MAX_NUMBERS * 2 // 3 + 1)],
-                        'coefficient': 3},
-                    3: {'win_numbers': [i for i in range(MAX_NUMBERS * 2 // 3 + 1, MAX_NUMBERS + 1)], 'coefficient': 3},
+                        'coefficient': 3, 'verbose_name': "2 столбец"},
+                    3: {'win_numbers': [i for i in range(MAX_NUMBERS * 2 // 3 + 1, MAX_NUMBERS + 1)], 'coefficient': 3,
+                        'verbose_name': "3 столбец"},
                     },
-        'первая': {'win_numbers': [i for i in range(1, MAX_NUMBERS // 2 + 1)], 'coefficient': 2},
+        'первая': {'win_numbers': [i for i in range(1, MAX_NUMBERS // 2 + 1)], 'coefficient': 2,
+                   'verbose_name': "первая половина"},
         'вторая': {'win_numbers': [i for i in range(MAX_NUMBERS // 2 + 1, MAX_NUMBERS + 1)], 'coefficient': 2},
-        'четное': {'win_numbers': [i for i in range(2, MAX_NUMBERS + 1, 2)], 'coefficient': 2},
-        'нечетное': {'win_numbers': [i for i in range(1, MAX_NUMBERS, 2)], 'coefficient': 2},
+        'verbose_name': "вторая половина",
+        'четное': {'win_numbers': [i for i in range(2, MAX_NUMBERS + 1, 2)], 'coefficient': 2,
+                   'verbose_name': "чётное"},
+        'нечетное': {'win_numbers': [i for i in range(1, MAX_NUMBERS, 2)], 'coefficient': 2,
+                     'verbose_name': "нечётное"},
     }
 
     translator.update(translator_numbers)
@@ -50,6 +62,14 @@ def generate_translator():
 
 
 TRANSLATOR = generate_translator()
+
+
+# def str_is_int(rate):
+#     try:
+#         int(rate)
+#         return True
+#     except ValueError:
+#         return False
 
 
 class Roulette(CommonCommand):
@@ -103,7 +123,7 @@ class Roulette(CommonCommand):
                     return "Выдал пособие по безработице"
                 else:
                     return "Приходи завтра"
-            if self.vk_event.args[0] == 'передать':
+            if self.vk_event.args[0] in ['передать', 'перевод', 'перевести', 'подать']:
                 self.args = 3
                 self.int_args = [-1]
                 self.check_args()
@@ -128,15 +148,24 @@ class Roulette(CommonCommand):
                 vk_user_gamer.roulette_points += points_transfer
                 vk_user_gamer.save()
                 return f"Передал игроку {vk_user_gamer.user} {points_transfer} очков"
-
+            if self.vk_event.args[0] in ['ставки']:
+                rrs = RouletteRate.objects.filter(chat=self.vk_event.chat)
+                msg = ""
+                for rr in rrs:
+                    rate_on_dict = json.loads(rr.rate_on)
+                    msg += f"{rr.gamer.user} поставил на {rate_on_dict['verbose_name']} {rr.rate} очков\n"
+                return msg
             rate_on = self.vk_event.args[0]
-
-            if rate_on in TRANSLATOR:
-                self.int_args = [-1]
+            # rate_is_int = str_is_int(rate_on)
+            if rate_on in TRANSLATOR:  # or rate_is_int:
                 self.args = 2
                 self.check_args()
-                self.parse_args('int')
-                rate = self.vk_event.args[-1]
+                if self.vk_event.args[-1].lower() == 'все':
+                    rate = gamer.roulette_points
+                else:
+                    self.int_args = [-1]
+                    self.parse_args('int')
+                    rate = self.vk_event.args[-1]
                 if rate <= 0:
                     return "Ставка не может быть ⩽0"
                 if rate > gamer.roulette_points:
@@ -151,6 +180,9 @@ class Roulette(CommonCommand):
                     self.check_number_arg_range(rowcol, 1, 3)
 
                     rate_obj = TRANSLATOR[rate_on][rowcol]
+
+                # elif rate_is_int:
+                #     rate_obj = {'win_numbers': [int(rate_on)], 'coefficient': MAX_NUMBERS}
                 else:
                     rate_obj = TRANSLATOR[rate_on]
                 rr = RouletteRate(gamer=gamer, chat=self.vk_event.chat, rate_on=json.dumps(rate_obj), rate=rate)
