@@ -9,7 +9,7 @@ class Time(CommonCommand):
     def __init__(self):
         names = ["время"]
         help_text = "Время - текущее время"
-        detail_help_text = "Время [N] - текущее время в городе N, доступны Самара, Питер, Сызрань, Прибой. По умолчанию берёт город из профиля."
+        detail_help_text = "Время [N] - текущее время в городе"
         super().__init__(names, help_text, detail_help_text)
 
     def start(self):
@@ -19,6 +19,8 @@ class Time(CommonCommand):
             city = self.vk_event.sender.city
         if not city:
             return "Город не найден. /город добавить"
+        if not city.timezone:
+            return "Таймзона у города не найдена"
 
         new_date = localize_datetime(datetime.datetime.utcnow(), city.timezone)
         return new_date.strftime("%d.%m.%Y\n%H:%M:%S")

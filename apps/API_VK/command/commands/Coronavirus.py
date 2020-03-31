@@ -50,6 +50,7 @@ class Coronavirus(CommonCommand):
                 plt.plot(datas[0], label="Больные")
                 plt.plot(datas[1], label="Выздоровевшие")
                 plt.plot(datas[2], label="Умершие")
+                plt.title(country.capitalize())
                 plt.xlabel('День')
                 plt.ylabel('Количество людей')
                 plt.legend()
