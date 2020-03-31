@@ -143,10 +143,15 @@ class CommonCommand:
                     if arg_type == 'int':
                         self.vk_event.args[checked_arg_index] = int(self.vk_event.args[checked_arg_index])
                     elif arg_type == 'float':
-                        self.vk_event.args[checked_arg_index] = int(self.vk_event.args[checked_arg_index])
+                        self.vk_event.args[checked_arg_index] = float(self.vk_event.args[checked_arg_index])
 
             except ValueError:
-                error = "Аргумент должен быть целочисленным"
+                if arg_type == 'int':
+                    error = "Аргумент должен быть целочисленным"
+                elif arg_type == 'float':
+                    error = "Аргумент должен быть с плавающей запятой"
+                else:
+                    error = "wut?"
                 raise RuntimeError(error)
         return True
 

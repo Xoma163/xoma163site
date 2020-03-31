@@ -11,17 +11,20 @@ class City(CommonCommand):
                            "Город (N) - устанавливает пользователю город из аргумента\n" \
                            "Город добавить {название} {временная зона}(например Europe/Moscow, Europe/Samara) {широта} {долгота} \n" \
                            "Пример: /город добавить Самара Europe/Samara 53.212273 50.169435"
-        super().__init__(names, help_text, detail_help_text, float_args=[3, 4])
+        super().__init__(names, help_text, detail_help_text)
 
     def start(self):
 
         if self.vk_event.args:
             if self.vk_event.args[0] == 'добавить':
                 self.check_args(5)
-                city_name = self.vk_event.args[1]
-                city_timezone = self.vk_event.args[2]
-                city_lat = self.vk_event.args[3]
-                city_lon = self.vk_event.args[4]
+                city_name = self.vk_event.args[1:len(self.vk_event.args) - 3]
+                city_name = " ".join(city_name)
+                city_timezone = self.vk_event.args[-3]
+                self.float_args = [-2, -1]
+                self.parse_args('float')
+                city_lat = self.vk_event.args[-2]
+                city_lon = self.vk_event.args[-1]
 
                 city = CityModel.objects.filter(synonyms__icontains=city_name)
                 if len(city) == 0:

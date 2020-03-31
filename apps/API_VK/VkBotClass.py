@@ -399,11 +399,14 @@ class VkBotClass(threading.Thread):
             if 'bdate' in user:
                 vk_user.birthday = parse_date(user['bdate'])
             if 'city' in user:
-
                 from apps.service.models import City
-                city = City.objects.filter(name=user['city']['title'])
+                city_name = user['city']['title']
+                city = City.objects.filter(name=city_name)
                 if len(city) > 0:
                     city = city.first()
+                else:
+                    city = City(name=city_name, synonyms=city_name)
+                    city.save()
                 vk_user.city = city
             else:
                 vk_user.city = None
