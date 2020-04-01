@@ -26,7 +26,6 @@ class Meme(CommonCommand):
         for _filter in filter_list:
             memes = memes.filter(name__icontains=_filter)
         if len(memes) == 0:
-            # ToDo: Тонимото?
             raise RuntimeError("Не нашёл :(")
         elif len(memes) == 1:
             return memes.first()

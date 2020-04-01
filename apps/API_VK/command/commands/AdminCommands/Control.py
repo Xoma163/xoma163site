@@ -4,7 +4,7 @@ class Control(CommonCommand):
     def __init__(self):
         names = ["управление", "сообщение"]
         help_text = "Управление - отправление сообщение в любую конфу"
-        detail_help_text = "Управление (N,M) - N - chat_id, M - сообщение"
+        detail_help_text = "Управление ({chat_id}, {сообщение})"
         super().__init__(names, help_text, detail_help_text, access='admin', args=2, int_args=[0])
 
     def start(self):

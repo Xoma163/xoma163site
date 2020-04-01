@@ -4,8 +4,8 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 class Conference(CommonCommand):
     def __init__(self):
         names = ["конфа", "конференция", "беседа"]
-
-        super().__init__(names, conversation=True)
+        help_text = "Конфа - назвать конфу"
+        super().__init__(names, help_text, conversation=True)
 
     def accept(self, vk_event):
         if vk_event.chat and (vk_event.chat.name is None or vk_event.chat.name == "") or vk_event.command in self.names:
@@ -24,4 +24,4 @@ class Conference(CommonCommand):
                     return "Конфа не имеет названия"
             return f"Поменял название беседы на {self.vk_event.original_args}"
         else:
-            return "Не задано имя конфы, задайте его командой /конфа 'Название конфы'"
+            return "Не задано имя конфы, задайте его командой /конфа {Название конфы}"

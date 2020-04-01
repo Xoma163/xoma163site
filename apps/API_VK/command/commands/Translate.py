@@ -7,7 +7,7 @@ class Translate(CommonCommand):
     def __init__(self):
         names = ["перевод"]
         help_text = "Перевод - автоматический переводчик"
-        detail_help_text = "Перевод ([N]) (N - фраза) - в зависимости от фразы переводит на нужный язык(английский или русский)"
+        detail_help_text = "Перевод ([{фраза}]) - в зависимости от фразы переводит на нужный язык(английский или русский)"
         super().__init__(names, help_text, detail_help_text)
 
     def start(self):

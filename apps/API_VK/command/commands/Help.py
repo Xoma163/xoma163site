@@ -6,20 +6,14 @@ def get_help_for_command(help_command):
     from apps.API_VK.command import get_commands
     commands = get_commands()
 
-    found_command = None
     for command in commands:
 
         if command.names and help_command in command.names:
-            found_command = command
-            break
-
-    if found_command:
-        if found_command.detail_help_text:
-            return found_command.detail_help_text
-        else:
-            return "У данной команды нет подробного описания"
-    else:
-        return "Я не знаю такой команды"
+            if command.detail_help_text:
+                return command.detail_help_text
+            else:
+                return "У данной команды нет подробного описания"
+    return "Я не знаю такой команды"
 
 
 class Help(CommonCommand):

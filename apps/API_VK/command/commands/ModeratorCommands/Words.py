@@ -9,6 +9,7 @@ class Words(CommonCommand):
         super().__init__(names, help_text, access='moderator')
 
     def start(self):
+        # ToDo: зачем это делать так?
         command = "/var/www/xoma163.site/venv/bin/python /var/www/xoma163.site/manage.py get_words"
         result = do_the_linux_command(command)
         if not result:

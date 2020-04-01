@@ -12,10 +12,42 @@ class Petrovich(CommonCommand):
     def __init__(self):
         names = ["петрович", "женя"]
         help_text = "Петрович - мини-игра, определяющая кто Петрович Дня"
-        detail_help_text = "Петрович - мини-игра, определяющая кто Петрович дня. Для участия нужно зарегистрироваться /рег"
+        detail_help_text = "Петрович - мини-игра, определяющая кто Петрович дня.\n" \
+                           "Петрович рег - регистрация в игре\n" \
+                           "Петрович дерег - дерегистрация в игре"
         super().__init__(names, help_text, detail_help_text, conversation=True)
 
     def start(self):
+        if self.vk_event.args:
+            if self.vk_event.args[0] == 'рег':
+                p_user = PetrovichUser.objects.filter(user=self.vk_event.sender, chat=self.vk_event.chat).first()
+                if p_user is not None:
+                    if not p_user.active:
+                        p_user.active = True
+                        p_user.save()
+                        return "Возвращаю тебя в строй"
+                    else:
+                        return "Ты уже зарегистрирован :)"
+                min_wins = PetrovichUser.objects.filter(chat=self.vk_event.chat).aggregate(Min('wins'))['wins__min']
+
+                p_user = PetrovichUser(user=self.vk_event.sender,
+                                       chat=self.vk_event.chat,
+                                       active=True)
+
+                if min_wins:
+                    p_user.wins = min_wins
+                p_user.save()
+
+                return "Регистрация прошла успешно"
+            elif self.vk_event.args[0] == 'дерег':
+                p_user = PetrovichUser.objects.filter(user=self.vk_event.sender, chat=self.vk_event.chat).first()
+                if p_user is not None:
+                    p_user.active = False
+                    p_user.save()
+                    return "Ок"
+                else:
+                    return "А ты и не зареган"
+            return "не понял команды. /ман Петрович"
         with lock:
             winner_today = PetrovichGames.objects.filter(chat=self.vk_event.chat).last()
             if winner_today:

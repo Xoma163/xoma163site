@@ -16,7 +16,7 @@ class Transliteration(CommonCommand):
     def __init__(self):
         names = ["транслит"]
         help_text = "Транслит - автоматическая транслитерация"
-        detail_help_text = "Транслит ([N]) (N - фраза) - в зависимости от фразы транслитит на нужный язык(английский или русский)"
+        detail_help_text = "Транслит ([{фраза}]) - в зависимости от фразы транслитит на нужный язык(английский или русский)"
         super().__init__(names, help_text, detail_help_text)
 
     def start(self):

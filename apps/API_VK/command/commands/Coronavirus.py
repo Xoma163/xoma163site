@@ -17,8 +17,10 @@ class Coronavirus(CommonCommand):
     def __init__(self):
         names = ["коронавирус", "корона", "вирус"]
         help_text = "Коронавирус - статистика по коронавирусу в разных странах"
-
-        super().__init__(names, help_text)
+        detail_help_text = "Коронавирус - статистика по коронавирусу в разных странах\n" \
+                           "Коронавирус - статистика в России\n" \
+                           "Коронавирус ({название страны} [,график])- статистика в этой стране. С графиком или без\n"
+        super().__init__(names, help_text, detail_help_text)
 
     def start(self):
         detail = False

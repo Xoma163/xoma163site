@@ -6,7 +6,7 @@ class Bash(CommonCommand):
     def __init__(self):
         names = ["баш"]
         help_text = "Баш - рандомная цитата с баша"
-        detail_help_text = "Баш [(N)] - рандомная цитата с баша. N - количество цитат. Максимум 25"
+        detail_help_text = "Баш [({количество})] - рандомная цитата с баша. Максимум 25 цитат"
         super().__init__(names, help_text, detail_help_text, int_args=[0])
 
     def start(self):

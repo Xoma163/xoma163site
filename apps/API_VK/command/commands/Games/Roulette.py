@@ -116,6 +116,8 @@ class Roulette(CommonCommand):
             if self.vk_event.args[0] == 'бонус':
                 datetime_now = localize_datetime(datetime.datetime.utcnow(), "Europe/Moscow")
                 datetime_last = localize_datetime(remove_tz(gamer.roulette_points_today), "Europe/Moscow")
+                if gamer.roulette_points > 10000:
+                    return "Тебе хватит и так"
                 if (datetime_now.date() - datetime_last.date()).days > 0:
                     gamer.roulette_points += 500
                     gamer.roulette_points_today = datetime_now

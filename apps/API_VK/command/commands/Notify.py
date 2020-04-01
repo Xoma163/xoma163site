@@ -46,7 +46,7 @@ class Notify(CommonCommand):
     def __init__(self):
         names = ["напомни", "напомнить", "оповещение", "оповести"]
         help_text = "Напомни - напоминает о чём-либо"
-        detail_help_text = "Напомни (N,M) - добавляет напоминание. N = Дата(полная в формате %d.%m.%Y %H:%M или %H:%M), M - сообщение"
+        detail_help_text = "Напомни ({дата/дата и время/день недели},{сообщение}) - добавляет напоминание. N = Дата(полная в формате %d.%m.%Y %H:%M или %H:%M), M - сообщение"
         super().__init__(names, help_text, detail_help_text, args=2)
 
     def start(self):

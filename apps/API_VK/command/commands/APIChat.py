@@ -21,24 +21,7 @@ class APIChat(CommonCommand):
         if self.vk_event.args[0] == 'привязать':
             chat_name = self.vk_event.original_args.split(' ', 1)[1]
             chat_with_user = get_one_chat_with_user(chat_name, self.vk_event.sender.user_id)
-            # chats = VkChat.objects.filter(name__icontains=chat_name)
-            # if len(chats) == 0:
-            #     return "Не нашёл такого чата"
-            #
-            # chats_with_user = []
-            # for chat in chats:
-            #     user_contains = chat.vkuser_set.filter(user_id=self.vk_event.sender.user_id)
-            #     if user_contains:
-            #         chats_with_user.append(chat)
-            #
-            # if len(chats_with_user) == 0:
-            #     return "Не нашёл доступного чата с пользователем в этом чате"
-            # elif len(chats_with_user) > 1:
-            #     chats_str = '\n'.join(chats_with_user)
-            #     return "Нашёл несколько чатов. Уточните какой:\n" \
-            #            f"{chats_str}"
-            # elif len(chats_with_user) == 1:
-            #     chat_with_user = chats_with_user[0]
+
             APITempUser.objects.filter(user_id=self.vk_event.yandex['client_id']).delete()
             yandex_temp_user = APITempUser(
                 user_id=self.vk_event.yandex['client_id'],
