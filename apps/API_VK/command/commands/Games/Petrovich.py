@@ -1,6 +1,8 @@
 import datetime
 from threading import Lock
 
+from django.db.models import Min
+
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import localize_datetime, remove_tz
 from apps.games.models import PetrovichGames, PetrovichUser
@@ -41,7 +43,7 @@ class Petrovich(CommonCommand):
                 return "Регистрация прошла успешно"
             elif self.vk_event.args[0] == 'дерег':
                 p_user = PetrovichUser.objects.filter(user=self.vk_event.sender, chat=self.vk_event.chat).first()
-                if p_user is not None:
+                if p_user is not None and p_user.active:
                     p_user.active = False
                     p_user.save()
                     return "Ок"
