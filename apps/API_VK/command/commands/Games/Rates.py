@@ -60,7 +60,7 @@ class Rates(CommonCommand):
 
             if self.vk_event.command == "казино":
                 attachments = []
-                photo = self.vk_bot.get_photo_by_id(457241180)
+                photo = self.vk_bot.get_attachment_by_id('photo', None, 457241180)
                 attachments.append(photo)
                 if len(winners) == 1:
                     msg = {'msg': f"Выпавшее число - {rnd}\nПобедитель этого казино:\n{winners_str}",

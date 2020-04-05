@@ -203,8 +203,11 @@ class CommonCommand:
 
         return True
 
-    def check_attachments(self):
+    # ToDo: check on types
+    def check_attachments(self, types=None):
         if self.vk_event.attachments:
+            if types:
+                pass
             return True
 
         error = "Пришлите вложения"

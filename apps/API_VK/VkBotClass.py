@@ -134,6 +134,19 @@ def parse_attachments(vk_attachments):
                     'url': f"https://vk.com/video{attachment_type['owner_id']}_{attachment_type['id']}",
                     'title': attachment_type['title']
                 })
+            elif attachment['type'] == 'audio':
+                attachments.append({
+                    'type': attachment['type'],
+                    # Хз работает или нет
+                    'url': f"https://vk.com/audio{attachment_type['owner_id']}_{attachment_type['id']}",
+                    'owner_id': attachment_type['owner_id'],
+                    'id': attachment_type['id'],
+                    'artist': attachment_type['artist'],
+                    'title': attachment_type['title'],
+                    'duration': attachment_type['duration'],
+                    'download_url': attachment_type['url'],
+                })
+                print(attachments[-1])
 
     if attachments and len(attachments) > 0:
         return attachments
@@ -520,18 +533,18 @@ class VkBotClass(threading.Thread):
         photo = self.upload.photo_messages(path)[0]
         if delete:
             os.remove(path)
-        return f"photo{photo['owner_id']}_{photo['id']}"
-
-    def get_photo_by_id(self, photo_id, group_id=None):
-        if group_id is None:
-            group_id = f'-{self.group_id}'
-        return f"photo{group_id}_{photo_id}"
+        return self.get_attachment_by_id('photo', photo['owner_id'], photo['id'])
 
     def upload_document(self, path, peer_id, title='Документ', delete=True):
         doc = self.upload.document_message(path, title=title, peer_id=peer_id)['doc']
         if delete:
             os.remove(path)
-        return f"doc{doc['owner_id']}_{doc['id']}"
+        return self.get_attachment_by_id('doc', doc['owner_id'], doc['id'])
+
+    def get_attachment_by_id(self, type, group_id, id):
+        if group_id is None:
+            group_id = f'-{self.group_id}'
+        return f"{type}{group_id}_{id}"
 
 
 class MyVkBotLongPoll(VkBotLongPoll):

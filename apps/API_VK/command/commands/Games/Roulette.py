@@ -111,7 +111,9 @@ class Roulette(CommonCommand):
                     return f"Ваш баланс - {gamer.roulette_points}"
             if self.vk_event.args[0] == 'картинка':
                 attachment = random_event(
-                    [self.vk_bot.get_photo_by_id(457242125), self.vk_bot.get_photo_by_id(457242126)], [90, 10])
+                    [self.vk_bot.get_attachment_by_id('photo', None, 457242125),
+                     self.vk_bot.get_attachment_by_id('photo', None, 457242126)],
+                    [90, 10])
                 return {'attachments': attachment}
             if self.vk_event.args[0] == 'бонус':
                 datetime_now = localize_datetime(datetime.datetime.utcnow(), "Europe/Moscow")
