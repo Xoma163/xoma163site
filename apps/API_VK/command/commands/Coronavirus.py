@@ -18,7 +18,7 @@ class Coronavirus(CommonCommand):
         names = ["коронавирус", "корона", "вирус"]
         help_text = "Коронавирус - статистика по коронавирусу в разных странах"
         detail_help_text = "Коронавирус - статистика по коронавирусу в разных странах\n" \
-                           "Коронавирус - статистика в России\n" \
+                           "Коронавирус - статистика в мире\n" \
                            "Коронавирус ({название страны} [,график])- статистика в этой стране. С графиком или без\n"
         super().__init__(names, help_text, detail_help_text)
 
@@ -30,13 +30,15 @@ class Coronavirus(CommonCommand):
                 if self.vk_event.args[1].lower() == "график":
                     detail = True
         else:
-            country = "Россия"
+            country = "Мир"
 
-        if has_cyrillic(country):
-            country_transliterate = get_translate('en', country).replace(' ', '-')
+        if country != "Мир":
+            if has_cyrillic(country):
+                country_transliterate = get_translate('en', country).replace(' ', '-')
+            else:
+                country_transliterate = country
         else:
-            country_transliterate = country
-
+            country_transliterate = None
         result = get_by_country(country_transliterate)
         if result:
             msg = f"{country.capitalize()}\n\n{result}"
@@ -49,9 +51,9 @@ class Coronavirus(CommonCommand):
                     empty_list = [0] * (max_len - len(datas[i]))
                     datas[i] = empty_list + datas[i]
 
-                plt.plot(datas[0], label="Больные")
-                plt.plot(datas[1], label="Выздоровевшие")
-                plt.plot(datas[2], label="Умершие")
+                plt.plot(datas[2], "bo-", label="Умершие", color="red")
+                plt.plot(datas[1], "bo-", label="Выздоровевшие", color="green")
+                plt.plot(datas[0], "bo-", label="Больные", color="orange")
                 plt.title(country.capitalize())
                 plt.xlabel('День')
                 plt.ylabel('Количество людей')
