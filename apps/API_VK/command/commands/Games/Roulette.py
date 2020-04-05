@@ -4,7 +4,7 @@ import random
 from threading import Lock
 
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command.CommonMethods import random_event, localize_datetime, remove_tz
+from apps.API_VK.command.CommonMethods import random_event, localize_datetime, remove_tz, decl_of_num
 from apps.games.models import RouletteRate, Gamer
 
 # Кратно 12
@@ -151,7 +151,7 @@ class Roulette(CommonCommand):
                 gamer.save()
                 vk_user_gamer.roulette_points += points_transfer
                 vk_user_gamer.save()
-                return f"Передал игроку {vk_user_gamer.user} {points_transfer} очков"
+                return f"Передал игроку {vk_user_gamer.user} {points_transfer} {decl_of_num(points_transfer, ['очко', 'очка', 'очков'])}"
             if self.vk_event.args[0] in ['ставки']:
                 rrs = RouletteRate.objects.filter(chat=self.vk_event.chat)
                 msg = ""

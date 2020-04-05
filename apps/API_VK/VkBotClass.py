@@ -146,7 +146,6 @@ def parse_attachments(vk_attachments):
                     'duration': attachment_type['duration'],
                     'download_url': attachment_type['url'],
                 })
-                print(attachments[-1])
 
     if attachments and len(attachments) > 0:
         return attachments

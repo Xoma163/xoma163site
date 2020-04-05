@@ -105,3 +105,13 @@ def get_mention(user, name=None):
     if not name:
         name = user.name
     return f"[id{user.user_id}|{name}]"
+
+
+def decl_of_num(number, titles):
+    cases = [2, 0, 1, 1, 1, 2]
+    if 4 < number % 100 < 20:
+        return titles[2]
+    elif number % 10 < 5:
+        return titles[cases[number % 10]]
+    else:
+        return titles[cases[5]]
