@@ -168,3 +168,18 @@ class City(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+
+class AudioList(models.Model):
+    id = models.AutoField(primary_key=True)
+    author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
+    name = models.CharField(verbose_name="Название", max_length=300)
+    attachment = models.CharField(verbose_name="Вложение", max_length=100, default="", null=True, blank=True)
+
+    class Meta:
+        verbose_name = "аудио-список"
+        verbose_name_plural = "аудио-списки"
+        ordering = ["name"]
+
+    def __str__(self):
+        return str(self.name)

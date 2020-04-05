@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.service.models import Statistic, Issue, Service, Counter, Cat, Meme, Notify, City
+from apps.service.models import Statistic, Issue, Service, Counter, Cat, Meme, Notify, City, AudioList
 
 
 @admin.register(Statistic)
@@ -42,3 +42,8 @@ class NotifyAdmin(admin.ModelAdmin):
 @admin.register(City)
 class CityAdmin(admin.ModelAdmin):
     list_display = ('name', 'synonyms', 'timezone', 'lat', 'lon')
+
+
+@admin.register(AudioList)
+class AudioListAdmin(admin.ModelAdmin):
+    list_display = ('author', 'name', 'attachment')
