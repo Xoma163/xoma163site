@@ -115,6 +115,10 @@ def parse_attachments(vk_attachments):
     if vk_attachments:
         for attachment in vk_attachments:
             attachment_type = attachment[attachment['type']]
+
+            new_attachment = {
+                'type': attachment['type']
+            }
             if attachment['type'] == 'photo':
                 max_size_image = attachment_type['sizes'][0]
                 max_size_width = max_size_image['width']
@@ -122,30 +126,27 @@ def parse_attachments(vk_attachments):
                     if size['width'] > max_size_width:
                         max_size_image = size
                         max_size_width = size['width']
-                attachments.append({
-                    'type': attachment['type'],
-                    'url': max_size_image['url'],
-                    'size': {
+                    new_attachment['url'] = max_size_image['url']
+                    new_attachment['size'] = {
                         'width': max_size_image['width'],
-                        'height': max_size_image['height']}})
+                        'height': max_size_image['height']}
             elif attachment['type'] == 'video':
-                attachments.append({
-                    'type': attachment['type'],
-                    'url': f"https://vk.com/video{attachment_type['owner_id']}_{attachment_type['id']}",
-                    'title': attachment_type['title']
-                })
+                new_attachment['url'] = f"https://vk.com/video{attachment_type['owner_id']}_{attachment_type['id']}"
+                new_attachment['title'] = attachment_type['title']
             elif attachment['type'] == 'audio':
-                attachments.append({
-                    'type': attachment['type'],
-                    # Хз работает или нет
-                    'url': f"https://vk.com/audio{attachment_type['owner_id']}_{attachment_type['id']}",
-                    'owner_id': attachment_type['owner_id'],
-                    'id': attachment_type['id'],
-                    'artist': attachment_type['artist'],
-                    'title': attachment_type['title'],
-                    'duration': attachment_type['duration'],
-                    'download_url': attachment_type['url'],
-                })
+                new_attachment['url'] = f"https://vk.com/audio{attachment_type['owner_id']}_{attachment_type['id']}"
+                new_attachment['owner_id'] = attachment_type['owner_id']
+                new_attachment['id'] = attachment_type['id']
+                new_attachment['artist'] = attachment_type['artist']
+                new_attachment['title'] = attachment_type['title']
+                new_attachment['duration'] = attachment_type['duration']
+                new_attachment['download_url'] = attachment_type['url']
+            elif attachment['type'] == 'doc':
+                new_attachment['title'] = attachment_type['title']
+                new_attachment['ext'] = attachment_type['ext']
+                new_attachment['download_url'] = attachment_type['url']
+
+            attachments.append(new_attachment)
 
     if attachments and len(attachments) > 0:
         return attachments

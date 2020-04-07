@@ -98,15 +98,6 @@ class Cat(models.Model):
             return '(Нет изображения)'
 
 
-@receiver(pre_delete, sender=Cat, dispatch_uid='question_delete_signal')
-def log_deleted_question(sender, instance, using, **kwargs):
-    delete_path = f'{MEDIA_ROOT}/{instance.image}'
-    try:
-        os.remove(delete_path)
-    except FileNotFoundError:
-        print("Warn: Кот удалён, но файл картинки не найден")
-
-
 class Meme(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(verbose_name="Название", max_length=1000, default="")
@@ -122,9 +113,11 @@ class Meme(models.Model):
     def __str__(self):
         return str(self.name)
 
-    def save_remote_image(self, url):
+    def save_remote_image(self, url, ext_image=None):
         if not self.image:
             ext, image = get_image_from_url(url)
+            if ext_image:
+                ext = ext_image
             self.image.save(f"{self.name}.{ext}", File(image))
         self.save()
 
@@ -134,6 +127,16 @@ class Meme(models.Model):
             return mark_safe(u'<img src="{0}" width="150"/>'.format(self.image.url))
         else:
             return '(Нет изображения)'
+
+
+@receiver(pre_delete, sender=Cat, dispatch_uid='question_delete_signal')
+@receiver(pre_delete, sender=Meme, dispatch_uid='question_delete_signal')
+def log_deleted_question(sender, instance, using, **kwargs):
+    delete_path = f'{MEDIA_ROOT}/{instance.image}'
+    try:
+        os.remove(delete_path)
+    except FileNotFoundError:
+        print("Warn: Кот/Мем удалён, но файл картинки не найден")
 
 
 class Notify(models.Model):

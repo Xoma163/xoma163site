@@ -63,8 +63,11 @@ class Meme(CommonCommand):
                 return {'msg': meme_name, 'attachments': [att]}
             return meme.link
         elif meme.image:
-            photo = self.vk_bot.upload_photo(meme.image.path, False)
-            return {'msg': meme_name, 'attachments': [photo]}
+            if meme.image.name.split('.')[-1] == 'gif':
+                att = self.vk_bot.upload_document(meme.image.path, self.vk_event.peer_id, False)
+            else:
+                att = self.vk_bot.upload_photo(meme.image.path, False)
+            return {'msg': meme_name, 'attachments': [att]}
         else:
             return "Какая-то хрень с мемом"
 
@@ -91,6 +94,13 @@ class Meme(CommonCommand):
                     new_meme['link'] = attachment['url']
                     meme = MemeModel(**new_meme)
                     meme.save()
+                elif attachment['type'] == 'doc':
+                    allowed_type = 'gif'
+                    if attachment['ext'] != allowed_type:
+                        return "Вложение должно быть типа gif"
+                    meme = MemeModel(**new_meme)
+                    meme.save()
+                    meme.save_remote_image(attachment['download_url'], allowed_type)
                 else:
                     return "Не знаю такого типа вложения"
                 return "Сохранил"
