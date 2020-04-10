@@ -5,19 +5,18 @@
   Чат
 {% endblock %}
 {% block body %}
-  {% csrf_token %}
     <div class="container-fluid">
         <div>
             <label>Команда</label>
         </div>
         <div>
-            <input type="text" style="width:300px;" name="command">
+            <input type="text" style="width:600px;" name="command">
         </div>
         <div>
             <label>Ответ</label>
         </div>
         <div>
-            <textarea name="result" style="width:300px;" cols="16" rows="16"></textarea>
+            <textarea name="result" style="width:600px;" cols="16" rows="16"></textarea>
         </div>
         <div>
             <button class="btn btn-success" onclick="sendCommand()">Отправить</button>

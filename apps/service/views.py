@@ -1,4 +1,4 @@
-from apps.service.models import Statistic, Issue
+from apps.service.models import Statistic
 
 
 def append_command_to_statistics(command):
@@ -13,18 +13,3 @@ def append_command_to_statistics(command):
         statistics.command = command
         statistics.count_queries = 1
         statistics.save()
-
-
-def append_feature(text):
-    feature = Issue()
-    feature.text = text
-    feature.save()
-
-
-def get_issues_text():
-    issues = Issue.objects.all()
-    features_text = "Добавленные ишю:\n\n"
-    for i, feature in enumerate(issues):
-        features_text += f"------------------------------{i + 1}------------------------------\n" \
-                         f"{feature.text}\n"
-    return features_text

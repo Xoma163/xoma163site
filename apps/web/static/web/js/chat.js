@@ -1,17 +1,34 @@
-function sendCommand() {
-    let CSRFTOKEN = $("input[name='csrfmiddlewaretoken']").val();
+$('input[name="command"]').on('keypress', function (e) {
+    if (e.which == 13) {
+        sendCommand();
+    }
+});
 
+
+function sendCommand() {
     let command = $('input[name="command"]').val();
     console.log(command);
-    $.post(`/api/`,
-        {
-            csrfmiddlewaretoken: CSRFTOKEN,
+
+
+    $.ajax({
+        url: '/api/',
+        headers: {
+            'Client-Id': 'ANONYMOUS',
+        },
+        method: 'GET',
+        dataType: 'json',
+        data: {
             msg: command,
             send: false
         },
-        function (data, status) {
+        success: function (data, status) {
+            console.log(data, status);
             if (status === "success") {
                 $('textarea[name="result"]').val(data['res']);
+
+            } else {
+                console.log(data, status)
             }
-        })
+        }
+    });
 }

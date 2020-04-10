@@ -139,7 +139,7 @@ def generate_help_text():
             if type(help_text) == list:
                 for text in help_text:
                     help_text_list[text['for']].append(text['text'])
-                    if command.api:
+                    if command.api is None or command.api:
                         api_help_text_list[text['for']].append(text['text'])
 
     for group in GROUPS:

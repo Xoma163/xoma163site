@@ -32,7 +32,7 @@ class Help(CommonCommand):
             help_texts = API_HELP_TEXT
         else:
             help_texts = HELP_TEXT
-        output = "\n— общие команды —\n"
+        output = "— общие команды —\n"
         output += help_texts['user']
 
         if check_user_group(self.vk_event.sender, 'student') and help_texts['student']:

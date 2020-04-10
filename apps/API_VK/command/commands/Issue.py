@@ -1,6 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.service.views import append_feature
-
+from apps.service.models import Issue as IssueModel
 
 class Issue(CommonCommand):
     def __init__(self):
@@ -16,16 +15,19 @@ class Issue(CommonCommand):
                 return "Требуется аргументы или пересылаемые сообщения"
 
             msgs = [{'text': self.vk_event.original_args, 'from_id': int(self.vk_event.sender.user_id)}]
-        feature_text = ""
+        issue_text = ""
         for msg in msgs:
             text = msg['text']
             if msg['from_id'] > 0:
-                quote_user_id = int(msg['from_id'])
-                quote_user = self.vk_bot.get_user_by_id(quote_user_id)
-                username = quote_user.name + " " + quote_user.surname
+                fwd_user_id = int(msg['from_id'])
+                fwd_user = self.vk_bot.get_user_by_id(fwd_user_id)
+                username = fwd_user.name + " " + fwd_user.surname
             else:
-                quote_user_id = int(msgs[0]['from_id']) * -1
-                username = self.vk_bot.get_group_name_by_id(quote_user_id)
-            feature_text += f"{username}:\n{text}\n\n"
-        append_feature(feature_text)
+                fwd_user_id = int(msgs[0]['from_id']) * -1
+                username = self.vk_bot.get_group_name_by_id(fwd_user_id)
+            issue_text += f"{username}:\n{text}\n\n"
+
+        issue = IssueModel()
+        issue.text = issue_text
+        issue.save()
         return "Сохранено"

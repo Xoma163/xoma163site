@@ -1,5 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.service.views import get_issues_text
+from apps.service.models import Issue
 
 
 class Issues(CommonCommand):
@@ -9,5 +9,9 @@ class Issues(CommonCommand):
         super().__init__(names, help_text)
 
     def start(self):
-        features = get_issues_text()
-        return features
+        issues = Issue.objects.all()
+        features_text = "Добавленные ишю:\n\n"
+        for i, feature in enumerate(issues):
+            features_text += f"------------------------------{i + 1}------------------------------\n" \
+                             f"{feature.text}\n"
+        return features_text

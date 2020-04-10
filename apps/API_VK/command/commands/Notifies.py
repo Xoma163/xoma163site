@@ -25,7 +25,7 @@ class Notifies(CommonCommand):
 
             result += f"{str(notify_datetime.strftime('%d.%m.%Y %H:%M'))}"
             if notify.from_chat:
-                result += f" (Конфе - {notify.chat.name})"
+                result += f" (Конфа - {notify.chat.name})"
             result += f"\n{notify.text}\n\n"
 
         return result

@@ -97,7 +97,7 @@ def check_bool(val):
     return False
 
 
-def petrovich(request):
+def petrovich_api(request):
     def register(vk_id):
         vk_id = vk_id.replace('-', '').replace(' ', '')
         user_id = int(vk_id)
@@ -134,19 +134,19 @@ def petrovich(request):
     from apps.API_VK.VkBotClass import parse_msg
     from apps.API_VK.VkEvent import VkEvent
 
+    if 'Client-Id' not in request.headers:
+        return send_json({'error': 'empty header "Client-Id"'})
+
     if request.method == "GET":
         msg = request.GET.get('msg', None)
-        # test = check_bool(request.GET.get('test', False))
         send = check_bool(request.GET.get('send', False))
-        # from_chat = check_bool(request.GET.get('from_chat', True))
     else:
         return send_json({'error': 'GET request required'})
     if not msg:
         return send_json({'error': 'empty param msg'})
     if len(msg) == 0:
         return send_json({'error': 'empty msg'})
-    if 'Client-Id' not in request.headers:
-        return send_json({'error': 'empty header "Client-Id"'})
+
     client_id = request.headers['Client-Id']
     yandex_user = APIUser.objects.filter(user_id=client_id).first()
 
@@ -192,20 +192,19 @@ def petrovich(request):
     return send_json({'res': res})
 
 
-def send_messages(vk_bot, peer_id, msgs):
-    vk_bot.parse_and_send_msgs(peer_id, msgs)
-
-
-def chat(request):
-    msg = request.GET.get('msg', None)
-    if not msg:
-        return send_json({'error': 'empty param msg'})
-    if len(msg) == 0:
-        return send_json({'error': 'empty msg'})
+def chat_api(request):
     if 'Client-Id' not in request.headers:
         return send_json({'error': 'empty header "Client-Id"'})
-
     client_id = request.headers['Client-Id']
+
+    if request.method == "GET":
+        msg = request.GET.get('msg', None)
+        if msg is None:
+            return send_json({'error': 'empty param msg'})
+        if len(msg) == 0:
+            return send_json({'error': 'empty msg'})
+    else:
+        return send_json({'error': 'GET request required'})
 
     yandex_user = APIUser.objects.filter(user_id=client_id).first()
     if not yandex_user:
@@ -216,9 +215,15 @@ def chat(request):
     if not chat:
         return send_json({'error': 'User chat is not registered'})
 
-    vk_bot.parse_and_send_msgs(chat.chat_id, f"{user}:\n{msg}")
+    x1 = threading.Thread(target=send_messages,
+                          args=(vk_bot, chat.chat_id, f"{user}:\n{msg}",))
+    x1.start()
 
     return JsonResponse({'res': 'success'}, json_dumps_params={'ensure_ascii': False})
+
+
+def send_messages(vk_bot, peer_id, msgs):
+    vk_bot.parse_and_send_msgs(peer_id, msgs)
 
 
 def get_user_by_imei(imei):

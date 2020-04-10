@@ -9,7 +9,7 @@ class Audio(CommonCommand):
         help_text = "Аудио - сохраняет аудио в базу"
         detail_help_text = "Аудио ([{количество}]) - присылает рандомные треки \n" \
                            "Аудио ([Прикреплённые аудио]) - сохраняет аудио в базу"
-        super().__init__(names, help_text, detail_help_text, int_args=[0])
+        super().__init__(names, help_text, detail_help_text, int_args=[0], api=False)
 
     def start(self):
         if self.vk_event.attachments:
