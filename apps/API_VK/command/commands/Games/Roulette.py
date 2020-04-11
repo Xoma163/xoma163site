@@ -75,7 +75,7 @@ TRANSLATOR = generate_translator()
 class Roulette(CommonCommand):
     def __init__(self):
         names = ["рулетка"]
-        help_text = "Рулетка - рулетка"
+        help_text = "Рулетка - игра рулетка"
         detail_help_text = "/рулетка - запуск рулетки\n" \
                            "/рулетка {аргументы} {ставка}- ставка рулетки\n" \
                            f"/рулетка 0-{MAX_NUMBERS} - ставка на число\n" \
