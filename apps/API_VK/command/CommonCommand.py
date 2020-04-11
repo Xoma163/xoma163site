@@ -31,7 +31,9 @@ class CommonCommand:
                  int_args=None,
                  float_args=None,
                  api=None,
-                 attachments=False
+                 attachments=False,
+                 enabled=True,
+                 priority=0,
                  ):
         self.names = names
         self.help_text = help_text
@@ -46,6 +48,8 @@ class CommonCommand:
         self.float_args = float_args
         self.api = api
         self.attachments = attachments
+        self.enabled = enabled
+        self.priority = priority
 
         self.vk_bot = None
         self.vk_event = None
