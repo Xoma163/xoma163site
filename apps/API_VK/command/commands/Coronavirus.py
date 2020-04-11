@@ -28,7 +28,9 @@ class Coronavirus(CommonCommand):
             country = self.vk_event.args[0]
             if len(self.vk_event.args) >= 2:
                 if self.vk_event.args[1].lower() == "график":
-                    detail = True
+                    detail = 'Graphic'
+                if self.vk_event.args[1].lower() in ["гист", "гистограмма"]:
+                    detail = 'Gist'
         else:
             country = "Мир"
 
@@ -42,18 +44,27 @@ class Coronavirus(CommonCommand):
         result = get_by_country(country_transliterate)
         if result:
             msg = f"{country.capitalize()}\n\n{result}"
-            if detail:
+            if detail in ["Gist", "Graphic"]:
                 attachments = []
-                datas = [get_detail_by_country(country_transliterate, status) for status in ALL_STATUSES]
+                if detail == "Gist":
+                    datas = [get_detail_by_country(country_transliterate, status) for status in ALL_STATUSES]
+                    fig, a = plt.subplots()
+                    a.bar(datas[0][1], datas[2][0], label="Умершие", color="red")
+                    a.bar(datas[0][1], datas[1][0], bottom=datas[2][0], label="Выздоровевшие", color="green")
+                    a.bar(datas[0][1], datas[0][0], bottom=datas[1][0], label="Больные", color="orange")
+                    a.xaxis.set_visible(False)
+                elif detail == "Graphic":
+                    datas = [get_detail_by_country(country_transliterate, status)[0] for status in ALL_STATUSES]
 
-                max_len = max([len(x) for x in datas])
-                for i in range(len(datas)):
-                    empty_list = [0] * (max_len - len(datas[i]))
-                    datas[i] = empty_list + datas[i]
+                    max_len = max([len(x) for x in datas])
+                    for i in range(len(datas)):
+                        empty_list = [0] * (max_len - len(datas[i]))
+                        datas[i] = empty_list + datas[i]
 
-                plt.plot(datas[2], "bo-", label="Умершие", color="red")
-                plt.plot(datas[1], "bo-", label="Выздоровевшие", color="green")
-                plt.plot(datas[0], "bo-", label="Больные", color="orange")
+                    plt.plot(datas[2], "bo-", label="Умершие", color="red")
+                    plt.plot(datas[1], "bo-", label="Выздоровевшие", color="green")
+                    plt.plot(datas[0], "bo-", label="Больные", color="orange")
+
                 plt.title(country.capitalize())
                 plt.xlabel('День')
                 plt.ylabel('Количество людей')

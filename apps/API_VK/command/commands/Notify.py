@@ -15,6 +15,22 @@ time_translator = {
 }
 
 
+# month_translator = {
+#     'янв': 1,
+#     'фев': 2,
+#     'мар': 3,
+#     'апр': 4,
+#     'май': 5,
+#     'июн': 6,
+#     'июл': 7,
+#     'авг': 8,
+#     'сен': 9,
+#     'окт': 10,
+#     'ноя': 11,
+#     'дек': 12
+# }
+
+
 def get_time(arg1, arg2):
     if arg1 == "завтра":
         arg1 = (datetime.today().date() + timedelta(days=1)).strftime("%d.%m.%Y")

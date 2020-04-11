@@ -5,7 +5,8 @@ def get_detail_by_country(country_name, status='confirmed'):
     url = f"https://api.covid19api.com/dayone/country/{country_name}/status/{status}"
     response = requests.get(url).json()
     data = [x['Cases'] for x in response]
-    return data
+    date = [x['Date'] for x in response]
+    return data, date
 
 
 def get_by_country(country_name):
