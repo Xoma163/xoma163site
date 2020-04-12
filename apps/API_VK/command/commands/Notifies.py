@@ -14,6 +14,7 @@ class Notifies(CommonCommand):
     def start(self):
         if self.vk_event.args:
             if self.vk_event.args[0].lower() in ["удалить", "удали"]:
+                self.check_args(2)
                 notifies = Notify.objects.filter(author=self.vk_event.sender)
                 if self.vk_event.from_chat:
                     notifies.filter(chat=self.vk_event.chat)

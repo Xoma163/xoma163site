@@ -39,7 +39,15 @@ class NotifyRepeat(CommonCommand):
             date = date + timedelta(days=1)
 
         text = self.vk_event.original_args.split(' ', 1)[1]
-
+        if text[0] == '/':
+            first_space = text.find(' ')
+            if first_space > 0:
+                command = text[1:first_space]
+            else:
+                command = text[1:]
+            from apps.API_VK.command.commands.Notify import Notify
+            if command in self.names or command in Notify().names:
+                text = f"/обосрать {self.vk_event.sender.name}"
         notify_datetime = localize_datetime(remove_tz(date), user_timezone)
 
         NotifyModel(date=date,

@@ -141,8 +141,8 @@ def log_deleted_question(sender, instance, using, **kwargs):
 
 class Notify(models.Model):
     id = models.AutoField(primary_key=True)
-    date = models.DateTimeField(verbose_name="Дата создания")
-    text = models.CharField(verbose_name="Напоминашка", max_length=1000, default="")
+    date = models.DateTimeField(verbose_name="Дата напоминания")
+    text = models.CharField(verbose_name="Текст/команда", max_length=1000, default="")
     text_for_filter = models.CharField(verbose_name="Текст для поиска", max_length=1000, default="")
     chat = models.ForeignKey(VkChat, verbose_name='Чат', null=True, on_delete=models.SET_NULL, blank=True)
     author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
@@ -150,8 +150,8 @@ class Notify(models.Model):
     repeat = models.BooleanField(verbose_name="Повторять", default=False)
 
     class Meta:
-        verbose_name = "оповещение"
-        verbose_name_plural = "оповещения"
+        verbose_name = "напоминание"
+        verbose_name_plural = "напоминания"
         ordering = ["text"]
 
     def __str__(self):

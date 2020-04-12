@@ -82,7 +82,15 @@ class Notify(CommonCommand):
         if (date - datetime_now).seconds < 60:
             return "Нельзя добавлять напоминание на ближайшую минуту"
         text = self.vk_event.original_args.split(' ', args_count)[args_count]
-
+        if text[0] == '/':
+            first_space = text.find(' ')
+            if first_space > 0:
+                command = text[1:first_space]
+            else:
+                command = text[1:]
+            from apps.API_VK.command.commands.NotifyRepeat import NotifyRepeat
+            if command in self.names or command in NotifyRepeat().names:
+                text = f"/обосрать {self.vk_event.sender.name}"
         notify_datetime = localize_datetime(remove_tz(date), user_timezone)
 
         NotifyModel(date=date,
