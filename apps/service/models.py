@@ -143,9 +143,11 @@ class Notify(models.Model):
     id = models.AutoField(primary_key=True)
     date = models.DateTimeField(verbose_name="Дата создания")
     text = models.CharField(verbose_name="Напоминашка", max_length=1000, default="")
+    text_for_filter = models.CharField(verbose_name="Текст для поиска", max_length=1000, default="")
     chat = models.ForeignKey(VkChat, verbose_name='Чат', null=True, on_delete=models.SET_NULL, blank=True)
     author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
     from_chat = models.BooleanField(verbose_name="Из чата", default=False)
+    repeat = models.BooleanField(verbose_name="Повторять", default=False)
 
     class Meta:
         verbose_name = "оповещение"

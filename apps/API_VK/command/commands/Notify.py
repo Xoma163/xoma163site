@@ -62,7 +62,7 @@ class Notify(CommonCommand):
     def __init__(self):
         names = ["напомни", "напомнить", "оповещение", "оповести"]
         help_text = "Напомни - напоминает о чём-либо"
-        detail_help_text = "Напомни ({дата/дата и время/день недели},{сообщение}) - добавляет напоминание. N = Дата(полная в формате %d.%m.%Y %H:%M или %H:%M), M - сообщение"
+        detail_help_text = "Напомни ({дата/дата и время/день недели}, {сообщение}) - добавляет напоминание. N = Дата(полная в формате %d.%m.%Y %H:%M или %H:%M), M - сообщение или команда"
         super().__init__(names, help_text, detail_help_text, args=2)
 
     def start(self):
@@ -71,6 +71,8 @@ class Notify(CommonCommand):
         user_timezone = self.vk_event.sender.city.timezone
 
         date, args_count = get_time(self.vk_event.args[0], self.vk_event.args[1])
+        if args_count == 2:
+            self.check_args(3)
         if not date:
             return "Не смог распарсить дату"
         date = normalize_datetime(date, user_timezone)
@@ -81,11 +83,13 @@ class Notify(CommonCommand):
             return "Нельзя добавлять напоминание на ближайшую минуту"
         text = self.vk_event.original_args.split(' ', args_count)[args_count]
 
+        notify_datetime = localize_datetime(remove_tz(date), user_timezone)
+
         NotifyModel(date=date,
                     text=text,
                     author=self.vk_event.sender,
                     chat=self.vk_event.chat,
-                    from_chat=self.vk_event.from_chat).save()
+                    from_chat=self.vk_event.from_chat,
+                    text_for_filter=notify_datetime.strftime("%d.%m.%Y %H:%M") + " " + text).save()
 
-        notify_datetime = localize_datetime(remove_tz(date), user_timezone)
         return f'Сохранил на дату {str(notify_datetime.strftime("%d.%m.%Y %H:%M"))}'

@@ -156,9 +156,6 @@ def petrovich_api(request):
             msg_list[i] = msg_list[i].lower()
         if msg_list and len(msg_list) >= 2:
             if msg_list[0] == 'вк':
-                print(msg)
-                print(msg_list)
-                print(msg.split(' ', 1)[1])
                 return send_json({'res': register(msg.split(' ', 1)[1])})
             elif msg_list[0] == 'код':
                 return send_json({'res': confirm(msg.split(' ', 1)[1])})
