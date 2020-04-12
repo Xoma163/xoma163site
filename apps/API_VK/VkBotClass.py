@@ -145,6 +145,12 @@ def parse_attachments(vk_attachments):
                 new_attachment['title'] = attachment_type['title']
                 new_attachment['ext'] = attachment_type['ext']
                 new_attachment['download_url'] = attachment_type['url']
+            elif attachment['type'] == 'wall':
+                if 'attachments' in attachment_type:
+                    new_attachment['attachments'] = parse_attachments(attachment_type['attachments'])
+                elif 'copy_history' in attachment_type and len(attachment_type['copy_history']) > 0 and 'attachments' in \
+                        attachment_type['copy_history'][0]:
+                    new_attachment['attachments'] = parse_attachments(attachment_type['copy_history'][0]['attachments'])
 
             attachments.append(new_attachment)
 

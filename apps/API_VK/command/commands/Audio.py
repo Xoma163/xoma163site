@@ -13,11 +13,7 @@ class Audio(CommonCommand):
 
     def start(self):
         if self.vk_event.attachments:
-            for att in self.vk_event.attachments:
-                if att['type'] == 'audio':
-                    AudioList(author=self.vk_event.sender,
-                              name=f"{att['artist']} - {att['title']}",
-                              attachment=self.vk_bot.get_attachment_by_id('audio', att['owner_id'], att['id'])).save()
+            self.save_attachments(self.vk_event.attachments)
             return "Добавил"
         else:
             count = 5
@@ -36,3 +32,13 @@ class Audio(CommonCommand):
                 msg = "Лови"
             audios.delete()
             return {"msg": msg, "attachments": attachments}
+
+    def save_attachments(self, attachments):
+        for att in attachments:
+            if att['type'] == 'audio':
+                AudioList(author=self.vk_event.sender,
+                          name=f"{att['artist']} - {att['title']}",
+                          attachment=self.vk_bot.get_attachment_by_id('audio', att['owner_id'], att['id'])).save()
+
+            elif att['type'] == 'wall':
+                self.save_attachments(att['attachments'])
