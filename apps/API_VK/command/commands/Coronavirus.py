@@ -49,9 +49,15 @@ class Coronavirus(CommonCommand):
                 if detail == "Gist":
                     datas = [get_detail_by_country(country_transliterate, status) for status in ALL_STATUSES]
                     fig, a = plt.subplots()
-                    a.bar(datas[0][1], datas[2][0], label="Умершие", color="red")
-                    a.bar(datas[0][1], datas[1][0], bottom=datas[2][0], label="Выздоровевшие", color="green")
-                    a.bar(datas[0][1], datas[0][0], bottom=datas[1][0], label="Больные", color="orange")
+                    x = datas[0][1]
+                    y1 = datas[0][0]
+                    y2 = datas[2][0]
+                    y2_bottom = y1
+                    y3 = datas[1][0]
+                    y3_bottom = [x + y for x, y in zip(datas[2][0], datas[0][0])]
+                    a.bar(x, y1, label="Больные", color="#46aada")
+                    a.bar(x, y2, bottom=y2_bottom, label="Умершие", color="red")
+                    a.bar(x, y3, bottom=y3_bottom, label="Выздоровевшие", color="green")
                     a.xaxis.set_visible(False)
                 elif detail == "Graphic":
                     datas = [get_detail_by_country(country_transliterate, status)[0] for status in ALL_STATUSES]
@@ -61,9 +67,9 @@ class Coronavirus(CommonCommand):
                         empty_list = [0] * (max_len - len(datas[i]))
                         datas[i] = empty_list + datas[i]
 
-                    plt.plot(datas[2], "bo-", label="Умершие", color="red")
                     plt.plot(datas[1], "bo-", label="Выздоровевшие", color="green")
-                    plt.plot(datas[0], "bo-", label="Больные", color="orange")
+                    plt.plot(datas[0], "bo-", label="Больные", color="#46aada")
+                    plt.plot(datas[2], "bo-", label="Умершие", color="red")
 
                 plt.title(country.capitalize())
                 plt.xlabel('День')
