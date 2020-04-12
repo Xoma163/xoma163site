@@ -1,6 +1,5 @@
-import subprocess
-
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command._DoTheLinuxComand import do_the_linux_command
 
 
 class Command(CommonCommand):
@@ -11,13 +10,4 @@ class Command(CommonCommand):
         super().__init__(names, help_text, detail_help_text, access='admin', args=1)
 
     def start(self):
-        try:
-            command = self.vk_event.params.split(' ')
-            process = subprocess.Popen(command, stdout=subprocess.PIPE)
-            output, error = process.communicate()
-            output = output.decode("utf-8")
-            if error:
-                output += f"\n{error}"
-            return output
-        except Exception as e:
-            return f"Ошибка:\n{str(e)}"
+        return do_the_linux_command(self.vk_event.original_args)
