@@ -58,8 +58,11 @@ class Meme(CommonCommand):
         else:
             meme_name = ""
         if meme.link:
-            if meme.link.find('vk.com') > 0 and meme.link.find('video'):
+            if meme.link.find('vk.com') != -1 and meme.link.find('video') != -1:
                 att = meme.link[meme.link.find('video'):]
+                return {'msg': meme_name, 'attachments': [att]}
+            if meme.link.find('vk.com') != -1 and meme.link.find('audio') != -1:
+                att = meme.link[meme.link.find('audio'):]
                 return {'msg': meme_name, 'attachments': [att]}
             return meme.link
         elif meme.image:
@@ -90,7 +93,7 @@ class Meme(CommonCommand):
                     meme = MemeModel(**new_meme)
                     meme.save()
                     meme.save_remote_image(attachment['url'])
-                elif attachment['type'] == 'video':
+                elif attachment['type'] == 'video' or attachment['type'] == 'audio':
                     new_meme['link'] = attachment['url']
                     meme = MemeModel(**new_meme)
                     meme.save()

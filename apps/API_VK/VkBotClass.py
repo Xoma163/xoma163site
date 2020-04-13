@@ -164,7 +164,7 @@ def message_for_me(message, mentions):
     if message[0] == '/':
         return True
     for mention in mentions:
-        if message.find(mention) > -1:
+        if message.find(mention) != -1:
             return True
     return False
 
