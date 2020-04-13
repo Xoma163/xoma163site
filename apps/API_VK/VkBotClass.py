@@ -264,17 +264,27 @@ class VkBotClass(threading.Thread):
             try:
                 if command.accept(vk_event):
                     result = command.__class__().check_and_start(self, vk_event)
-                    # if result:
                     if send:
                         self.parse_and_send_msgs(vk_event.peer_id, result)
                     append_command_to_statistics(vk_event.command)
                     logger.debug(f"{{result: {result}}}")
                     return result
             except RuntimeError as e:
+                msg = str(e)
                 if send:
-                    self.parse_and_send_msgs(vk_event.peer_id, str(e))
-                logger.debug(f"{{exception: {str(e)}}}")
-                return str(e)
+                    self.parse_and_send_msgs(vk_event.peer_id, msg)
+                logger.warning(f"{{RunTimeException: {msg}}}")
+                return msg
+            except Exception as e:
+                msg = "Ошибка. /Логи"
+                if send:
+                    self.parse_and_send_msgs(vk_event.peer_id, msg)
+                tb = traceback.format_exc()
+                logs = f"Exception: {str(e)}\n" \
+                       f"Traceback:\n" \
+                       f"{tb}"
+                logger.error(f"{{Exception: {logs}}}")
+                return msg
 
         similar_command = commands[0].names[0]
         tanimoto_max = 0

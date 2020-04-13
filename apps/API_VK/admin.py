@@ -10,10 +10,9 @@ class VkUserAdmin(admin.ModelAdmin):
         'user_id', 'name', 'surname', 'nickname', 'nickname_real', 'gender', 'birthday', 'city',
         # 'is_admin', 'is_moderator', 'is_student', 'is_banned', 'is_minecraft', 'is_terraria'
     )
-    list_filter = (
-        'gender', 'city', 'groups',
-        # 'is_admin', 'is_moderator', 'is_student', 'is_banned', 'city', 'is_minecraft', 'is_terraria')
-    )
+    list_filter = ('gender',
+                   ('city', admin.RelatedOnlyFieldListFilter),
+                   ('groups', admin.RelatedOnlyFieldListFilter),)
 
 
 @admin.register(VkChat)
@@ -30,7 +29,7 @@ class VkBotAdmin(admin.ModelAdmin):
 class LogAdmin(admin.ModelAdmin):
     readonly_fields = ('date',)
     list_display = ('date', 'imei', 'author', 'event', 'msg', 'success')
-    list_filter = ('author',)
+    list_filter = (('author', admin.RelatedOnlyFieldListFilter),)
 
 
 @admin.register(QuoteBook)

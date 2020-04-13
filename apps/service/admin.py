@@ -31,12 +31,14 @@ class CatAdmin(admin.ModelAdmin):
 class MemeAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'link', 'preview', 'author')
     search_fields = ['name', 'link']
-    list_filter = ('author',)
+    list_filter = (('author', admin.RelatedOnlyFieldListFilter),)
 
 
 @admin.register(Notify)
 class NotifyAdmin(admin.ModelAdmin):
-    list_display = ('id', 'date', 'text', 'author', 'chat', 'from_chat')
+    list_display = ('id', 'date', 'text', 'author', 'chat', 'repeat')
+    search_fields = ['date', 'text', 'text_for_filter']
+    list_filter = (('author', admin.RelatedOnlyFieldListFilter), ('chat', admin.RelatedOnlyFieldListFilter), 'repeat',)
 
 
 @admin.register(City)

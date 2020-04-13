@@ -21,13 +21,13 @@ class RateAdmin(admin.ModelAdmin):
 @admin.register(PetrovichUser)
 class PetrovichUserAdmin(admin.ModelAdmin):
     list_display = ('user', 'chat', 'wins', 'active',)
-    list_filter = ('user', 'chat',)
+    list_filter = (('user', admin.RelatedOnlyFieldListFilter), ('chat', admin.RelatedOnlyFieldListFilter),)
 
 
 @admin.register(PetrovichGames)
 class PetrovichGamesAdmin(admin.ModelAdmin):
     list_display = ('user', 'date', 'chat',)
-    list_filter = ('user', 'chat',)
+    list_filter = (('user', admin.RelatedOnlyFieldListFilter), ('chat', admin.RelatedOnlyFieldListFilter),)
 
 
 @admin.register(TicTacToeSession)
@@ -38,7 +38,7 @@ class TicTacToeSessionAdmin(admin.ModelAdmin):
 @admin.register(CodenamesUser)
 class CodenamesUserAdmin(admin.ModelAdmin):
     list_display = ('user', 'chat', 'command', 'role', 'role_preference')
-    list_filter = ('user', 'chat',)
+    list_filter = (('user', admin.RelatedOnlyFieldListFilter), ('chat', admin.RelatedOnlyFieldListFilter),)
 
 
 @admin.register(CodenamesSession)

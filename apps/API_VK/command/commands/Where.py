@@ -1,6 +1,7 @@
 import datetime
 
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import localize_datetime, remove_tz
 from apps.API_VK.models import Log
 from xoma163site.settings import TIME_ZONE
 
@@ -19,10 +20,11 @@ class Where(CommonCommand):
         except RuntimeError as e:
             return str(e)
 
-        if user.city and user.city.timezone:
-            today = datetime.datetime.utcnow() + datetime.timedelta(hours=user.city.timezone)
+        if self.vk_event.sender.city and self.vk_event.sender.city.timezone:
+            timezone = self.vk_event.sender.city.timezone
         else:
-            today = datetime.datetime.utcnow().replace(tzinfo=datetime.tzinfo(TIME_ZONE))
+            timezone = TIME_ZONE
+        today = localize_datetime(datetime.datetime.utcnow(), timezone)
         log = Log.objects.filter(success=True,
                                  date__year=today.year,
                                  date__month=today.month,
@@ -33,5 +35,6 @@ class Where(CommonCommand):
         elif log is None:
             msg = "Информации пока ещё нет"
         else:
-            msg = "%s\n%s" % (log.date.strftime("%H:%M:%S"), log.msg)
+            localized_date = localize_datetime(remove_tz(log.date), timezone)
+            msg = "%s\n%s" % (localized_date.strftime("%H:%M:%S"), log.msg)
         return str(msg)

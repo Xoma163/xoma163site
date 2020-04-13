@@ -3,7 +3,7 @@ import requests
 
 def get_detail_by_country(country_name, status='confirmed'):
     url = f"https://api.covid19api.com/dayone/country/{country_name}/status/{status}"
-    response = requests.get(url).json()
+    response = requests.get(url, timeout=5).json()
     data = [x['Cases'] for x in response]
     date = [x['Date'] for x in response]
     return data, date
@@ -17,7 +17,7 @@ def get_by_country(country_name):
                f"Зараженные - {data['TotalConfirmed']}, смерти - {data['TotalDeaths']}, выздоровело - {data['TotalRecovered']}, болеют сейчас - {data['TotalConfirmed'] - data['TotalDeaths'] - data['TotalRecovered']}"
 
     url = f"https://api.covid19api.com/summary"
-    response = requests.get(url).json()
+    response = requests.get(url, timeout=5).json()
 
     if country_name is None:
         return set_data(response["Global"])

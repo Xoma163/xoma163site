@@ -54,7 +54,6 @@ class NotifyRepeat(CommonCommand):
                     text=text,
                     author=self.vk_event.sender,
                     chat=self.vk_event.chat,
-                    from_chat=self.vk_event.from_chat,
                     repeat=True,
                     text_for_filter=notify_datetime.strftime("%H:%M") + " " + text).save()
 

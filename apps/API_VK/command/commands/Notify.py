@@ -97,7 +97,6 @@ class Notify(CommonCommand):
                     text=text,
                     author=self.vk_event.sender,
                     chat=self.vk_event.chat,
-                    from_chat=self.vk_event.from_chat,
                     text_for_filter=notify_datetime.strftime("%d.%m.%Y %H:%M") + " " + text).save()
 
         return f'Сохранил на дату {str(notify_datetime.strftime("%d.%m.%Y %H:%M"))}'

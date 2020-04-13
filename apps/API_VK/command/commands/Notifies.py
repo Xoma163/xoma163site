@@ -15,9 +15,9 @@ class Notifies(CommonCommand):
         if self.vk_event.args:
             if self.vk_event.args[0].lower() in ["удалить", "удали"]:
                 self.check_args(2)
-                notifies = Notify.objects.filter(author=self.vk_event.sender)
-                if self.vk_event.from_chat:
-                    notifies.filter(chat=self.vk_event.chat)
+                notifies = Notify.objects.filter(author=self.vk_event.sender).order_by("date")
+                if self.vk_event.chat:
+                    notifies = notifies.filter(chat=self.vk_event.chat)
                 filter_list = self.vk_event.args[1:]
                 for _filter in filter_list:
                     notifies = notifies.filter(text_for_filter__icontains=_filter)
@@ -36,9 +36,9 @@ class Notifies(CommonCommand):
             else:
                 return "Доступные команды - [удалить]"
         else:
-            notifies = Notify.objects.filter(author=self.vk_event.sender)
-            if self.vk_event.from_chat:
-                notifies.filter(chat=self.vk_event.chat)
+            notifies = Notify.objects.filter(author=self.vk_event.sender).order_by("date")
+            if self.vk_event.chat:
+                notifies = notifies.filter(chat=self.vk_event.chat)
             if len(notifies) == 0:
                 return "Нет напоминаний"
             result = ""
@@ -51,7 +51,7 @@ class Notifies(CommonCommand):
                     result += f"{str(notify_datetime.strftime('%H:%M'))} - Постоянное"
                 else:
                     result += f"{str(notify_datetime.strftime('%d.%m.%Y %H:%M'))}"
-                if notify.from_chat:
+                if notify.chat:
                     result += f" (Конфа - {notify.chat.name})"
                 result += f"\n{notify.text}\n\n"
 
