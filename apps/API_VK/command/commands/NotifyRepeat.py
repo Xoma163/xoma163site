@@ -50,11 +50,14 @@ class NotifyRepeat(CommonCommand):
                 text = f"/обосрать {self.vk_event.sender.name}"
         notify_datetime = localize_datetime(remove_tz(date), user_timezone)
 
-        NotifyModel(date=date,
-                    text=text,
-                    author=self.vk_event.sender,
-                    chat=self.vk_event.chat,
-                    repeat=True,
-                    text_for_filter=notify_datetime.strftime("%H:%M") + " " + text).save()
+        notify = NotifyModel(date=date,
+                             text=text,
+                             author=self.vk_event.sender,
+                             chat=self.vk_event.chat,
+                             repeat=True,
+                             text_for_filter=notify_datetime.strftime("%H:%M") + " " + text)
+        notify.save()
+        notify.text_for_filter += f" ({notify.id})"
+        notify.save()
 
         return f'Следующее выполнение - {str(notify_datetime.strftime("%d.%m.%Y %H:%M"))}'
