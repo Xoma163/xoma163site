@@ -280,6 +280,7 @@ class VkBotClass(threading.Thread):
                 if send:
                     self.parse_and_send_msgs(vk_event.peer_id, msg)
                 tb = traceback.format_exc()
+                print(tb)
                 logs = f"Exception: {str(e)}\n" \
                        f"Traceback:\n" \
                        f"{tb}"
