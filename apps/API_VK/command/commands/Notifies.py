@@ -3,15 +3,41 @@ from apps.API_VK.command.CommonMethods import localize_datetime, remove_tz
 from apps.service.models import Notify
 
 
+def get_notifies_from_object(notifies_obj, timezone, print_username=False):
+    if len(notifies_obj) == 0:
+        return "Нет напоминаний"
+    result = ""
+
+    for notify in notifies_obj:
+        notify_datetime = localize_datetime(remove_tz(notify.date), timezone)
+
+        if print_username:
+            result += f"{notify.author}\n"
+        if notify.repeat:
+            result += f"{str(notify_datetime.strftime('%H:%M'))} - Постоянное"
+        else:
+            result += f"{str(notify_datetime.strftime('%d.%m.%Y %H:%M'))}"
+        if notify.chat:
+            result += f" (Конфа - {notify.chat.name})\n"
+        result += f"{notify.text}\n\n"
+
+    return result
+
+
 class Notifies(CommonCommand):
     def __init__(self):
         names = ["напоминания", "оповещения"]
         help_text = "Напоминания - список напоминаний"
         detail_help_text = "Напоминания - список напоминаний. Отправляет в лс все напоминания, когда либо созданные, в группу - только напоминания внутри группы\n" \
-                           "Напоминания удалить ({текст напоминания}) - удаляет напоминания"
+                           "Напоминания удалить ({текст напоминания}) - удаляет напоминания\n" \
+                           "Напоминания конфа - выводит все напоминания по конфе"
         super().__init__(names, help_text, detail_help_text)
 
     def start(self):
+        if self.vk_event.sender.city is None:
+            return "Не знаю ваш город. /город"
+        user_timezone = self.vk_event.sender.city.timezone
+
         if self.vk_event.args:
             if self.vk_event.args[0].lower() in ["удалить", "удали"]:
                 self.check_args(2)
@@ -33,26 +59,17 @@ class Notifies(CommonCommand):
 
                 notifies.delete()
                 return "Удалил"
+            elif self.vk_event.args[0].lower() in ["конфа", "беседе", "конфы", "беседы"]:
+                self.check_conversation()
+                notifies = Notify.objects.filter(chat=self.vk_event.chat)
+                return get_notifies_from_object(notifies, user_timezone, True)
             else:
-                return "Доступные команды - [удалить]"
+                self.check_conversation()
+                user = self.vk_bot.get_user_by_name(self.vk_event.original_args, self.vk_event.chat)
+                notifies = Notify.objects.filter(author=user, chat=self.vk_event.chat)
+                return get_notifies_from_object(notifies, user_timezone, True)
         else:
             notifies = Notify.objects.filter(author=self.vk_event.sender).order_by("date")
             if self.vk_event.chat:
                 notifies = notifies.filter(chat=self.vk_event.chat)
-            if len(notifies) == 0:
-                return "Нет напоминаний"
-            result = ""
-
-            user_timezone = self.vk_event.sender.city.timezone
-            for notify in notifies:
-                notify_datetime = localize_datetime(remove_tz(notify.date), user_timezone)
-
-                if notify.repeat:
-                    result += f"{str(notify_datetime.strftime('%H:%M'))} - Постоянное"
-                else:
-                    result += f"{str(notify_datetime.strftime('%d.%m.%Y %H:%M'))}"
-                if notify.chat:
-                    result += f" (Конфа - {notify.chat.name})"
-                result += f"\n{notify.text}\n\n"
-
-            return result
+            return get_notifies_from_object(notifies, user_timezone)
