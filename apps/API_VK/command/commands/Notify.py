@@ -77,10 +77,14 @@ class Notify(CommonCommand):
             return "Не смог распарсить дату"
         date = normalize_datetime(date, user_timezone)
         datetime_now = localize_datetime(datetime.utcnow(), "UTC")
-        if (date - datetime_now).days < 0 or (datetime_now - date).seconds < 0:
-            return "Нельзя указывать дату в прошлом"
+
         if (date - datetime_now).seconds < 60:
             return "Нельзя добавлять напоминание на ближайшую минуту"
+        if (date - datetime_now).days < 0 or (datetime_now - date).seconds < 0:
+            date = date + timedelta(days=1)
+            if (date - datetime_now).days < 0 or (datetime_now - date).seconds < 0:
+                return "Нельзя указывать дату в прошлом"
+
         text = self.vk_event.original_args.split(' ', args_count)[args_count]
         if text[0] == '/':
             first_space = text.find(' ')
