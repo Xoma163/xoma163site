@@ -18,8 +18,8 @@ def get_notifies_from_object(notifies_obj, timezone, print_username=False):
         else:
             result += f"{str(notify_datetime.strftime('%d.%m.%Y %H:%M'))}"
         if notify.chat:
-            result += f" (Конфа - {notify.chat.name})\n"
-        result += f"{notify.text}\n\n"
+            result += f" (Конфа - {notify.chat.name})"
+        result += f"\n{notify.text}\n\n"
 
     return result
 
