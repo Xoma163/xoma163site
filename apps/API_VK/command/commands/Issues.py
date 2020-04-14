@@ -6,7 +6,7 @@ class Issues(CommonCommand):
     def __init__(self):
         names = ["ишюс", "ишьюс", "иши"]
         help_text = "Ишьюс - список проблем"
-        super().__init__(names, help_text)
+        super().__init__(names, help_text, access="moderator")
 
     def start(self):
         issues = Issue.objects.all()
