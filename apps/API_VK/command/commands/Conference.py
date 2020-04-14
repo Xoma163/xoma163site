@@ -1,4 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.models import VkChat
 
 
 class Conference(CommonCommand):
@@ -15,6 +16,9 @@ class Conference(CommonCommand):
     def start(self):
         if self.vk_event.command in self.names:
             if self.vk_event.args:
+                same_chats = VkChat.objects.filter(name=self.vk_event.original_args)
+                if len(same_chats) > 0:
+                    return "Конфа с таким названием уже есть. Придумайте другое"
                 self.vk_event.chat.name = self.vk_event.original_args
                 self.vk_event.chat.save()
             else:

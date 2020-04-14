@@ -476,6 +476,23 @@ class VkBotClass(threading.Thread):
 
         return user.first()
 
+    @staticmethod
+    def get_chat_by_name(args):
+        if not args:
+            raise RuntimeError("Отсутствуют аргументы")
+        if type(args) == str:
+            args = [args]
+        vk_chats = VkChat.objects
+        for arg in args:
+            vk_chats = vk_chats.filter(name__icontains=arg)
+
+        if len(vk_chats) > 1:
+            raise RuntimeError("2 и более чатов подходит под поиск")
+
+        if len(vk_chats) == 0:
+            raise RuntimeError("Чат не найден")
+        return vk_chats.first()
+
     def get_bot_by_id(self, bot_id):
         vk_bot = VkBot.objects.filter(bot_id=bot_id)
         if len(vk_bot) > 0:
