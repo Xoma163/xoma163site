@@ -3,8 +3,20 @@ import json
 
 from django.contrib.postgres.fields import JSONField
 from django.db import models
+from django.utils.safestring import mark_safe
+from pygments import highlight
+from pygments.formatters.html import HtmlFormatter
+from pygments.lexers.data import JsonLexer
 
 from apps.API_VK.models import VkUser, VkChat
+
+
+def _get_pretty(field):
+    response = json.dumps(field, sort_keys=True, indent=2, ensure_ascii=False)
+    formatter = HtmlFormatter(style='colorful')
+    response = highlight(response, JsonLexer(), formatter)
+    style = "<style>" + formatter.get_style_defs() + "</style><br>"
+    return mark_safe(style + response)
 
 
 class Gamer(models.Model):
@@ -98,6 +110,9 @@ class TicTacToeSession(models.Model):
     def __str__(self):
         return str(self.user1) + " " + str(self.user2)
 
+    def pretty_board(self):
+        return _get_pretty(self.board)
+
 
 class CodenamesUser(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
@@ -139,6 +154,9 @@ class CodenamesSession(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+    def pretty_board(self):
+        return _get_pretty(self.board)
 
 
 class RouletteRate(models.Model):

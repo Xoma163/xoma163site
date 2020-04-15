@@ -16,3 +16,4 @@ transliterate
 lxml
 matplotlib
 pytest
+pygments
