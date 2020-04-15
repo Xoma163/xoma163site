@@ -1,11 +1,21 @@
+from itertools import groupby
+
 import requests
 
 
 def get_detail_by_country(country_name, status='confirmed'):
     url = f"https://api.covid19api.com/dayone/country/{country_name}/status/{status}"
+
     response = requests.get(url, timeout=5).json()
-    data = [x['Cases'] for x in response]
-    date = [x['Date'] for x in response]
+    groups = []
+    for key, group in groupby(response, lambda x: x['Date']):
+        list_group = list(group)
+        if len(list_group) > 0:
+            groups.append(list_group)
+
+    # Суммирование сгрупированных данных
+    data = [sum([y['Cases'] for y in x]) for x in groups]
+    date = [x[0]['Date'] for x in groups]
     return data, date
 
 

@@ -29,7 +29,7 @@ class Coronavirus(CommonCommand):
             if len(self.vk_event.args) >= 2:
                 if self.vk_event.args[1].lower() == "график":
                     detail = 'Graphic'
-                if self.vk_event.args[1].lower() in ["гист", "гистограмма"]:
+                if self.vk_event.args[1].lower() in ["гист", "гистограмма", 'гиста']:
                     detail = 'Gist'
         else:
             country = "Мир"
@@ -42,7 +42,7 @@ class Coronavirus(CommonCommand):
         else:
             country_transliterate = None
 
-        if country in ["США", "USA"]:
+        if country.lower() in ["сша", "usa"]:
             country_transliterate = "united-states"
 
         result = get_by_country(country_transliterate)
