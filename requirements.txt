@@ -17,3 +17,4 @@ lxml
 matplotlib
 pytest
 pygments
+wikipedia
