@@ -29,7 +29,8 @@ class Coronavirus(CommonCommand):
             if len(self.vk_event.args) >= 2:
                 if self.vk_event.args[1].lower() == "график":
                     detail = 'Graphic'
-                if self.vk_event.args[1].lower() in ["гист", "гистограмма", 'гиста']:
+                if self.vk_event.args[1].lower() in ["гист", "гистограмма", 'гиста', 'киста', 'глиста', 'коса',
+                                                     'попса']:
                     detail = 'Gist'
         else:
             country = "Мир"
@@ -52,6 +53,9 @@ class Coronavirus(CommonCommand):
                 attachments = []
                 if detail == "Gist":
                     datas = [get_detail_by_country(country_transliterate, status) for status in ALL_STATUSES]
+
+                    for i in range(len(datas[0][0])):
+                        datas[0][0][i] -= datas[1][0][i] + datas[2][0][i]
                     fig, a = plt.subplots()
                     x = datas[0][1]
                     y1 = datas[0][0]
@@ -59,7 +63,7 @@ class Coronavirus(CommonCommand):
                     y2_bottom = y1
                     y3 = datas[1][0]
                     y3_bottom = [x + y for x, y in zip(datas[2][0], datas[0][0])]
-                    a.bar(x, y1, label="Больные", color="#46aada")
+                    a.bar(x, y1, label="Болеют", color="#46aada")
                     a.bar(x, y2, bottom=y2_bottom, label="Умершие", color="red")
                     a.bar(x, y3, bottom=y3_bottom, label="Выздоровевшие", color="green")
                     a.xaxis.set_visible(False)
@@ -70,6 +74,9 @@ class Coronavirus(CommonCommand):
                     for i in range(len(datas)):
                         empty_list = [0] * (max_len - len(datas[i]))
                         datas[i] = empty_list + datas[i]
+
+                    for i in range(len(datas[0][0])):
+                        datas[0][0][i] -= datas[1][0][i] + datas[2][0][i]
 
                     plt.plot(datas[1], "bo-", label="Выздоровевшие", color="green")
                     plt.plot(datas[0], "bo-", label="Больные", color="#46aada")

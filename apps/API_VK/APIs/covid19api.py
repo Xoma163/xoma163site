@@ -22,9 +22,9 @@ def get_detail_by_country(country_name, status='confirmed'):
 def get_by_country(country_name):
     def set_data(data):
         return f"Сегодня:\n" \
-               f"Зараженные - {data['NewConfirmed']}, смерти - {data['NewDeaths']}, выздоровело - {data['NewRecovered']}\n" \
-               f"Всего:\n" \
-               f"Зараженные - {data['TotalConfirmed']}, смерти - {data['TotalDeaths']}, выздоровело - {data['TotalRecovered']}, болеют сейчас - {data['TotalConfirmed'] - data['TotalDeaths'] - data['TotalRecovered']}"
+               f"Зараженные - {data['NewConfirmed']}, смертей - {data['NewDeaths']}, выздоровело - {data['NewRecovered']}\n" \
+               f"Сейчас:\n" \
+               f"Болеют - {data['TotalConfirmed'] - data['TotalDeaths'] - data['TotalRecovered']}, смертей - {data['TotalDeaths']}, выздоровело - {data['TotalRecovered']}"
 
     url = f"https://api.covid19api.com/summary"
     response = requests.get(url, timeout=5).json()
