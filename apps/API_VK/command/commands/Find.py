@@ -40,8 +40,9 @@ class Find(CommonCommand):
         if len(urls) == 0:
             return "Ничего не нашёл"
         attachments = []
+        # ToDo: TempFile
         for url in urls:
-            path = f"{BASE_DIR}/static/vkapi/{query}.jpg"
+            path = f"{BASE_DIR}/static/vkapi/find/{query}.jpg"
             try:
                 img = requests.get(url)
                 img_file = open(path, "wb")

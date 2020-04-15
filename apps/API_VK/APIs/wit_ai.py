@@ -19,20 +19,17 @@ def stream_audio_file(_bytes, chunk_size=4096):
         yield data
 
 
-def get_text_from_audio_file(audio_message):
-    r = requests.get(audio_message['download_url'], stream=True)
-
+def get_text_from_audio_file(data):
     URL = 'https://api.wit.ai/speech'
     headers = {'Accept': 'audio/x-mpeg-3',
                'Authorization': 'Bearer ' + API_KEY,
                'Content-Type': 'audio/mpeg3',
+               # 'Content-Type': 'audio/raw;encoding=unsigned-integer;bits=16;rate=192000;endian=big',
+               # "Transfer-encoding": "chunked"
                }
-    # data = stream_audio_file(r.content)
+    # data = stream_audio_file(data)
 
-    response = requests.post(URL, data=r.content, headers=headers, stream=True).json()
+    response = requests.post(URL, data=data, headers=headers, stream=True).json()
     if 'error' in response:
-        return f"Ошибка распознования - {response['error']}"
-    if '_text' in response and response['_text'] != "":
-        return response['_text']
-    else:
-        return "Ничего не понял(("
+        raise RuntimeError(f"Ошибка распознования - {response['error']}")
+    return response['_text']

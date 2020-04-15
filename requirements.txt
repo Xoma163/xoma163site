@@ -18,3 +18,5 @@ matplotlib
 pytest
 pygments
 wikipedia
+pydub
+SpeechRecognition
