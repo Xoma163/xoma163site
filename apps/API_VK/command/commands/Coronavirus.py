@@ -41,6 +41,10 @@ class Coronavirus(CommonCommand):
                 country_transliterate = country
         else:
             country_transliterate = None
+
+        if country in ["США", "USA"]:
+            country_transliterate = "united-states"
+
         result = get_by_country(country_transliterate)
         if result:
             msg = f"{country.capitalize()}\n\n{result}"
