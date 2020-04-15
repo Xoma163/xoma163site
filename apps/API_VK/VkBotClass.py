@@ -151,6 +151,11 @@ def parse_attachments(vk_attachments):
                 elif 'copy_history' in attachment_type and len(attachment_type['copy_history']) > 0 and 'attachments' in \
                         attachment_type['copy_history'][0]:
                     new_attachment['attachments'] = parse_attachments(attachment_type['copy_history'][0]['attachments'])
+            elif attachment['type'] == 'audio_message':
+                new_attachment['id'] = attachment_type['id']
+                new_attachment['owner_id'] = attachment_type['owner_id']
+                new_attachment['duration'] = attachment_type['duration']
+                new_attachment['download_url'] = attachment_type['link_mp3']
 
             attachments.append(new_attachment)
 
