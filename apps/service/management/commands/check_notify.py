@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 from django.core.management.base import BaseCommand
 
@@ -15,10 +15,18 @@ class Command(BaseCommand):
 
         notifies = Notify.objects.all()
 
+        DATETIME_NOW = datetime.utcnow()
         for notify in notifies:
-            delta_time = remove_tz(notify.date) - datetime.utcnow() + timedelta(minutes=1)
-            if delta_time.days == 0 and delta_time.seconds <= 60:
+            if notify.repeat:
+                datetime1 = datetime.combine(date.min, remove_tz(notify.date).time())
+                datetime2 = datetime.combine(date.min, DATETIME_NOW.time())
+                delta_time = datetime1 - datetime2 + timedelta(minutes=1)
+                flag = delta_time.seconds <= 60
+            else:
+                delta_time = remove_tz(notify.date) - DATETIME_NOW + timedelta(minutes=1)
+                flag = delta_time.days == 0 and delta_time.seconds <= 60
 
+            if flag:
                 notify_datetime = localize_datetime(remove_tz(notify.date), notify.author.city.timezone)
                 message = f"Напоминалка на {notify_datetime.strftime('%H:%M')}\n" \
                           f"[id{notify.author.user_id}|{notify.author}]:\n" \
@@ -46,7 +54,10 @@ class Command(BaseCommand):
                     vk_bot.menu(vk_event_object, send=True)
 
                 if notify.repeat:
-                    notify.date = notify.date + timedelta(days=1)
+                    # Для постоянных уведомлений дата должа быть на завтрашний день обязательно. Это важно для сортировки
+                    new_datetime = datetime.combine(DATETIME_NOW.date(), notify.date.time()) + timedelta(days=1)
+                    new_datetime = localize_datetime(remove_tz(new_datetime), notify.author.city.timezone)
+                    notify.date = new_datetime
                     notify.save()
                 else:
                     notify.delete()
