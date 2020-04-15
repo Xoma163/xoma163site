@@ -2,7 +2,7 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 
 class Control(CommonCommand):
     def __init__(self):
-        names = ["управление", "сообщение"]
+        names = ["отправить", "сообщение"]
         help_text = "Управление - отправление сообщение в любую конфу"
         detail_help_text = "Управление ({chat_id}, {сообщение})"
         super().__init__(names, help_text, detail_help_text, access='admin', args=2)
