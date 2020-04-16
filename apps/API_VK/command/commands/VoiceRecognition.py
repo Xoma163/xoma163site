@@ -2,9 +2,9 @@
 import os
 
 import requests
+import speech_recognition as sr
 from pydub import AudioSegment
 
-from apps.API_VK.APIs.wit_ai import get_text_from_audio_file
 from apps.API_VK.command.CommonCommand import CommonCommand
 from xoma163site.settings import BASE_DIR
 
@@ -27,74 +27,49 @@ class VoiceRecognition(CommonCommand):
             if attachment['type'] == 'audio_message':
                 audio_message = attachment
                 break
-        # audio_message = {'download_url': "https://psv4.userapi.com/c852420//u15045422/audiomsg/d15/80cc2f6a18.mp3",
-        #                  'id': '100',
-        #                  'owner_id': "15045422"}
         if not audio_message:
             return "Не нашел аудио в пересланных сообщениях"
         r = requests.get(audio_message['download_url'], stream=True)
 
-        filename = f"{audio_message['owner_id']}_{audio_message['id']}.mp3"
-        # filename2 = f"{audio_message['owner_id']}_{audio_message['id']}.wav"
-        filepath = f"{BASE_DIR}/static/vkapi/recognition/{filename}"
-        # filepath2 = f"{BASE_DIR}/static/vkapi/recognition/{filename2}"
-        #
-        song_file = open(filepath, "wb")
+        # ToDo: может как-то можно обойтись без файлов
+        FILENAME_MP3 = f"{audio_message['owner_id']}_{audio_message['id']}.mp3"
+        FILEPATH_MP3 = f"{BASE_DIR}/static/vkapi/recognition/{FILENAME_MP3}"
+        FILENAME_WAV = f"{audio_message['owner_id']}_{audio_message['id']}.wav"
+        FILEPATH_WAV = f"{BASE_DIR}/static/vkapi/recognition/{FILENAME_WAV}"
+
+        song_file = open(FILEPATH_MP3, "wb")
         song_file.write(r.content)
         song_file.close()
         try:
-            song_cutted = []
-            song = AudioSegment.from_mp3(filepath)
-
-            for fragment in range(int(song.duration_seconds // MAX_DURATION) + 1):
-                extract = song[MAX_DURATION * fragment * 1000:MAX_DURATION * (fragment + 1) * 1000]
-                song_cutted.append(extract)
+            song = AudioSegment.from_mp3(FILEPATH_MP3)
+            song.export(FILEPATH_WAV, 'wav')
         except Exception as e:
             print(str(e))
+            if os.path.exists(FILEPATH_WAV):
+                os.remove(FILEPATH_WAV)
             return "Ошибка в сохранении аудиофайла"
         finally:
-            if os.path.exists(filepath):
-                os.remove(filepath)
-        #
-        # import speech_recognition as sr
-        # AUDIO_FILE = filepath2
-        #
-        # use the audio file as the audio source
-        # r = sr.Recognizer()
-        # with sr.AudioFile(AUDIO_FILE) as source:
-        #     audio = r.record(source)
-        #
-        # recognize speech using Wit.ai
-        # try:
-        #     msg = r.recognize_wit(audio, key=secrets['wit']['api_key'])
-        #     print("Wit.ai thinks you said " + msg)
-        # except sr.UnknownValueError:
-        #     print("Wit.ai could not understand audio")
-        #     return "Не понял("
-        # except sr.RequestError as e:
-        #     print("Could not request results from Wit.ai service; {0}".format(e))
-        #     return "Проблема с форматом"
-        #
-        # try:
-        # for testing purposes, we're just using the default API key
-        # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
-        # instead of `r.recognize_google(audio)`
-        # msg = r.recognize_google(audio)
-        # print("Google Speech Recognition thinks you said " + msg)
-        # except sr.UnknownValueError:
-        #     print("Google Speech Recognition could not understand audio")
-        #     return "Не понял("
-        # except sr.RequestError as e:
-        #     print("Could not request results from Google Speech Recognition service; {0}".format(e))
-        #     return "Проблема с форматом"
-        #
-        # msg = ""
-        # for data in song_cutted:
-        #     msg += get_text_from_audio_file(data.raw_data)
+            if os.path.exists(FILEPATH_MP3):
+                os.remove(FILEPATH_MP3)
 
-        msg = get_text_from_audio_file(r.content)
+        r = sr.Recognizer()
+        try:
+            with sr.AudioFile(FILEPATH_WAV) as source:
+                audio = r.record(source)
+        except Exception as e:
+            print(str(e))
+            return "Ошибка какая-то"
 
-        if len(msg) == 0:
+        finally:
+            if os.path.exists(FILEPATH_WAV):
+                os.remove(FILEPATH_WAV)
+
+        try:
+            msg = r.recognize_google(audio, language='ru_RU')
+            return msg
+        except sr.UnknownValueError:
+            print("Google Speech Recognition could not understand audio")
             return "Ничего не понял(("
-
-        return msg
+        except sr.RequestError as e:
+            print("Could not request results from Google Speech Recognition service; {0}".format(e))
+            return "Проблема с форматом"
