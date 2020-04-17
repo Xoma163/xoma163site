@@ -14,7 +14,7 @@ class GamerAdmin(admin.ModelAdmin):
 
 @admin.register(Rate)
 class RateAdmin(admin.ModelAdmin):
-    list_display = ('user', 'chat', 'rate')
+    list_display = ('gamer', 'chat', 'rate')
     ordering = ('-chat',)
 
 

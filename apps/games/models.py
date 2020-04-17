@@ -38,7 +38,7 @@ class Gamer(models.Model):
 
 class Rate(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
-    user = models.ForeignKey(VkUser, verbose_name="Пользователь", on_delete=models.SET_NULL, null=True)
+    gamer = models.ForeignKey(Gamer, verbose_name="Пользователь", on_delete=models.SET_NULL, null=True)
     chat = models.ForeignKey(VkChat, verbose_name="Чат", on_delete=models.SET_NULL, null=True)
     rate = models.IntegerField(verbose_name="Ставка")
     date = models.DateTimeField(verbose_name="Дата", auto_now_add=True, blank=True)
@@ -50,7 +50,7 @@ class Rate(models.Model):
         ordering = ["chat", "date"]
 
     def __str__(self):
-        return str(self.chat) + " " + str(self.user)
+        return str(self.chat) + " " + str(self.gamer)
 
 
 # class RateDelete(models.Model):

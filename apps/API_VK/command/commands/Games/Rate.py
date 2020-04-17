@@ -3,7 +3,6 @@ from threading import Lock
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import get_random_item_from_list
 from apps.API_VK.models import VkUser
-from apps.games.models import Gamer  # , RateDelete
 from apps.games.models import Rate as RateModel
 
 lock = Lock()
@@ -18,18 +17,20 @@ class Rate(CommonCommand):
 
     def start(self):
         with lock:
+            gamer = self.vk_bot.get_gamer_by_user(self.vk_event.sender)
+
             MIN_GAMERS = int(len(VkUser.objects.filter(chats=self.vk_event.chat)) / 2)
             if MIN_GAMERS < 2:
                 MIN_GAMERS = 2
             rates_gamers = RateModel.objects.filter(chat=self.vk_event.chat)
-            existed_rate = rates_gamers.filter(user=self.vk_event.sender)
+            existed_rate = rates_gamers.filter(gamer=gamer)
 
             rate_gamer_str = ""
             for rate_gamer in rates_gamers:
                 if rate_gamer.random:
-                    rate_gamer_str += f"{str(rate_gamer.user)} - {rate_gamer.rate} (R)\n"
+                    rate_gamer_str += f"{str(rate_gamer.gamer)} - {rate_gamer.rate} (R)\n"
                 else:
-                    rate_gamer_str += f"{str(rate_gamer.user)} - {rate_gamer.rate}\n"
+                    rate_gamer_str += f"{str(rate_gamer.gamer)} - {rate_gamer.rate}\n"
 
             if len(existed_rate) > 0:
                 return f"Ставка уже поставлена\n" \
@@ -53,15 +54,12 @@ class Rate(CommonCommand):
             if len(existed_another_rate) > 0:
                 return "Эта ставка уже поставлена другим игроком"
 
-            if len(Gamer.objects.filter(user=self.vk_event.sender)) == 0:
-                Gamer(**{'user': self.vk_event.sender}).save()
-
             RateModel(
-                **{'user': self.vk_event.sender, 'chat': self.vk_event.chat, 'rate': arg, 'random': random}).save()
+                **{'gamer': gamer, 'chat': self.vk_event.chat, 'rate': arg, 'random': random}).save()
             if random:
-                rate_gamer_str += f"{self.vk_event.sender} - {arg} (R)\n"
+                rate_gamer_str += f"{gamer} - {arg} (R)\n"
             else:
-                rate_gamer_str += f"{self.vk_event.sender} - {arg}\n"
+                rate_gamer_str += f"{gamer} - {arg}\n"
 
             # RateDelete(**{'chat': self.vk_event.chat, 'message_id': self.vk_event.message_id}).save()
             return f"Игроки {len(rates_gamers) + 1}/{MIN_GAMERS}:\n" \

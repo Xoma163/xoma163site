@@ -3,7 +3,6 @@ from threading import Lock
 
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.models import VkUser
-from apps.games.models import Gamer
 from apps.games.models import Rate as RateModel
 
 lock = Lock()
@@ -47,7 +46,7 @@ class Rates(CommonCommand):
 
             winners_str = ""
             for winner in winners:
-                gamer = Gamer.objects.get(user=winner.user)
+                gamer = self.vk_bot.get_gamer_by_user(self.vk_event.sender)
                 winners_str += f"{gamer}\n"
 
                 if winner.rate != rnd:
