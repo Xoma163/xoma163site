@@ -22,6 +22,8 @@ class VoiceRecognition(CommonCommand):
         from apps.API_VK.VkBotClass import parse_attachments
 
         attachments = parse_attachments(self.vk_event.fwd[0]['attachments'])
+        if attachments:
+            return "Не нашёл вложений в пересланных сообщениях"
         audio_message = None
         for attachment in attachments:
             if attachment['type'] == 'audio_message':

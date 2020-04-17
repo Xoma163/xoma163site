@@ -90,15 +90,11 @@ class Roulette(CommonCommand):
                            "рулетка бонус - получение пособия по безработице\n" \
                            "рулетка передать [игрок] очки - передача очков другому игроку\n"
 
-        super().__init__(names, help_text, detail_help_text, conversation=True)
+        super().__init__(names, help_text, detail_help_text)
 
     def start(self):
+        gamer = self.vk_bot.get_gamer_by_user(self.vk_event.sender)
         if self.vk_event.args:
-
-            if len(Gamer.objects.filter(user=self.vk_event.sender)) == 0:
-                Gamer(user=self.vk_event.sender).save()
-            gamer = Gamer.objects.filter(user=self.vk_event.sender).first()
-
             if self.vk_event.args[0] == 'баланс':
                 if len(self.vk_event.args) > 1:
                     username = " ".join(self.vk_event.args[1:])
@@ -128,6 +124,7 @@ class Roulette(CommonCommand):
                 else:
                     return "Приходи завтра"
             if self.vk_event.args[0] in ['передать', 'перевод', 'перевести', 'подать']:
+                self.check_conversation()
                 self.args = 3
                 self.int_args = [-1]
                 self.check_args()
@@ -153,12 +150,19 @@ class Roulette(CommonCommand):
                 vk_user_gamer.save()
                 return f"Передал игроку {vk_user_gamer.user} {points_transfer} {decl_of_num(points_transfer, ['очко', 'очка', 'очков'])}"
             if self.vk_event.args[0] in ['ставки']:
-                rrs = RouletteRate.objects.filter(chat=self.vk_event.chat)
+                if self.vk_event.from_chat:
+                    rrs = RouletteRate.objects.filter(chat=self.vk_event.chat)
+                else:
+                    rrs = RouletteRate.objects.filter(chat__isnull=True, gamer=gamer)
+
+                if len(rrs) == 0:
+                    return "Ставок нет"
                 msg = ""
                 for rr in rrs:
                     rate_on_dict = json.loads(rr.rate_on)
                     msg += f"{rr.gamer.user} поставил на {rate_on_dict['verbose_name']} {rr.rate} очков\n"
                 return msg
+
             rate_on = self.vk_event.args[0]
             # rate_is_int = str_is_int(rate_on)
             if rate_on in TRANSLATOR:  # or rate_is_int:
@@ -200,7 +204,10 @@ class Roulette(CommonCommand):
                 return "Не могу понять на что вы поставили. /ман рулетка"
         else:
             with lock:
-                rrs = RouletteRate.objects.filter(chat=self.vk_event.chat)
+                if self.vk_event.from_chat:
+                    rrs = RouletteRate.objects.filter(chat=self.vk_event.chat)
+                else:
+                    rrs = RouletteRate.objects.filter(chat__isnull=True, gamer=gamer)
                 if len(rrs) == 0:
                     return "Ставок нет"
                 msg1 = "Ставки сделаны. Ставок больше нет\n"

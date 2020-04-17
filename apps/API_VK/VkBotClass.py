@@ -454,6 +454,20 @@ class VkBotClass(threading.Thread):
         return vk_user
 
     @staticmethod
+    def get_gamer_by_user(user):
+        from apps.games.models import Gamer
+
+        gamers = Gamer.objects.filter(user=user)
+        if len(gamers) == 0:
+            gamer = Gamer(user=user)
+            gamer.save()
+            return gamer
+        elif len(gamers) > 1:
+            raise RuntimeError("Два и более игрока подходит под поиск")
+        else:
+            return gamers.first()
+
+    @staticmethod
     def get_user_by_name(args, filter_chat=None):
         if not args:
             raise RuntimeError("Отсутствуют аргументы")
