@@ -19,18 +19,12 @@ class VoiceRecognition(CommonCommand):
                          )
 
     def start(self):
-        from apps.API_VK.VkBotClass import parse_attachments
 
-        attachments = parse_attachments(self.vk_event.fwd[0]['attachments'])
-        if attachments:
-            return "Не нашёл вложений в пересланных сообщениях"
-        audio_message = None
-        for attachment in attachments:
-            if attachment['type'] == 'audio_message':
-                audio_message = attachment
-                break
+        from apps.API_VK.command.CommonMethods import get_att_from_attachments_or_fwd
+        audio_message = get_att_from_attachments_or_fwd(self.vk_event, 'audio_message')
         if not audio_message:
-            return "Не нашел аудио в пересланных сообщениях"
+            return "Не нашёл голосового сообщения"
+        print(audio_message['download_url'])
         r = requests.get(audio_message['download_url'], stream=True)
 
         # ToDo: может как-то можно обойтись без файлов
@@ -70,8 +64,7 @@ class VoiceRecognition(CommonCommand):
             msg = r.recognize_google(audio, language='ru_RU')
             return msg
         except sr.UnknownValueError:
-            print("Google Speech Recognition could not understand audio")
             return "Ничего не понял(("
         except sr.RequestError as e:
-            print("Could not request results from Google Speech Recognition service; {0}".format(e))
+            print(str(e))
             return "Проблема с форматом"
