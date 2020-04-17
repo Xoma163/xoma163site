@@ -20,3 +20,5 @@ pygments
 wikipedia
 pydub
 SpeechRecognition
+numpy
+cv2

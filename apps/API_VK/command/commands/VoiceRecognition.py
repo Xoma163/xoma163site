@@ -20,11 +20,11 @@ class VoiceRecognition(CommonCommand):
 
     def start(self):
 
-        from apps.API_VK.command.CommonMethods import get_att_from_attachments_or_fwd
-        audio_message = get_att_from_attachments_or_fwd(self.vk_event, 'audio_message')
-        if not audio_message:
+        from apps.API_VK.command.CommonMethods import get_attachments_from_attachments_or_fwd
+        audio_messages = get_attachments_from_attachments_or_fwd(self.vk_event, 'audio_message')
+        if not audio_messages:
             return "Не нашёл голосового сообщения"
-        print(audio_message['download_url'])
+        audio_message = audio_messages[0]
         r = requests.get(audio_message['download_url'], stream=True)
 
         # ToDo: может как-то можно обойтись без файлов

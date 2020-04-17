@@ -1,6 +1,6 @@
 from apps.API_VK.APIs.everypixel import get_image_quality
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command.CommonMethods import get_att_from_attachments_or_fwd
+from apps.API_VK.command.CommonMethods import get_attachments_from_attachments_or_fwd
 
 
 class EstimatePhoto(CommonCommand):
@@ -12,9 +12,9 @@ class EstimatePhoto(CommonCommand):
         super().__init__(names, help_text, detail_help_text, api=False)
 
     def start(self):
-        image = get_att_from_attachments_or_fwd(self.vk_event, 'photo')
+        images = get_attachments_from_attachments_or_fwd(self.vk_event, 'photo')
 
-        if not image:
+        if not images:
             return "Не нашёл картинки"
-
+        image = images[0]
         return get_image_quality(image['url'])

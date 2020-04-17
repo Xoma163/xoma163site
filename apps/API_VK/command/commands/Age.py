@@ -2,7 +2,7 @@ from django.utils.crypto import get_random_string
 
 from apps.API_VK.APIs.everypixel import get_faces_on_photo
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command.CommonMethods import get_att_from_attachments_or_fwd
+from apps.API_VK.command.CommonMethods import get_attachments_from_attachments_or_fwd
 from xoma163site.settings import BASE_DIR
 
 
@@ -46,10 +46,11 @@ class Age(CommonCommand):
         super().__init__(names, help_text, detail_help_text, api=False)
 
     def start(self):
-        image = get_att_from_attachments_or_fwd(self.vk_event, 'photo')
+        images = get_attachments_from_attachments_or_fwd(self.vk_event, 'photo')
 
-        if not image:
+        if not images:
             return "Не нашёл картинки"
+        image = images[0]
         response = get_faces_on_photo(image['url'])
         if response['status'] == 'error':
             print(response)

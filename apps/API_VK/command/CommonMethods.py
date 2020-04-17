@@ -117,25 +117,19 @@ def decl_of_num(number, titles):
         return titles[cases[5]]
 
 
-def get_att_from_attachments_or_fwd(vk_event, _type):
+def get_attachments_from_attachments_or_fwd(vk_event, _type):
     from apps.API_VK.VkBotClass import parse_attachments
-
+    attachments = []
     if vk_event.attachments:
         for att in vk_event.attachments:
             if att['type'] == _type:
-                return att
-    elif vk_event.fwd:
+                attachments.append(att)
+    if vk_event.fwd:
         msg = vk_event.fwd[0]
         if msg['attachments']:
-            attachments = parse_attachments(msg['attachments'])
-            for att in attachments:
+            fwd_attachments = parse_attachments(msg['attachments'])
+            for att in fwd_attachments:
                 if att['type'] == _type:
-                    return att
-    else:
-        return None
+                    attachments.append(att)
 
-# def get_random_string(length):
-#     import string
-#     characters = string.ascii_letters + string.digits
-#     return ''.join(random.choice(characters) for i in range(length))
-#
+    return attachments
