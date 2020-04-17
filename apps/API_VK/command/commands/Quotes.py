@@ -48,6 +48,8 @@ class Quotes(CommonCommand):
         objs = objs.filter(peer_id=self.vk_event.peer_id).order_by('-date')
         p = Paginator(objs, 5)
 
+        if page <= 0:
+            page = 1
         if page > p.num_pages:
             page = p.num_pages
 

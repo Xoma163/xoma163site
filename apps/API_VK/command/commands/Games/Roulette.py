@@ -154,9 +154,9 @@ class Roulette(CommonCommand):
                     rrs = RouletteRate.objects.filter(chat=self.vk_event.chat)
                 else:
                     rrs = RouletteRate.objects.filter(chat__isnull=True, gamer=gamer)
-
                 if len(rrs) == 0:
                     return "Ставок нет"
+                
                 msg = ""
                 for rr in rrs:
                     rate_on_dict = json.loads(rr.rate_on)
