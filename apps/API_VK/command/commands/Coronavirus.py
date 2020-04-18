@@ -50,6 +50,8 @@ class Coronavirus(CommonCommand):
         if result:
             msg = f"{country.capitalize()}\n\n{result}"
             if detail in ["Gist", "Graphic"]:
+                self.api = False
+                self.check_api()
                 attachments = []
                 if detail == "Gist":
                     datas = [get_detail_by_country(country_transliterate, status) for status in ALL_STATUSES]

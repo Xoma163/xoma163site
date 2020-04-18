@@ -101,21 +101,22 @@ class Command(BaseCommand):
                                     Words(**word_dict).save()
                                     statistics['created'] += 1
                         else:
-                            print(f"Слово не имеет id. Проверьте - {word_dict}. Строка - {j}")
+                            return f"Слово не имеет id. Проверьте - {word_dict}. Строка - {j}"
 
                     else:
                         headers = [header for header in val]
-            print("Result: success")
-            print(f"Time: {time.time() - time1}")
-            print(f"\nStatistics:\n"
-                  f"created - {statistics['created']}\n"
-                  f"updated - {statistics['updated']}\n"
-                  f"deleted - {statistics['deleted']}\n"
-                  f"skipped - {statistics['skipped']}\n"
-                  f"total - {statistics['bad_words'] + statistics['good_words']}\n"
-                  f"-----\n"
-                  f"bad_words - {statistics['bad_words']}\n"
+
+            msg = "Result: success\n" \
+                  f"Time: {time.time() - time1}" \
+                  f"\nStatistics:\n" \
+                  f"created - {statistics['created']}\n" \
+                  f"updated - {statistics['updated']}\n" \
+                  f"deleted - {statistics['deleted']}\n" \
+                  f"skipped - {statistics['skipped']}\n" \
+                  f"total - {statistics['bad_words'] + statistics['good_words']}\n" \
+                  f"-----\n" \
+                  f"bad_words - {statistics['bad_words']}\n" \
                   f"good_words - {statistics['good_words']}\n"
-                  )
+            return msg
         except Exception as e:
-            print("error: " + str(e))
+            return "error " + str(e)

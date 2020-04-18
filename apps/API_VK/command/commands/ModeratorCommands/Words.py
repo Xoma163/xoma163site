@@ -1,5 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command._DoTheLinuxComand import do_the_linux_command
+from apps.service.management.commands.get_words import Command
 
 
 class Words(CommonCommand):
@@ -10,8 +10,11 @@ class Words(CommonCommand):
 
     def start(self):
         # ToDo: зачем это делать так?
-        command = "/var/www/xoma163.site/venv/bin/python /var/www/xoma163.site/manage.py get_words"
-        result = do_the_linux_command(command)
-        if not result:
-            result = "done"
-        return result
+        get_words = Command()
+        return get_words.handle()
+
+        # command = "/var/www/xoma163.site/venv/bin/python /var/www/xoma163.site/manage.py get_words"
+        # result = do_the_linux_command(command)
+        # if not result:
+        #     result = "done"
+        # return result

@@ -60,19 +60,19 @@ class Meme(CommonCommand):
 
         if meme.link:
             if meme.link.find('vk.com') != -1 and meme.link.find('video') != -1:
-                att = meme.link[meme.link.find('video'):]
-                msg = {'msg': meme_name, 'attachments': [att]}
+                attachment = meme.link[meme.link.find('video'):]
+                msg = {'msg': meme_name, 'attachments': [attachment]}
             elif meme.link.find('vk.com') != -1 and meme.link.find('audio') != -1:
-                att = meme.link[meme.link.find('audio'):]
-                msg = {'msg': meme_name, 'attachments': [att]}
+                attachment = meme.link[meme.link.find('audio'):]
+                msg = {'msg': meme_name, 'attachments': [attachment]}
             else:
                 msg = meme.link
         elif meme.image:
             if meme.image.name.split('.')[-1] == 'gif':
-                att = self.vk_bot.upload_document(meme.image.path, self.vk_event.peer_id, False)
+                attachment = self.vk_bot.upload_document(meme.image.path, self.vk_event.peer_id, False)
             else:
-                att = self.vk_bot.upload_photo(meme.image.path, False)
-            msg = {'msg': meme_name, 'attachments': [att]}
+                attachment = self.vk_bot.upload_photo(meme.image.path)
+            msg = {'msg': meme_name, 'attachments': [attachment]}
         else:
             return "Какая-то хрень с мемом"
         if send_keyboard:
