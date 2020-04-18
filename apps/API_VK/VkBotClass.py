@@ -55,16 +55,11 @@ def parse_msg(msg):
                 'command': None,
                 'args': None,
                 'original_args': None,
-                'params': None,
                 }
 
     command_arg = msg_clear.split(' ', 1)
     msg_dict['command'] = command_arg[0]
     if len(command_arg) > 1:
-        msg_dict['params'] = msg.replace(msg_dict['command'] + ' ', '')
-        if len(msg_dict['params']) == 0:
-            msg_dict['params'] = None
-
         if len(command_arg[1]) > 0:
             msg_dict['args'] = command_arg[1].split(' ')
             msg_dict['original_args'] = command_arg[1].strip()
@@ -221,17 +216,16 @@ class VkBotClass(threading.Thread):
         if self.DEBUG and send:
             if hasattr(vk_event, 'payload') and vk_event.payload:
                 debug_message = \
-                    f"msg = {vk_event.msg}\n " \
-                    f"command = {vk_event.command}\n " \
-                    f"args = {vk_event.args}\n " \
-                    f"payload = {vk_event.payload}\n "
+                    f"msg = {vk_event.msg}\n" \
+                    f"command = {vk_event.command}\n" \
+                    f"args = {vk_event.args}\n" \
+                    f"payload = {vk_event.payload}\n"
             else:
                 debug_message = \
-                    f"msg = {vk_event.msg}\n " \
-                    f"command = {vk_event.command}\n " \
-                    f"args = {vk_event.args}\n " \
-                    f"original_args = {vk_event.original_args}\n " \
-                    f"params = {vk_event.params}\n"
+                    f"msg = {vk_event.msg}\n" \
+                    f"command = {vk_event.command}\n" \
+                    f"args = {vk_event.args}\n" \
+                    f"original_args = {vk_event.original_args}\n"
             self.send_message(vk_event.peer_id, debug_message)
 
         group = vk_event.sender.groups.filter(name='banned')

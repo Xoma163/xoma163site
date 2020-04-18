@@ -5,7 +5,7 @@ class Calc(CommonCommand):
     def __init__(self):
         names = ["калькулятор", "кальк", "к", "="]
         help_text = "Калькулятор - считает простые выражения"
-        detail_help_text = "=(выражение) - считает выражение. Умеет работать с + - * / ^ ( )"
+        detail_help_text = "=(выражение) - считает выражение. Умеет работать с + - * / ( )"
         super().__init__(names, help_text, detail_help_text)
 
     def accept(self, vk_event):
@@ -24,9 +24,9 @@ class Calc(CommonCommand):
         if root is None:
             return "Не смог распартить выражение"
         else:
-            try:
-                return int(root.value)
-            except ValueError:
+            if type(root.value) == float and root.value == int(root.value):
+                return str(int(root.value))
+            else:
                 return str(root.value)
 
 
