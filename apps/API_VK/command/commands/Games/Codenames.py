@@ -331,7 +331,6 @@ class Codenames(CommonCommand):
         for captain in captains:
             captain.role = 'captain'
 
-        # ToDo вот этот эксклюд можно как-то покрасивее наверное сделать
         players = self.players.exclude(id__in=[captain.id for captain in captains])
         for player in players:
             player.role = 'player'
@@ -360,8 +359,8 @@ class Codenames(CommonCommand):
         session.save()
         self.session = session
 
-        self.send_keyboard(board)
-        self.vk_bot.send_message(self.vk_event.peer_id, msg=self.get_info())
+        # self.send_keyboard(board)
+        self.vk_bot.send_message(self.vk_event.peer_id, msg=self.get_info(), keyboard=self.get_keyboard(board))
 
         for captain in captains:
             self.send_captain_keyboard(board, captain,
@@ -416,8 +415,8 @@ class Codenames(CommonCommand):
             self.game_over(is_game_over, board)
             return
 
-        self.send_keyboard(board)
-        return
+        # self.send_keyboard(board)
+        return {"msg": "Лови клаву", "keyboard": self.get_keyboard(board)}
 
     # Загадка капитана
     def do_the_riddle(self, command, count, word):
@@ -431,7 +430,8 @@ class Codenames(CommonCommand):
         self.session.save()
 
         board = json.loads(self.session.board)
-        self.send_keyboard(board)
+        return {"msg": "Лови клаву", "keyboard": self.get_keyboard(board)}
+        # self.send_keyboard(board)
 
     # Метод получает количество оставшихся закрытых слов команд
     @staticmethod
