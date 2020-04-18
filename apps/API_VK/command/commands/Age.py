@@ -1,9 +1,6 @@
-from django.utils.crypto import get_random_string
-
 from apps.API_VK.APIs.everypixel import get_faces_on_photo
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import get_attachments_from_attachments_or_fwd
-from xoma163site.settings import BASE_DIR
 
 
 def draw_on_images(image_url, faces):
@@ -31,10 +28,8 @@ def draw_on_images(image_url, faces):
             _image = cv2.putText(_image, age, age_point, font, font_scale['small'], color['black'], thickness['big'])
             _image = cv2.putText(_image, age, age_point, font, font_scale['small'], color['white'], thickness['medium'])
 
-    file_path = f"{BASE_DIR}/static/vkapi/image{get_random_string(20)}.jpg"
-    cv2.imwrite(file_path, _image)
-
-    return file_path
+    _bytes = cv2.imencode('.jpg', _image)[1].tostring()
+    return _bytes
 
 
 class Age(CommonCommand):
@@ -53,6 +48,8 @@ class Age(CommonCommand):
         image = images[0]
         response = get_faces_on_photo(image['download_url'])
         if response['status'] == 'error':
+            if response['message'] == 'ratelimit exceeded 100 requests per 86400 seconds':
+                return "Сегодняшний лимит исчерпан"
             print(response)
             return "Ошибка"
         elif response['status'] == "ok":

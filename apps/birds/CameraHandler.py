@@ -2,13 +2,11 @@ import datetime
 import os
 import threading
 import time
+from io import BytesIO
 
 import cv2
-import imageio
 import numpy as np
 from PIL import Image
-
-from xoma163site.settings import BASE_DIR
 
 
 class CameraHandler(threading.Thread):
@@ -77,37 +75,32 @@ class CameraHandler(threading.Thread):
     def wait():
         time.sleep(1)
 
-    def get_gif(self, frames=20, quality=False):
+    def get_gif(self, frames=20):
         if not self._running:
             self.resume()
             while self.time_on_frame.get_list_size(frames)[0] == 0:
                 self.wait()
             self.terminate()
 
-        filename = f"{BASE_DIR}/static/vkapi/birds-{threading.get_ident()}.gif"
         images = self.images.get_list_size(frames)
 
         # Высокое качество
         duration = sum(self.time_on_frame.get_list_size(frames)) / frames
-        if quality:
-            duration /= 1000
-            imageio.mimsave(filename, images, duration=duration)
-        #     Обычное качество
-        elif not quality:
-            # frametimes = self.time_on_frame.get_list_size(frames)
-            pil_images = []
-            for i in range(len(images)):
-                pil_image = Image.fromarray(images[i])
-                pil_image.info['duration'] = duration
-                pil_images.append(pil_image)
 
-            pil_images[0].save(filename,
-                               format="GIF",
-                               save_all=True,
-                               append_images=pil_images[1:],
-                               loop=0,
-                               )
-        return os.path.abspath(filename)
+        pil_images = []
+        for i in range(len(images)):
+            pil_image = Image.fromarray(images[i])
+            pil_image.info['duration'] = duration
+            pil_images.append(pil_image)
+
+        gif = BytesIO()
+        pil_images[0].save(gif,
+                           format="GIF",
+                           save_all=True,
+                           append_images=pil_images[1:],
+                           loop=0,
+                           )
+        return gif
 
     def get_img(self):
         if not self._running:
@@ -115,11 +108,10 @@ class CameraHandler(threading.Thread):
             while self.time_on_frame.get_last() == 0:
                 self.wait()
             self.terminate()
-        filename = f"{BASE_DIR}/static/vkapi/snapshot-{threading.get_ident()}.jpg"
         frame = self.images.get_last()
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-        cv2.imwrite(filename, frame, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
-        return os.path.abspath(filename)
+        _bytes = cv2.imencode('.jpg', frame)[1].tostring()
+        return _bytes
 
     @staticmethod
     def clear_file(path):
@@ -139,12 +131,7 @@ class MaxSizeList(object):
         self.ls = []
 
     def init_frames(self):
-        try:
-            filename = BASE_DIR + "/static/vkapi/snapshot.jpg"
-            frame = cv2.imread(filename)
-            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-        except:
-            frame = np.zeros((100, 100, 3), np.uint8)
+        frame = np.zeros((100, 100, 3), np.uint8)
         self.ls = [frame for i in range(self.max_length)]
 
     def init_0(self):

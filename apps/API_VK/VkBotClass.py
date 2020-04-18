@@ -1,10 +1,12 @@
+import io
 import json
 import logging
-import os
 import re
 import threading
 import traceback
+from urllib.parse import urlparse
 
+import requests
 import vk_api
 from django.contrib.auth.models import Group
 from vk_api import VkUpload
@@ -586,17 +588,38 @@ class VkBotClass(threading.Thread):
     def check_bot_working(self):
         return self.BOT_CAN_WORK
 
-    def upload_photo(self, path, delete=True):
-        photo = self.upload.photo_messages(path)[0]
-        if delete:
-            os.remove(path)
-        return self.get_attachment_by_id('photo', photo['owner_id'], photo['id'])
+    @staticmethod
+    def _prepare_obj_to_upload(file_like_object, allowed_exts_url=None):
+        # bytes array
+        if type(file_like_object) == bytes:
+            obj = io.BytesIO(file_like_object)
+            obj.seek(0)
+        # bytesIO
+        elif type(file_like_object) == io.BytesIO:
+            obj = file_like_object
+            obj.seek(0)
+        # url
+        elif urlparse(file_like_object).hostname:
+            if allowed_exts_url:
+                if file_like_object.split('.')[-1].lower() not in allowed_exts_url:
+                    raise RuntimeError(f"Загрузка изображений по URL доступна только для {' '.join(allowed_exts_url)}")
 
-    def upload_document(self, path, peer_id, title='Документ', delete=True):
-        doc = self.upload.document_message(path, title=title, peer_id=peer_id)['doc']
-        if delete:
-            os.remove(path)
-        return self.get_attachment_by_id('doc', doc['owner_id'], doc['id'])
+            response = requests.get(file_like_object, stream=True)
+            obj = response.raw
+        # path
+        else:
+            obj = file_like_object
+        return obj
+
+    def upload_photo(self, image):
+        image = self._prepare_obj_to_upload(image, ['jpg', 'jpeg', 'png'])
+        vk_photo = self.upload.photo_messages(image)[0]
+        return self.get_attachment_by_id('photo', vk_photo['owner_id'], vk_photo['id'])
+
+    def upload_document(self, document, peer_id, title='Документ'):
+        document = self._prepare_obj_to_upload(document)
+        vk_document = self.upload.document_message(document, title=title, peer_id=peer_id)['doc']
+        return self.get_attachment_by_id('doc', vk_document['owner_id'], vk_document['id'])
 
     def get_attachment_by_id(self, type, group_id, id):
         if group_id is None:

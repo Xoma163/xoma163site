@@ -5,7 +5,6 @@ psycopg2
 pysocks
 django-hosts
 opencv-python
-imageio
 pillow
 requests
 google-api-python-client

@@ -29,9 +29,9 @@ class VoiceRecognition(CommonCommand):
 
         # ToDo: может как-то можно обойтись без файлов
         FILENAME_MP3 = f"{audio_message['owner_id']}_{audio_message['id']}.mp3"
-        FILEPATH_MP3 = f"{BASE_DIR}/static/vkapi/recognition/{FILENAME_MP3}"
+        FILEPATH_MP3 = f"{BASE_DIR}/static/TEMP/{FILENAME_MP3}"
         FILENAME_WAV = f"{audio_message['owner_id']}_{audio_message['id']}.wav"
-        FILEPATH_WAV = f"{BASE_DIR}/static/vkapi/recognition/{FILENAME_WAV}"
+        FILEPATH_WAV = f"{BASE_DIR}/static/TEMP/{FILENAME_WAV}"
 
         song_file = open(FILEPATH_MP3, "wb")
         song_file.write(r.content)

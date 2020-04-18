@@ -7,40 +7,38 @@ class Birds(CommonCommand):
     def __init__(self):
         names = ["с", "c", "синички"]
         help_text = "Синички - ссылка и гифка с синичками"
-        detail_help_text = "Синички ([{кол-во кадров}}[,{качество}]]) - ссылка и гифка с синичками. Качество(0 или 1). По умолчанию 100, 0"
+        detail_help_text = "Синички ([{кол-во кадров}}) - ссылка и гифка с синичками. По умолчанию 20"
         keyboard = [{'text': 'Синички 0', 'color': 'blue', 'row': 2, 'col': 1},
                     {'text': 'Синички 20', 'color': 'blue', 'row': 2, 'col': 2},
                     {'text': 'Синички 100', 'color': 'blue', 'row': 2, 'col': 3}]
 
-        super().__init__(names, help_text, detail_help_text, keyboard, int_args=[0, 1], api=False)
+        super().__init__(names, help_text, detail_help_text, keyboard, int_args=[0], api=False)
 
     def start(self):
         attachments = []
         try:
-            path = cameraHandler.get_img()
+            image = cameraHandler.get_img()
         except RuntimeError as e:
             print(e)
             return "какая-то дичь с синичками. Зовите разраба"
         frames = 20
-        quality = 0
 
         if self.vk_event.args:
             frames = self.vk_event.args[0]
             self.check_number_arg_range(frames, 0, cameraHandler.MAX_FRAMES)
-            if len(self.vk_event.args) > 1:
-                quality = self.vk_event.args[1]
-                self.check_number_arg_range(quality, 0, 1)
 
-        photo = self.vk_bot.upload_photo(path)
-        attachments.append(photo)
+        attachment = self.vk_bot.upload_photo(image)
+        attachments.append(attachment)
         if frames != 0:
             try:
-                path2 = cameraHandler.get_gif(frames, quality == 1)
+                document = cameraHandler.get_gif(frames)
             except RuntimeError as e:
                 return str(e)
-            gif = self.vk_bot.upload_document(path2, self.vk_event.peer_id, "Синички")
-            attachments.append(gif)
+            attachment = self.vk_bot.upload_document(document, self.vk_event.peer_id, "Синички")
+            attachments.append(attachment)
+
         return {'attachments': attachments, "keyboard": get_inline_keyboard(self.names[0], args={"frames": frames})}
+
         # ToDo: баг ВКАПИ, при котором при отправке ссылки атачменты не прикрепляются. Ишю 54
         # https://github.com/python273/vk_api/issues/329
         # return {'msg': "http://birds.xoma163.xyz", 'attachments': attachments}

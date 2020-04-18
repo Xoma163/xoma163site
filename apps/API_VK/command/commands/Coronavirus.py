@@ -1,3 +1,4 @@
+from io import BytesIO
 from threading import Lock
 
 import matplotlib.pyplot as plt
@@ -6,7 +7,6 @@ from apps.API_VK.APIs.covid19api import get_by_country, get_detail_by_country
 from apps.API_VK.APIs.yandex_translate import get_translate
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import has_cyrillic
-from xoma163site.settings import BASE_DIR
 
 ALL_STATUSES = ['confirmed', 'recovered', 'deaths']
 lock = Lock()
@@ -75,8 +75,8 @@ class Coronavirus(CommonCommand):
                         empty_list = [0] * (max_len - len(datas[i]))
                         datas[i] = empty_list + datas[i]
 
-                    for i in range(len(datas[0][0])):
-                        datas[0][0][i] -= datas[1][0][i] + datas[2][0][i]
+                    for i in range(len(datas[0])):
+                        datas[0][i] -= datas[1][i] + datas[2][i]
 
                     plt.plot(datas[1], "bo-", label="Выздоровевшие", color="green")
                     plt.plot(datas[0], "bo-", label="Больные", color="#46aada")
@@ -86,14 +86,14 @@ class Coronavirus(CommonCommand):
                 plt.xlabel('День')
                 plt.ylabel('Количество людей')
                 plt.legend()
-                img_path = f"{BASE_DIR}/static/vkapi/coronavirus-{country_transliterate}.png"
                 with lock:
-                    plt.savefig(img_path)
+                    graphic = BytesIO()
+                    plt.savefig(graphic)
                     plt.cla()
 
-                    graphic = self.vk_bot.upload_photo(img_path)
-                attachments.append(graphic)
-                return {'msg': msg, 'attachments': attachments}
+                    attachment = self.vk_bot.upload_photo(graphic)
+                    attachments.append(attachment)
+                    return {'msg': msg, 'attachments': attachments}
             else:
                 return msg
         else:

@@ -29,18 +29,18 @@ class Wikipedia(CommonCommand):
             if self.vk_event.from_api:
                 return msg
             output = {'msg': msg}
-            # if page.images:
-            #     images = page.images[:3]
-            #     attachments = []
-            #     for image in images:
-            #         print(image)
-            #         response = requests.get(image)
-            #         # image_object = urlopen(image)
-            #         # image_object = StringIO(response.content)
-            #
-            #         attachment = self.vk_bot.upload_photo(str(response.content), False)
-            #         attachments.append(attachment)
-            #     output['attachments'] = attachments
+            if page.images:
+                attachments = []
+                MAX_IMAGES = 3
+                for image_url in page.images:
+                    try:
+                        attachment = self.vk_bot.upload_photo(image_url)
+                        attachments.append(attachment)
+                    except RuntimeError:
+                        pass
+                    if len(attachments) == MAX_IMAGES:
+                        break
+                output['attachments'] = attachments
             if is_random:
                 output['keyboard'] = get_inline_keyboard(self.names[0], args={"random": "р"})
             return output

@@ -1,7 +1,4 @@
-import os
-
 from apps.API_VK.command.CommonCommand import CommonCommand
-from xoma163site.settings import BASE_DIR
 
 
 class Find(CommonCommand):
@@ -33,29 +30,21 @@ class Find(CommonCommand):
             }
         )
         if r.status_code == 429:
-            return "Не так часто"
+            return "Сегодняшний лимит исчерпан"
 
         response = r.json().get('data').get('result').get('items')
         urls = [r.get('media') for r in response]
         if len(urls) == 0:
             return "Ничего не нашёл"
         attachments = []
-        # ToDo: TempFile
         for url in urls:
-            path = f"{BASE_DIR}/static/vkapi/find/{query}.jpg"
             try:
-                img = requests.get(url)
-                img_file = open(path, "wb")
-                img_file.write(img.content)
-                img_file.close()
-
-                photo = self.vk_bot.upload_photo(path)
-                attachments.append(photo)
-            except Exception as e:
-                print(str(e))
-            finally:
-                if os.path.exists(path):
-                    os.remove(path)
+                attachment = self.vk_bot.upload_photo(url)
+                attachments.append(attachment)
+            except RuntimeError:
+                pass
+            except requests.exceptions.ConnectionError:
+                pass
             if len(attachments) >= count:
                 break
         if len(attachments) == 0:
