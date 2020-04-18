@@ -121,12 +121,15 @@ def parse_attachments(vk_attachments):
             new_attachment = {
                 'type': attachment['type']
             }
-            if attachment['type'] == 'photo':
+            if 'owner_id' in attachment_type:
                 new_attachment['owner_id'] = attachment_type['owner_id']
+            if 'id' in attachment_type:
                 new_attachment['id'] = attachment_type['id']
-                new_attachment['vk_url'] = f"photo{attachment_type['owner_id']}_{attachment_type['id']}"
+            if attachment_type['type'] in ['photo', 'video', 'audio', 'doc']:
+                new_attachment[
+                    'vk_url'] = f"{attachment_type['type']}{attachment_type['owner_id']}_{attachment_type['id']}"
                 new_attachment['url'] = f"https://vk.com/{new_attachment['vk_url']}"
-
+            if attachment['type'] == 'photo':
                 max_size_image = attachment_type['sizes'][0]
                 max_size_width = max_size_image['width']
                 for size in attachment_type['sizes']:
@@ -138,26 +141,13 @@ def parse_attachments(vk_attachments):
                         'width': max_size_image['width'],
                         'height': max_size_image['height']}
             elif attachment['type'] == 'video':
-                new_attachment['owner_id'] = attachment_type['owner_id']
-                new_attachment['id'] = attachment_type['id']
-                new_attachment['vk_url'] = f"video{attachment_type['owner_id']}_{attachment_type['id']}"
-                new_attachment['url'] = f"https://vk.com/{new_attachment['vk_url']}"
                 new_attachment['title'] = attachment_type['title']
             elif attachment['type'] == 'audio':
-                new_attachment['owner_id'] = attachment_type['owner_id']
-                new_attachment['id'] = attachment_type['id']
-                new_attachment['vk_url'] = f"audio{attachment_type['owner_id']}_{attachment_type['id']}"
-                new_attachment['url'] = f"https://vk.com/{new_attachment['vk_url']}"
                 new_attachment['artist'] = attachment_type['artist']
                 new_attachment['title'] = attachment_type['title']
                 new_attachment['duration'] = attachment_type['duration']
                 new_attachment['download_url'] = attachment_type['url']
             elif attachment['type'] == 'doc':
-                print(attachment)
-                new_attachment['owner_id'] = attachment_type['owner_id']
-                new_attachment['id'] = attachment_type['id']
-                new_attachment['vk_url'] = f"doc{attachment_type['owner_id']}_{attachment_type['id']}"
-                new_attachment['url'] = f"https://vk.com/{new_attachment['vk_url']}"
                 new_attachment['title'] = attachment_type['title']
                 new_attachment['ext'] = attachment_type['ext']
                 new_attachment['download_url'] = attachment_type['url']
@@ -168,8 +158,6 @@ def parse_attachments(vk_attachments):
                         attachment_type['copy_history'][0]:
                     new_attachment['attachments'] = parse_attachments(attachment_type['copy_history'][0]['attachments'])
             elif attachment['type'] == 'audio_message':
-                new_attachment['id'] = attachment_type['id']
-                new_attachment['owner_id'] = attachment_type['owner_id']
                 new_attachment['download_url'] = attachment_type['link_mp3']
                 new_attachment['duration'] = attachment_type['duration']
 
@@ -432,9 +420,6 @@ class VkBotClass(threading.Thread):
         if title != self.vk.messages.getconversationById(peer_ids=2000000000 + chat_id)['items'][0]['chat_settings'][
             'title']:
             self.vk.messages.editChat(chat_id=chat_id, title=title)
-            print('set title to', title)
-        else:
-            print('dont set title')
 
     def get_user_by_id(self, user_id):
         vk_user = VkUser.objects.filter(user_id=user_id)
@@ -584,10 +569,6 @@ class VkBotClass(threading.Thread):
             if vk_user.nickname is None and 'screen_name' in user:
                 vk_user.nickname = user['screen_name']
             vk_user.save()
-
-    def get_conversation(self):
-        res = self.vk.messages.getconversation()
-        print(res)
 
     def get_short_link(self, long_link):
         result = self.vk.utils.getShortLink(url=long_link)

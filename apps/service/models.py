@@ -149,7 +149,7 @@ class Notify(models.Model):
     chat = models.ForeignKey(VkChat, verbose_name='Чат', null=True, on_delete=models.SET_NULL, blank=True)
     author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
     repeat = models.BooleanField(verbose_name="Повторять", default=False)
-    attachments = JSONField(null=True, verbose_name="Вложения")
+    attachments = JSONField(null=True, verbose_name="Вложения", blank=True)
 
     class Meta:
         verbose_name = "напоминание"
