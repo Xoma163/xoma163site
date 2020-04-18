@@ -88,9 +88,13 @@ A : Любая команда должна содержать метод \_\_ini
 - from_id - если положительный, то от пользователя, если отрицательный, то это group_id бота
 
 #### Формат attachments
-Для изображений 'type_name':'photo'. Остальные типы пока не поддерживаются
 
-[{'type_name':{'url':'...','size':{'width':'...','height'...'}}}]
+- {'photo':{'download_url':'...','size':{'width':'...','height'...'}}}
+- {'video':{'url':'...','title':'...'}}
+- {'audio':{'owner_id':'...', 'id':'...', 'url':'...', 'artist':'...', 'title':'...', 'duration':'...', 'download_url':'...' }}
+- {'doc':{'title':'...', 'ext':'...', 'download_url':'...'}}
+- {'wall':{'attachments':[...], 'copy_history':'...'}}
+- {'audio_message':{'id':'...', 'owner_id':'...', 'download_url':'...', 'duration':'...'}}
 
 --- 
 

@@ -92,7 +92,7 @@ class Meme(CommonCommand):
                 if attachment['type'] == 'photo':
                     meme = MemeModel(**new_meme)
                     meme.save()
-                    meme.save_remote_image(attachment['url'])
+                    meme.save_remote_image(attachment['download_url'])
                 elif attachment['type'] == 'video' or attachment['type'] == 'audio':
                     new_meme['link'] = attachment['url']
                     meme = MemeModel(**new_meme)

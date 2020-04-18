@@ -126,17 +126,19 @@ def parse_attachments(vk_attachments):
                     if size['width'] > max_size_width:
                         max_size_image = size
                         max_size_width = size['width']
-                    new_attachment['url'] = max_size_image['url']
+                    new_attachment['download_url'] = max_size_image['url']
                     new_attachment['size'] = {
                         'width': max_size_image['width'],
                         'height': max_size_image['height']}
             elif attachment['type'] == 'video':
+                new_attachment['owner_id'] = attachment_type['owner_id']
+                new_attachment['id'] = attachment_type['id']
                 new_attachment['url'] = f"https://vk.com/video{attachment_type['owner_id']}_{attachment_type['id']}"
                 new_attachment['title'] = attachment_type['title']
             elif attachment['type'] == 'audio':
-                new_attachment['url'] = f"https://vk.com/audio{attachment_type['owner_id']}_{attachment_type['id']}"
                 new_attachment['owner_id'] = attachment_type['owner_id']
                 new_attachment['id'] = attachment_type['id']
+                new_attachment['url'] = f"https://vk.com/audio{attachment_type['owner_id']}_{attachment_type['id']}"
                 new_attachment['artist'] = attachment_type['artist']
                 new_attachment['title'] = attachment_type['title']
                 new_attachment['duration'] = attachment_type['duration']
@@ -154,8 +156,8 @@ def parse_attachments(vk_attachments):
             elif attachment['type'] == 'audio_message':
                 new_attachment['id'] = attachment_type['id']
                 new_attachment['owner_id'] = attachment_type['owner_id']
-                new_attachment['duration'] = attachment_type['duration']
                 new_attachment['download_url'] = attachment_type['link_mp3']
+                new_attachment['duration'] = attachment_type['duration']
 
             attachments.append(new_attachment)
 

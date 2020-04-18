@@ -51,14 +51,14 @@ class Age(CommonCommand):
         if not images:
             return "Не нашёл картинки"
         image = images[0]
-        response = get_faces_on_photo(image['url'])
+        response = get_faces_on_photo(image['download_url'])
         if response['status'] == 'error':
             print(response)
             return "Ошибка"
         elif response['status'] == "ok":
             if len(response['faces']) == 0:
                 return "Не нашёл лиц на фото"
-            file_path = draw_on_images(image['url'], response['faces'])
+            file_path = draw_on_images(image['download_url'], response['faces'])
             attachments = self.vk_bot.upload_photo(file_path)
             return {"attachments": attachments}
         else:

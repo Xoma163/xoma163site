@@ -1,13 +1,7 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import get_attachments_from_attachments_or_fwd
 from apps.service.models import Cat as CatModel
 from xoma163site.settings import MAIN_SITE
-
-
-def add_cat(cat_image):
-    cat = CatModel(author=cat_image['author'])
-    cat.save_remote_image(cat_image['url'])
-    cat.save()
-    return MAIN_SITE + cat.image.url
 
 
 class Cat(CommonCommand):
@@ -17,33 +11,19 @@ class Cat(CommonCommand):
         detail_help_text = "Кот + вложение/пересылаемое сообщение с вложением - добавляет кота в БД"
         super().__init__(names, help_text, detail_help_text, api=False)
 
+    def add_cat(self, cat_image):
+        cat = CatModel(author=self.vk_event.sender)
+        cat.save_remote_image(cat_image['download_url'])
+        cat.save()
+        return MAIN_SITE + cat.image.url
+
     def start(self):
-        from apps.API_VK.VkBotClass import parse_attachments
+        images = get_attachments_from_attachments_or_fwd(self.vk_event, 'photo')
 
-        if not (self.vk_event.attachments or self.vk_event.fwd):
-            return "Пришлите фотографии или перешлите сообщения с фотографиями"
-
-        cat_images = []
-        if self.vk_event.attachments:
-            for attachment in self.vk_event.attachments:
-                cat_images.append({'url': attachment['url'], 'author': self.vk_event.sender})
-
-        if self.vk_event.fwd:
-            for msg in self.vk_event.fwd:
-                attachments = parse_attachments(msg['attachments'])
-                if attachments:
-                    for attachment in attachments:
-                        if msg['from_id'] > 0:
-                            msg_user_id = int(msg['from_id'])
-                            author = self.vk_bot.get_user_by_id(msg_user_id)
-                        else:
-                            author = None
-                        cat_images.append({'url': attachment['url'], 'author': author})
-        if len(cat_images) > 0:
-            new_urls = []
-            for cat_image in cat_images:
-                new_url = add_cat(cat_image)
-                new_urls.append(new_url)
-            return "\n".join(new_urls)
-        else:
-            return "В пересланных сообщениях нет фотографий"
+        if len(images) == 0:
+            return "Не нашёл картинок"
+        new_urls = []
+        for image in images:
+            new_url = self.add_cat(image)
+            new_urls.append(new_url)
+        return "\n".join(new_urls)

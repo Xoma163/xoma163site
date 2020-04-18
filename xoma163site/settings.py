@@ -25,17 +25,22 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = secrets['django']['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
 MAIN_PROTOCOL = 'https'
 MAIN_DOMAIN = "xoma163.xyz"
 MAIN_SITE = f'{MAIN_PROTOCOL}://{MAIN_DOMAIN}'
-ALLOWED_HOSTS = [
-    # ips
-    '192.168.1.10', '85.113.60.5',
-    # old site
-    'xoma163.site', 'api.xoma163.site', 'www.xoma163.site', 'birds.xoma163.site',
-    # new site
-    'xoma163.xyz', 'api.xoma163.xyz', 'www.xoma163.xyz', 'birds.xoma163.xyz',
-]
+DOMAINS_IPS = ['192.168.1.10', '85.113.60.5']
+DOMAINS = ['xoma163.xyz', 'xoma163.site']
+SUBDOMAINS = [None, 'api', 'www', 'birds']
+SUBDOMAINS_DOMAINS = []
+for subdomain in SUBDOMAINS:
+    for domain in DOMAINS:
+        if subdomain:
+            SUBDOMAINS_DOMAINS.append(f"{subdomain}.{domain}")
+        else:
+            SUBDOMAINS_DOMAINS.append(domain)
+
+ALLOWED_HOSTS = DOMAINS_IPS + SUBDOMAINS_DOMAINS
 
 # Application definition
 
@@ -147,10 +152,9 @@ FILE_UPLOAD_PERMISSIONS = 0o644
 
 APPEND_SLASH = True
 
-from time import sleep
-
 
 def sprint(text):
+    from time import sleep
     print(text)
     sleep(0.0000000001)
 
