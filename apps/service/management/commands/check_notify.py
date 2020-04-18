@@ -16,12 +16,16 @@ class Command(BaseCommand):
         notifies = Notify.objects.all()
 
         DATETIME_NOW = datetime.utcnow()
+        # DATETIME_NOW = datetime(2020, 4, 18, 12, 30, 1)
+        print(f'DATETIME_NOW: {DATETIME_NOW}\n')
         for notify in notifies:
             if notify.repeat:
                 datetime1 = datetime.combine(date.min, remove_tz(notify.date).time())
                 datetime2 = datetime.combine(date.min, DATETIME_NOW.time())
                 delta_time = datetime1 - datetime2 + timedelta(minutes=1)
                 flag = delta_time.seconds <= 60
+                print(f"notify: {notify.text} - {notify.date}")
+                print(f"datetime1: {datetime1}\ndatetime2: {datetime2}\ndelta_time:{delta_time}\nflag:{flag}\n")
             else:
                 delta_time = remove_tz(notify.date) - DATETIME_NOW + timedelta(minutes=1)
                 flag = delta_time.days == 0 and delta_time.seconds <= 60
@@ -61,3 +65,5 @@ class Command(BaseCommand):
                     notify.save()
                 else:
                     notify.delete()
+        print(
+            '----------------------------------------------------------------------------------------------------------------------------------------------------------')
