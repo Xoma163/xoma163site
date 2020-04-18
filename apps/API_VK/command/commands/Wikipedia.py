@@ -1,6 +1,7 @@
 import wikipedia
 
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import get_inline_keyboard
 
 wikipedia.set_lang("ru")
 
@@ -13,12 +14,36 @@ class Wikipedia(CommonCommand):
         super().__init__(names, help_text, detail_help_text, args=1)
 
     def start(self):
+        is_random = False
+        if self.vk_event.args[0].lower() in ["рандом", "р"]:
+            is_random = True
+            search_query = wikipedia.random()
+        else:
+            search_query = self.vk_event.original_args
         try:
-            page = wikipedia.page(self.vk_event.original_args)
+            page = wikipedia.page(search_query)
             if page.summary != '':
-                return page.summary
+                msg = f"{page.original_title}\n\n{page.summary}\n\nПодробнее: {page.url}"
             else:
-                return page.content
+                msg = f"{page.original_title}\n\n{page.content}\n\nПодробнее: {page.url}"
+            if self.vk_event.from_api:
+                return msg
+            output = {'msg': msg}
+            # if page.images:
+            #     images = page.images[:3]
+            #     attachments = []
+            #     for image in images:
+            #         print(image)
+            #         response = requests.get(image)
+            #         # image_object = urlopen(image)
+            #         # image_object = StringIO(response.content)
+            #
+            #         attachment = self.vk_bot.upload_photo(str(response.content), False)
+            #         attachments.append(attachment)
+            #     output['attachments'] = attachments
+            if is_random:
+                output['keyboard'] = get_inline_keyboard(self.names[0], args={"random": "р"})
+            return output
         except wikipedia.DisambiguationError as e:
             options = set(e.options)
             msg = "Нашел сразу несколько. Уточните\n"
