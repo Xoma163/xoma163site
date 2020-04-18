@@ -2,6 +2,7 @@ import os
 from tempfile import NamedTemporaryFile
 from urllib.request import urlopen
 
+from django.contrib.postgres.fields import JSONField
 from django.core.files import File
 from django.db import models
 from django.db.models.signals import pre_delete
@@ -61,6 +62,7 @@ class Counter(models.Model):
 
     def __str__(self):
         return self.name
+
 
 # ToDo: переделать на requests
 def get_image_from_url(url):
@@ -147,6 +149,7 @@ class Notify(models.Model):
     chat = models.ForeignKey(VkChat, verbose_name='Чат', null=True, on_delete=models.SET_NULL, blank=True)
     author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
     repeat = models.BooleanField(verbose_name="Повторять", default=False)
+    attachments = JSONField(null=True, verbose_name="Вложения")
 
     class Meta:
         verbose_name = "напоминание"

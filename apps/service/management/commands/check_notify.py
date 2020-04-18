@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, timedelta, date
 
 from django.core.management.base import BaseCommand
@@ -35,10 +36,24 @@ class Command(BaseCommand):
                 message = f"Напоминалка на {notify_datetime.strftime('%H:%M')}\n" \
                           f"[id{notify.author.user_id}|{notify.author}]:\n" \
                           f"{notify.text}"
+                notify_attachments = json.loads(notify.attachments)
+                attachments = []
+                if notify_attachments:
+                    for attachment in notify_attachments:
+                        # Фото
+                        if attachment['type'] == 'photo':
+                            new_attachment = vk_bot.upload_photo(attachment['download_url'])
+                            attachments.append(new_attachment)
+                        # if attachment['type'] == 'doc':
+                        #     new_attachment = vk_bot.upload_photo(attachment['download_url'])
+                        #     attachments.append(new_attachment)
+                        # Видео и аудио
+                        elif 'vk_url' in attachment:
+                            attachments.append(attachment['vk_url'])
                 if notify.chat:
-                    vk_bot.send_message(notify.chat.chat_id, message)
+                    vk_bot.send_message(notify.chat.chat_id, message, attachments)
                 else:
-                    vk_bot.send_message(notify.author.user_id, message)
+                    vk_bot.send_message(notify.author.user_id, message, attachments)
 
                 # Если отложенная команда
                 if notify.text.startswith('/'):

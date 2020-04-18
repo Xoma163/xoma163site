@@ -59,13 +59,15 @@ class Meme(CommonCommand):
             meme_name = meme.name
 
         if meme.link:
-            if meme.link.find('vk.com') != -1 and meme.link.find('video') != -1:
-                attachment = meme.link[meme.link.find('video'):]
-                msg = {'msg': meme_name, 'attachments': [attachment]}
-            elif meme.link.find('vk.com') != -1 and meme.link.find('audio') != -1:
-                attachment = meme.link[meme.link.find('audio'):]
-                msg = {'msg': meme_name, 'attachments': [attachment]}
-            else:
+            allowed_attachments = ['video', 'audio']
+            flag = False
+            for allowed_attachment in allowed_attachments:
+                if meme.link.find('vk.com') != -1 and meme.link.find(allowed_attachment) != -1:
+                    attachment = meme.link[meme.link.find(allowed_attachment):]
+                    msg = {'msg': meme_name, 'attachments': [attachment]}
+                    flag = True
+                    break
+            if not flag:
                 msg = meme.link
         elif meme.image:
             if meme.image.name.split('.')[-1] == 'gif':

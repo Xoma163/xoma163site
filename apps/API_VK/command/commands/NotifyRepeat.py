@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, timedelta
 
 from apps.API_VK.command.CommonCommand import CommonCommand
@@ -55,7 +56,9 @@ class NotifyRepeat(CommonCommand):
                              author=self.vk_event.sender,
                              chat=self.vk_event.chat,
                              repeat=True,
-                             text_for_filter=notify_datetime.strftime("%H:%M") + " " + text)
+                             text_for_filter=notify_datetime.strftime("%H:%M") + " " + text,
+                             attachments=json.dumps(self.vk_event.attachments))
+
         notify.save()
         notify.text_for_filter += f" ({notify.id})"
         notify.save()

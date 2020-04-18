@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, timedelta
 
 from apps.API_VK.command.CommonCommand import CommonCommand
@@ -13,22 +14,6 @@ time_translator = {
     'суббота': 6, 'сб': 6,
     'воскресенье': 7, 'воскресение': 7, 'вс': 7,
 }
-
-
-# month_translator = {
-#     'янв': 1,
-#     'фев': 2,
-#     'мар': 3,
-#     'апр': 4,
-#     'май': 5,
-#     'июн': 6,
-#     'июл': 7,
-#     'авг': 8,
-#     'сен': 9,
-#     'окт': 10,
-#     'ноя': 11,
-#     'дек': 12
-# }
 
 
 def get_time(arg1, arg2):
@@ -101,7 +86,8 @@ class Notify(CommonCommand):
                              text=text,
                              author=self.vk_event.sender,
                              chat=self.vk_event.chat,
-                             text_for_filter=notify_datetime.strftime("%d.%m.%Y %H:%M") + " " + text)
+                             text_for_filter=notify_datetime.strftime("%d.%m.%Y %H:%M") + " " + text,
+                             attachments=json.dumps(self.vk_event.attachments))
         notify.save()
         notify.text_for_filter += f" ({notify.id})"
         notify.save()

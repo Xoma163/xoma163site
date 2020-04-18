@@ -122,6 +122,11 @@ def parse_attachments(vk_attachments):
                 'type': attachment['type']
             }
             if attachment['type'] == 'photo':
+                new_attachment['owner_id'] = attachment_type['owner_id']
+                new_attachment['id'] = attachment_type['id']
+                new_attachment['vk_url'] = f"photo{attachment_type['owner_id']}_{attachment_type['id']}"
+                new_attachment['url'] = f"https://vk.com/{new_attachment['vk_url']}"
+
                 max_size_image = attachment_type['sizes'][0]
                 max_size_width = max_size_image['width']
                 for size in attachment_type['sizes']:
@@ -135,17 +140,24 @@ def parse_attachments(vk_attachments):
             elif attachment['type'] == 'video':
                 new_attachment['owner_id'] = attachment_type['owner_id']
                 new_attachment['id'] = attachment_type['id']
-                new_attachment['url'] = f"https://vk.com/video{attachment_type['owner_id']}_{attachment_type['id']}"
+                new_attachment['vk_url'] = f"video{attachment_type['owner_id']}_{attachment_type['id']}"
+                new_attachment['url'] = f"https://vk.com/{new_attachment['vk_url']}"
                 new_attachment['title'] = attachment_type['title']
             elif attachment['type'] == 'audio':
                 new_attachment['owner_id'] = attachment_type['owner_id']
                 new_attachment['id'] = attachment_type['id']
-                new_attachment['url'] = f"https://vk.com/audio{attachment_type['owner_id']}_{attachment_type['id']}"
+                new_attachment['vk_url'] = f"audio{attachment_type['owner_id']}_{attachment_type['id']}"
+                new_attachment['url'] = f"https://vk.com/{new_attachment['vk_url']}"
                 new_attachment['artist'] = attachment_type['artist']
                 new_attachment['title'] = attachment_type['title']
                 new_attachment['duration'] = attachment_type['duration']
                 new_attachment['download_url'] = attachment_type['url']
             elif attachment['type'] == 'doc':
+                print(attachment)
+                new_attachment['owner_id'] = attachment_type['owner_id']
+                new_attachment['id'] = attachment_type['id']
+                new_attachment['vk_url'] = f"doc{attachment_type['owner_id']}_{attachment_type['id']}"
+                new_attachment['url'] = f"https://vk.com/{new_attachment['vk_url']}"
                 new_attachment['title'] = attachment_type['title']
                 new_attachment['ext'] = attachment_type['ext']
                 new_attachment['download_url'] = attachment_type['url']
