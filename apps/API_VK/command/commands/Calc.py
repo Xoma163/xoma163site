@@ -6,16 +6,23 @@ class Calc(CommonCommand):
         names = ["калькулятор", "кальк", "к", "="]
         help_text = "Калькулятор - считает простые выражения"
         detail_help_text = "=(выражение) - считает выражение. Умеет работать с + - * / ^ ( )"
-        super().__init__(names, help_text, detail_help_text, args=1)
+        super().__init__(names, help_text, detail_help_text)
+
+    def accept(self, vk_event):
+        if (vk_event.msg and vk_event.msg[0] == '=') or vk_event.command in self.names:
+            return True
+        return False
 
     def start(self):
-
-        expression = self.vk_event.original_args.replace(' ', '')
+        if self.vk_event.msg[0] == '=':
+            expression = self.vk_event.msg[1:]
+        else:
+            self.check_args(1)
+            expression = self.vk_event.original_args
+        expression = expression.replace(' ', '')
         root = build_subtree(expression, compiled_grammars)
-        print(expression)
-        print(root)
         if root is None:
-            return "Passed expression didn't match any grammar"
+            return "Не смог распартить выражение"
         else:
             try:
                 return int(root.value)
