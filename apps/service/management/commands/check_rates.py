@@ -18,10 +18,7 @@ class Command(BaseCommand):
         for rates in rates_chats:
             command.vk_event = VkEvent(
                 {'chat': VkChat.objects.get(id=rates['chat']),
-                 'command': 'ставки',
-                 'parsed': {
-                     'keys': None
-                 }})
+                 'command': 'ставки', })
             command.vk_bot = vk_bot
             result = command.start()
             # Небольшой костыльчик, ну типа только если идёт розыгрыш, тогда возвращается list

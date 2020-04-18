@@ -21,13 +21,16 @@ def add_phrase_before(recipient, word, field_name):
     else:
         return "EXCEPTION LOLOLOL"
 
-
-def check_key(keys, translator):
-    for key in keys:
-        if key in translator:
-            return key
-    return False
-
+translator = {
+    'м': 'm1',
+    'ж': 'f1',
+    'с': 'n1',
+    'м1': 'm1',
+    'ж1': 'f1',
+    'с1': 'n1',
+    'мм': 'mm',
+    'жм': 'fm'
+}
 
 class Praise(CommonCommand):
     def __init__(self):
@@ -38,38 +41,22 @@ class Praise(CommonCommand):
         super().__init__(names, help_text, detail_help_text)
 
     def start(self):
-        translator = {
-            'м': 'm1',
-            'ж': 'f1',
-            'с': 'n1',
-            'м1': 'm1',
-            'ж1': 'f1',
-            'с1': 'n1',
-            'мм': 'mm',
-            'жм': 'fm'
-        }
-        if self.vk_event.keys_list:
-            key = check_key(self.vk_event.keys_list, translator)
-            if key:
-                translator_key = key
-            else:
-                msg = f"Неверные ключи определения пола и числа. Доступные: {str(list(translator.keys()))}"
-                return msg
+        if self.vk_event.original_args and self.vk_event.args[-1] in translator:
+            translator_key = self.vk_event.args[-1]
+            del self.vk_event.args[-1]
         else:
-            if self.vk_event.params_without_keys:
-                try:
-                    user = self.vk_bot.get_user_by_name([self.vk_event.params_without_keys], self.vk_event.chat)
-                    if user.gender == '1':
-                        translator_key = 'ж1'
-                    else:
-                        translator_key = 'м1'
-                except Exception as e:
+            try:
+                user = self.vk_bot.get_user_by_name(self.vk_event.original_args, self.vk_event.chat)
+                if user.gender == '1':
+                    translator_key = 'ж1'
+                else:
                     translator_key = 'м1'
-            else:
+            except RuntimeError:
                 translator_key = 'м1'
 
-        if self.vk_event.params_without_keys:
-            recipient = self.vk_event.params_without_keys
+        if self.vk_event.args:
+            recipient = " ".join(self.vk_event.args)
+
             if "петрович" in recipient.lower():
                 msg = "спс))"
             else:

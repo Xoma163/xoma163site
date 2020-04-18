@@ -8,7 +8,7 @@ class Start_lada(CommonCommand):
 
     def start(self):
         if self.vk_event.args:
-            who = self.vk_event.params_without_keys
+            who = self.vk_event.original_args
             return ["уи ви ви ви ви ви ви ви", f'завёл {who}']
             
         return "уи ви ви ви ви ви ви ви"

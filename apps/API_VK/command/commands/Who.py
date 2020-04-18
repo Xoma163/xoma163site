@@ -15,7 +15,7 @@ class Who(CommonCommand):
         super().__init__(names, help_text, detail_help_text, conversation=True, args=1)
 
     def start(self):
-        arg = self.vk_event.params_without_keys.lower()
+        arg = self.vk_event.original_args.lower()
         if arg in ['moderators', 'moderator', 'moders', 'moder', 'модераторы', 'модератор', 'модеры', 'модер']:
             who = 'moderator'
         elif arg in ['administrations', 'administration', 'администрация', 'админы', 'админ', 'главный', 'власть',

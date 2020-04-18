@@ -41,10 +41,7 @@ class VkEvent:
                 self.command = parsed.get('command')
                 self.args = parsed.get('args')
                 self.original_args = parsed.get('original_args')
-                self.keys = parsed.get('keys')
-                self.keys_list = parsed.get('keys_list')
                 self.params = parsed.get('params')
-                self.params_without_keys = parsed.get('params_without_keys')
 
             self.payload = None
         if self.chat:

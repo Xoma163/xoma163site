@@ -39,18 +39,9 @@ def parse_msg(msg):
     command - команда
     args - список аргументов
     original_args - строка аргументов (без ключей)
-    keys - ключи
     params - оригинальное сообщение без команды (с аргументами и ключами)
 
     """
-    # new_msg_dict = {'msg': None,
-    #                 'msg_without_command': None,
-    #                 'msg_without_command_and_keys': None,
-    #                 'command': None,
-    #                 'keys': None,
-    #                 'args': None,
-    #                 'args_str':None
-    #                 }
     msg_clear = re.sub(" +", " ", msg)
     msg_clear = re.sub(",+", ",", msg_clear)
     # Если всё поломалось, то вернуть
@@ -63,10 +54,8 @@ def parse_msg(msg):
                 'command': None,
                 'args': None,
                 'original_args': None,
-                'keys': None,
-                'keys_list': None,
                 'params': None,
-                'params_without_keys': None}
+                }
 
     command_arg = msg_clear.split(' ', 1)
     msg_dict['command'] = command_arg[0]
@@ -74,38 +63,11 @@ def parse_msg(msg):
         msg_dict['params'] = msg.replace(msg_dict['command'] + ' ', '')
         if len(msg_dict['params']) == 0:
             msg_dict['params'] = None
-        msg_dict['params_without_keys'] = msg_dict['params']
 
-        command_arg[1] = command_arg[1].replace(',', ' ')
-        if command_arg[1].startswith('-'):
-            command_arg[1] = " " + command_arg[1]
-        find_dash = command_arg[1].find(' -')
-        if find_dash != -1:
-            msg_dict['keys'] = {}
-            msg_dict['keys_list'] = []
-        while find_dash != -1:
-            next_space = command_arg[1].find(' ', find_dash + 2)
-            if next_space == -1:
-                next_space = len(command_arg[1])
-
-            # for letter in command_arg[1][find_dash + 2:next_space]:
-            letter = command_arg[1][find_dash + 2:next_space]
-            if letter:
-                msg_dict['keys'].update({letter[0]: letter[1:]})
-                msg_dict['keys_list'].append(letter)
-
-            command_arg[1] = command_arg[1][:find_dash] + command_arg[1][next_space:]
-            find_dash = command_arg[1].find(' -')
         if len(command_arg[1]) > 0:
             msg_dict['args'] = command_arg[1].split(' ')
             msg_dict['original_args'] = command_arg[1].strip()
 
-        if msg_dict['keys_list']:
-            for key in msg_dict['keys_list']:
-                if msg_dict['params_without_keys'][0] == '-':
-                    msg_dict['params_without_keys'] = msg_dict['params_without_keys'].replace(f'-{key}', '')
-                else:
-                    msg_dict['params_without_keys'] = msg_dict['params_without_keys'].replace(f' -{key}', '')
     msg_dict['command'] = msg_dict['command'].lower()
 
     return msg_dict
@@ -246,10 +208,7 @@ class VkBotClass(threading.Thread):
                     f"command = {vk_event.command}\n " \
                     f"args = {vk_event.args}\n " \
                     f"original_args = {vk_event.original_args}\n " \
-                    f"keys = {vk_event.keys}\n " \
-                    f"keys_list = {vk_event.keys_list}\n " \
-                    f"params = {vk_event.params}\n" \
-                    f"params_without_keys = {vk_event.params_without_keys}"
+                    f"params = {vk_event.params}\n"
             self.send_message(vk_event.peer_id, debug_message)
 
         group = vk_event.sender.groups.filter(name='banned')

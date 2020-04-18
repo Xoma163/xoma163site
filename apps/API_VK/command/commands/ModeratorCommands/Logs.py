@@ -73,9 +73,12 @@ class Logs(CommonCommand):
     def start(self):
         count = 50
 
-        if self.vk_event.keys:
-            if 'n' in self.vk_event.keys:
-                count = self.vk_event.keys['n']
+        if self.vk_event.args:
+            try:
+                count = int(self.vk_event.args[-1])
+                del self.vk_event.args[-1]
+            except ValueError:
+                pass
 
         if self.vk_event.args:
             if self.vk_event.args[0] in ['веб', 'web', 'сайт', 'site']:
@@ -86,6 +89,6 @@ class Logs(CommonCommand):
                 return get_bot_logs(command)
             else:
                 return 'Нет такого модуля'
-        else:
-            command = f"systemctl status xoma163bot -n{count}"
-            return get_bot_logs(command)
+
+        command = f"systemctl status xoma163bot -n{count}"
+        return get_bot_logs(command)

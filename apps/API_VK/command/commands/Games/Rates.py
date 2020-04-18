@@ -24,7 +24,7 @@ class Rates(CommonCommand):
                 MIN_GAMERS = 2
 
             gamers = RateModel.objects.filter(chat=self.vk_event.chat).order_by("date")
-            if self.vk_event.keys and 'f' in self.vk_event.keys:
+            if self.vk_event.args and self.vk_event.args[0] == 'f':
                 self.check_sender('admin')
                 if len(gamers) < 1:
                     return "Ну ты ваще обалдел? Хотя бы один игрок-то пусть будет"
