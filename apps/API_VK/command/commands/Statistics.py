@@ -6,7 +6,7 @@ from apps.games.models import PetrovichUser
 class Statistics(CommonCommand):
     def __init__(self):
         names = ["стата", "статистика"]
-        help_text = "Стата - статистика"
+        help_text = "Стата - статистика по победителям игр"
         detail_help_text = "Стата ([{модуль}])- статистика. Если передан модуль, то выведется статистика по конкретному модулю(петрович, ставки, крестики, рулетка)"
         super().__init__(names, help_text, detail_help_text)
 

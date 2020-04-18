@@ -41,11 +41,12 @@ def generate_groups():
 
 
 def generate_help_text():
-    help_text_generated = {group: "" for group in GROUPS}
-    api_help_text_generated = {group: "" for group in GROUPS}
+    GROUPS_WITH_GAMES = GROUPS + ["games"]
+    help_text_generated = {group: "" for group in GROUPS_WITH_GAMES}
+    api_help_text_generated = {group: "" for group in GROUPS_WITH_GAMES}
 
-    help_text_list = {group: [] for group in GROUPS}
-    api_help_text_list = {group: [] for group in GROUPS}
+    help_text_list = {group: [] for group in GROUPS_WITH_GAMES}
+    api_help_text_list = {group: [] for group in GROUPS_WITH_GAMES}
     for command in COMMANDS:
         if command.help_text:
             help_text = command.help_text
@@ -58,11 +59,19 @@ def generate_help_text():
             if type(help_text) == list:
                 for text in help_text:
                     if command.enabled:
-                        help_text_list[text['for']].append(text['text'])
+                        # Если команда игра, то в отдельный список
+                        if command.__class__.__module__.split('.')[-2] == 'Games':
+                            help_text_list['games'].append(text['text'])
+                        else:
+                            help_text_list[text['for']].append(text['text'])
                         if command.api is None or command.api:
-                            api_help_text_list[text['for']].append(text['text'])
 
-    for group in GROUPS:
+                            if command.__class__.__module__.split('.')[-2] == 'Games':
+                                api_help_text_list['games'].append(text['text'])
+                            else:
+                                api_help_text_list[text['for']].append(text['text'])
+
+    for group in GROUPS_WITH_GAMES:
         help_text_list[group].sort()
         help_text_generated[group] = "\n".join(help_text_list[group])
 
