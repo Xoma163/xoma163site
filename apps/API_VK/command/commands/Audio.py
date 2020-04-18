@@ -1,5 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command.CommonMethods import decl_of_num
+from apps.API_VK.command.CommonMethods import decl_of_num, get_attachments_from_attachments_or_fwd
 from apps.service.models import AudioList
 
 
@@ -12,8 +12,9 @@ class Audio(CommonCommand):
         super().__init__(names, help_text, detail_help_text, int_args=[0], api=False)
 
     def start(self):
-        if self.vk_event.attachments:
-            self.save_attachments(self.vk_event.attachments)
+        attachments = get_attachments_from_attachments_or_fwd(self.vk_event, ['audio', 'wall'])
+        if attachments:
+            self.save_attachments(attachments)
             return "Добавил"
         else:
             count = 5
