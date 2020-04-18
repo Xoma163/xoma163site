@@ -1,4 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import get_inline_keyboard
 
 MAX_QUOTES = 20
 
@@ -15,7 +16,11 @@ class Bash(CommonCommand):
             self.parse_args('int')
             quotes_count = self.vk_event.args[0]
             self.check_number_arg_range(quotes_count, 1, MAX_QUOTES)
-        return parse_bash(quotes_count)
+        msg = parse_bash(quotes_count)
+        if self.vk_event.from_api:
+            return msg
+        else:
+            return {"msg": msg, "keyboard": get_inline_keyboard(self.names[0], args={"quotes_count": quotes_count})}
 
 
 def parse_bash(quotes_count):
@@ -29,7 +34,6 @@ def parse_bash(quotes_count):
         for i in range(quotes_count):
             html_quote = "\n".join(html_quotes[i].xpath('text()'))
             bash_quotes.append(html_quote.strip('\n').strip(' ').strip('\n'))
-
         return "\n——————————————————\n".join(bash_quotes)
     except Exception as e:
         print(e)

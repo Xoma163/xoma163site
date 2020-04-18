@@ -1,5 +1,6 @@
 from apps.API_VK.APIs.rzhunemogy_joke import get_joke
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import get_inline_keyboard
 
 
 class Joke(CommonCommand):
@@ -16,5 +17,8 @@ class Joke(CommonCommand):
             a_type = self.vk_event.args[0]
             self.check_number_arg_range(a_type, 0, 19, [9, 10, 17, 19])
 
-        joke = get_joke(a_type)
-        return joke
+        msg = get_joke(a_type)
+        if self.vk_event.from_api:
+            return msg
+        else:
+            return {"msg": msg, "keyboard": get_inline_keyboard(self.names[0], args={"a_type": a_type})}

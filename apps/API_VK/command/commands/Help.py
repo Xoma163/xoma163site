@@ -28,7 +28,7 @@ class Help(CommonCommand):
             return get_help_for_command(self.vk_event.args[0].lower())
         from apps.API_VK.command import HELP_TEXT, API_HELP_TEXT
 
-        if self.vk_event.api:
+        if self.vk_event.from_api:
             help_texts = API_HELP_TEXT
         else:
             help_texts = HELP_TEXT

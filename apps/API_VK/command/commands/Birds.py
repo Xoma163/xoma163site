@@ -1,4 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import get_inline_keyboard
 from xoma163site.wsgi import cameraHandler
 
 
@@ -11,7 +12,7 @@ class Birds(CommonCommand):
                     {'text': 'Синички 20', 'color': 'blue', 'row': 2, 'col': 2},
                     {'text': 'Синички 100', 'color': 'blue', 'row': 2, 'col': 3}]
 
-        super().__init__(names, help_text, detail_help_text, int_args=[0, 1], keyboard=keyboard, api=False)
+        super().__init__(names, help_text, detail_help_text, keyboard, int_args=[0, 1], api=False)
 
     def start(self):
         attachments = []
@@ -39,7 +40,7 @@ class Birds(CommonCommand):
                 return str(e)
             gif = self.vk_bot.upload_document(path2, self.vk_event.peer_id, "Синички")
             attachments.append(gif)
-        return {'msg': '', 'attachments': attachments}
+        return {'attachments': attachments, "keyboard": get_inline_keyboard(self.names[0], args={"frames": frames})}
         # ToDo: баг ВКАПИ, при котором при отправке ссылки атачменты не прикрепляются. Ишю 54
         # https://github.com/python273/vk_api/issues/329
         # return {'msg': "http://birds.xoma163.xyz", 'attachments': attachments}

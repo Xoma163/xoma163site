@@ -28,8 +28,6 @@ def generate_commands():
     return _commands
 
 
-
-
 def get_commands():
     return COMMANDS
 

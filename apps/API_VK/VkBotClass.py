@@ -200,6 +200,8 @@ class VkBotClass(threading.Thread):
             attachments = []
         if type(attachments) == str:
             attachments = [attachments]
+        if attachments and msg == "ᅠ":
+            msg = ""
         if keyboard:
             keyboard = json.dumps(keyboard)
         msg = str(msg)

@@ -1,3 +1,4 @@
+import json
 import random
 import re
 import threading
@@ -133,3 +134,20 @@ def get_attachments_from_attachments_or_fwd(vk_event, _type):
                     attachments.append(att)
 
     return attachments
+
+
+def get_inline_keyboard(command_text, button_text="Ещё", args=None):
+    if args is None:
+        args = {}
+    return {
+        'inline': True,
+        'buttons': [[
+            {
+                'action': {
+                    'type': 'text',
+                    'label': button_text,
+                    "payload": json.dumps({"command": command_text, "args": args}, ensure_ascii=False)
+                },
+                'color': 'primary',
+            }
+        ]]}

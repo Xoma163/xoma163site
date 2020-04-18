@@ -195,12 +195,12 @@ class CommonCommand:
 
     def check_api(self):
         # Если запрос пришёл через api
-        if self.vk_event.api:
+        if self.vk_event.from_api:
             if self.api == False:
                 error = "Команда недоступна для API"
                 raise RuntimeError(error)
 
-        if not self.vk_event.api:
+        if not self.vk_event.from_api:
             if self.api:
                 error = "Команда недоступна для VK"
                 raise RuntimeError(error)

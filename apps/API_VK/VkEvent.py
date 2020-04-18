@@ -26,7 +26,12 @@ class VkEvent:
             self.msg = None
             self.command = self.payload['command']
             if 'args' in self.payload:
-                self.args = [arg for arg in self.payload['args'].values()]
+                if type(self.payload['args']) == dict:
+                    self.args = [arg for arg in self.payload['args'].values()]
+                elif type(self.payload['args']) == list:
+                    self.args = self.payload['args']
+                str_args = [str(arg) for arg in self.args]
+                self.original_args = " ".join(str_args)
             else:
                 self.args = None
         else:
@@ -60,9 +65,9 @@ class VkEvent:
             self.fwd = None
 
         if 'api' in vk_event:
-            self.api = vk_event['api']
+            self.from_api = vk_event['api']
         else:
-            self.api = False
+            self.from_api = False
 
         if 'yandex' in vk_event:
             self.yandex = vk_event['yandex']

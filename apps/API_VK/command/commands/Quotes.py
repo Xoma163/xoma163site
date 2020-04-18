@@ -56,7 +56,7 @@ class Quotes(CommonCommand):
         objs_on_page = p.page(page)
         msg = f"Страница {page}/{p.num_pages}\n\n"
         for i, obj_on_page in enumerate(objs_on_page):
-            if not self.vk_event.api:
+            if not self.vk_event.from_api:
                 msg += f"------------------------------{i + 1}------------------------------\n" \
                        f"{obj_on_page.text}\n" \
                        f"(c) {obj_on_page.date.strftime('%d.%m.%Y %H:%M:%S')}\n"

@@ -1,4 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import get_inline_keyboard
 
 from apps.service.models import Meme as MemeModel
 
@@ -52,27 +53,31 @@ class Meme(CommonCommand):
         else:
             return "Не нашёл мем :("
 
-    def send_1_meme(self, meme, print_name=True):
+    def send_1_meme(self, meme, print_name=True, send_keyboard=False):
+        meme_name = ""
         if print_name:
             meme_name = meme.name
-        else:
-            meme_name = ""
+
         if meme.link:
             if meme.link.find('vk.com') != -1 and meme.link.find('video') != -1:
                 att = meme.link[meme.link.find('video'):]
-                return {'msg': meme_name, 'attachments': [att]}
-            if meme.link.find('vk.com') != -1 and meme.link.find('audio') != -1:
+                msg = {'msg': meme_name, 'attachments': [att]}
+            elif meme.link.find('vk.com') != -1 and meme.link.find('audio') != -1:
                 att = meme.link[meme.link.find('audio'):]
-                return {'msg': meme_name, 'attachments': [att]}
-            return meme.link
+                msg = {'msg': meme_name, 'attachments': [att]}
+            else:
+                msg = meme.link
         elif meme.image:
             if meme.image.name.split('.')[-1] == 'gif':
                 att = self.vk_bot.upload_document(meme.image.path, self.vk_event.peer_id, False)
             else:
                 att = self.vk_bot.upload_photo(meme.image.path, False)
-            return {'msg': meme_name, 'attachments': [att]}
+            msg = {'msg': meme_name, 'attachments': [att]}
         else:
             return "Какая-то хрень с мемом"
+        if send_keyboard:
+            msg['keyboard'] = get_inline_keyboard(self.names[0], args={"random": "р"})
+        return msg
 
     def start(self):
         from apps.API_VK.command.CommonMethods import get_one_chat_with_user
@@ -128,7 +133,7 @@ class Meme(CommonCommand):
                 return "Не передан url видео или не прикреплена картинка"
         elif self.vk_event.args[0] in ['рандом', 'р']:
             meme = MemeModel.objects.all().order_by('?').first()
-            return self.send_1_meme(meme)
+            return self.send_1_meme(meme, send_keyboard=True)
         elif self.vk_event.args[0] in ['конфа', 'конференция', 'чат']:
 
             self.check_args(3)
