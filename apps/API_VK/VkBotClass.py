@@ -25,10 +25,11 @@ logger = logging.getLogger('commands')
 
 def parse_msg_to_me(msg, mentions):
     # Обрезаем палку
-    if msg[0] == '/':
-        msg = msg[1:]
-    for mention in mentions:
-        msg = msg.replace(mention, '')
+    if len(msg) > 0:
+        if msg[0] == '/':
+            msg = msg[1:]
+        for mention in mentions:
+            msg = msg.replace(mention, '')
     return msg
 
 
@@ -87,9 +88,9 @@ def parse_attachments(vk_attachments):
                 new_attachment['owner_id'] = attachment_type['owner_id']
             if 'id' in attachment_type:
                 new_attachment['id'] = attachment_type['id']
-            if attachment_type['type'] in ['photo', 'video', 'audio', 'doc']:
+            if attachment['type'] in ['photo', 'video', 'audio', 'doc']:
                 new_attachment[
-                    'vk_url'] = f"{attachment_type['type']}{attachment_type['owner_id']}_{attachment_type['id']}"
+                    'vk_url'] = f"{attachment['type']}{attachment_type['owner_id']}_{attachment_type['id']}"
                 new_attachment['url'] = f"https://vk.com/{new_attachment['vk_url']}"
             if attachment['type'] == 'photo':
                 max_size_image = attachment_type['sizes'][0]
@@ -131,7 +132,16 @@ def parse_attachments(vk_attachments):
         return None
 
 
-def message_for_me(message, mentions):
+def message_for_me(vk_event, mentions, have_audio_message):
+    message = vk_event['message']['text']
+    from_user = vk_event['from_user']
+
+    if have_audio_message:
+        return True
+    if from_user:
+        return True
+    if len(message) < 0:
+        return False
     if message[0] == '/':
         return True
     for mention in mentions:
@@ -193,7 +203,20 @@ class VkBotClass(threading.Thread):
                     self.send_message(peer_id, **msg)
 
     def menu(self, vk_event, send=True):
-        logger.debug(vk_event)
+
+        # Проверяем не остановлен ли бот, если так, то проверяем вводимая команда = старт?
+        if not self.check_bot_working():
+            if not check_user_group(vk_event.sender, 'admin'):
+                return
+
+            if vk_event.command in ['старт']:
+                self.BOT_CAN_WORK = True
+                # cameraHandler.resume()
+                msg = "Стартуем!"
+                self.send_message(vk_event.peer_id, msg)
+                logger.debug(f"{{result: {msg}}}")
+                return msg
+            return
 
         if self.DEBUG and send:
             if hasattr(vk_event, 'payload') and vk_event.payload:
@@ -215,24 +238,13 @@ class VkBotClass(threading.Thread):
         if len(group) > 0:
             return
 
-        # Проверяем не остановлен ли бот, если так, то проверяем вводимая команда = старт?
-        if not self.check_bot_working():
-            if not check_user_group(vk_event.sender, 'admin'):
-                return
-
-            if vk_event.command in ['старт']:
-                self.BOT_CAN_WORK = True
-                # cameraHandler.resume()
-                msg = "Стартуем!"
-                self.send_message(vk_event.peer_id, msg)
-                logger.debug(f"{{result: {msg}}}")
-                return msg
-            return
+        logger.debug(vk_event)
 
         commands = get_commands()
         for command in commands:
             try:
                 if command.accept(vk_event):
+
                     result = command.__class__().check_and_start(self, vk_event)
                     if send:
                         self.parse_and_send_msgs(vk_event.peer_id, result)
@@ -320,11 +332,17 @@ class VkBotClass(threading.Thread):
                         'parsed': {
                         }}
 
-                    if vk_event['message']['text'] is None or vk_event['message']['text'] == "":
+                    have_audio_message = False
+                    for attachment in vk_event['message']['attachments']:
+                        if attachment['type'] == 'audio_message':
+                            have_audio_message = True
+                            break
+
+                    if vk_event['message']['text'] == "" and not have_audio_message:
                         continue
 
                     # Сообщение либо мне в лс, либо упоминание меня
-                    if not (message_for_me(vk_event['message']['text'], self.mentions) or vk_event['from_user']):
+                    if not message_for_me(vk_event, self.mentions, have_audio_message):
                         continue
 
                     vk_event['message']['text'] = parse_msg_to_me(vk_event['message']['text'], self.mentions)

@@ -14,9 +14,18 @@ MAX_DURATION = 20
 class VoiceRecognition(CommonCommand):
     def __init__(self):
         names = ["распознай", "голос", "голосовое"]
-        super().__init__(names,
-                         fwd=True
-                         )
+        super().__init__(names)
+
+    def accept(self, vk_event):
+        if vk_event.attachments:
+            for attachment in vk_event.attachments:
+                if attachment['type'] == 'audio_message':
+                    return True
+
+        if vk_event.command in self.names:
+            return True
+
+        return False
 
     def start(self):
 

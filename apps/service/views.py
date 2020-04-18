@@ -2,6 +2,8 @@ from apps.service.models import Statistic
 
 
 def append_command_to_statistics(command):
+    if not command or len(command) == 0:
+        return
     if command[-1] == '?':
         command = "?"
     statistics = Statistic.objects.filter(command=command).first()
