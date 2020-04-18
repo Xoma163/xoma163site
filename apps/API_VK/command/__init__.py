@@ -28,25 +28,13 @@ def generate_commands():
     return _commands
 
 
-import_all_commands()
-
-commands = generate_commands()
-
-
-# underscore_symbol = "̲"
-# for command in commands:
-#     if command.help_text:
-#         find_dash = command.help_text.find('-') - 1
-#         underscore_help_text = underscore_symbol.join(list(command.help_text[:find_dash]))
-#         other_help_text = command.help_text[find_dash:]
-#         command.help_text = underscore_symbol + underscore_help_text + other_help_text
 
 
 def get_commands():
-    return commands
+    return COMMANDS
 
 
-def get_groups():
+def generate_groups():
     from django.contrib.auth.models import Group
 
     groups = Group.objects.all().values('name')
@@ -54,16 +42,13 @@ def get_groups():
     return groups_names
 
 
-GROUPS = get_groups()
-
-HELP_TEXT = {group: "" for group in GROUPS}
-API_HELP_TEXT = {group: "" for group in GROUPS}
-
-
 def generate_help_text():
+    help_text_generated = {group: "" for group in GROUPS}
+    api_help_text_generated = {group: "" for group in GROUPS}
+
     help_text_list = {group: [] for group in GROUPS}
     api_help_text_list = {group: [] for group in GROUPS}
-    for command in commands:
+    for command in COMMANDS:
         if command.help_text:
             help_text = command.help_text
             if type(help_text) == str:
@@ -81,15 +66,16 @@ def generate_help_text():
 
     for group in GROUPS:
         help_text_list[group].sort()
-        HELP_TEXT[group] = "\n".join(help_text_list[group])
+        help_text_generated[group] = "\n".join(help_text_list[group])
 
         api_help_text_list[group].sort()
-        API_HELP_TEXT[group] = "\n".join(api_help_text_list[group])
+        api_help_text_generated[group] = "\n".join(api_help_text_list[group])
+    return help_text_generated, api_help_text_generated
 
 
-def get_keyboard():
+def generate_keyboard():
     keys = {group: [] for group in GROUPS}
-    for command in commands:
+    for command in COMMANDS:
         key = command.keyboard
         if key:
             if type(key) == dict:
@@ -138,8 +124,23 @@ def get_keyboard():
     return buttons
 
 
-generate_help_text()
-KEYBOARDS = get_keyboard()
+import_all_commands()
+
+COMMANDS = generate_commands()
+
+# underscore_symbol = "̲"
+# for command in COMMANDS:
+#     if command.help_text:
+#         find_dash = command.help_text.find('-') - 1
+#         underscore_help_text = underscore_symbol.join(list(command.help_text[:find_dash]))
+#         other_help_text = command.help_text[find_dash:]
+#         command.help_text = underscore_symbol + underscore_help_text + other_help_text
+
+GROUPS = generate_groups()
+
+KEYBOARDS = generate_keyboard()
+
+HELP_TEXT, API_HELP_TEXT = generate_help_text()
 
 EMPTY_KEYBOARD = {
     "one_time": False,
