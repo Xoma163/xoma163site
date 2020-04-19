@@ -1,5 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command.CommonMethods import get_inline_keyboard
+from apps.API_VK.command.CommonMethods import get_inline_keyboard, get_attachments_from_attachments_or_fwd
 
 from apps.service.models import Meme as MemeModel
 
@@ -18,6 +18,7 @@ class Meme(CommonCommand):
                            "Мем р(рандом) - присылает рандомный мем.\n" \
                            "Добавление мема - /мем добавить ...(название) (url)\n" \
                            "Добавление мема - /мем добавить ...(название) (картинка)\n" \
+                           "Добавление мема - /мем добавить ...(название) (пересланное сообщение)\n" \
                            "Отправка мема в конфу - /мем конфа (название конфы) (название/рандом)\n"
         super().__init__(names, help_text, detail_help_text, args=1)
 
@@ -91,11 +92,15 @@ class Meme(CommonCommand):
         if self.vk_event.args[0] == 'добавить':
             self.check_args(2)
 
-            if self.vk_event.attachments:
+            if self.vk_event.attachments or self.vk_event.fwd:
                 new_meme = {'name': self.vk_event.original_args.split(' ', 1)[1], 'author': self.vk_event.sender}
                 if check_name_exists(new_meme['name']):
                     return "Мем с таким названием уже есть"
-                attachment = self.vk_event.attachments[0]
+                # attachment = self.vk_event.attachments[0]
+                attachments = get_attachments_from_attachments_or_fwd(self.vk_event, ['photo', 'audio', 'video', 'doc'])
+                if len(attachments) == 0:
+                    return "Не нашёл вложений в сообщении или пересланных сообщениях"
+                attachment = attachments[0]
                 if attachment['type'] == 'photo':
                     meme = MemeModel(**new_meme)
                     meme.save()
