@@ -15,11 +15,6 @@ def get_random_item_from_list(my_list, arg=None):
     return msg
 
 
-'''
-DEPRECATED
-'''
-
-
 # Вероятность события в процентах
 def random_probability(probability):
     if 1 > probability > 99:
@@ -31,6 +26,7 @@ def random_probability(probability):
         return False
 
 
+# Возвращает случайное событие с указанными весами этих событий
 def random_event(events, weights):
     # В принципе это необязательно
     if sum(weights) != 100:
@@ -38,15 +34,18 @@ def random_event(events, weights):
     return random.choices(events, weights=weights)
 
 
+# Есть ли кириллица
 def has_cyrillic(text):
     return bool(re.search('[а-яА-Я]', text))
 
 
+# Проверить вхождение пользователя в группу
 def check_user_group(user, role):
     group = user.groups.filter(name=role)
     return group.exists()
 
 
+# Получить все группы пользователя
 def get_user_groups(user):
     groups = user.groups.all().values()
     return [group['name'] for group in groups]
@@ -57,11 +56,13 @@ def _send_messages_thread(vk_bot, users, message):
         vk_bot.parse_and_send_msgs(user.user_id, message)
 
 
+# Отправляет сообщения в потоке всем пользователям
 def send_messages(vk_bot, users, message):
     thread = threading.Thread(target=_send_messages_thread, args=(vk_bot, users, message,))
     thread.start()
 
 
+# Убирает временную зону у datetime
 def remove_tz(datetime):
     return datetime.replace(tzinfo=None)
 
@@ -79,6 +80,7 @@ def normalize_datetime(datetime, tz):
     return pytz.utc.normalize(localized_time, is_dst=None).astimezone(tz_utc)  # .replace(tzinfo=None)
 
 
+# Возвращает чат по названию, где есть пользователь
 def get_one_chat_with_user(chat_name, user_id):
     from apps.API_VK.models import VkChat
     chats = VkChat.objects.filter(name__icontains=chat_name)
@@ -102,12 +104,15 @@ def get_one_chat_with_user(chat_name, user_id):
         return chats_with_user[0]
 
 
+# Возвращает упоминание пользователя
 def get_mention(user, name=None):
     if not name:
         name = user.name
     return f"[id{user.user_id}|{name}]"
 
 
+# Склоняет существительное после числительного
+# number - число, titles - 3 склонения.
 def decl_of_num(number, titles):
     cases = [2, 0, 1, 1, 1, 2]
     if 4 < number % 100 < 20:
@@ -118,6 +123,21 @@ def decl_of_num(number, titles):
         return titles[cases[5]]
 
 
+# Получает вложения и загружает необходимые на сервер, на которых нет прав
+def get_attachments_for_upload(vk_bot, attachments):
+    uploaded_attachments = []
+    for attachment in attachments:
+        # Фото
+        if attachment['type'] == 'photo':
+            new_attachment = vk_bot.upload_photo(attachment['download_url'])
+            uploaded_attachments.append(new_attachment)
+        # Видео, аудио, документы
+        elif 'vk_url' in attachment:
+            uploaded_attachments.append(attachment['vk_url'])
+    return uploaded_attachments
+
+
+# Получает все вложения из сообщения и пересланного сообщения
 def get_attachments_from_attachments_or_fwd(vk_event, _type):
     if _type is str:
         _type = [_type]
@@ -138,6 +158,7 @@ def get_attachments_from_attachments_or_fwd(vk_event, _type):
     return attachments
 
 
+# Возвращает клавиатуру с кнопкой "Ещё"
 def get_inline_keyboard(command_text, button_text="Ещё", args=None):
     if args is None:
         args = {}

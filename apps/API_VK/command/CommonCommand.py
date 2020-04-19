@@ -54,12 +54,14 @@ class CommonCommand:
         self.vk_bot = None
         self.vk_event = None
 
+    # Метод, определяющий на что среагирует команда
     def accept(self, vk_event):
         if vk_event.command in self.names:
             return True
 
         return False
 
+    # Выполнение всех проверок и старт команды
     def check_and_start(self, vk_bot, vk_event):
         self.vk_bot = vk_bot
         self.vk_event = vk_event
@@ -67,6 +69,7 @@ class CommonCommand:
         self.checks()
         return self.start()
 
+    # Проверки
     def checks(self):
         # Если команда не для api
         self.check_api()
@@ -90,20 +93,14 @@ class CommonCommand:
     def start(self):
         pass
 
-    # HELPERS:
-
-    # def check_sender(self, role):
-    #     if getattr(self.vk_event.sender, 'is_' + role):
-    #         return True
-    #     error = f"Команда доступна только для пользователей с уровнем прав {role_translator[role]}"
-    #     raise RuntimeError(error)
-
+    # Проверяет роль отправителя
     def check_sender(self, role):
         if check_user_group(self.vk_event.sender, role):
             return True
         error = f"Команда доступна только для пользователей с уровнем прав {role_translator[role]}"
         raise RuntimeError(error)
 
+    # Проверяет количество переданных аргументов
     def check_args(self, args=None):
         if args is None:
             args = self.args
@@ -117,6 +114,7 @@ class CommonCommand:
         error = "Для работы команды требуются аргументы"
         raise RuntimeError(error)
 
+    # Проверяет интовый аргумент в диапазоне
     @staticmethod
     def check_number_arg_range(arg, val1, val2, banned_list=None):
         if val1 <= arg <= val2:
@@ -132,6 +130,7 @@ class CommonCommand:
             error = f"Значение может быть в диапазоне [{val1};{val2}]"
             raise RuntimeError(error)
 
+    # Парсит аргументы в int или float
     def parse_args(self, arg_type):
         if not self.vk_event.args:
             return True
@@ -159,6 +158,7 @@ class CommonCommand:
                 raise RuntimeError(error)
         return True
 
+    # Проверяет, прислано ли сообщение в лс
     def check_pm(self):
         if self.vk_event.from_user:
             return True
@@ -166,6 +166,7 @@ class CommonCommand:
         error = "Команда работает только в ЛС"
         raise RuntimeError(error)
 
+    # Проверяет, прислано ли пересланное сообщение
     def check_fwd(self):
         if self.vk_event.fwd:
             return True
@@ -173,6 +174,7 @@ class CommonCommand:
         error = "Перешлите сообщения"
         raise RuntimeError(error)
 
+    # Проверяет, прислано ли сообщение в чат
     def check_conversation(self):
         if self.vk_event.from_chat:
             return True
@@ -180,7 +182,9 @@ class CommonCommand:
         error = "Команда работает только в беседах"
         raise RuntimeError(error)
 
-    def check_command_time(self, name, seconds):
+    # Проверяет, прошло ли время с последнего выполнения команды и можно ли выполнять команду
+    @staticmethod
+    def check_command_time(name, seconds):
         entity, created = Service.objects.get_or_create(name=name)
         if created:
             return True
@@ -193,6 +197,7 @@ class CommonCommand:
         entity.save()
         return True
 
+    # Проверяет, прислано ли сообщение через API
     def check_api(self):
         # Если запрос пришёл через api
         if self.vk_event.from_api:

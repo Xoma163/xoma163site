@@ -1,5 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command.CommonMethods import random_probability
+from apps.API_VK.command.CommonMethods import random_event
 
 
 class Clear(CommonCommand):
@@ -9,6 +9,4 @@ class Clear(CommonCommand):
 
     def start(self):
         if self.vk_event.command == 'ммм':
-            if random_probability(50):
-                return "Данон"
-        return "Хуета"
+            return random_event(["Данон", "Хуета"], [50, 50])

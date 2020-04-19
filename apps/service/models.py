@@ -8,7 +8,7 @@ from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
-from apps.API_VK.models import VkChat, VkUser
+from apps.API_VK.models import VkChat, VkUser, VkBot
 from xoma163site.settings import MEDIA_ROOT
 
 
@@ -184,9 +184,27 @@ class AudioList(models.Model):
     attachment = models.CharField(verbose_name="Вложение", max_length=100, default="", null=True, blank=True)
 
     class Meta:
-        verbose_name = "аудио-список"
-        verbose_name_plural = "аудио-списки"
+        verbose_name = "аудиозапись"
+        verbose_name_plural = "аудиозаписи"
         ordering = ["name"]
 
     def __str__(self):
         return str(self.name)
+
+
+class LaterMessage(models.Model):
+    id = models.AutoField(primary_key=True)
+    author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
+    message_author = models.ForeignKey(VkUser, verbose_name="Автор сообщения", on_delete=models.SET_NULL, null=True,
+                                       related_name="message_author_%(class)ss")
+    message_bot = models.ForeignKey(VkBot, verbose_name="Автор сообщения(бот)", on_delete=models.SET_NULL, null=True)
+    text = models.CharField(verbose_name="Текст", max_length=300, blank=True)
+    date = models.DateTimeField(verbose_name="Дата сообщения")
+    attachments = JSONField(null=True, verbose_name="Вложения", blank=True)
+
+    class Meta:
+        verbose_name = "Потом сообщение"
+        verbose_name_plural = "Потом сообщения"
+
+    def __str__(self):
+        return str(self.id) + "." + str(self.author)

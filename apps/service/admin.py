@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.service.models import Statistic, Issue, Service, Counter, Cat, Meme, Notify, City, AudioList
+from apps.service.models import Statistic, Issue, Service, Counter, Cat, Meme, Notify, City, AudioList, LaterMessage
 
 
 @admin.register(Statistic)
@@ -49,3 +49,8 @@ class CityAdmin(admin.ModelAdmin):
 @admin.register(AudioList)
 class AudioListAdmin(admin.ModelAdmin):
     list_display = ('author', 'name', 'attachment')
+
+
+@admin.register(LaterMessage)
+class LaterMessageAdmin(admin.ModelAdmin):
+    list_display = ('author', 'message_author', 'text', 'date', 'attachments')

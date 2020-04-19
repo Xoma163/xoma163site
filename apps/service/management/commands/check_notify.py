@@ -13,6 +13,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         from apps.API_VK.VkBotClass import parse_msg
         from apps.API_VK.command.CommonMethods import remove_tz, localize_datetime
+        from apps.API_VK.command.CommonMethods import get_attachments_for_upload
 
         notifies = Notify.objects.all()
 
@@ -40,17 +41,7 @@ class Command(BaseCommand):
                     attachments = []
                     if notify.attachments:
                         notify_attachments = json.loads(notify.attachments)
-                        for attachment in notify_attachments:
-                            # Фото
-                            if attachment['type'] == 'photo':
-                                new_attachment = vk_bot.upload_photo(attachment['download_url'])
-                                attachments.append(new_attachment)
-                            # if attachment['type'] == 'doc':
-                            #     new_attachment = vk_bot.upload_photo(attachment['download_url'])
-                            #     attachments.append(new_attachment)
-                            # Видео и аудио
-                            elif 'vk_url' in attachment:
-                                attachments.append(attachment['vk_url'])
+                        attachments = get_attachments_for_upload(vk_bot, notify_attachments)
                     if notify.chat:
                         vk_bot.send_message(notify.chat.chat_id, message, attachments)
                     else:
