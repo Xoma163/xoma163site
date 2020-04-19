@@ -196,8 +196,9 @@ class LaterMessage(models.Model):
     id = models.AutoField(primary_key=True)
     author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
     message_author = models.ForeignKey(VkUser, verbose_name="Автор сообщения", on_delete=models.SET_NULL, null=True,
-                                       related_name="message_author_%(class)ss")
-    message_bot = models.ForeignKey(VkBot, verbose_name="Автор сообщения(бот)", on_delete=models.SET_NULL, null=True)
+                                       related_name="message_author_%(class)ss", blank=True)
+    message_bot = models.ForeignKey(VkBot, verbose_name="Автор сообщения(бот)", on_delete=models.SET_NULL, null=True,
+                                    blank=True)
     text = models.CharField(verbose_name="Текст", max_length=300, blank=True)
     date = models.DateTimeField(verbose_name="Дата сообщения")
     attachments = JSONField(null=True, verbose_name="Вложения", blank=True)
@@ -205,6 +206,7 @@ class LaterMessage(models.Model):
     class Meta:
         verbose_name = "Потом сообщение"
         verbose_name_plural = "Потом сообщения"
+        ordering = ['-date']
 
     def __str__(self):
-        return str(self.id) + "." + str(self.author)
+        return f"{self.id}. {self.author}"

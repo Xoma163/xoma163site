@@ -12,7 +12,7 @@ class Discord(CommonCommand):
         help_text = "Потом - добавляет сообщения и вложения из пересланных сообщений, чтобы посмотреть потом."
         detail_help_text = "Потом (пересланные сообщения) - добавляет сообщения и вложения из пересланных сообщений, " \
                            "чтобы посмотреть потом.\n" \
-                           "Потом - присылает одно случайное вложение"
+                           "Потом - присылает последнее сохранённое сообщение и удалет его из базы"
         super().__init__(names, help_text, detail_help_text)
 
     def start(self):
@@ -33,11 +33,18 @@ class Discord(CommonCommand):
                 lm.save()
             return "Сохранил"
         else:
-            lm = LaterMessage.objects.filter(author=self.vk_event.sender).order_by('?').first()
+            lm = LaterMessage.objects.filter(author=self.vk_event.sender).order_by('date').first()
             if not lm:
                 return "Ничего не нашёл :("
             else:
-                msg = f"{lm.message_author} ({lm.date.strftime('%d.%m.%Y %H:%M:%S')}):\n" \
+
+                author = None
+                if lm.message_author:
+                    author = lm.message_author
+                elif lm.message_bot:
+                    author = lm.message_bot
+
+                msg = f"{author} ({lm.date.strftime('%d.%m.%Y %H:%M:%S')}):\n" \
                       f"{lm.text}"
                 attachments = []
                 if lm.attachments:

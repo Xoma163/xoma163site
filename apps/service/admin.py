@@ -53,4 +53,7 @@ class AudioListAdmin(admin.ModelAdmin):
 
 @admin.register(LaterMessage)
 class LaterMessageAdmin(admin.ModelAdmin):
-    list_display = ('author', 'message_author', 'text', 'date', 'attachments')
+    list_display = ('author', 'message_author', 'message_bot', 'text', 'date', 'attachments')
+    list_filter = (('author', admin.RelatedOnlyFieldListFilter),
+                   ('message_author', admin.RelatedOnlyFieldListFilter),
+                   ('message_bot', admin.RelatedOnlyFieldListFilter))
