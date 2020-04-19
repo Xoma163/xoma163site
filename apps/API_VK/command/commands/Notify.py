@@ -86,8 +86,9 @@ class Notify(CommonCommand):
                              text=text,
                              author=self.vk_event.sender,
                              chat=self.vk_event.chat,
-                             text_for_filter=notify_datetime.strftime("%d.%m.%Y %H:%M") + " " + text,
-                             attachments=json.dumps(self.vk_event.attachments))
+                             text_for_filter=notify_datetime.strftime("%d.%m.%Y %H:%M") + " " + text)
+        if self.vk_event.attachments:
+            notify.attachments = json.dumps(self.vk_event.attachments)
         notify.save()
         notify.text_for_filter += f" ({notify.id})"
         notify.save()

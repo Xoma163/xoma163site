@@ -19,20 +19,20 @@ class Discord(CommonCommand):
         from apps.API_VK.VkBotClass import parse_attachments
         if self.vk_event.fwd:
             for fwd in self.vk_event.fwd:
-                new_lm = {
-                    'author': self.vk_event.sender,
-                    'text': fwd['text'],
-                    'date': normalize_datetime(datetime.fromtimestamp(fwd['date']), "UTC"),
-                }
+                lm = LaterMessage(
+                    author=self.vk_event.sender,
+                    text=fwd['text'],
+                    date=normalize_datetime(
+                        datetime.fromtimestamp(fwd['date']), "UTC"))
+
                 if fwd['from_id'] > 0:
-                    new_lm['message_author'] = self.vk_bot.get_user_by_id(fwd['from_id'])
+                    lm.message_author = self.vk_bot.get_user_by_id(fwd['from_id'])
                 else:
-                    new_lm['message_bot'] = self.vk_bot.get_bot_by_id(fwd['from_id'])
+                    lm.message_bot = self.vk_bot.get_bot_by_id(fwd['from_id'])
 
                 attachments = parse_attachments(fwd['attachments'])
                 if attachments:
-                    new_lm['attachments'] = json.dumps(attachments)
-                lm = LaterMessage(**new_lm)
+                    lm.attachments = json.dumps(attachments)
                 lm.save()
             return "Сохранил"
         else:
@@ -51,7 +51,6 @@ class Discord(CommonCommand):
                       f"{lm.text}"
                 attachments = []
                 if lm.attachments:
-                    print(lm.attachments)
                     lm_attachments = json.loads(lm.attachments)
                     attachments = get_attachments_for_upload(self.vk_bot, lm_attachments)
                 lm.delete()
