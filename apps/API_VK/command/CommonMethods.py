@@ -124,6 +124,8 @@ def decl_of_num(number, titles):
 
 
 # Получает вложения и загружает необходимые на сервер, на которых нет прав
+# Прикрепляет только фото, видео, аудио и документы.
+# ToDo: придумать как обрабатывать посты или ссылки
 def get_attachments_for_upload(vk_bot, attachments):
     uploaded_attachments = []
     for attachment in attachments:
