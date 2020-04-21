@@ -10,29 +10,32 @@ class Memes(CommonCommand):
         help_text = "Мемы - список мемов"
         detail_help_text = "Мемы ([{фильтр}]) - присылает список мемов.\n" \
                            "Мемы ([{страница}]) - присылает список мемов на странице."
-        super().__init__(names, help_text, detail_help_text, api=False, args=1)
+        super().__init__(names, help_text, detail_help_text, api=False, int_args=[0])
 
     def start(self):
-        try:
-            self.int_args = [0]
-            self.parse_args('int')
-
+        if self.vk_event.args:
             page = self.vk_event.args[0]
+        else:
+            page = 1
 
-            memes = MemeModel.objects.all()
-            p = Paginator(memes, 20)
+        memes = MemeModel.objects.all()
+        p = Paginator(memes, 20)
 
-            if page <= 0:
-                page = 1
-            if page > p.num_pages:
-                page = p.num_pages
+        if page <= 0:
+            page = 1
+        if page > p.num_pages:
+            page = p.num_pages
 
-            msg = f"Страница {page}/{p.num_pages}\n\n"
-            memes_on_page = p.page(page)
-            meme_names = [meme.name for meme in memes_on_page]
-            meme_names_str = "\n".join(meme_names)
-            return f"{msg}\n\n{meme_names_str}"
-        except RuntimeError:
-            memes = MemeModel.objects.all()
-            for arg in self.vk_event.args:
-                memes = memes.filter(name__icontains=arg)
+        msg_header = f"Страница {page}/{p.num_pages}"
+
+        memes_on_page = p.page(page)
+        meme_names = [meme.name for meme in memes_on_page]
+        msg_body = ";\n".join(meme_names) + '.'
+
+        if page != p.num_pages:
+            on_last_page = p.per_page * page
+        else:
+            on_last_page = p.count
+        msg_footer = f'----{p.per_page * (page - 1) + 1}/{on_last_page}----'
+        msg = f"{msg_header}\n\n{msg_body}\n\n{msg_footer}"
+        return msg

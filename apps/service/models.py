@@ -134,11 +134,12 @@ class Meme(models.Model):
 @receiver(pre_delete, sender=Cat, dispatch_uid='question_delete_signal')
 @receiver(pre_delete, sender=Meme, dispatch_uid='question_delete_signal')
 def log_deleted_question(sender, instance, using, **kwargs):
-    delete_path = f'{MEDIA_ROOT}/{instance.image}'
-    try:
-        os.remove(delete_path)
-    except FileNotFoundError:
-        print("Warn: Кот/Мем удалён, но файл картинки не найден")
+    if instance.image:
+        delete_path = f'{MEDIA_ROOT}/{instance.image}'
+        try:
+            os.remove(delete_path)
+        except FileNotFoundError:
+            print("Warn: Кот/Мем удалён, но файл картинки не найден")
 
 
 class Notify(models.Model):

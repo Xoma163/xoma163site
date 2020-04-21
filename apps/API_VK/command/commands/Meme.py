@@ -38,10 +38,10 @@ class Meme(CommonCommand):
                     return meme
             memes10 = memes[:10]
             meme_names = [meme.name for meme in memes10]
-            meme_names_str = "\n".join(meme_names)
+            meme_names_str = ";\n".join(meme_names)
 
             msg = f"Нашёл сразу несколько, уточните:\n\n" \
-                  f"{meme_names_str}"
+                  f"{meme_names_str}" + '.'
             if len(memes) > 10:
                 msg += "\n..."
             raise RuntimeError(msg)
@@ -60,16 +60,13 @@ class Meme(CommonCommand):
             meme_name = meme.name
 
         if meme.link:
+            msg = {'msg': meme.link}
             allowed_attachments = ['video', 'audio']
-            flag = False
             for allowed_attachment in allowed_attachments:
                 if meme.link.find('vk.com') != -1 and meme.link.find(allowed_attachment) != -1:
                     attachment = meme.link[meme.link.find(allowed_attachment):]
                     msg = {'msg': meme_name, 'attachments': [attachment]}
-                    flag = True
                     break
-            if not flag:
-                msg = meme.link
         elif meme.image:
             if meme.image.name.split('.')[-1] == 'gif':
                 attachment = self.vk_bot.upload_document(meme.image.path, self.vk_event.peer_id, False)
