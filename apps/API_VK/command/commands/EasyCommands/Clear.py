@@ -10,3 +10,4 @@ class Clear(CommonCommand):
     def start(self):
         if self.vk_event.command == 'ммм':
             return random_event(["Данон", "Хуета"], [50, 50])
+        return "Хуета"
