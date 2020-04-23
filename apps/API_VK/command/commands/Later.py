@@ -50,7 +50,7 @@ class Discord(CommonCommand):
                 msg = f"{author} ({lm.date.strftime('%d.%m.%Y %H:%M:%S')}):\n" \
                       f"{lm.text}"
                 attachments = []
-                if lm.attachments:
+                if lm.attachments and lm.attachments != "null":
                     lm_attachments = json.loads(lm.attachments)
                     attachments = get_attachments_for_upload(self.vk_bot, lm_attachments)
                 lm.delete()

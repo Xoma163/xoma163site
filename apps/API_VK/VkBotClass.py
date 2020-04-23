@@ -119,10 +119,10 @@ def parse_attachments(vk_attachments):
                 new_attachment['download_url'] = attachment_type['link_mp3']
                 new_attachment['duration'] = attachment_type['duration']
             elif attachment['type'] == 'link':
-                new_attachment['url'] = attachment_type['link']['url']
-                new_attachment['title'] = attachment_type['link']['title']
-                new_attachment['description'] = attachment_type['link']['description']
-                new_attachment['caption'] = attachment_type['link']['caption']
+                new_attachment['url'] = attachment_type['url']
+                new_attachment['title'] = attachment_type['title']
+                new_attachment['description'] = attachment_type['description']
+                new_attachment['caption'] = attachment_type['caption']
 
             attachments.append(new_attachment)
 

@@ -1,4 +1,5 @@
 import json
+import traceback
 from datetime import datetime, timedelta, date
 
 from django.core.management.base import BaseCommand
@@ -19,7 +20,7 @@ class Command(BaseCommand):
 
         DATETIME_NOW = datetime.utcnow()
         # DATETIME_NOW = datetime(2020, 4, 18, 12, 30, 1)
-        print(f'DATETIME_NOW: {DATETIME_NOW}\n')
+        # print(f'DATETIME_NOW: {DATETIME_NOW}\n')
         for notify in notifies:
             try:
                 if notify.repeat:
@@ -27,8 +28,8 @@ class Command(BaseCommand):
                     datetime2 = datetime.combine(date.min, DATETIME_NOW.time())
                     delta_time = datetime1 - datetime2 + timedelta(minutes=1)
                     flag = delta_time.seconds <= 60
-                    print(f"notify: {notify.text} - {notify.date}")
-                    print(f"datetime1: {datetime1}\ndatetime2: {datetime2}\ndelta_time:{delta_time}\nflag:{flag}\n")
+                    # print(f"notify: {notify.text} - {notify.date}")
+                    # print(f"datetime1: {datetime1}\ndatetime2: {datetime2}\ndelta_time:{delta_time}\nflag:{flag}\n")
                 else:
                     delta_time = remove_tz(notify.date) - DATETIME_NOW + timedelta(minutes=1)
                     flag = delta_time.days == 0 and delta_time.seconds <= 60
@@ -39,7 +40,7 @@ class Command(BaseCommand):
                               f"[id{notify.author.user_id}|{notify.author}]:\n" \
                               f"{notify.text}"
                     attachments = []
-                    if notify.attachments:
+                    if notify.attachments and notify.attachments != "null":
                         notify_attachments = json.loads(notify.attachments)
                         attachments = get_attachments_for_upload(vk_bot, notify_attachments)
                     if notify.chat:
@@ -49,7 +50,9 @@ class Command(BaseCommand):
 
                     # Если отложенная команда
                     if notify.text.startswith('/'):
+                        print('startswith /')
                         msg = notify.text[1:]
+                        print("msg:", msg)
                         vk_event = {
                             'parsed': parse_msg(msg),
                             'sender': notify.author,
@@ -62,8 +65,10 @@ class Command(BaseCommand):
                             vk_event['peer_id'] = notify.author.user_id
 
                         vk_event_object = VkEvent(vk_event)
-                        vk_bot.menu(vk_event_object, send=True)
-
+                        print('start menu')
+                        menu_res = vk_bot.menu(vk_event_object, send=True)
+                        print('menu_res:', menu_res)
+                        print('end menu')
                     if notify.repeat:
                         # Для постоянных уведомлений дата должа быть на завтрашний день обязательно. Это важно для сортировки
                         new_datetime = datetime.combine(DATETIME_NOW.date(), notify.date.time()) + timedelta(days=1)
@@ -74,5 +79,7 @@ class Command(BaseCommand):
                         notify.delete()
             except Exception as e:
                 print(str(e))
+                tb = traceback.format_exc()
+                print(tb)
         print(
             '----------------------------------------------------------------------------------------------------------------------------------------------------------')
