@@ -14,7 +14,7 @@ class Petrovich(CommonCommand):
     def __init__(self):
         names = ["петрович", "женя"]
         help_text = "Петрович - мини-игра, определяющая кто Петрович Дня"
-        detail_help_text = "Петрович - мини-игра, определяющая кто Петрович дня.\n" \
+        detail_help_text = "Петрович - мини-игра, определяющая кто Петрович дня\n" \
                            "Петрович рег - регистрация в игре\n" \
                            "Петрович дерег - дерегистрация в игре"
         super().__init__(names, help_text, detail_help_text, conversation=True)

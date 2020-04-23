@@ -20,7 +20,7 @@ class Command(BaseCommand):
 
         DATETIME_NOW = datetime.utcnow()
         # DATETIME_NOW = datetime(2020, 4, 18, 12, 30, 1)
-        # print(f'DATETIME_NOW: {DATETIME_NOW}\n')
+        print(f'DATETIME_NOW: {DATETIME_NOW}\n')
         for notify in notifies:
             try:
                 if notify.repeat:

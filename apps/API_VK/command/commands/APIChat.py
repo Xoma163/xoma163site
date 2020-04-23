@@ -12,7 +12,7 @@ class APIChat(CommonCommand):
     def __init__(self):
         names = ["чат"]
         help_text = "Чат - привязывает чат к API"
-        detail_help_text = "Чат - привязывает чат к API.\n" \
+        detail_help_text = "Чат - привязывает чат к API\n" \
                            "Чат привязать (название конфы) - отправляет код в выбранную конфу\n" \
                            "Чат код (код) - привязывает чат к пользователю"
         super().__init__(names, help_text, detail_help_text, api=True, args=1)

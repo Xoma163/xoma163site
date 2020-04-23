@@ -6,7 +6,7 @@ class Reboot(CommonCommand):
     def __init__(self):
         names = ["ребут"]
         help_text = "Ребут - перезагружает сервер."
-        detail_help_text = "Ребут - перезагружает весь сервер аппаратно. Поднимется ли обратно - полностью на твоей ответственности."
+        detail_help_text = "Ребут - перезагружает весь сервер аппаратно. Поднимется ли обратно - полностью на твоей ответственности"
         super().__init__(names, help_text, detail_help_text, access='admin')
 
     def start(self):

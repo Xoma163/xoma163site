@@ -117,7 +117,7 @@ class Codenames(CommonCommand):
     def __init__(self):
         names = ["коднеймс", "codenames", "кн"]
         help_text = "Коднеймс - игра коднеймс"
-        detail_help_text = "Коднеймс - игра коднеймс.\n" \
+        detail_help_text = "Коднеймс - игра коднеймс\n" \
                            "Правила: https://tesera.ru/images/items/657300/codenames_rules_ru_1_5.pdf\n\n" \
                            "Коднеймс рег [роль=рандом] - регистрация в игре. Роли: капитан, игрок\n" \
                            "Коднеймс дерег - дерегистрация в игре\n" \

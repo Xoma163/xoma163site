@@ -7,7 +7,7 @@ class Random(CommonCommand):
     def __init__(self):
         names = ["рандом", "ранд", "random"]
         help_text = "Рандом - рандомное число в заданном диапазоне"
-        detail_help_text = "Рандом [N=0[,M=1]] - рандомное число в заданном диапазоне."
+        detail_help_text = "Рандом [N=0[,M=1]] - рандомное число в заданном диапазоне"
         super().__init__(names, help_text, detail_help_text, int_args=[0, 1])
 
     def start(self):

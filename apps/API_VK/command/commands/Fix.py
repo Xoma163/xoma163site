@@ -18,7 +18,7 @@ class Fix(CommonCommand):
     def __init__(self):
         names = ["фикс"]
         help_text = "Фикс - исправляет раскладку текста"
-        detail_help_text = "Фикс (Пересылаемые сообщения)- исправляет раскладку текста"
+        detail_help_text = "Фикс (Пересылаемые сообщения) - исправляет раскладку текста"
         super().__init__(names, help_text, detail_help_text, fwd=True)
 
     def start(self):

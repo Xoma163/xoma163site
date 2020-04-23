@@ -14,8 +14,8 @@ class Meme(CommonCommand):
     def __init__(self):
         names = ["мем"]
         help_text = "Мем - присылает нужный мем"
-        detail_help_text = "Мем (название) - присылает нужный мем.\n" \
-                           "Мем р - присылает рандомный мем.\n" \
+        detail_help_text = "Мем (название) - присылает нужный мем\n" \
+                           "Мем р - присылает рандомный мем\n" \
                            "Добавление мема - /мем добавить ...(название) (url)\n" \
                            "Добавление мема - /мем добавить (Вложение/Пересланное сообщение с вложением) (название)\n" \
                            "Отправка мема в конфу - /мем конфа (название конфы) (название/рандом)\n"
@@ -92,7 +92,6 @@ class Meme(CommonCommand):
                 new_meme = {'name': self.vk_event.original_args.split(' ', 1)[1], 'author': self.vk_event.sender}
                 if check_name_exists(new_meme['name']):
                     return "Мем с таким названием уже есть"
-                # attachment = self.vk_event.attachments[0]
                 attachments = get_attachments_from_attachments_or_fwd(self.vk_event, ['photo', 'audio', 'video', 'doc'])
                 if len(attachments) == 0:
                     return "Не нашёл вложений в сообщении или пересланных сообщениях"

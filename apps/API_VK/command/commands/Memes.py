@@ -8,7 +8,7 @@ class Memes(CommonCommand):
     def __init__(self):
         names = ["мемы"]
         help_text = "Мемы - список мемов"
-        detail_help_text = "Мемы [страница=1] - присылает список мемов на странице."
+        detail_help_text = "Мемы [страница=1] - присылает список мемов на странице"
         super().__init__(names, help_text, detail_help_text, api=False, int_args=[0])
 
     def start(self):
