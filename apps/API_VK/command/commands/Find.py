@@ -5,7 +5,7 @@ class Find(CommonCommand):
     def __init__(self):
         names = ["поиск", "найди", "найти", "ищи", "искать"]
         help_text = "Поиск  - ищет информацию по картинкам"
-        detail_help_text = "Поиск ([{поисковый запрос}]) - ищет информацию по картинкам, N - поисковый запрос"
+        detail_help_text = "Поиск (поисковый запрос) - ищет информацию по картинкам."
 
         super().__init__(names, help_text, detail_help_text, args=1, api=False)
 

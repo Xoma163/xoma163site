@@ -7,14 +7,15 @@ class Audio(CommonCommand):
     def __init__(self):
         names = ["аудио", "плейлист"]
         help_text = "Аудио - сохраняет аудио в базу"
-        detail_help_text = "Аудио ([{количество}]) - присылает рандомные треки \n" \
-                           "Аудио ([Прикреплённые аудио]) - сохраняет аудио в базу"
+        detail_help_text = "Аудио [количество=5] - присылает рандомные треки \n" \
+                           "Аудио (Прикреплённые аудио/Пересланное сообщение с аудио/Пересланное сообщение с постом " \
+                           "в котором аудио) - сохраняет аудио в базу"
         super().__init__(names, help_text, detail_help_text, int_args=[0], api=False)
 
     def start(self):
-        attachments = get_attachments_from_attachments_or_fwd(self.vk_event, ['audio', 'wall'])
-        if attachments:
-            self.save_attachments(attachments)
+        audios_att = get_attachments_from_attachments_or_fwd(self.vk_event, ['audio', 'wall'])
+        if audios_att:
+            self.save_attachments(audios_att)
             return "Добавил"
         else:
             count = 5

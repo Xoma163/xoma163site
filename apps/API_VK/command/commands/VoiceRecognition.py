@@ -1,4 +1,3 @@
-# import SpeechRecognition as SpeechRecognition
 import os
 
 import requests
@@ -14,7 +13,11 @@ MAX_DURATION = 20
 class VoiceRecognition(CommonCommand):
     def __init__(self):
         names = ["распознай", "голос", "голосовое"]
-        super().__init__(names)
+        help_text = "Распознай - распознаёт голосовое сообщение"
+        detail_help_text = "Распознай (Пересланное сообщение с голосовым сообщением) - распознаёт голосовое " \
+                           "сообщение.\n" \
+                           "Если дан доступ к переписке, то распознает автоматически"
+        super().__init__(names, help_text, detail_help_text)
 
     def accept(self, vk_event):
         if vk_event.attachments:

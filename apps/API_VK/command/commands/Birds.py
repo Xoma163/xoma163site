@@ -7,7 +7,7 @@ class Birds(CommonCommand):
     def __init__(self):
         names = ["с", "c", "синички"]
         help_text = "Синички - ссылка и гифка с синичками"
-        detail_help_text = "Синички ([{кол-во кадров}}) - ссылка и гифка с синичками. По умолчанию 20"
+        detail_help_text = "Синички [кол-во кадров=20] - ссылка и гифка с синичками."
         keyboard = [{'text': 'Синички 0', 'color': 'blue', 'row': 2, 'col': 1},
                     {'text': 'Синички 20', 'color': 'blue', 'row': 2, 'col': 2},
                     {'text': 'Синички 100', 'color': 'blue', 'row': 2, 'col': 3}]

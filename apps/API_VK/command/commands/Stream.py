@@ -6,7 +6,7 @@ class Stream(CommonCommand):
     def __init__(self):
         names = ["стрим", "поток"]
         help_text = "Стрим - ссылка на стрим"
-        detail_help_text = "Стрим ([{новая ссылка}]) - ссылка на стрим. С параметром меняет ссылку на стрим"
+        detail_help_text = "Стрим [новая ссылка] - ссылка на стрим. С параметром меняет ссылку на стрим"
         super().__init__(names, help_text, detail_help_text)
 
     def start(self):

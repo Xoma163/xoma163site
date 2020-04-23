@@ -67,7 +67,7 @@ class Petrovich(CommonCommand):
             if winner:
                 winner = winner.user
             else:
-                return "Нет участников игры. Зарегистрируйтесь! /рег"
+                return "Нет участников игры. Зарегистрируйтесь! /петрович рег"
 
             PetrovichGames.objects.filter(chat=self.vk_event.chat).delete()
             PetrovichGames(user=winner, chat=self.vk_event.chat).save()

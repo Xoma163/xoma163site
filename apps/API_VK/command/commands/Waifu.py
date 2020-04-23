@@ -8,8 +8,7 @@ class Waifu(CommonCommand):
     def __init__(self):
         names = ["вайфу"]
         help_text = "Вайфу - присылает несуществующую вайфу"
-        detail_help_text = "Вайфу - присылает несуществующую вайфу\n" \
-                           "Вайфу ([{номер}]) - присылает несуществующую вайфу по номеру (0-100000)"
+        detail_help_text = "Вайфу [номер=рандом] - присылает несуществующую вайфу по номеру (0-100000)\n"
         super().__init__(names, help_text, detail_help_text, int_args=[0])
 
     def start(self):

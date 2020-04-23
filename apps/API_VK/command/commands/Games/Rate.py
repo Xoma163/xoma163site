@@ -12,7 +12,7 @@ class Rate(CommonCommand):
     def __init__(self):
         names = ["ставка"]
         help_text = "Ставка - игра, определяющая, кто ближе угадал загаданное число"
-        detail_help_text = "Ставка ([N]) - делает ставку. N - ставка. Без параметра - случайная"
+        detail_help_text = "Ставка [ставка=рандом] - делает ставку."
         super().__init__(names, help_text, detail_help_text, int_args=[0], conversation=True)
 
     def start(self):

@@ -5,14 +5,14 @@ class Uyu(CommonCommand):
     def __init__(self):
         names = ["уъу", "бля", "ъуъ"]
         help_text = "Уъу - уъуфикация текста"
-        detail_help_text = "Уъу ([{новое слово}]) - уъуфикация текста. Для работы требует пересылаемое сообщение. Если передан аргумент, то слово поменяется"
+        detail_help_text = "Уъу (Пересланные сообщения) [новое слово] - уъуфикация текста."
         super().__init__(names, help_text, detail_help_text)
 
     def start(self):
+        add_word = "бля"
         if self.vk_event.original_args:
             add_word = self.vk_event.original_args
-        else:
-            add_word = "бля"
+
         msgs = self.vk_event.fwd
         if msgs is None:
             return add_word

@@ -9,7 +9,7 @@ class Time(CommonCommand):
     def __init__(self):
         names = ["время"]
         help_text = "Время - текущее время"
-        detail_help_text = "Время ([{город}]) - текущее время в городе"
+        detail_help_text = "Время [город=из профиля] - текущее время в городе"
         super().__init__(names, help_text, detail_help_text)
 
     def start(self):

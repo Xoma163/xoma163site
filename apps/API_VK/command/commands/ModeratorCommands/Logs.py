@@ -66,7 +66,8 @@ class Logs(CommonCommand):
     def __init__(self):
         names = ["лог", "логи", "logs", "log"]
         help_text = "Лог - логи"
-        detail_help_text = "Лог ([{тип}]) - логи. Тип - логи сервера или бота. Принимает ключ -n и количество строк в логах. Пример /лог сервер -n50"
+        detail_help_text = "Лог [тип=бот] [кол-во строк=50] - логи. \n" \
+                           "Тип - бот или сервер"
         keyboard = {'for': 'moderator', 'text': 'Логи', 'color': 'blue', 'row': 1, 'col': 1}
         super().__init__(names, help_text, detail_help_text, access='moderator', keyboard=keyboard)
 

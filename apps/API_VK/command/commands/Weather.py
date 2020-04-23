@@ -6,7 +6,7 @@ class Weather(CommonCommand):
     def __init__(self):
         names = ["погода"]
         help_text = "Погода - прогноз погоды"
-        detail_help_text = "Погода ([{город}]) - прогноз погоды в городе. По умолчанию берёт город из профиля"
+        detail_help_text = "Погода [город=из профиля] - прогноз погоды"
         keyboard = {'text': 'Погода', 'color': 'blue', 'row': 1, 'col': 1}
         super().__init__(names, help_text, detail_help_text, keyboard=keyboard)
 

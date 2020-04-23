@@ -12,13 +12,15 @@ class Permissions(CommonCommand):
     def __init__(self):
         names = ["права"]
         help_text = "Права - присылает список ваших прав"
-        detail_help_text = "Права ([N]) - присылает ваши права. Если передать аргументы, где N - имя, фамилия, логин/id, никнейм, то выведутся права конкретного пользователя в беседе."
+        detail_help_text = "Права - присылает ваши права. " \
+                           "Права [N] - права пользователя в беседе. N - имя, фамилия, логин/id, никнейм."
 
         super().__init__(names, help_text, detail_help_text)
 
     def start(self):
 
         if self.vk_event.args:
+            self.check_conversation()
             try:
                 user = self.vk_bot.get_user_by_name(self.vk_event.args, self.vk_event.chat)
             except RuntimeError as e:

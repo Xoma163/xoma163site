@@ -6,7 +6,7 @@ class Counter(CommonCommand):
     def __init__(self):
         names = ["счётчик", "счетчик", "счёт", "счет"]
         help_text = "Счётчик - счётчик события"
-        detail_help_text = "Счётчик ({событие}) - счётчик события. Инкремент"
+        detail_help_text = "Счётчик (событие) - счётчик события. Инкремент"
         super().__init__(names, help_text, detail_help_text, args=1)
 
     def start(self):

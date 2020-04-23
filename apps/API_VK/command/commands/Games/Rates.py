@@ -12,7 +12,8 @@ class Rates(CommonCommand):
     def __init__(self):
         names = ["ставки", "казино"]
         help_text = "Ставки - играет ставки"
-        detail_help_text = "Ставки - играет ставки. Если передан ключ -f, играет независимо от количества игроков"
+        detail_help_text = "Ставки - играет ставки. Если передан f последним параметром, то играет независимо от " \
+                           "количества игроков"
 
         super().__init__(names, help_text, detail_help_text, conversation=True)
 

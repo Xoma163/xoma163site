@@ -7,8 +7,7 @@ class EstimatePhoto(CommonCommand):
     def __init__(self):
         names = ["оцени", "оценить"]
         help_text = "Оцени - оценить качество фотографии"
-        detail_help_text = "Оцени (Пересылаемое сообщение) - оценивает качество изображения\n" \
-                           "Оцени (Изображение) - оценивает качество изображения"
+        detail_help_text = "Оцени (Изображение/Пересылаемое сообщение с изображением) - оценивает качество изображения"
         super().__init__(names, help_text, detail_help_text, api=False)
 
     def start(self):

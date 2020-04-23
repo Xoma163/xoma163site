@@ -10,7 +10,7 @@ class Wikipedia(CommonCommand):
     def __init__(self):
         names = ["вики", "википедия"]
         help_text = "Вики - поиск информации в википедии"
-        detail_help_text = "Вики ([{фраза}]) - поиск информации в википедии"
+        detail_help_text = "Вики (фраза) - поиск информации в википедии"
         super().__init__(names, help_text, detail_help_text, args=1)
 
     def start(self):
