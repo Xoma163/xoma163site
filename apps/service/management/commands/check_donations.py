@@ -2,7 +2,7 @@ import requests
 from django.core.management.base import BaseCommand
 
 from apps.API_VK.models import VkChat
-from apps.service.models import Service
+from apps.service.models import Service, Donations
 from secrets.secrets import secrets
 from xoma163site.wsgi import vk_bot
 
@@ -30,6 +30,11 @@ class Command(BaseCommand):
                 result_str = 'Новые донаты!\n\n'
             for i in range(new_donation_count):
                 donation = response['data'][i]
+                new_donation = Donations(username=donation['username'],
+                                         amount=donation['amount'],
+                                         currency=donation['currency'],
+                                         message=donation['message'])
+                new_donation.save()
                 result_str += f"{donation['username']} - {donation['amount']} {donation['currency']}:\n" \
                               f"{donation['message']}\n\n"
                 result_str += f"\n\n {secrets['vk']['mention_me']}"

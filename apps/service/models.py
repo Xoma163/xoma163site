@@ -211,3 +211,19 @@ class LaterMessage(models.Model):
 
     def __str__(self):
         return f"{self.id}. {self.author}"
+
+
+class Donations(models.Model):
+    username = models.CharField(verbose_name="Имя", max_length=100, blank=True)
+    amount = models.CharField(verbose_name="Количество", max_length=10, blank=True)
+    currency = models.CharField(verbose_name="Валюта", max_length=30, blank=True)
+    message = models.CharField(verbose_name="Сообщение", max_length=1000, blank=True)
+    date = models.DateTimeField(verbose_name="Дата", auto_now_add=True, blank=True)
+
+    class Meta:
+        verbose_name = "Донат"
+        verbose_name_plural = "Донаты"
+        ordering = ['-date']
+
+    def __str__(self):
+        return f"{self.username}. {self.amount}"
