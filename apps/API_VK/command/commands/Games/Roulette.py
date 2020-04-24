@@ -77,7 +77,7 @@ class Roulette(CommonCommand):
         names = ["рулетка"]
         help_text = "Рулетка - игра рулетка"
         detail_help_text = "рулетка - запуск рулетки\n" \
-                           "рулетка (аргументы) (ставка)- ставка рулетки\n" \
+                           "рулетка (аргументы) (ставка) - ставка рулетки\n" \
                            f"рулетка 0-{MAX_NUMBERS} (ставка) - ставка на число\n" \
                            "рулетка столбец (1,2,3) (ставка) - ставка на столбец\n" \
                            "рулетка строка (1,2,3) (ставка) - ставка на строку\n" \
@@ -137,7 +137,7 @@ class Roulette(CommonCommand):
                     return "Очков должно быть >0"
                 username = " ".join(self.vk_event.args[1:-1])
                 vk_user = self.vk_bot.get_user_by_name(username, self.vk_event.chat)
-                vk_user_gamer = Gamer.objects.filter(user=vk_user).first()
+                vk_user_gamer = self.vk_bot.get_gamer_by_user(vk_user)
                 if not vk_user_gamer:
                     return "Не нашёл такого игрока"
 
@@ -149,6 +149,27 @@ class Roulette(CommonCommand):
                 vk_user_gamer.roulette_points += points_transfer
                 vk_user_gamer.save()
                 return f"Передал игроку {vk_user_gamer.user} {points_transfer} {decl_of_num(points_transfer, ['очко', 'очка', 'очков'])}"
+            if self.vk_event.args[0] in ['выдать']:
+                self.check_sender('admin')
+                self.check_conversation()
+                self.args = 3
+                self.int_args = [-1]
+                self.check_args()
+                self.parse_args('int')
+
+                points_transfer = self.vk_event.args[-1]
+
+                username = " ".join(self.vk_event.args[1:-1])
+                vk_user = self.vk_bot.get_user_by_name(username, self.vk_event.chat)
+                vk_user_gamer = self.vk_bot.get_gamer_by_user(vk_user)
+                if not vk_user_gamer:
+                    return "Не нашёл такого игрока"
+
+                vk_user_gamer.roulette_points += points_transfer
+                vk_user_gamer.save()
+                return f"Начислил игроку {vk_user_gamer.user} {points_transfer} " \
+                       f"{decl_of_num(points_transfer, ['очко', 'очка', 'очков'])}"
+
             if self.vk_event.args[0] in ['ставки']:
                 if self.vk_event.from_chat:
                     rrs = RouletteRate.objects.filter(chat=self.vk_event.chat)
