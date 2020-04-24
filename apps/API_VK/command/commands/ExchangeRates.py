@@ -1,7 +1,4 @@
-from xml.etree import ElementTree
-
-import requests
-
+from apps.API_VK.APIs.cbr import get_exchange_rates
 from apps.API_VK.command.CommonCommand import CommonCommand
 
 
@@ -12,17 +9,12 @@ class ExchangeRates(CommonCommand):
         super().__init__(names, help_text)
 
     def start(self):
-        response = requests.get("https://www.cbr-xml-daily.ru/daily.xml")
-        tree = ElementTree.fromstring(response.content)
+        _filters_list = ["USD", "EUR"]
 
-        _filters = {"USD": 0, "EUR": 0}
-        for elem in tree:
-            for _filter in _filters:
-                if elem.find("CharCode").text == _filter:
-                    _filters[_filter] = elem.find("Value").text
+        ex_rates = get_exchange_rates(_filters_list)
 
         msg = "Курс валют:\n"
-        for _filter in _filters:
-            _filters[_filter] = round(float(_filters[_filter].replace(',', '.')), 2)
-            msg += f"{_filter} - {_filters[_filter]} руб.\n"
+        for ex_rate in ex_rates:
+            ex_rates[ex_rate] = round(float(ex_rates[ex_rate].replace(',', '.')), 2)
+            msg += f"{ex_rate} - {ex_rates[ex_rate]} руб.\n"
         return msg
