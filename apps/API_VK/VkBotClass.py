@@ -14,6 +14,7 @@ from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.utils import get_random_id
 
 from apps.API_VK.VkEvent import VkEvent
+from apps.API_VK.VkUserClass import VkUserClass
 from apps.API_VK.command import get_commands
 from apps.API_VK.command.CommonMethods import check_user_group
 from apps.API_VK.models import VkUser, VkChat, VkBot
@@ -169,6 +170,22 @@ def tanimoto(s1, s2):
 
 
 class VkBotClass(threading.Thread):
+
+    def __init__(self):
+        super().__init__()
+        self._TOKEN = secrets['vk']['bot']['TOKEN']
+        self.group_id = secrets['vk']['bot']['group_id']
+        vk_session = vk_api.VkApi(token=self._TOKEN, api_version="5.103")
+        self.longpoll = MyVkBotLongPoll(vk_session, group_id=self.group_id)
+        self.upload = VkUpload(vk_session)
+        self.vk = vk_session.get_api()
+        self.mentions = secrets['vk']['bot']['mentions']
+
+        self.vk_user = VkUserClass()
+
+        self.BOT_CAN_WORK = True
+        self.DEBUG = False
+
     def send_message(self, peer_id, msg="ᅠ", attachments=None, keyboard=None, **kwargs):
         if attachments is None:
             attachments = []
@@ -287,19 +304,6 @@ class VkBotClass(threading.Thread):
             self.send_message(vk_event.peer_id, msg)
         logger.debug(f"{{result: {msg}}}")
         return msg
-
-    def __init__(self):
-        super().__init__()
-        self._TOKEN = secrets['vk']['TOKEN']
-        self.group_id = secrets['vk']['group_id']
-        vk_session = vk_api.VkApi(token=self._TOKEN, api_version="5.103")
-        self.longpoll = MyVkBotLongPoll(vk_session, group_id=self.group_id)
-        self.upload = VkUpload(vk_session)
-        self.vk = vk_session.get_api()
-        self.mentions = secrets['vk']['mentions']
-
-        self.BOT_CAN_WORK = True
-        self.DEBUG = False
 
     def listen_longpoll(self):
         for event in self.longpoll.listen():
@@ -571,7 +575,7 @@ class VkBotClass(threading.Thread):
         elif urlparse(file_like_object).hostname:
             if allowed_exts_url:
                 if file_like_object.split('.')[-1].lower() not in allowed_exts_url:
-                    raise RuntimeError(f"Загрузка изображений по URL доступна только для {' '.join(allowed_exts_url)}")
+                    raise RuntimeError(f"Загрузка по URL доступна только для {' '.join(allowed_exts_url)}")
 
             response = requests.get(file_like_object, stream=True)
             obj = response.raw
@@ -589,6 +593,16 @@ class VkBotClass(threading.Thread):
         document = self._prepare_obj_to_upload(document)
         vk_document = self.upload.document_message(document, title=title, peer_id=peer_id)['doc']
         return self.get_attachment_by_id('doc', vk_document['owner_id'], vk_document['id'])
+
+    def upload_audio(self, audio, artist, title):
+        audio = self._prepare_obj_to_upload(audio)
+        try:
+            vk_audio = self.vk_user.upload.audio(audio, artist=artist, title=title)
+        except vk_api.exceptions.ApiError as e:
+            if e.code == 270:
+                raise RuntimeError("Аудиозапись была удалена по просьбе правообладателя")
+            raise RuntimeError("Ошибка загрузки аудиозаписи")
+        return self.get_attachment_by_id('audio', vk_audio['owner_id'], vk_audio['id'])
 
     def get_attachment_by_id(self, type, group_id, id):
         if group_id is None:

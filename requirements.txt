@@ -21,3 +21,4 @@ pydub
 SpeechRecognition
 numpy
 cv2
+youtube_dl
