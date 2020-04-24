@@ -6,6 +6,8 @@ def append_command_to_statistics(command):
         return
     if command[-1] == '?':
         command = "?"
+    elif command[0] == '=':
+        command = '='
     statistics = Statistic.objects.filter(command=command).first()
     if statistics:
         statistics.count_queries += 1

@@ -47,7 +47,7 @@ class Rates(CommonCommand):
 
             winners_str = ""
             for winner in winners:
-                gamer = self.vk_bot.get_gamer_by_user(self.vk_event.sender)
+                gamer = winner.gamer
                 winners_str += f"{gamer}\n"
 
                 if winner.rate != rnd:

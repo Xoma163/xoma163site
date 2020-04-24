@@ -1,5 +1,8 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
 
+MAX_OPERATIONS = 20
+ACCURACY = 15
+
 
 class Calc(CommonCommand):
     def __init__(self):
@@ -20,14 +23,32 @@ class Calc(CommonCommand):
             self.check_args(1)
             expression = self.vk_event.original_args
         expression = expression.replace(' ', '')
-        root = build_subtree(expression, compiled_grammars)
+
+        # ToDo: пофиксить баг с низкой скоростью подсчёта
+        operations = ['-', '+', '*', '/']
+        operations_count = 0
+        for operation in operations:
+            operations_count += expression.count(operation)
+        if operations_count > MAX_OPERATIONS:
+            return "Слишком много операций, процессор перегреется(("
+
+        try:
+            root = build_subtree(expression, compiled_grammars)
+        except ZeroDivisionError:
+            return "Деление на 0"
         if root is None:
             return "Не смог распартить выражение"
         else:
-            if type(root.value) == float and root.value == int(root.value):
-                return str(int(root.value))
-            else:
-                return str(root.value)
+            try:
+                if type(root.value) == float and root.value == int(root.value):
+                    return str(int(root.value))
+                else:
+                    return str(root.value)
+            except OverflowError:
+                if root.value > 0:
+                    return "∞"
+                else:
+                    return "-∞"
 
 
 # By E.Dubovitsky and A.Popova
@@ -79,7 +100,7 @@ class Plus(BinaryOperator):
         super().__init__("+")
 
     def compute(self, left, right):
-        return left + right
+        return round(left + right, ACCURACY)
 
 
 class Minus(BinaryOperator):
@@ -88,7 +109,7 @@ class Minus(BinaryOperator):
         super().__init__("-")
 
     def compute(self, left, right):
-        return left - right
+        return round(left - right, ACCURACY)
 
 
 class Multiply(BinaryOperator):
@@ -97,7 +118,7 @@ class Multiply(BinaryOperator):
         super().__init__("*")
 
     def compute(self, left, right):
-        return left * right
+        return round(left * right, ACCURACY)
 
 
 class Divide(BinaryOperator):
@@ -106,7 +127,9 @@ class Divide(BinaryOperator):
         super().__init__("/")
 
     def compute(self, left, right):
-        return left / right
+        if right == 0:
+            raise ZeroDivisionError
+        return round(left / right, ACCURACY)
 
 
 class Power(BinaryOperator):
@@ -199,9 +222,9 @@ class Grammar:
     def parse(self, expr):
         if self.symbol is None:
             if self.left is "R":
-                if expr.isdigit():
+                try:
                     return Node(self, float(expr))
-                else:
+                except ValueError:
                     return None
             else:
                 child_node = build_subtree(expr, get_possible_grammars(self.left))
