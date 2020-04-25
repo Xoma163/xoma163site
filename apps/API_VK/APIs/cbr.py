@@ -13,5 +13,5 @@ def get_exchange_rates(_filters_list):
     for elem in tree:
         for _filter in _filters:
             if elem.find("CharCode").text == _filter:
-                _filters[_filter] = elem.find("Value").text
+                _filters[_filter] = float(elem.find("Value").text.replace(',', '.'))
     return _filters
