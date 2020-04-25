@@ -57,7 +57,7 @@ class Coronavirus(CommonCommand):
                 if detail == "Gist":
                     datas = [get_detail_by_country(country_transliterate, status) for status in ALL_STATUSES]
 
-                    for i in range(len(datas[0][0])):
+                    for i, _ in enumerate(datas[0][0]):
                         datas[0][0][i] -= datas[1][0][i] + datas[2][0][i]
                     a = plt.subplots()[1]
                     x = datas[0][1]
@@ -74,11 +74,11 @@ class Coronavirus(CommonCommand):
                     datas = [get_detail_by_country(country_transliterate, status)[0] for status in ALL_STATUSES]
 
                     max_len = max([len(x) for x in datas])
-                    for i in range(len(datas)):
+                    for i, _ in enumerate(datas):
                         empty_list = [0] * (max_len - len(datas[i]))
                         datas[i] = empty_list + datas[i]
 
-                    for i in range(len(datas[0])):
+                    for i, _ in enumerate(datas[0]):
                         datas[0][i] -= datas[1][i] + datas[2][i]
 
                     plt.plot(datas[1], "bo-", label="Выздоровевшие", color="green")

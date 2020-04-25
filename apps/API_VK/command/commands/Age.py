@@ -26,7 +26,7 @@ def draw_on_images(image_url, faces):
         font_scale[x] *= scale
     for x in thickness:
         thickness[x] = round(thickness[x] * scale)
-    for i in range(len(shift_age_point)):
+    for i, _ in enumerate(shift_age_point):
         shift_age_point[i] = round(shift_age_point[i] * scale)
     for face in faces:
         start_point = (int(face['bbox'][0]), int(face['bbox'][1]))

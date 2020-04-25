@@ -152,7 +152,7 @@ def petrovich_api(request):
 
     if not yandex_user:
         msg_list = msg.split(' ')
-        for i in range(len(msg_list)):
+        for i, _ in enumerate(msg_list):
             msg_list[i] = msg_list[i].lower()
         if msg_list and len(msg_list) >= 2:
             if msg_list[0] == 'вк':

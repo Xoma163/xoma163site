@@ -7,9 +7,9 @@ $(document).ready(function () {
         saveRow(this)
     });
 
-    SESSION_ID = $("input[name='session_id']").val();
-    CSRFTOKEN = $("input[name='csrfmiddlewaretoken']").val()
-    // let csrftoken = getCookie('csrftoken');
+    SESSION_ID = $("input[name=\"session_id\"]").val();
+    CSRFTOKEN = $("input[name=\"csrfmiddlewaretoken\"]").val()
+    // let csrftoken = getCookie(\"csrftoken\");
 });
 
 
@@ -19,15 +19,14 @@ function addRow() {
     let preLastRow = $("#order tbody tr:nth-last-child(-2n+2)");
     let lastRow = $("#order tbody tr:last");
     let lastRowClone = $(lastRow).clone();
-    let realLastRow = $(lastRow).clone();
 
     let product = {
-        name: $(lastRow).find("input[name='name']").val(),
-        count: $(lastRow).find("input[name='count']").val(),
-        tare_id: $(lastRow).find("select[name='tare']").val(),
-        price: $(lastRow).find("input[name='price']").val(),
-        user_id: $(lastRow).find("select[name='user']").val(),
-        is_bought: $(lastRow).find("input[name='is_bought']").prop("checked")
+        name: $(lastRow).find("input[name=\"name\"]").val(),
+        count: $(lastRow).find("input[name=\"count\"]").val(),
+        tare_id: $(lastRow).find("select[name=\"tare\"]").val(),
+        price: $(lastRow).find("input[name=\"price\"]").val(),
+        user_id: $(lastRow).find("select[name=\"user\"]").val(),
+        is_bought: $(lastRow).find("input[name=\"is_bought\"]").prop("checked")
     };
 
     $.post("add_row",
@@ -44,12 +43,12 @@ function addRow() {
             $(lastRowClone[0].cells[0]).html(`${oldRowNum}<input type="hidden" value="${data.id}" name="id">`);
 
             // Копирование селектов
-            var originalSelects = $(lastRow[0].cells[3]).find('select');
-            $(lastRowClone[0].cells[3]).find('select').each(function (index, item) {
+            var originalSelects = $(lastRow[0].cells[3]).find("select");
+            $(lastRowClone[0].cells[3]).find("select").each(function (index, item) {
                 $(item).val(originalSelects.eq(index).val());
             });
-            var originalSelects = $(lastRow[0].cells[5]).find('select');
-            $(lastRowClone[0].cells[5]).find('select').each(function (index, item) {
+            var originalSelects = $(lastRow[0].cells[5]).find("select");
+            $(lastRowClone[0].cells[5]).find("select").each(function (index, item) {
                 $(item).val(originalSelects.eq(index).val());
             });
 
@@ -73,7 +72,7 @@ function addRow() {
 
 function delRow(_this) {
     let tr = $(_this).parents("tr");
-    let id = $(tr).find("input[name='id']").val();
+    let id = $(tr).find("input[name=\"id\"]").val();
 
     $.post("del_row",
         {
@@ -90,13 +89,13 @@ function saveRow(_this) {
     let tr = $(_this).parents("tr");
     let order = {
         product: {
-            id: $(tr).find("input[name='id']").val(),
-            name: $(tr).find("input[name='name']").val(),
-            count: $(tr).find("input[name='count']").val(),
-            tare_id: $(tr).find("select[name='tare']").val(),
-            price: $(tr).find("input[name='price']").val(),
-            user_id: $(tr).find("select[name='user']").val(),
-            is_bought: $(tr).find("input[name='is_bought']").prop("checked")
+            id: $(tr).find("input[name=\"id\"]").val(),
+            name: $(tr).find("input[name=\"name\"]").val(),
+            count: $(tr).find("input[name=\"count\"]").val(),
+            tare_id: $(tr).find("select[name=\"tare\"]").val(),
+            price: $(tr).find("input[name=\"price\"]").val(),
+            user_id: $(tr).find("select[name=\"user\"]").val(),
+            is_bought: $(tr).find("input[name=\"is_bought\"]").prop("checked")
         }
     };
 
@@ -104,7 +103,7 @@ function saveRow(_this) {
     $.post("save_rows",
         {
             csrfmiddlewaretoken: CSRFTOKEN,
-            // csrfmiddlewaretoken: $('[name="csrfmiddlewaretoken"]').val(),
+            // csrfmiddlewaretoken: $(\"[name="csrfmiddlewaretoken"]\").val(),
             session_id: SESSION_ID,
             orders: JSON.stringify(orders)
         },
@@ -114,7 +113,7 @@ function saveRow(_this) {
 
 // function saveRows() {
 //     let session_id = 1;
-//     let csrftoken = getCookie('csrftoken');
+//     let csrftoken = getCookie(\"csrftoken\");
 //
 //     let trs = $("#order tbody tr");
 //     let orders = [];
@@ -122,13 +121,13 @@ function saveRow(_this) {
 //         let tr = trs[i];
 //         let order = {
 //             product: {
-//                 id: $(tr).find("input[name='id']").val(),
-//                 name: $(tr).find("input[name='name']").val(),
-//                 count: $(tr).find("input[name='count']").val(),
-//                 tare_id: $(tr).find("select[name='tare']").val(),
-//                 price: $(tr).find("input[name='price']").val(),
-//                 user_id: $(tr).find("select[name='user']").val(),
-//                 is_bought: $(tr).find("input[name='is_bought']").prop("checked")
+//                 id: $(tr).find("input[name=\"id\"]").val(),
+//                 name: $(tr).find("input[name=\"name\"]").val(),
+//                 count: $(tr).find("input[name=\"count\"]").val(),
+//                 tare_id: $(tr).find("select[name=\"tare\"]").val(),
+//                 price: $(tr).find("input[name=\"price\"]").val(),
+//                 user_id: $(tr).find("select[name=\"user\"]").val(),
+//                 is_bought: $(tr).find("input[name=\"is_bought\"]").prop("checked")
 //             }
 //         };
 //         orders.push(order)
@@ -149,8 +148,8 @@ function addUser() {
     let lastRowClone = $(lastRow).clone();
     $(lastRowClone[0].cells[0]).find("input").val("");
 
-    let newUserName = $(lastRow).find("input[name='name']").val();
-    // let newUserName = $("#modal-settings input[name='newName']");
+    let newUserName = $(lastRow).find("input[name=\"name\"]").val();
+    // let newUserName = $("#modal-settings input[name=\"newName\"]");
     $.post("add_user",
         {
             csrfmiddlewaretoken: CSRFTOKEN,
@@ -178,8 +177,8 @@ function addUser() {
 `);
             users.append(lastRowClone);
 
-            // $("select[name='user']").append(`<option value="${data.id}">${newUserName}</option>`)
-            // $(newUserName).val('');
+            // $("select[name=\"user\"]").append(`<option value="${data.id}">${newUserName}</option>`)
+            // $(newUserName).val(\"\");
         });
 
 
@@ -187,7 +186,7 @@ function addUser() {
 
 function delUser(_this) {
     let tr = $(_this).parents("tr");
-    let id = $(tr).find("input[name='id']").val();
+    let id = $(tr).find("input[name=\"id\"]").val();
 
     $.post("del_user",
         {
@@ -197,7 +196,7 @@ function delUser(_this) {
         },
         function (data, status) {
             $(tr).remove();
-            $(`select[name='user'] option[value=${id}]`).remove();
+            $(`select[name=\"user\"] option[value=${id}]`).remove();
 
         })
 }
@@ -206,8 +205,8 @@ function saveUser(_this) {
 
     let tr = $(_this).parents("tr");
     let user = {
-        id: $(tr).find("input[name='id']").val(),
-        name: $(tr).find("input[name='name']").val(),
+        id: $(tr).find("input[name=\"id\"]").val(),
+        name: $(tr).find("input[name=\"name\"]").val(),
     };
 
     let users = [user];
@@ -218,16 +217,16 @@ function saveUser(_this) {
             users: JSON.stringify(users)
         },
         function (data, status) {
-            $(`select[name='user'] option[value=${user.id}]`).html(user.name);
+            $(`select[name=\"user\"] option[value=${user.id}]`).html(user.name);
         })
 }
 
 
 function getCalculateData() {
-    let users = $("select[name='user']:not(:last)");
+    let users = $("select[name=\"user\"]:not(:last)");
     for (let i = 0; i < users.length; i++) {
         if ($(users[i]).val() === "None") {
-            alert("Не все значения 'кто' проставлены, рассчёт невозможен");
+            alert("Не все значения \"кто\" проставлены, рассчёт невозможен");
             return
         }
     }
@@ -241,19 +240,19 @@ function getCalculateData() {
             modelBody.empty();
             for (let i = 0; i < data.result.length; i++)
                 modelBody.append(`<div>${data.result[i]}</div>`);
-            $('#modal-calculation').modal('show');
+            $("#modal-calculation").modal("show");
         });
 
 }
 
 // function getCookie(name) {
 //     var cookieValue = null;
-//     if (document.cookie && document.cookie !== '') {
-//         var cookies = document.cookie.split(';');
+//     if (document.cookie && document.cookie !== \"\") {
+//         var cookies = document.cookie.split(\";\");
 //         for (var i = 0; i < cookies.length; i++) {
 //             var cookie = cookies[i].trim();
 //             // Does this cookie string begin with the name we want?
-//             if (cookie.substring(0, name.length + 1) === (name + '=')) {
+//             if (cookie.substring(0, name.length + 1) === (name + \"=\")) {
 //                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
 //                 break;
 //             }

@@ -166,7 +166,7 @@ class TicTacToe(CommonCommand):
 
 
 def check_win(table):
-    for i in range(len(table)):
+    for i, _ in enumerate(table):
         res = check_win_elems([row for row in table[i]])
         if res:
             return res
@@ -174,11 +174,11 @@ def check_win(table):
         if res:
             return res
 
-    res = check_win_elems([table[i][i] for i in range(len(table))])
+    res = check_win_elems([table[i][i] for i, _ in enumerate(table)])
     if res:
         return res
 
-    res = check_win_elems([table[i][len(table[i]) - 1 - i] for i in range(len(table))])
+    res = check_win_elems([table[i][len(table[i]) - 1 - i] for i, _ in enumerate(table)])
     if res:
         return res
 

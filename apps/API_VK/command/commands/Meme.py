@@ -81,7 +81,7 @@ class Meme(CommonCommand):
     def start(self):
         from apps.API_VK.command.CommonMethods import get_one_chat_with_user
 
-        for i in range(len(self.vk_event.args)):
+        for i, _ in enumerate(self.vk_event.args):
             self.vk_event.args[i] = self.vk_event.args[i].lower()
         self.vk_event.original_args = self.vk_event.original_args.lower()
 

@@ -61,7 +61,7 @@ def get_weather(city):
         },
         'forecast': {}}
 
-    for i in range(len(response['forecast']['parts'])):
+    for i, _ in enumerate(response['forecast']['parts']):
         weather['forecast'][i] = {
             'part_name': DAY_TRANSLATE[response['forecast']['parts'][i]['part_name']],
             'temp_min': response['forecast']['parts'][i]['temp_min'],
@@ -84,7 +84,7 @@ def get_weather(city):
           f"Давление  {weather['now']['pressure']}мм.рт.ст., влажность {weather['now']['humidity']}%"
 
     forecast = ""
-    for i in range(len(weather['forecast'])):
+    for i, _ in enumerate(weather['forecast']):
         forecast += f"\n\n" \
                     f"Прогноз на {weather['forecast'][i]['part_name']}:\n" \
                     f"{weather['forecast'][i]['condition']}\n"

@@ -88,7 +88,7 @@ class CameraHandler(threading.Thread):
         duration = sum(self.time_on_frame.get_list_size(frames)) / frames
 
         pil_images = []
-        for i in range(len(images)):
+        for i, _ in enumerate(images):
             pil_image = Image.fromarray(images[i])
             pil_image.info['duration'] = duration
             pil_images.append(pil_image)

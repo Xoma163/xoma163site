@@ -82,43 +82,43 @@ A : Любая команда должна содержать метод \_\_ini
 Список полей VkEvent может отличаться от вышеуказанного. Уточняйте в VkEvent(vk_bot.py)
 
 #### Формат fwd
-[{'text':'...','from_id':'...'},...]
+`[{'text':'...','from_id':'...'},...]`
 -   text - Текст сообщения
 -   from_id - если положительный, то от пользователя, если отрицательный, то это group_id бота
 
 #### Формат attachments
 
--   {'photo':{'download_url':'...','size':{'width':'...','height'...'}}}
--   {'video':{'url':'...','title':'...'}}
--   {'audio':{'owner_id':'...', 'id':'...', 'url':'...', 'artist':'...', 'title':'...', 'duration':'...', 'download_url':'...' }}
--   {'doc':{'title':'...', 'ext':'...', 'download_url':'...'}}
--   {'wall':{'attachments':[...], 'copy_history':'...'}}
--   {'audio_message':{'id':'...', 'owner_id':'...', 'download_url':'...', 'duration':'...'}}
+-   `{'photo':{'download_url':'...','size':{'width':'...','height'...'}}}`
+-   `{'video':{'url':'...','title':'...'}}`
+-   `{'audio':{'owner_id':'...', 'id':'...', 'url':'...', 'artist':'...', 'title':'...', 'duration':'...', 'download_url':'...' }}`
+-   `{'doc':{'title':'...', 'ext':'...', 'download_url':'...'}}`
+-   `{'wall':{'attachments':[...], 'copy_history':'...'}}`
+-   `{'audio_message':{'id':'...', 'owner_id':'...', 'download_url':'...', 'duration':'...'}}`
 
 --- 
 
 Q: **Как возвращать ответ команды?**
 
 A:
--   return "сообщение" - отправляет одно сообщение
--   return {'msg':'сообщение', 'attachments':'[вложения]','keyboard':'[клавиатура]'} (в таком виде обязателен только msg) - отправляет вложение или клавиатуру
--   return ['сообщение1','сообщение2',...]
--   return [{'msg':'сообщение', 'attachments':'[вложения]','keyboard':'[клавиатура]'},{...},...] - отправляет несколько сообщений подряд с вложениями или клавиатурой
+-   return `"сообщение"` - отправляет одно сообщение
+-   return `{'msg':'сообщение', 'attachments':'[вложения]','keyboard':'[клавиатура]'}` (в таком виде обязателен только msg) - отправляет вложение или клавиатуру
+-   return `['сообщение1','сообщение2',...]`
+-   return `[{'msg':'сообщение', 'attachments':'[вложения]','keyboard':'[клавиатура]'},{...},...]` - отправляет несколько сообщений подряд с вложениями или клавиатурой
 
 ---
 
 Q: **Какие существуют методы для упрощения разработки команд**
 
 A: В CommonCommand есть следующие методы:
--   check_sender(role) - Проверяет роль пользователя
--   check_args(count) - Проверяет количество аргументов
--   check_number_arg_range(arg,val1,val2,banned_list) - Проверяет вхождение аргумента в диапазон [val1;val2] и также проверяет, чтобы значение не входило в banned_list 
--   parse_args(type) - Проверяет на type(int/float) выбранные позиции аргументов (параметр int_args/float_args)
--   check_pm - Проверяет на личные сообщения боту
--   check_conversation - Проверяет на беседу
--   check_fwd - Проверяет, есть ли пересланные сообщения 
--   check_command_time(name,time) - Проверяет, не вышло ли время для повторного использования какого-либо функционала (см Start/Stop/Restart в ModeratorCommand)
--   check_attachments - Проверяет, есть ли вложения
+-   `check_sender(role)` - Проверяет роль пользователя
+-   `check_args(count)` - Проверяет количество аргументов
+-   `check_number_arg_range(arg,val1,val2,banned_list)` - Проверяет вхождение аргумента в диапазон `[val1;val2]` и также проверяет, чтобы значение не входило в banned_list 
+-   `parse_args(type)` - Проверяет на type(int/float) выбранные позиции аргументов (параметр int_args/float_args)
+-   `check_pm` - Проверяет на личные сообщения боту
+-   `check_conversation` - Проверяет на беседу
+-   `check_fwd` - Проверяет, есть ли пересланные сообщения 
+-   `check_command_time(name,time)` - Проверяет, не вышло ли время для повторного использования какого-либо функционала (см Start/Stop/Restart в ModeratorCommand)
+-   `check_attachments` - Проверяет, есть ли вложения
 
 ---
 
