@@ -25,7 +25,7 @@ class Calc(CommonCommand):
         expression = expression.replace(' ', '')
 
         # ToDo: пофиксить баг с низкой скоростью подсчёта
-        operations = ['-', '+', '*', '/']
+        operations = ['-', '+', '*', '/', '^']
         operations_count = 0
         for operation in operations:
             operations_count += expression.count(operation)
@@ -37,7 +37,7 @@ class Calc(CommonCommand):
         except ZeroDivisionError:
             return "Деление на 0"
         if root is None:
-            return "Не смог распартить выражение"
+            return "Не смог распарсить выражение"
         else:
             try:
                 if type(root.value) == float and root.value == int(root.value):
@@ -56,9 +56,11 @@ class Calc(CommonCommand):
 grams_raw = ["S->S+T",
              "S->S-T",
              "S->T",
-             "T->T*F",
-             "T->T/F",
-             "T->F",
+             "T->T*G",
+             "T->T/G",
+             "T->G",
+             "G->G^F",
+             "G->F",
              "F->(S)",
              "F->R"]
 compiled_grammars = []
@@ -138,7 +140,10 @@ class Power(BinaryOperator):
         super().__init__("^")
 
     def compute(self, left, right):
-        left ** right
+        try:
+            return round(left ** right, ACCURACY)
+        except OverflowError:
+            return float("inf")
 
 
 class Function(Symbol):
