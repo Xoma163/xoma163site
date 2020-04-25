@@ -233,5 +233,5 @@ role_translator = {
     'student': "студент",
     'minecraft_notify': "уведомления майна",
     'user': 'пользователь',
-    'ban': 'забанен'
+    'banned': 'забанен'
 }
