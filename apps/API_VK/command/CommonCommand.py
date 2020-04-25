@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from apps.API_VK.command.CommonMethods import check_user_group
+from apps.API_VK.command.CommonMethods import check_user_group, get_help_for_command
 from apps.service.models import Service
 
 
@@ -109,9 +109,11 @@ class CommonCommand:
                 return True
             else:
                 error = "Передано недостаточно аргументов"
+                error += f"\n\n{get_help_for_command(self)}"
                 raise RuntimeError(error)
 
         error = "Для работы команды требуются аргументы"
+        error += f"\n\n{get_help_for_command(self)}"
         raise RuntimeError(error)
 
     # Проверяет интовый аргумент в диапазоне

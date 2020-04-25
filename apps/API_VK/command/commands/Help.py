@@ -1,19 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command.CommonMethods import check_user_group
-
-
-def get_help_for_command(help_command):
-    from apps.API_VK.command import get_commands
-    commands = get_commands()
-
-    for command in commands:
-
-        if command.names and help_command in command.names:
-            if command.detail_help_text:
-                return command.detail_help_text
-            else:
-                return "У данной команды нет подробного описания"
-    return "Я не знаю такой команды"
+from apps.API_VK.command.CommonMethods import check_user_group, find_command_by_name, get_help_for_command
 
 
 class Help(CommonCommand):
@@ -34,7 +20,11 @@ class Help(CommonCommand):
 
     def start(self):
         if self.vk_event.args:
-            return get_help_for_command(self.vk_event.args[0].lower())
+            command = find_command_by_name(self.vk_event.args[0].lower())
+            if not command:
+                return "Я не знаю такой команды"
+            else:
+                return get_help_for_command(command)
         from apps.API_VK.command import HELP_TEXT, API_HELP_TEXT
 
         if self.vk_event.from_api:

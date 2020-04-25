@@ -176,3 +176,22 @@ def get_inline_keyboard(command_text, button_text="Ещё", args=None):
                 'color': 'primary',
             }
         ]]}
+
+
+# Ищет команду по имени
+def find_command_by_name(command_name):
+    from apps.API_VK.command import get_commands
+    commands = get_commands()
+
+    for command in commands:
+        if command.names and command_name in command.names:
+            return command
+    return None
+
+
+# Получает detail_help_text для команды
+def get_help_for_command(command):
+    if command.detail_help_text:
+        return command.detail_help_text
+    else:
+        return "У данной команды нет подробного описания"
