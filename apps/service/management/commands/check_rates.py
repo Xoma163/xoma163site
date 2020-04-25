@@ -17,8 +17,12 @@ class Command(BaseCommand):
         command = Rates()
         for rates in rates_chats:
             command.vk_event = VkEvent(
-                {'chat': VkChat.objects.get(id=rates['chat']),
-                 'command': 'ставки'})
+                {
+                    'message': {
+                        'text': 'ставки'
+                    },
+                    'chat': VkChat.objects.get(id=rates['chat'])
+                })
             command.vk_event.args = []
             command.vk_bot = vk_bot
             result = command.start()

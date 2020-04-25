@@ -68,7 +68,7 @@ class VkBotClass(threading.Thread):
             return True
         if from_user:
             return True
-        if len(message) < 0:
+        if len(message) == 0:
             return False
         if message[0] == '/':
             return True

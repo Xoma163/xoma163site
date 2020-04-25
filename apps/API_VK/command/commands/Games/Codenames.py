@@ -125,7 +125,8 @@ class Codenames(CommonCommand):
                            "Коднеймс клава - текущая клавиатура игры\n" \
                            "Коднеймс инфо - команды, кол-во слов, чей ход, загаданное слово\n" \
                            "Коднеймс загадать (кол-во слов) (слово) \n" \
-                           "Коднеймс слово (слово) - выбрать слово. Либо тык в клаву"
+                           "Коднеймс слово (слово) - выбрать слово. Либо тык в клаву\n\n" \
+                           "Коднеймс удалить - удаляет сессию игры. Только для админа конфы"
         super().__init__(names, help_text, detail_help_text, api=False)
 
     def init_var(self):
@@ -276,7 +277,7 @@ class Codenames(CommonCommand):
                         return "Сейчас зарегистрированы:\n" \
                                f"{get_str_players(self.players)}\n"
                 elif self.vk_event.args[0].lower() in ['удалить']:
-                    self.check_sender('admin')
+                    self.check_sender('conference_admin')
                     if self.session is None:
                         return "Нечего удалять"
                     else:

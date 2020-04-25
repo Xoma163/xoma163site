@@ -127,7 +127,7 @@ class VkEvent:
 
         vk_event['message']['text'] = self.delete_slash_and_mentions(vk_event['message']['text'], self.mentions)
         vk_event['parsed'] = self.parse_msg(vk_event['message']['text'])
-        vk_event['attachments'] = self.parse_attachments(vk_event['message']['attachments'])
+        vk_event['attachments'] = self.parse_attachments(vk_event.get('message').get('attachments'))
 
         self.sender = vk_event.get('sender')
         self.chat = vk_event.get('chat')

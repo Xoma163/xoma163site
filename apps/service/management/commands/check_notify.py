@@ -12,7 +12,6 @@ from xoma163site.wsgi import vk_bot
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        from apps.API_VK.VkBotClass import parse_msg
         from apps.API_VK.command.CommonMethods import remove_tz, localize_datetime
         from apps.API_VK.command.CommonMethods import get_attachments_for_upload
 
@@ -54,7 +53,9 @@ class Command(BaseCommand):
                         msg = notify.text[1:]
                         print("msg:", msg)
                         vk_event = {
-                            'parsed': parse_msg(msg),
+                            'message': {
+                                'text': msg
+                            },
                             'sender': notify.author,
                         }
                         if notify.chat:

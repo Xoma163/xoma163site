@@ -16,16 +16,19 @@ class Meme(CommonCommand):
         help_text = "Мем - присылает нужный мем"
         detail_help_text = "Мем (название) - присылает нужный мем\n" \
                            "Мем р - присылает рандомный мем\n" \
-                           "Добавление мема - /мем добавить ...(название) (url)\n" \
-                           "Добавление мема - /мем добавить (Вложение/Пересланное сообщение с вложением) (название)\n" \
+                           "Мем добавить ...(название) (url) - добавляет мем\n" \
+                           "Мем добавить (Вложение/Пересланное сообщение с вложением) (название) - добавляет мем\n" \
+                           "Мем удалить (название) - удаляет мем\n" \
                            "Отправка мема в конфу - /мем конфа (название конфы) (название/рандом)\n"
         super().__init__(names, help_text, detail_help_text, args=1)
 
-    def get_1_meme(self, filter_list):
+    def get_1_meme(self, filter_list, filter_user=None):
         memes = MemeModel.objects.all()
 
         for _filter in filter_list:
             memes = memes.filter(name__icontains=_filter)
+        if filter_user:
+            memes = memes.filter(author=filter_user)
         if len(memes) == 0:
             raise RuntimeError("Не нашёл :(")
         elif len(memes) == 1:
@@ -147,7 +150,12 @@ class Meme(CommonCommand):
             chat = get_one_chat_with_user(self.vk_event.args[1], self.vk_event.sender.user_id)
 
             return self.send_1_meme_to_chat(meme, chat, False)
-
+        elif self.vk_event.args[0] in ['удалить']:
+            self.check_args(2)
+            meme = self.get_1_meme(self.vk_event.args[1:], self.vk_event.sender)
+            meme_name = meme.name
+            meme.delete()
+            return f'Удалил мем "{meme_name}"'
         else:
             meme = self.get_1_meme(self.vk_event.args)
             return self.send_1_meme(meme, False)

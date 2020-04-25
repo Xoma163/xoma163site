@@ -7,6 +7,9 @@ from apps.web.models import Order, Product, User
 
 def add_row(request):
     data = request.POST.copy()
+    products_count = len(Order.objects.filter(session__id=data['sessionID']))
+    if products_count >= 100:
+        return JsonResponse({}, status=400, json_dumps_params={'ensure_ascii': False})
     product = Product()
     product.session_id = data['sessionID']
     product_data = json.loads(data['product'])
@@ -25,7 +28,7 @@ def add_row(request):
     order.session_id = data['sessionID']
     order.product = product
     order.save()
-    return JsonResponse({'id': product.id}, json_dumps_params={'ensure_ascii': False})
+    return JsonResponse({'id': product.id}, status=200, json_dumps_params={'ensure_ascii': False})
 
 
 def del_row(request):
@@ -64,6 +67,9 @@ def save_rows(request):
 def add_user(request):
     data = request.POST.copy()
 
+    users_count = len(User.objects.filter(session__id=data['sessionID']))
+    if users_count >= 100:
+        return JsonResponse({}, status=400, json_dumps_params={'ensure_ascii': False})
     new_user = User()
     new_user.name = data['name']
     new_user.session_id = data['sessionID']

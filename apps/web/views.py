@@ -9,6 +9,9 @@ def index(request):
 
 def calc(request):
     if request.method == "POST":
+        sessions = Session.objects.all()
+        if len(sessions) >= 100:
+            return render(request, "web/sessions.html", {'sessions': sessions})
         session = Session()
         session.name = request.POST['name']
         session.save()

@@ -131,7 +131,6 @@ def petrovich_api(request):
         yandex_temp_user.delete()
         return "Успешно зарегистрировал. Можете пользоваться функционалом"
 
-    from apps.API_VK.VkBotClass import parse_msg
     from apps.API_VK.VkEvent import VkEvent
 
     if 'Client-Id' not in request.headers:
@@ -166,7 +165,9 @@ def petrovich_api(request):
     chat = yandex_user.vk_chat
 
     vk_event = {
-        'parsed': parse_msg(msg),
+        'message': {
+            'text': msg
+        },
         'sender': user,
         'api': True,
         'yandex': {'client_id': client_id}

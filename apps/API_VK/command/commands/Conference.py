@@ -11,7 +11,6 @@ class Conference(CommonCommand):
     def accept(self, vk_event):
         if vk_event.chat and (vk_event.chat.name is None or vk_event.chat.name == "") or vk_event.command in self.names:
             return True
-        print(vk_event.action)
         if vk_event.action and vk_event.action['type'] == 'chat_invite_user':
             return True
         return False

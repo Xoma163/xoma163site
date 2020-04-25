@@ -13,7 +13,7 @@ function delRow(_this) {
         },
         function (data, status) {
             $(tr).remove();
-        })
+        });
 }
 
 function saveRow(_this) {
@@ -39,7 +39,7 @@ function saveRow(_this) {
             orders: JSON.stringify(orders)
         },
         function (data, status) {
-        })
+        });
 }
 
 function addRow() {
@@ -116,8 +116,6 @@ function addUser() {
         },
         function (data, status) {
             $(lastRow).remove();
-
-            console.log(data);
             $(users).append(`
               <tr class="text-center">
                 <td class="form-group">
@@ -201,8 +199,6 @@ function getCalculateData() {
 }
 
 $(document).ready(function () {
-    console.log("ready!");
-
     $("#order tr:not(:last) input,#order tr:not(:last) select").change(function (event) {
         saveRow(this);
     });

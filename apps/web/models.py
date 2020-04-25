@@ -3,6 +3,7 @@ from django.db import models
 
 # Create your models here.
 
+# ToDo: add products to session m2m
 class Session(models.Model):
     id = models.AutoField(primary_key=True, verbose_name="ID")
     name = models.CharField(max_length=100, verbose_name="Название")
