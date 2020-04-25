@@ -1,9 +1,11 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import get_random_item_from_list
 from apps.API_VK.models import Words
+from apps.API_VK.static_texts import get_bad_answers
 
 
-def get_from_db(field_name):
-    my_field = {field_name + "__isnull": False, 'type': 'good'}
+def get_from_db(field_name, _type):
+    my_field = {field_name + "__isnull": False, 'type': _type}
     try:
         word = getattr(Words.objects.filter(**my_field).order_by('?').first(), field_name).lower()
     except AttributeError:
@@ -21,6 +23,7 @@ def add_phrase_before(recipient, word, field_name):
     else:
         return "EXCEPTION LOLOLOL"
 
+
 translator = {
     'м': 'm1',
     'ж': 'f1',
@@ -31,6 +34,50 @@ translator = {
     'мм': 'mm',
     'жм': 'fm'
 }
+
+
+def get_praise_or_scold(vk_bot, vk_event, _type):
+    if vk_event.original_args and vk_event.args[-1] in translator:
+        translator_key = vk_event.args[-1]
+        del vk_event.args[-1]
+    else:
+        try:
+            user = vk_bot.get_user_by_name(vk_event.original_args, vk_event.chat)
+            if user.gender == '1':
+                translator_key = 'ж1'
+            else:
+                translator_key = 'м1'
+        except RuntimeError:
+            translator_key = 'м1'
+    if vk_event.args:
+        recipient = " ".join(vk_event.args)
+
+        if "петрович" in recipient.lower():
+            if _type == 'bad':
+                msg = get_random_item_from_list(get_bad_answers())
+            elif _type == 'good':
+                msg = "спс))"
+            else:
+                msg = "wtf"
+        else:
+            word = get_from_db(translator[translator_key], _type)
+            msg = add_phrase_before(recipient, word, translator[translator_key])
+    else:
+        msg = get_from_db(translator[translator_key], _type)
+    return msg
+
+
+def get_praise_or_scold_self(vk_event, _type):
+    recipient = vk_event.sender
+    if recipient.gender == '1':
+        translator_key = 'ж1'
+    else:
+        translator_key = 'м1'
+
+    word = get_from_db(translator[translator_key], _type)
+    msg = add_phrase_before(recipient.name, word, translator[translator_key])
+    return msg
+
 
 class Praise(CommonCommand):
     def __init__(self):
@@ -44,27 +91,4 @@ class Praise(CommonCommand):
         super().__init__(names, help_text, detail_help_text)
 
     def start(self):
-        if self.vk_event.original_args and self.vk_event.args[-1] in translator:
-            translator_key = self.vk_event.args[-1]
-            del self.vk_event.args[-1]
-        else:
-            try:
-                user = self.vk_bot.get_user_by_name(self.vk_event.original_args, self.vk_event.chat)
-                if user.gender == '1':
-                    translator_key = 'ж1'
-                else:
-                    translator_key = 'м1'
-            except RuntimeError:
-                translator_key = 'м1'
-
-        if self.vk_event.args:
-            recipient = " ".join(self.vk_event.args)
-
-            if "петрович" in recipient.lower():
-                msg = "спс))"
-            else:
-                word = get_from_db(translator[translator_key])
-                msg = add_phrase_before(recipient, word, translator[translator_key])
-        else:
-            msg = get_from_db(translator[translator_key])
-        return msg
+        return get_praise_or_scold(self.vk_bot, self.vk_event, 'good')
