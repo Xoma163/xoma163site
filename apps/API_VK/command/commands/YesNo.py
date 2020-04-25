@@ -59,4 +59,11 @@ class YesNo(CommonCommand):
                 messages.append(f"{name}, может ты {msg_self} {self.vk_event.msg[min_index_bad: len_bad]}?")
                 return messages
 
-        return random_event(["Да", "Нет", "Ну тут даже я хз"], [48, 48, 4])
+        random_events = [["Да", "Ага", "Канеш", "Само собой", "Абсолютно"],
+                         ["Нет", "Неа", "Ни за что", "Невозможно", "NO"],
+                         ["Ну тут даже я хз", "ДА НЕ ЗНАЮ Я", "Хз", "Спроси у другого бота", "Да нет наверное"]]
+        probability_events1 = [48, 48, 4]
+        probability_events2 = [80, 5, 5, 5, 5]
+        selected_event = random_event(random_events, probability_events1)[0]
+        selected_event2 = random_event(selected_event, probability_events2)[0]
+        return selected_event2
