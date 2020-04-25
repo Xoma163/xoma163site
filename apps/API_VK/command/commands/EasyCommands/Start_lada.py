@@ -10,5 +10,5 @@ class Start_lada(CommonCommand):
         if self.vk_event.args:
             who = self.vk_event.original_args
             return ["уи ви ви ви ви ви ви ви", f'завёл {who}']
-            
+
         return "уи ви ви ви ви ви ви ви"

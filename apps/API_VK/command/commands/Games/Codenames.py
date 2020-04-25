@@ -207,7 +207,7 @@ class Codenames(CommonCommand):
                         self.parse_args('int')
                         count = self.vk_event.args[1]
                         word = self.vk_event.args[2]
-                    except:
+                    except RuntimeError:
                         self.int_args = [2]
                         self.parse_args('int')
                         word = self.vk_event.args[1]
@@ -580,9 +580,9 @@ class Codenames(CommonCommand):
     def get_inline_keyboard(self, table, for_captain=False):
         keyboards = []
 
-        for i, row in enumerate(table):
+        for row in table:
             rows = []
-            for j, elem in enumerate(row):
+            for elem in row:
                 rows.append(self.get_elem(elem, for_captain))
 
             keyboards.append({
@@ -595,9 +595,9 @@ class Codenames(CommonCommand):
     # Обычная клава
     def get_keyboard(self, table, for_captain=False, game_over=False):
         buttons = []
-        for i, row in enumerate(table):
+        for row in table:
             rows = []
-            for j, elem in enumerate(row):
+            for elem in row:
                 rows.append(self.get_elem(elem, for_captain, game_over))
             buttons.append(rows)
 

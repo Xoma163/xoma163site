@@ -86,8 +86,8 @@ def get_weather(city):
     forecast = ""
     for i in range(len(weather['forecast'])):
         forecast += f"\n\n" \
-            f"Прогноз на {weather['forecast'][i]['part_name']}:\n" \
-            f"{weather['forecast'][i]['condition']}\n"
+                    f"Прогноз на {weather['forecast'][i]['part_name']}:\n" \
+                    f"{weather['forecast'][i]['condition']}\n"
 
         if weather['forecast'][i]['temp_min'] != weather['forecast'][i]['temp_max']:
             forecast += f"Температура от {weather['forecast'][i]['temp_min']} до {weather['forecast'][i]['temp_max']}°С"
@@ -95,12 +95,12 @@ def get_weather(city):
             forecast += f"Температура {weather['forecast'][i]['temp_max']}°С"
 
         forecast += f"(ощущается как {weather['forecast'][i]['temp_feels_like']}°С)\n" \
-            f"Ветер {weather['forecast'][i]['wind_speed']}м/c(порывы до {weather['forecast'][i]['wind_gust']}м/c)\n" \
-            f"Давление {weather['forecast'][i]['pressure']} мм.рт.ст., влажность {weather['forecast'][i]['humidity']}%\n"
+                    f"Ветер {weather['forecast'][i]['wind_speed']}м/c(порывы до {weather['forecast'][i]['wind_gust']}м/c)\n" \
+                    f"Давление {weather['forecast'][i]['pressure']} мм.рт.ст., влажность {weather['forecast'][i]['humidity']}%\n"
         if weather['forecast'][i]['prec_mm'] != 0:
             forecast += f"Осадки {weather['forecast'][i]['prec_mm']}мм " \
-                f"на протяжении {weather['forecast'][i]['prec_period']} часов " \
-                f"с вероятностью {weather['forecast'][i]['prec_prob']}%"
+                        f"на протяжении {weather['forecast'][i]['prec_period']} часов " \
+                        f"с вероятностью {weather['forecast'][i]['prec_prob']}%"
         else:
             forecast += "Без осадков"
     entity.value = now + forecast

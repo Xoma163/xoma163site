@@ -1,7 +1,6 @@
 import io
 import json
 import logging
-import re
 import threading
 import traceback
 from urllib.parse import urlparse
@@ -24,151 +23,6 @@ from secrets.secrets import secrets
 logger = logging.getLogger('commands')
 
 
-def parse_msg_to_me(msg, mentions):
-    # Обрезаем палку
-    if len(msg) > 0:
-        if msg[0] == '/':
-            msg = msg[1:]
-        for mention in mentions:
-            msg = msg.replace(mention, '')
-    return msg
-
-
-def parse_msg(msg):
-    # Сообщение, команда, аргументы, аргументы строкой, ключи
-    """
-    msg - оригинальное сообщение
-    command - команда
-    args - список аргументов
-    original_args - строка аргументов (без ключей)
-    params - оригинальное сообщение без команды (с аргументами и ключами)
-
-    """
-    msg_clear = re.sub(" +", " ", msg)
-    msg_clear = re.sub(",+", ",", msg_clear)
-    # Если всё поломалось, то вернуть
-    # msg_clear = msg_clear.lstrip().lstrip(',').lstrip().lstrip(' ').lstrip()  # .replace(' ,', ',').replace(', ', ',')
-    msg_clear = msg_clear.strip().strip(',').strip().strip(' ').strip().replace('ё', 'е')
-    # .replace(' ,', ',').replace(', ', ',')
-
-    msg_dict = {'msg': msg,
-                'msg_clear': msg_clear,
-                'command': None,
-                'args': None,
-                'original_args': None,
-                }
-
-    command_arg = msg_clear.split(' ', 1)
-    msg_dict['command'] = command_arg[0]
-    if len(command_arg) > 1:
-        if len(command_arg[1]) > 0:
-            msg_dict['args'] = command_arg[1].split(' ')
-            msg_dict['original_args'] = command_arg[1].strip()
-
-    msg_dict['command'] = msg_dict['command'].lower()
-
-    return msg_dict
-
-
-def parse_attachments(vk_attachments):
-    attachments = []
-
-    if vk_attachments:
-        for attachment in vk_attachments:
-            attachment_type = attachment[attachment['type']]
-
-            new_attachment = {
-                'type': attachment['type']
-            }
-            if 'owner_id' in attachment_type:
-                new_attachment['owner_id'] = attachment_type['owner_id']
-            if 'id' in attachment_type:
-                new_attachment['id'] = attachment_type['id']
-            if attachment['type'] in ['photo', 'video', 'audio', 'doc']:
-                new_attachment[
-                    'vk_url'] = f"{attachment['type']}{attachment_type['owner_id']}_{attachment_type['id']}"
-                new_attachment['url'] = f"https://vk.com/{new_attachment['vk_url']}"
-            if attachment['type'] == 'photo':
-                max_size_image = attachment_type['sizes'][0]
-                max_size_width = max_size_image['width']
-                for size in attachment_type['sizes']:
-                    if size['width'] > max_size_width:
-                        max_size_image = size
-                        max_size_width = size['width']
-                    new_attachment['download_url'] = max_size_image['url']
-                    new_attachment['size'] = {
-                        'width': max_size_image['width'],
-                        'height': max_size_image['height']}
-            elif attachment['type'] == 'video':
-                new_attachment['title'] = attachment_type['title']
-            elif attachment['type'] == 'audio':
-                new_attachment['artist'] = attachment_type['artist']
-                new_attachment['title'] = attachment_type['title']
-                new_attachment['duration'] = attachment_type['duration']
-                new_attachment['download_url'] = attachment_type['url']
-            elif attachment['type'] == 'doc':
-                new_attachment['title'] = attachment_type['title']
-                new_attachment['ext'] = attachment_type['ext']
-                new_attachment['download_url'] = attachment_type['url']
-            elif attachment['type'] == 'wall':
-                if 'attachments' in attachment_type:
-                    new_attachment['attachments'] = parse_attachments(attachment_type['attachments'])
-                elif 'copy_history' in attachment_type and len(attachment_type['copy_history']) > 0 and 'attachments' in \
-                        attachment_type['copy_history'][0]:
-                    new_attachment['attachments'] = parse_attachments(attachment_type['copy_history'][0]['attachments'])
-            elif attachment['type'] == 'audio_message':
-                new_attachment['download_url'] = attachment_type['link_mp3']
-                new_attachment['duration'] = attachment_type['duration']
-            elif attachment['type'] == 'link':
-                new_attachment['url'] = attachment_type['url']
-                new_attachment['title'] = attachment_type['title']
-                new_attachment['description'] = attachment_type['description']
-                new_attachment['caption'] = attachment_type['caption']
-
-            attachments.append(new_attachment)
-
-    if attachments and len(attachments) > 0:
-        return attachments
-    else:
-        return None
-
-
-def message_for_me(vk_event, mentions, have_audio_message):
-    message = vk_event['message']['text']
-    from_user = vk_event['from_user']
-
-    if have_audio_message:
-        return True
-    if from_user:
-        return True
-    if len(message) < 0:
-        return False
-    if message[0] == '/':
-        return True
-    for mention in mentions:
-        if message.find(mention) != -1:
-            return True
-    return False
-
-
-def parse_date(date):
-    date_arr = date.split('.')
-    if len(date_arr) == 2:
-        return f"1970-{date_arr[1]}-{date_arr[0]}"
-    else:
-        return f"{date_arr[2]}-{date_arr[1]}-{date_arr[0]}"
-
-
-def tanimoto(s1, s2):
-    a, b, c = len(s1), len(s2), 0.0
-
-    for sym in s1:
-        if sym in s2:
-            c += 1
-
-    return c / (a + b - c)
-
-
 class VkBotClass(threading.Thread):
 
     def __init__(self):
@@ -186,7 +40,44 @@ class VkBotClass(threading.Thread):
         self.BOT_CAN_WORK = True
         self.DEBUG = False
 
-    def send_message(self, peer_id, msg="ᅠ", attachments=None, keyboard=None, **kwargs):
+    @staticmethod
+    def parse_date(date):
+        date_arr = date.split('.')
+        if len(date_arr) == 2:
+            return f"1970-{date_arr[1]}-{date_arr[0]}"
+        else:
+            return f"{date_arr[2]}-{date_arr[1]}-{date_arr[0]}"
+
+    @staticmethod
+    def tanimoto(s1, s2):
+        a, b, c = len(s1), len(s2), 0.0
+
+        for sym in s1:
+            if sym in s2:
+                c += 1
+
+        return c / (a + b - c)
+
+    def need_a_response(self, vk_event, have_audio_message, have_action):
+        message = vk_event['message']['text']
+        from_user = vk_event['from_user']
+
+        if have_audio_message:
+            return True
+        if have_action:
+            return True
+        if from_user:
+            return True
+        if len(message) < 0:
+            return False
+        if message[0] == '/':
+            return True
+        for mention in self.mentions:
+            if message.find(mention) != -1:
+                return True
+        return False
+
+    def send_message(self, peer_id, msg="ᅠ", attachments=None, keyboard=None, dont_parse_links=False, **kwargs):
         if attachments is None:
             attachments = []
         if type(attachments) == str:
@@ -205,6 +96,7 @@ class VkBotClass(threading.Thread):
                               random_id=get_random_id(),
                               attachment=','.join(attachments),
                               keyboard=keyboard,
+                              dont_parse_links=dont_parse_links
                               )
 
     def parse_and_send_msgs(self, peer_id, result):
@@ -235,6 +127,10 @@ class VkBotClass(threading.Thread):
                 return msg
             return
 
+        group = vk_event.sender.groups.filter(name='banned')
+        if len(group) > 0:
+            return
+
         if self.DEBUG and send:
             if hasattr(vk_event, 'payload') and vk_event.payload:
                 debug_message = \
@@ -250,17 +146,12 @@ class VkBotClass(threading.Thread):
                     f"original_args = {vk_event.original_args}\n"
             self.send_message(vk_event.peer_id, debug_message)
 
-        group = vk_event.sender.groups.filter(name='banned')
-        if len(group) > 0:
-            return
-
         logger.debug(vk_event)
 
         commands = get_commands()
         for command in commands:
             try:
                 if command.accept(vk_event):
-
                     result = command.__class__().check_and_start(self, vk_event)
                     if send:
                         self.parse_and_send_msgs(vk_event.peer_id, result)
@@ -269,40 +160,39 @@ class VkBotClass(threading.Thread):
                     return result
             except RuntimeError as e:
                 msg = str(e)
+                logger.warning(f"{{RunTimeException: {msg}}}")
                 if send:
                     self.parse_and_send_msgs(vk_event.peer_id, msg)
-                logger.warning(f"{{RunTimeException: {msg}}}")
                 return msg
             except Exception as e:
                 msg = "Ошибка. /Логи"
-                if send:
-                    self.parse_and_send_msgs(vk_event.peer_id, msg)
                 tb = traceback.format_exc()
                 print(tb)
                 logs = f"Exception: {str(e)}\n" \
                        f"Traceback:\n" \
                        f"{tb}"
                 logger.error(f"{{Exception: {logs}}}")
+                if send:
+                    self.parse_and_send_msgs(vk_event.peer_id, msg)
                 return msg
 
         similar_command = commands[0].names[0]
         tanimoto_max = 0
         for command in commands:
             for name in command.names:
-                tanimoto_current = tanimoto(vk_event.command, name)
+                tanimoto_current = self.tanimoto(vk_event.command, name)
                 if tanimoto_current > tanimoto_max:
                     tanimoto_max = tanimoto_current
                     similar_command = name
 
         msg = f"Я не понял команды \"{vk_event.command}\"\n"
-        if tanimoto_max >= 1:
-            tanimoto_max = 1
+        tanimoto_max = min(1, tanimoto_max)
         if tanimoto_max != 0:
             msg += f"Возможно вы имели в виду {similar_command} с вероятностью {round(tanimoto_max * 100, 2)}%"
 
+        logger.debug(f"{{result: {msg}}}")
         if send:
             self.send_message(vk_event.peer_id, msg)
-        logger.debug(f"{{result: {msg}}}")
         return msg
 
     def listen_longpoll(self):
@@ -330,27 +220,31 @@ class VkBotClass(threading.Thread):
                             # 'id': event.message.id,
                             'text': event.message.text,
                             'payload': event.message.payload,
-                            'attachments': event.message.attachments
+                            'attachments': event.message.attachments,
+                            'action': event.message.action
                         },
                         'parsed': {
-                        }}
+                        },
+                        'fwd': None
+                    }
 
+                    # Обработка вложенных сообщений в vk_event['fwd']. reply и fwd для вк это разные вещи.
+                    if event.message.reply_message:
+                        vk_event['fwd'] = [event.message.reply_message]
+                    elif len(event.message.fwd_messages) != 0:
+                        vk_event['fwd'] = event.message.fwd_messages
+
+                    # Проверка есть ли аудиосообщения
                     have_audio_message = False
+                    have_action = vk_event['message']['action'] is not None
                     for attachment in vk_event['message']['attachments']:
                         if attachment['type'] == 'audio_message':
                             have_audio_message = True
                             break
 
-                    if vk_event['message']['text'] == "" and not have_audio_message:
+                    # Сообщение либо мне в лс, либо упоминание меня, либо есть аудиосообщение, либо есть экшн
+                    if not self.need_a_response(vk_event, have_audio_message, have_action):
                         continue
-
-                    # Сообщение либо мне в лс, либо упоминание меня
-                    if not message_for_me(vk_event, self.mentions, have_audio_message):
-                        continue
-
-                    vk_event['message']['text'] = parse_msg_to_me(vk_event['message']['text'], self.mentions)
-                    vk_event['parsed'] = parse_msg(vk_event['message']['text'])
-                    vk_event['attachments'] = parse_attachments(vk_event['message']['attachments'])
 
                     # Узнаём пользователя
                     if vk_event['user_id'] > 0:
@@ -365,22 +259,15 @@ class VkBotClass(threading.Thread):
                         if vk_event['sender'] and vk_event['chat']:
                             self.add_group_to_user(vk_event['sender'], vk_event['chat'])
                         else:
-                            self.send_message(vk_event['peer_id'],
-                                              'Непредвиденная ошибка. Сообщите разработчику')
+                            self.send_message(vk_event['peer_id'], 'Непредвиденная ошибка. Сообщите разработчику')
                     else:
                         vk_event['chat'] = None
-
-                    # Обработка вложенных сообщений в vk_event['fwd']. reply и fwd для вк это разные вещи.
-                    if event.message.reply_message:
-                        vk_event['fwd'] = [event.message.reply_message]
-                    elif len(event.message.fwd_messages) != 0:
-                        vk_event['fwd'] = event.message.fwd_messages
-                    else:
-                        vk_event['fwd'] = None
 
                     vk_event_object = VkEvent(vk_event)
                     thread = threading.Thread(target=self.menu, args=(vk_event_object,))
                     thread.start()
+                else:
+                    pass
 
             except Exception as e:
                 print('VkBot exception\n:', e)
@@ -415,7 +302,7 @@ class VkBotClass(threading.Thread):
             if 'sex' in user:
                 vk_user.gender = user['sex']
             if 'bdate' in user:
-                vk_user.birthday = parse_date(user['bdate'])
+                vk_user.birthday = self.parse_date(user['bdate'])
             if 'city' in user:
                 from apps.service.models import City
                 city_name = user['city']['title']
@@ -520,9 +407,6 @@ class VkBotClass(threading.Thread):
             vk_chat.save()
         return vk_chat
 
-    def get_group_name_by_id(self, group_id):
-        group = self.vk.groups.getById(group_id=group_id)[0]
-        return group['name']
 
     @staticmethod
     def add_group_to_user(vk_user, chat):
@@ -543,7 +427,7 @@ class VkBotClass(threading.Thread):
             if 'sex' in user:
                 vk_user.gender = user['sex']
             if vk_user.birthday is None and 'bdate' in user:
-                vk_user.birthday = parse_date(user['bdate'])
+                vk_user.birthday = self.parse_date(user['bdate'])
             if vk_user.city is None and 'city' in user:
                 vk_user.city = user['city']['title']
             if vk_user.nickname is None and 'screen_name' in user:
@@ -557,7 +441,6 @@ class VkBotClass(threading.Thread):
         else:
             return None
 
-    # Проверки
     def check_bot_working(self):
         return self.BOT_CAN_WORK
 

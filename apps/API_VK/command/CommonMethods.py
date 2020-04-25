@@ -143,7 +143,6 @@ def get_attachments_for_upload(vk_bot, attachments):
 def get_attachments_from_attachments_or_fwd(vk_event, _type):
     if _type is str:
         _type = [_type]
-    from apps.API_VK.VkBotClass import parse_attachments
     attachments = []
     if vk_event.attachments:
         for att in vk_event.attachments:
@@ -152,7 +151,7 @@ def get_attachments_from_attachments_or_fwd(vk_event, _type):
     if vk_event.fwd:
         msg = vk_event.fwd[0]
         if msg['attachments']:
-            fwd_attachments = parse_attachments(msg['attachments'])
+            fwd_attachments = vk_event.parse_attachments(msg['attachments'])
             for att in fwd_attachments:
                 if att['type'] in _type:
                     attachments.append(att)

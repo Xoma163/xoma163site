@@ -31,15 +31,15 @@ def get_time(arg1, arg2):
     try:
         date = datetime.strptime(str(datetime.today().date()) + " " + arg1, "%Y-%m-%d %H:%M")
         return date, 1
-    except:
+    except ValueError:
         try:
             date = datetime.strptime(arg1 + " " + arg2, "%d.%m.%Y %H:%M")
             return date, 2
-        except:
+        except ValueError:
             try:
                 date = datetime.strptime(arg1 + " 10:00", "%d.%m.%Y %H:%M")
                 return date, 1
-            except:
+            except ValueError:
                 pass
     return None, None
 

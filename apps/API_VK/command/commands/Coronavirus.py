@@ -59,7 +59,7 @@ class Coronavirus(CommonCommand):
 
                     for i in range(len(datas[0][0])):
                         datas[0][0][i] -= datas[1][0][i] + datas[2][0][i]
-                    fig, a = plt.subplots()
+                    a = plt.subplots()[1]
                     x = datas[0][1]
                     y1 = datas[0][0]
                     y2 = datas[2][0]

@@ -1,8 +1,8 @@
 import requests
 
 
-def get_joke(type=1):
-    URL = f"http://rzhunemogu.ru/RandJSON.aspx?CType={type}"
+def get_joke(_type=1):
+    URL = f"http://rzhunemogu.ru/RandJSON.aspx?CType={_type}"
     try:
         response = requests.get(URL, timeout=10)
     except Exception as e:

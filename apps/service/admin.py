@@ -19,7 +19,7 @@ admin.site.register(Service)
 
 
 @admin.register(Counter)
-class FeatureAdmin(admin.ModelAdmin):
+class CounterAdmin(admin.ModelAdmin):
     list_display = ('name', 'count', 'chat')
 
 

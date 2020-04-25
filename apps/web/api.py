@@ -31,8 +31,8 @@ def add_row(request):
 def del_row(request):
     data = request.POST.copy()
     session_id = data['session_id']
-    id = data['id']
-    product = Product.objects.filter(id=id, session_id=session_id).first()
+    _id = data['id']
+    product = Product.objects.filter(id=_id, session_id=session_id).first()
     Order.objects.filter(session_id=session_id, product=product).delete()
     product.delete()
     return JsonResponse({'status': 'ok'}, json_dumps_params={'ensure_ascii': False})
@@ -49,8 +49,9 @@ def save_rows(request):
         for key in product:
             if product[key] == '' or product[key] == 'None':
                 product[key] = None
-        existed_product, created = Product.objects.update_or_create(session_id=session_id, id=product['id'],
-                                                                    defaults=product)
+        # [0] - игнорирование параметра created
+        existed_product = Product.objects.update_or_create(session_id=session_id, id=product['id'],
+                                                           defaults=product)[0]
         # order = Order.objects.filter(session_id=session_id, id=product['id']).update(**order)
         if existed_product:
             statistics['updated'] += 1
@@ -74,8 +75,8 @@ def add_user(request):
 def del_user(request):
     data = request.POST.copy()
     session_id = data['session_id']
-    id = data['id']
-    User.objects.filter(id=id, session_id=session_id).first().delete()
+    _id = data['id']
+    User.objects.filter(id=_id, session_id=session_id).first().delete()
 
     return JsonResponse({'status': 'ok'}, json_dumps_params={'ensure_ascii': False})
 

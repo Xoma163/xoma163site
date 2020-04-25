@@ -18,8 +18,8 @@ class Status(CommonCommand):
         terraria = get_terraria_server_info("localhost", "7777", "хз")
 
         total_str = f"{res_1_12}\n\n" \
-            f"{res_1_15_1}\n\n" \
-            f"{terraria}"
+                    f"{res_1_15_1}\n\n" \
+                    f"{terraria}"
 
         return total_str
 

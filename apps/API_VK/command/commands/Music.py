@@ -44,9 +44,9 @@ class Music(CommonCommand):
             return "Не смог найти видео по этой ссылке"
         audio_urls = []
         if 'formats' in video_info:
-            for format in video_info['formats']:
-                if format['ext'] == 'm4a':
-                    audio_urls.append(format)
+            for _format in video_info['formats']:
+                if _format['ext'] == 'm4a':
+                    audio_urls.append(_format)
 
         if len(audio_urls) == 0:
             return "Чёт проблемки, напишите разрабу и пришлите ссылку на видео"

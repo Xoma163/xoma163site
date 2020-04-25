@@ -32,6 +32,10 @@ class Who(CommonCommand):
             who = 'terraria'
         elif arg in ['banned', 'ban', 'забанены', 'забанен', 'бан']:
             who = 'banned'
+        elif arg in ['conference admin', 'chat admin', 'админ конфы', 'админ беседы', 'админ конференции',
+                     'администратор конфы', 'админ чата', 'администратор беседы', 'администратор конференции',
+                     'администратор чата']:
+            return str(self.vk_event.chat.admin)
         else:
             return "Не знаю такой роли"
         users = get_users(self.vk_event.chat, who)

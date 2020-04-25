@@ -1,5 +1,6 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
 
+
 class Control(CommonCommand):
     def __init__(self):
         names = ["отправить", "сообщение"]

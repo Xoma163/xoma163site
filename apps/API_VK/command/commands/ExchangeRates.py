@@ -7,7 +7,7 @@ class ExchangeRates(CommonCommand):
         names = ["курс"]
         help_text = "Курс - курс валют"
         detail_help_text = "Курс - курс валют\n" \
-                           "Курс (количество) (валюта) - перевод в другую валюту конкретное количество валюты"
+                           "Курс (количество) (валюта) - перевод в другие валюты конкретное количество валюты"
         super().__init__(names, detail_help_text, help_text)
 
     def start(self):

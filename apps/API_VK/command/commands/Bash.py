@@ -3,6 +3,7 @@ from apps.API_VK.command.CommonMethods import get_inline_keyboard
 
 MAX_QUOTES = 20
 
+
 class Bash(CommonCommand):
     def __init__(self):
         names = ["баш"]

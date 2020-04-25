@@ -37,8 +37,8 @@ class Birds(CommonCommand):
             attachment = self.vk_bot.upload_document(document, self.vk_event.peer_id, "Синички")
             attachments.append(attachment)
 
-        return {'attachments': attachments, "keyboard": get_inline_keyboard(self.names[0], args={"frames": frames})}
-
-        # ToDo: баг ВКАПИ, при котором при отправке ссылки атачменты не прикрепляются. Ишю 54
-        # https://github.com/python273/vk_api/issues/329
-        # return {'msg': "http://birds.xoma163.xyz", 'attachments': attachments}
+        return {'msg': 'https://birds.xoma163.xyz',
+                'attachments': attachments,
+                "keyboard": get_inline_keyboard(self.names[0], args={"frames": frames}),
+                'dont_parse_links': True
+                }

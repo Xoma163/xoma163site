@@ -97,6 +97,9 @@ class CommonCommand:
     def check_sender(self, role):
         if check_user_group(self.vk_event.sender, role):
             return True
+        if role == 'conference_admin':
+            if self.vk_event.chat.admin == self.vk_event.sender:
+                return True
         error = f"Команда доступна только для пользователей с уровнем прав {role_translator[role]}"
         raise RuntimeError(error)
 

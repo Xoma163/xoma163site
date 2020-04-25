@@ -11,4 +11,3 @@ class Words(CommonCommand):
     def start(self):
         get_words = Command()
         return get_words.handle()
-

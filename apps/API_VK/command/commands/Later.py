@@ -16,7 +16,6 @@ class Discord(CommonCommand):
         super().__init__(names, help_text, detail_help_text)
 
     def start(self):
-        from apps.API_VK.VkBotClass import parse_attachments
         if self.vk_event.fwd:
             for fwd in self.vk_event.fwd:
                 lm = LaterMessage(
@@ -30,7 +29,7 @@ class Discord(CommonCommand):
                 else:
                     lm.message_bot = self.vk_bot.get_bot_by_id(fwd['from_id'])
 
-                attachments = parse_attachments(fwd['attachments'])
+                attachments = self.vk_event.parse_attachments(fwd['attachments'])
                 if attachments:
                     lm.attachments = json.dumps(attachments)
                 lm.save()
