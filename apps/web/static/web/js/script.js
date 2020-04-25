@@ -1,17 +1,5 @@
 let SESSION_ID;
 let CSRFTOKEN;
-$(document).ready(function () {
-    console.log("ready!");
-
-    $("#order tr:not(:last) input,#order tr:not(:last) select").change(function (event) {
-        saveRow(this)
-    });
-
-    SESSION_ID = $("input[name=\"session_id\"]").val();
-    CSRFTOKEN = $("input[name=\"csrfmiddlewaretoken\"]").val()
-    // let csrftoken = getCookie(\"csrftoken\");
-});
-
 
 function addRow() {
     let order = $("#order tbody");
@@ -19,26 +7,27 @@ function addRow() {
     let preLastRow = $("#order tbody tr:nth-last-child(-2n+2)");
     let lastRow = $("#order tbody tr:last");
     let lastRowClone = $(lastRow).clone();
+    let realLastRow = $(lastRow).clone();
 
     let product = {
         name: $(lastRow).find("input[name=\"name\"]").val(),
         count: $(lastRow).find("input[name=\"count\"]").val(),
-        tare_id: $(lastRow).find("select[name=\"tare\"]").val(),
+        tareId: $(lastRow).find("select[name=\"tare\"]").val(),
         price: $(lastRow).find("input[name=\"price\"]").val(),
-        user_id: $(lastRow).find("select[name=\"user\"]").val(),
-        is_bought: $(lastRow).find("input[name=\"is_bought\"]").prop("checked")
+        userID: $(lastRow).find("select[name=\"user\"]").val(),
+        isBought: $(lastRow).find("input[name=\"is_bought\"]").prop("checked")
     };
 
     $.post("add_row",
         {
             csrfmiddlewaretoken: CSRFTOKEN,
-            session_id: SESSION_ID,
+            sessionID: SESSION_ID,
             product: JSON.stringify(product)
         },
         function (data, status) {
             let oldRowNum = 1;
             if ($(preLastRow).length) {
-                oldRowNum = parseInt($(preLastRow[0].cells[0]).html()) + 1;
+                oldRowNum = parseInt($(preLastRow[0].cells[0]).html(), 10) + 1;
             }
             $(lastRowClone[0].cells[0]).html(`${oldRowNum}<input type="hidden" value="${data.id}" name="id">`);
 
@@ -51,8 +40,9 @@ function addRow() {
             $(lastRowClone[0].cells[5]).find("select").each(function (index, item) {
                 $(item).val(originalSelects.eq(index).val());
             });
-
-            $(lastRowClone[0].cells[7]).empty().append(`<i class="fa fa-times" onclick="delRow(this)" style="color:red;cursor:pointer;"></i>`);
+            console.log('123');
+            $(lastRowClone[0].cells[7]).empty().append("<i class=\"fa fa-times\" onclick=\"delRow(this)\"" +
+                " style=\"color:red;cursor:pointer;\"></i>");
             $(realLastRow[0].cells[1]).find("input").val("");
             $(realLastRow[0].cells[2]).find("input").val("0");
             $(realLastRow[0].cells[3]).find("select option:first").prop("selected", true);
@@ -65,7 +55,7 @@ function addRow() {
 
             // $("#order input:last-of-type,#order select:last-of-type").change(function (event) {
             $("#order tr:nth-last-child(2) input,#order tr:nth-last-child(2) select").change(function (event) {
-                saveRow(this)
+                saveRow(this);
             });
         });
 }
@@ -77,7 +67,7 @@ function delRow(_this) {
     $.post("del_row",
         {
             csrfmiddlewaretoken: CSRFTOKEN,
-            session_id: SESSION_ID,
+            sessionID: SESSION_ID,
             id: id
         },
         function (data, status) {
@@ -92,10 +82,10 @@ function saveRow(_this) {
             id: $(tr).find("input[name=\"id\"]").val(),
             name: $(tr).find("input[name=\"name\"]").val(),
             count: $(tr).find("input[name=\"count\"]").val(),
-            tare_id: $(tr).find("select[name=\"tare\"]").val(),
+            tareId: $(tr).find("select[name=\"tare\"]").val(),
             price: $(tr).find("input[name=\"price\"]").val(),
-            user_id: $(tr).find("select[name=\"user\"]").val(),
-            is_bought: $(tr).find("input[name=\"is_bought\"]").prop("checked")
+            userID: $(tr).find("select[name=\"user\"]").val(),
+            isBought: $(tr).find("input[name=\"is_bought\"]").prop("checked")
         }
     };
 
@@ -104,43 +94,12 @@ function saveRow(_this) {
         {
             csrfmiddlewaretoken: CSRFTOKEN,
             // csrfmiddlewaretoken: $(\"[name="csrfmiddlewaretoken"]\").val(),
-            session_id: SESSION_ID,
+            sessionID: SESSION_ID,
             orders: JSON.stringify(orders)
         },
         function (data, status) {
         })
 }
-
-// function saveRows() {
-//     let session_id = 1;
-//     let csrftoken = getCookie(\"csrftoken\");
-//
-//     let trs = $("#order tbody tr");
-//     let orders = [];
-//     for (let i = 0; i < trs.length; i++) {
-//         let tr = trs[i];
-//         let order = {
-//             product: {
-//                 id: $(tr).find("input[name=\"id\"]").val(),
-//                 name: $(tr).find("input[name=\"name\"]").val(),
-//                 count: $(tr).find("input[name=\"count\"]").val(),
-//                 tare_id: $(tr).find("select[name=\"tare\"]").val(),
-//                 price: $(tr).find("input[name=\"price\"]").val(),
-//                 user_id: $(tr).find("select[name=\"user\"]").val(),
-//                 is_bought: $(tr).find("input[name=\"is_bought\"]").prop("checked")
-//             }
-//         };
-//         orders.push(order)
-//     }
-//     $.post("save_rows",
-//         {
-//             csrfmiddlewaretoken: csrftoken,
-//             session_id: session_id,
-//             orders: JSON.stringify(orders)
-//         },
-//         function (data, status) {
-//         })
-// }
 
 function addUser() {
     let users = $("#users tbody");
@@ -153,7 +112,7 @@ function addUser() {
     $.post("add_user",
         {
             csrfmiddlewaretoken: CSRFTOKEN,
-            session_id: SESSION_ID,
+            sessionID: SESSION_ID,
             name: newUserName
         },
         function (data, status) {
@@ -176,9 +135,6 @@ function addUser() {
               </tr>
 `);
             users.append(lastRowClone);
-
-            // $("select[name=\"user\"]").append(`<option value="${data.id}">${newUserName}</option>`)
-            // $(newUserName).val(\"\");
         });
 
 
@@ -191,7 +147,7 @@ function delUser(_this) {
     $.post("del_user",
         {
             csrfmiddlewaretoken: CSRFTOKEN,
-            session_id: SESSION_ID,
+            sessionID: SESSION_ID,
             id: id
         },
         function (data, status) {
@@ -213,12 +169,12 @@ function saveUser(_this) {
     $.post("save_users",
         {
             csrfmiddlewaretoken: CSRFTOKEN,
-            session_id: SESSION_ID,
+            sessionID: SESSION_ID,
             users: JSON.stringify(users)
         },
         function (data, status) {
             $(`select[name=\"user\"] option[value=${user.id}]`).html(user.name);
-        })
+        });
 }
 
 
@@ -227,36 +183,34 @@ function getCalculateData() {
     for (let i = 0; i < users.length; i++) {
         if ($(users[i]).val() === "None") {
             alert("Не все значения \"кто\" проставлены, рассчёт невозможен");
-            return
+            return;
         }
     }
     $.post("get_calculate",
         {
             csrfmiddlewaretoken: CSRFTOKEN,
-            session_id: SESSION_ID,
+            sessionID: SESSION_ID,
         },
         function (data, status) {
             let modelBody = $("#modal-calculation .modal-body");
             modelBody.empty();
-            for (let i = 0; i < data.result.length; i++)
+            for (let i = 0; i < data.result.length; i++) {
                 modelBody.append(`<div>${data.result[i]}</div>`);
+            }
             $("#modal-calculation").modal("show");
         });
 
 }
 
-// function getCookie(name) {
-//     var cookieValue = null;
-//     if (document.cookie && document.cookie !== \"\") {
-//         var cookies = document.cookie.split(\";\");
-//         for (var i = 0; i < cookies.length; i++) {
-//             var cookie = cookies[i].trim();
-//             // Does this cookie string begin with the name we want?
-//             if (cookie.substring(0, name.length + 1) === (name + \"=\")) {
-//                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-//                 break;
-//             }
-//         }
-//     }
-//     return cookieValue;
-// }
+
+$(document).ready(function () {
+    console.log("ready!");
+
+    $("#order tr:not(:last) input,#order tr:not(:last) select").change(function (event) {
+        saveRow(this);
+    });
+
+    SESSION_ID = $("input[name=\"session_id\"]").val();
+    CSRFTOKEN = $("input[name=\"csrfmiddlewaretoken\"]").val();
+    // let csrftoken = getCookie(\"csrftoken\");
+});

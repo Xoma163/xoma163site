@@ -19,7 +19,7 @@ def draw_on_images(image_url, faces):
     font_scale = {'big': 1, 'medium': 0.8, 'small': 0.6}
     shift_age_point = [35, 10]
 
-    width, height, channels = _image.shape
+    width, height, _ = _image.shape
     scale = width * height / 1920 / 1080
     scale = max(scale, 0.8)
     for x in font_scale:

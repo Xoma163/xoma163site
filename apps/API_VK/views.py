@@ -89,7 +89,7 @@ def where_is_me(request):
 
 
 def check_bool(val):
-    if type(val) is bool:
+    if isinstance(val, bool):
         return val
 
     if val.lower() == 'true':

@@ -7,8 +7,7 @@ from secrets.secrets import secrets
 def auto_str(cls):
     def __str__(self):
         return '%s(%s)' % (
-            type(self).__name__,
-            ', '.join('%s=%s' % item for item in vars(self).items())
+            type(self).__name__, ', '.join('%s=%s' % item for item in vars(self).items())
         )
 
     cls.__str__ = __str__
@@ -140,9 +139,9 @@ class VkEvent:
             self.msg = None
             self.command = self.payload['command']
             if 'args' in self.payload:
-                if type(self.payload['args']) == dict:
+                if isinstance(self.payload['args'], dict):
                     self.args = [arg for arg in self.payload['args'].values()]
-                elif type(self.payload['args']) == list:
+                elif isinstance(self.payload['args'], list):
                     self.args = self.payload['args']
                 str_args = [str(arg) for arg in self.args]
                 self.original_args = " ".join(str_args)

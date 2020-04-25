@@ -40,7 +40,7 @@ class Calc(CommonCommand):
             return "Не смог распарсить выражение"
         else:
             try:
-                if type(root.value) == float and root.value == int(root.value):
+                if isinstance(root.value, float) and root.value == int(root.value):
                     return str(int(root.value))
                 else:
                     return str(root.value)
@@ -226,7 +226,7 @@ class Grammar:
 
     def parse(self, expr):
         if self.symbol is None:
-            if self.left is "R":
+            if self.left == "R":
                 try:
                     return Node(self, float(expr))
                 except ValueError:

@@ -8,21 +8,21 @@ from apps.web.models import Order, Product, User
 def add_row(request):
     data = request.POST.copy()
     product = Product()
-    product.session_id = data['session_id']
+    product.session_id = data['sessionID']
     product_data = json.loads(data['product'])
     if product_data:
         product.name = product_data['name']
         product.count = product_data['count']
-        if product_data['tare_id'] and product_data['tare_id'] != "None":
-            product.tare_id = product_data['tare_id']
+        if product_data['tareId'] and product_data['tareId'] != "None":
+            product.tare_id = product_data['tareId']
         product.price = product_data['price']
-        if product_data['user_id'] and product_data['user_id'] != "None":
-            product.user_id = product_data['user_id']
-        product.is_bought = product_data['is_bought']
+        if product_data['userID'] and product_data['userID'] != "None":
+            product.user_id = product_data['userID']
+        product.is_bought = product_data['isBought']
     product.save()
 
     order = Order()
-    order.session_id = data['session_id']
+    order.session_id = data['sessionID']
     order.product = product
     order.save()
     return JsonResponse({'id': product.id}, json_dumps_params={'ensure_ascii': False})
@@ -30,7 +30,7 @@ def add_row(request):
 
 def del_row(request):
     data = request.POST.copy()
-    session_id = data['session_id']
+    session_id = data['sessionID']
     _id = data['id']
     product = Product.objects.filter(id=_id, session_id=session_id).first()
     Order.objects.filter(session_id=session_id, product=product).delete()
@@ -40,7 +40,7 @@ def del_row(request):
 
 def save_rows(request):
     data = request.POST.copy()
-    session_id = data['session_id']
+    session_id = data['sessionID']
     orders = json.loads(data['orders'])
 
     statistics = {'updated': 0, 'created': 0}
@@ -66,7 +66,7 @@ def add_user(request):
 
     new_user = User()
     new_user.name = data['name']
-    new_user.session_id = data['session_id']
+    new_user.session_id = data['sessionID']
     new_user.save()
 
     return JsonResponse({'id': new_user.id}, json_dumps_params={'ensure_ascii': False})
@@ -74,7 +74,7 @@ def add_user(request):
 
 def del_user(request):
     data = request.POST.copy()
-    session_id = data['session_id']
+    session_id = data['sessionID']
     _id = data['id']
     User.objects.filter(id=_id, session_id=session_id).first().delete()
 
@@ -83,7 +83,7 @@ def del_user(request):
 
 def save_users(request):
     data = request.POST.copy()
-    session_id = data['session_id']
+    session_id = data['sessionID']
     users = json.loads(data['users'])
 
     statistics = {'updated': 0, 'created': 0}
@@ -106,7 +106,7 @@ def save_users(request):
 
 def get_calculate(request):
     data = request.POST.copy()
-    session_id = data['session_id']
+    session_id = data['sessionID']
     users = list(User.objects.filter(session_id=session_id).values('name'))
     users = {u['name']: {'money': 0} for u in users}
 

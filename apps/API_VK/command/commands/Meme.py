@@ -47,7 +47,7 @@ class Meme(CommonCommand):
 
     def send_1_meme_to_chat(self, meme, chat, print_name=True):
         meme = self.send_1_meme(meme, print_name)
-        if type(meme) == dict:
+        if isinstance(meme, dict):
             self.vk_bot.parse_and_send_msgs(chat.chat_id, meme)
             return "Отправил"
         else:

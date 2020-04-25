@@ -80,7 +80,7 @@ class VkBotClass(threading.Thread):
     def send_message(self, peer_id, msg="ᅠ", attachments=None, keyboard=None, dont_parse_links=False, **kwargs):
         if attachments is None:
             attachments = []
-        if type(attachments) == str:
+        if isinstance(attachments, str):
             attachments = [attachments]
         if attachments and msg == "ᅠ":
             msg = ""
@@ -100,15 +100,15 @@ class VkBotClass(threading.Thread):
                               )
 
     def parse_and_send_msgs(self, peer_id, result):
-        if type(result) == str or type(result) == int:
+        if isinstance(result, str) or isinstance(result, int):
             result = {'msg': result}
-        if type(result) == dict:
+        if isinstance(result, dict):
             result = [result]
-        if type(result) == list:
+        if isinstance(result, list):
             for msg in result:
-                if type(msg) == str:
+                if isinstance(msg, str):
                     msg = {'msg': msg}
-                if type(msg) == dict:
+                if isinstance(msg, dict):
                     self.send_message(peer_id, **msg)
 
     def menu(self, vk_event, send=True):
@@ -207,7 +207,7 @@ class VkBotClass(threading.Thread):
                     from_id - кто отправил сообщение (если значение отрицательное, то другой бот)
                     user_id - id пользователя
                     peer_id - откуда отправил сообщение (если там значение совпадает с from_id, то это from_user, 
-                        если нет и значение начинается на 200000000*, то это конфа
+                    если нет и значение начинается на 200000000*, то это конфа
                     payload - скрытая информация, которая передаётся при нажатии на кнопку
                     '''
 
@@ -341,7 +341,7 @@ class VkBotClass(threading.Thread):
     def get_user_by_name(args, filter_chat=None):
         if not args:
             raise RuntimeError("Отсутствуют аргументы")
-        if type(args) == str:
+        if isinstance(args, str):
             args = [args]
         vk_users = VkUser.objects
         if filter_chat:
@@ -369,7 +369,7 @@ class VkBotClass(threading.Thread):
     def get_chat_by_name(args):
         if not args:
             raise RuntimeError("Отсутствуют аргументы")
-        if type(args) == str:
+        if isinstance(args, str):
             args = [args]
         vk_chats = VkChat.objects
         for arg in args:
@@ -407,7 +407,6 @@ class VkBotClass(threading.Thread):
             vk_chat.save()
         return vk_chat
 
-
     @staticmethod
     def add_group_to_user(vk_user, chat):
         chats = vk_user.chats
@@ -415,8 +414,8 @@ class VkBotClass(threading.Thread):
             chats.add(chat)
 
     @staticmethod
-    def get_group_id(id):
-        return 2000000000 + int(id)
+    def get_group_id(_id):
+        return 2000000000 + int(_id)
 
     def update_users(self):
         users = VkUser.objects.all()
@@ -447,11 +446,11 @@ class VkBotClass(threading.Thread):
     @staticmethod
     def _prepare_obj_to_upload(file_like_object, allowed_exts_url=None):
         # bytes array
-        if type(file_like_object) == bytes:
+        if isinstance(file_like_object, bytes):
             obj = io.BytesIO(file_like_object)
             obj.seek(0)
         # bytesIO
-        elif type(file_like_object) == io.BytesIO:
+        elif isinstance(file_like_object, io.BytesIO):
             obj = file_like_object
             obj.seek(0)
         # url
@@ -487,10 +486,10 @@ class VkBotClass(threading.Thread):
             raise RuntimeError("Ошибка загрузки аудиозаписи")
         return self.get_attachment_by_id('audio', vk_audio['owner_id'], vk_audio['id'])
 
-    def get_attachment_by_id(self, type, group_id, id):
+    def get_attachment_by_id(self, _type, group_id, _id):
         if group_id is None:
             group_id = f'-{self.group_id}'
-        return f"{type}{group_id}_{id}"
+        return f"{_type}{group_id}_{_id}"
 
 
 class MyVkBotLongPoll(VkBotLongPoll):

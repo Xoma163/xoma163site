@@ -57,8 +57,6 @@ class CameraHandler(threading.Thread):
                 except Exception as e:
                     print("EXCEPTION IN CAMERAHANDLER" + str(e))
                     self.wait()
-            else:
-                self.wait()
         else:
             self.wait()
 

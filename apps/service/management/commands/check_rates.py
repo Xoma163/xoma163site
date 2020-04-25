@@ -23,5 +23,5 @@ class Command(BaseCommand):
             command.vk_bot = vk_bot
             result = command.start()
             # Небольшой костыльчик, ну типа только если идёт розыгрыш, тогда возвращается list
-            if type(result) == list:
+            if isinstance(result, list):
                 vk_bot.parse_and_send_msgs(command.vk_event.chat.chat_id, result)

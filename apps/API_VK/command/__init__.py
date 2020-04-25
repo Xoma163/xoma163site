@@ -12,7 +12,7 @@ def import_all_commands():
         if not path[0].endswith('__pycache__'):
             COMMANDS_DIRS.append(path[0])
 
-    for (module_loader, name, ispkg) in pkgutil.iter_modules(COMMANDS_DIRS):
+    for (module_loader, name, _) in pkgutil.iter_modules(COMMANDS_DIRS):
         package = module_loader.path.replace(BASE_DIR, '')[1:].replace('/', '.')
         importlib.import_module('.' + name, package)
 
@@ -50,13 +50,13 @@ def generate_help_text():
     for command in COMMANDS:
         if command.help_text:
             help_text = command.help_text
-            if type(help_text) == str:
+            if isinstance(help_text, str):
                 help_text = {'for': command.access, 'text': help_text}
 
-            if type(help_text) == dict:
+            if isinstance(help_text, dict):
                 help_text = [help_text]
 
-            if type(help_text) == list:
+            if isinstance(help_text, list):
                 for text in help_text:
                     if command.enabled:
                         # Если команда игра, то в отдельный список
@@ -85,9 +85,9 @@ def generate_keyboard():
     for command in COMMANDS:
         key = command.keyboard
         if key:
-            if type(key) == dict:
+            if isinstance(key, dict):
                 key = [key]
-            if type(key) == list:
+            if isinstance(key, list):
                 for elem in key:
                     if 'for' in elem:
                         keys[elem['for']].append(elem)
