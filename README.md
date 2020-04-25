@@ -6,20 +6,20 @@
 
 ### FAQ
 
----
+***
 
 Q: **Где лежит сам бот в этом django проекте?**
 
 A: apps/API_VK/. Обработка запросов - VkBotClass.py, API - views.py, команды - command/
 
----
+***
 
 Q: **Куда контрибьютить свою команду?**
 
 A: В папке apps/API_VK/command/commands/ нужно добавить свою команду, унаследованную от CommonCommand. 
 Команду следует положить в ту папку, в которую она подходит логически (пример: команда для админа в AdminCommands, простая команда с простым ответом - EasyCommands, Игра - Games, ...)
 
----
+***
 
 Q: **Правила оформления команд**
 
@@ -94,7 +94,7 @@ A : Любая команда должна содержать метод \_\_ini
 -   `{'wall':{'attachments':[...], 'copy_history':'...'}}`
 -   `{'audio_message':{'id':'...', 'owner_id':'...', 'download_url':'...', 'duration':'...'}}`
 
---- 
+***
 
 Q: **Как возвращать ответ команды?**
 
@@ -146,10 +146,10 @@ A:
 Q: **Как работать с базой данных?**
 
 A: Вкратце - в models.py у каждого приложения есть классы - модели. (Пример VkUser, VkChat, ...). Внутри этого файла описываются поля модели. Короткий гайд по работе с сущностями:
--   Model.objects.all() - все записи
--   Model.objects.filter(fieldname = value, fieldname2 = value2) - фильтрация по полям
--   Model(**dict) или 
-```
+-   `Model.objects.all()` - все записи
+-   `Model.objects.filter(fieldname = value, fieldname2 = value2)` - фильтрация по полям
+-   `Model(**dict)` или 
+``` python
 model = Model();
 model.field=value
 model.save()
