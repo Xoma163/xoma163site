@@ -14,11 +14,16 @@ class APIChat(CommonCommand):
         help_text = "Чат - привязывает чат к API"
         detail_help_text = "Чат - привязывает чат к API\n" \
                            "Чат привязать (название конфы) - отправляет код в выбранную конфу\n" \
+                           "Чат отвязать (название конфы) - отправляет код в выбранную конфу\n" \
                            "Чат код (код) - привязывает чат к пользователю"
         super().__init__(names, help_text, detail_help_text, api=True, args=1)
 
     def start(self):
+        if self.vk_event.sender.user_id == "ANONYMOUS":
+            return "Анонимный пользователь не может иметь привязанных чатов"
+
         if self.vk_event.args[0] == 'привязать':
+            self.check_args(2)
             chat_name = self.vk_event.original_args.split(' ', 1)[1]
             chat_with_user = get_one_chat_with_user(chat_name, self.vk_event.sender.user_id)
 
@@ -35,6 +40,7 @@ class APIChat(CommonCommand):
             self.vk_bot.send_message(chat_with_user.chat_id, msg)
             return "Отправил код. Пришлите мне его. Чат код {код}"
         elif self.vk_event.args[0] == 'код':
+            self.check_args(2)
             code = self.vk_event.args[1]
             yandex_temp_user = APITempUser.objects.filter(user_id=self.vk_event.yandex['client_id'],
                                                           vk_user=self.vk_event.sender,
@@ -67,4 +73,3 @@ class APIChat(CommonCommand):
             return "Успешно отвязал"
         else:
             return "Не понял. Доступно: Чат привязать/код/отвязать."
-        return

@@ -52,9 +52,8 @@ def save_rows(request):
         for key in product:
             if product[key] == '' or product[key] == 'None':
                 product[key] = None
-        # [0] - игнорирование параметра created
-        existed_product = Product.objects.update_or_create(session_id=session_id, id=product['id'],
-                                                           defaults=product)[0]
+        existed_product, _ = Product.objects.update_or_create(session_id=session_id, id=product['id'],
+                                                              defaults=product)
         # order = Order.objects.filter(session_id=session_id, id=product['id']).update(**order)
         if existed_product:
             statistics['updated'] += 1

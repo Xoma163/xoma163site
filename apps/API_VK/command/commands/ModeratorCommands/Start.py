@@ -20,7 +20,7 @@ class Start(CommonCommand):
     def start(self):
         if self.vk_event.args:
             if self.vk_event.args[0] == "синички":
-                self.check_sender('moderator')
+                self.check_sender('admin')
                 if not cameraHandler.is_active():
                     cameraHandler.resume()
                     return "Стартуем синичек!"

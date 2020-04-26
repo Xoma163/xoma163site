@@ -8,8 +8,7 @@ def get_detail_by_country(country_name, status='confirmed'):
 
     response = requests.get(url, timeout=5).json()
     groups = []
-    # [1] - ignore parameter key
-    for group in groupby(response, lambda x: x['Date'])[1]:
+    for _, group in groupby(response, lambda x: x['Date']):
         list_group = list(group)
         if len(list_group) > 0:
             groups.append(list_group)

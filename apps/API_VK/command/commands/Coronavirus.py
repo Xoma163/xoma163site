@@ -59,7 +59,7 @@ class Coronavirus(CommonCommand):
 
                     for i, _ in enumerate(datas[0][0]):
                         datas[0][0][i] -= datas[1][0][i] + datas[2][0][i]
-                    a = plt.subplots()[1]
+                    _, a = plt.subplots()
                     x = datas[0][1]
                     y1 = datas[0][0]
                     y2 = datas[2][0]

@@ -12,8 +12,7 @@ class Stream(CommonCommand):
 
     def start(self):
         if self.vk_event.args is None:
-            # [0] - игнорирование параметра created
-            stream = Service.objects.get_or_create(name="stream")[0]
+            stream, _ = Service.objects.get_or_create(name="stream")
             stream_link = stream.value
             if len(stream_link) < 5:
                 return "Стрим пока не идёт"

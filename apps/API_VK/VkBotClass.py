@@ -316,8 +316,8 @@ class VkBotClass(threading.Thread):
                 vk_user.city = None
             if 'screen_name' in user:
                 vk_user.nickname = user['screen_name']
-            group_user = Group.objects.get(name='user')
             vk_user.save()
+            group_user = Group.objects.get(name='user')
             vk_user.groups.add(group_user)
             vk_user.save()
         return vk_user

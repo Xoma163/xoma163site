@@ -21,7 +21,7 @@ class Stop(CommonCommand):
     def start(self):
         if self.vk_event.args:
             if self.vk_event.args[0] == "синички":
-                self.check_sender('moderator')
+                self.check_sender('admin')
                 if cameraHandler.is_active():
                     cameraHandler.terminate()
                     return "Финишируем синичек"

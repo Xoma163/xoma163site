@@ -2,6 +2,7 @@ from datetime import datetime
 
 from apps.API_VK.command.CommonMethods import check_user_group, get_help_for_command
 from apps.service.models import Service
+from secrets.secrets import secrets
 
 
 class CommonCommand:
@@ -95,6 +96,9 @@ class CommonCommand:
 
     # Проверяет роль отправителя
     def check_sender(self, role):
+        if role == 'admin':
+            if self.vk_event.sender.user_id != secrets['vk']['admin_id']:
+                return False
         if check_user_group(self.vk_event.sender, role):
             return True
         if role == 'conference_admin':
