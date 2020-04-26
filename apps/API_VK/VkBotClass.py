@@ -236,7 +236,11 @@ class VkBotClass(threading.Thread):
                     # Проверка есть ли аудиосообщения
                     have_audio_message = False
                     have_action = vk_event['message']['action'] is not None
-                    for attachment in vk_event['message']['attachments']:
+
+                    all_attachments = vk_event['message']['attachments']
+                    if vk_event['fwd']:
+                        all_attachments += vk_event['fwd'][0]['attachments']
+                    for attachment in all_attachments:
                         if attachment['type'] == 'audio_message':
                             have_audio_message = True
                             break
