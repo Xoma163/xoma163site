@@ -24,6 +24,7 @@ class Help(CommonCommand):
             if not command:
                 return "Я не знаю такой команды"
             else:
+                self.check_sender(command.access)
                 return get_help_for_command(command)
         from apps.API_VK.command import HELP_TEXT, API_HELP_TEXT
 

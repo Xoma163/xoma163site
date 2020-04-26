@@ -108,11 +108,11 @@ class CommonCommand:
                 if self.vk_event.chat.admin == self.vk_event.sender:
                     return True
             if len(roles) == 1:
-                error = f"Команда доступна только для пользователей с уровнем прав - {role_translator[role]}"
+                error = f"Команда доступна только для пользователей с уровнем прав {role_translator[role]}"
             else:
                 rus_roles = [role_translator[x] for x in roles]
 
-                error = f"Команда доступна только для пользователей с уровнями прав - {', '.join(rus_roles)}"
+                error = f"Команда доступна только для пользователей с уровнями прав {', '.join(rus_roles)}"
 
             raise RuntimeError(error)
 

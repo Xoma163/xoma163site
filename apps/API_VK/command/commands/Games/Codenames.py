@@ -127,7 +127,7 @@ class Codenames(CommonCommand):
                            "Коднеймс загадать (кол-во слов) (слово) \n" \
                            "Коднеймс слово (слово) - выбрать слово. Либо тык в клаву\n\n" \
                            "Коднеймс удалить - удаляет сессию игры. Только для админа конфы"
-        super().__init__(names, help_text, detail_help_text, api=False)
+        super().__init__(names, help_text, detail_help_text, api=False, args=1)
 
     def init_var(self):
 
@@ -147,147 +147,147 @@ class Codenames(CommonCommand):
         with lock:
             self.init_var()
 
-            if self.vk_event.args:
-                if self.vk_event.args[0].lower() in ['рег', 'регистрация']:
-                    if len(Gamer.objects.filter(user=self.vk_event.sender)) == 0:
-                        Gamer(user=self.vk_event.sender).save()
+            # if self.vk_event.args:
+            if self.vk_event.args[0].lower() in ['рег', 'регистрация']:
+                if len(Gamer.objects.filter(user=self.vk_event.sender)) == 0:
+                    Gamer(user=self.vk_event.sender).save()
 
-                    self.check_conversation()
-                    if len(CodenamesUser.objects.filter(chat=self.vk_event.chat, user=self.vk_event.sender)) > 0:
-                        return 'Ты уже зарегистрирован'
-                    if len(CodenamesUser.objects.filter(user=self.vk_event.sender)) > 0:
-                        return 'Нельзя участвовать сразу в двух играх'
+                self.check_conversation()
+                if len(CodenamesUser.objects.filter(chat=self.vk_event.chat, user=self.vk_event.sender)) > 0:
+                    return 'Ты уже зарегистрирован'
+                if len(CodenamesUser.objects.filter(user=self.vk_event.sender)) > 0:
+                    return 'Нельзя участвовать сразу в двух играх'
 
-                    role_preference = None
-                    if len(self.vk_event.args) >= 2:
-                        if self.vk_event.args[1] in ["кэп", "капитан"]:
-                            role_preference = "captain"
-                        elif self.vk_event.args[1] in ["игрок"]:
-                            role_preference = "player"
-                        else:
-                            return "Не знаю такой роли для регистрации"
-
-                    codenames_user = CodenamesUser(user=self.vk_event.sender,
-                                                   chat=self.vk_event.chat,
-                                                   role_preference=role_preference)
-                    if not self.session:
-                        codenames_user.save()
-                        return "Зарегистрировал. Сейчас зарегистрированы:\n" \
-                               f"{get_str_players(self.players)}\n"
+                role_preference = None
+                if len(self.vk_event.args) >= 2:
+                    if self.vk_event.args[1] in ["кэп", "капитан"]:
+                        role_preference = "captain"
+                    elif self.vk_event.args[1] in ["игрок"]:
+                        role_preference = "player"
                     else:
-                        if len(self.players) % 2 == 0:
-                            codenames_user.command = 'blue'
-                        else:
-                            codenames_user.command = 'red'
-                        codenames_user.save()
-                        return f"Зарегистрировал. Ты в {translator_commands[codenames_user.command]} команде"
-                elif self.vk_event.args[0].lower() in ['дерег']:
-                    self.check_conversation()
-                    check_not_session(self.session)
-                    self.player.delete()
-                    return "Дерегнул. Сейчас зарегистрированы:\n" \
+                        return "Не знаю такой роли для регистрации"
+
+                codenames_user = CodenamesUser(user=self.vk_event.sender,
+                                               chat=self.vk_event.chat,
+                                               role_preference=role_preference)
+                if not self.session:
+                    codenames_user.save()
+                    return "Зарегистрировал. Сейчас зарегистрированы:\n" \
                            f"{get_str_players(self.players)}\n"
-                elif self.vk_event.args[0].lower() in ['старт']:
-                    self.check_conversation()
-                    check_not_session(self.session)
-                    if len(self.players) < MIN_USERS:
-                        return f"Минимальное количество игроков - {MIN_USERS}. Сейчас зарегистрированы:\n" \
-                               f"{get_str_players(self.players)}\n"
-                    return self.prepare_game()
-                elif self.vk_event.args[0].lower() in ['загадать']:
-                    check_session(self.session)
-                    check_player(self.player)
-                    self.check_pm()
-                    check_player_captain(self.player)
-                    command = self.player.command
-                    check_next_step(self.session, command + "_wait")
-                    if len(self.vk_event.args) < 3:
-                        return "Недостаточно аргументов"
-                    self.int_args = [1]
-                    try:
-                        self.parse_args('int')
-                        count = self.vk_event.args[1]
-                        word = self.vk_event.args[2]
-                    except RuntimeError:
-                        self.int_args = [2]
-                        self.parse_args('int')
-                        word = self.vk_event.args[1]
-                        count = self.vk_event.args[2]
-
-                    # count = int(self.vk_event.args[1])
-                    if count > 9:
-                        count = 9
-                    elif count < 1:
-                        return "Число загадываемых слов не может быть меньше 1"
-                    # word = self.vk_event.args[2]
-                    self.do_the_riddle(command, count, word)
-                    return 'Отправил в конфу'
-                elif self.vk_event.args[0].lower() in ['слово'] or self.vk_event.payload:
-                    self.check_conversation()
-                    check_session(self.session)
-                    check_player(self.player)
-                    if self.player.role == 'captain':
-                        return "Капитан не может угадывать"
-                    check_next_step(self.session, self.player.command)
-                    if self.vk_event.payload:
-                        if self.vk_event.payload['args']['action'] in ['слово']:
-                            return self.select_word(self.vk_event.payload['args']['row'],
-                                                    self.vk_event.payload['args']['col'])
-                        return "Внутренняя ошибка. Неизвестный action в payload"
-                    elif self.vk_event.args[0].lower() in ['слово']:
-                        self.check_args(2)
-                        word = self.vk_event.args[1].capitalize()
-                        board = json.loads(self.session.board)
-
-                        find_row = None
-                        find_col = None
-                        for i, row in enumerate(board):
-                            if find_row is not None:
-                                break
-                            for j, elem in enumerate(row):
-                                if elem['name'] == word:
-                                    find_row = i
-                                    find_col = j
-                                    if elem['state'] == 'open':
-                                        return "Слово уже открыто"
-                                    break
-                        self.select_word(find_row, find_col)
-                        return
-                elif self.vk_event.args[0].lower() in ['клава']:
-                    check_session(self.session)
-                    check_player(self.player)
-                    board = json.loads(self.session.board)
-                    user_is_captain = self.player.role == 'captain'
-                    if user_is_captain:
-                        if self.vk_event.from_chat:
-                            self.send_keyboard(board)
-                        else:
-                            self.check_pm()
-                            self.send_captain_keyboard(board)
-                    else:
-                        self.check_conversation()
-                        self.send_keyboard(board)
-                    return
-                elif self.vk_event.args[0].lower() in ['инфо', 'инфа', 'информация']:
-                    self.check_conversation()
-                    if self.session:
-                        msg = self.get_info()
-                        return msg
-                    else:
-                        return "Сейчас зарегистрированы:\n" \
-                               f"{get_str_players(self.players)}\n"
-                elif self.vk_event.args[0].lower() in ['удалить']:
-                    self.check_sender('conference_admin')
-                    if self.session is None:
-                        return "Нечего удалять"
-                    else:
-                        self.session.delete()
-                        return "Удалил"
                 else:
-                    return "Не знаю такого аргумента. /ман коднеймс"
-            # Регистрация
+                    if len(self.players) % 2 == 0:
+                        codenames_user.command = 'blue'
+                    else:
+                        codenames_user.command = 'red'
+                    codenames_user.save()
+                    return f"Зарегистрировал. Ты в {translator_commands[codenames_user.command]} команде"
+            elif self.vk_event.args[0].lower() in ['дерег']:
+                self.check_conversation()
+                check_not_session(self.session)
+                self.player.delete()
+                return "Дерегнул. Сейчас зарегистрированы:\n" \
+                       f"{get_str_players(self.players)}\n"
+            elif self.vk_event.args[0].lower() in ['старт']:
+                self.check_conversation()
+                check_not_session(self.session)
+                if len(self.players) < MIN_USERS:
+                    return f"Минимальное количество игроков - {MIN_USERS}. Сейчас зарегистрированы:\n" \
+                           f"{get_str_players(self.players)}\n"
+                return self.prepare_game()
+            elif self.vk_event.args[0].lower() in ['загадать']:
+                check_session(self.session)
+                check_player(self.player)
+                self.check_pm()
+                check_player_captain(self.player)
+                command = self.player.command
+                check_next_step(self.session, command + "_wait")
+                if len(self.vk_event.args) < 3:
+                    return "Недостаточно аргументов"
+                self.int_args = [1]
+                try:
+                    self.parse_args('int')
+                    count = self.vk_event.args[1]
+                    word = self.vk_event.args[2]
+                except RuntimeError:
+                    self.int_args = [2]
+                    self.parse_args('int')
+                    word = self.vk_event.args[1]
+                    count = self.vk_event.args[2]
+
+                # count = int(self.vk_event.args[1])
+                if count > 9:
+                    count = 9
+                elif count < 1:
+                    return "Число загадываемых слов не может быть меньше 1"
+                # word = self.vk_event.args[2]
+                self.do_the_riddle(command, count, word)
+                return 'Отправил в конфу'
+            elif self.vk_event.args[0].lower() in ['слово'] or self.vk_event.payload:
+                self.check_conversation()
+                check_session(self.session)
+                check_player(self.player)
+                if self.player.role == 'captain':
+                    return "Капитан не может угадывать"
+                check_next_step(self.session, self.player.command)
+                if self.vk_event.payload:
+                    if self.vk_event.payload['args']['action'] in ['слово']:
+                        return self.select_word(self.vk_event.payload['args']['row'],
+                                                self.vk_event.payload['args']['col'])
+                    return "Внутренняя ошибка. Неизвестный action в payload"
+                elif self.vk_event.args[0].lower() in ['слово']:
+                    self.check_args(2)
+                    word = self.vk_event.args[1].capitalize()
+                    board = json.loads(self.session.board)
+
+                    find_row = None
+                    find_col = None
+                    for i, row in enumerate(board):
+                        if find_row is not None:
+                            break
+                        for j, elem in enumerate(row):
+                            if elem['name'] == word:
+                                find_row = i
+                                find_col = j
+                                if elem['state'] == 'open':
+                                    return "Слово уже открыто"
+                                break
+                    self.select_word(find_row, find_col)
+                    return
+            elif self.vk_event.args[0].lower() in ['клава']:
+                check_session(self.session)
+                check_player(self.player)
+                board = json.loads(self.session.board)
+                user_is_captain = self.player.role == 'captain'
+                if user_is_captain:
+                    if self.vk_event.from_chat:
+                        self.send_keyboard(board)
+                    else:
+                        self.check_pm()
+                        self.send_captain_keyboard(board)
+                else:
+                    self.check_conversation()
+                    self.send_keyboard(board)
+                return
+            elif self.vk_event.args[0].lower() in ['инфо', 'инфа', 'информация']:
+                self.check_conversation()
+                if self.session:
+                    msg = self.get_info()
+                    return msg
+                else:
+                    return "Сейчас зарегистрированы:\n" \
+                           f"{get_str_players(self.players)}\n"
+            elif self.vk_event.args[0].lower() in ['удалить']:
+                self.check_sender('conference_admin')
+                if self.session is None:
+                    return "Нечего удалять"
+                else:
+                    self.session.delete()
+                    return "Удалил"
             else:
-                return 'Не переданы аргументы. /ман коднеймс'
+                return "Не знаю такого аргумента. /ман коднеймс"
+            # Регистрация
+            # else:
+            #     return 'Не переданы аргументы. /ман коднеймс'
 
             return 'Как ты сюда попал?'
 

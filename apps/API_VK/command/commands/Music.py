@@ -26,7 +26,7 @@ class Music(CommonCommand):
         names = ["музыка"]
         help_text = "Музыка - скачивает аудиодорожку из YouTube и присылает её в виде аудио"
         detail_help_text = "Музыка (ссылка на видео youtube) - скачивает аудиодорожку из YouTube и присылает её в " \
-                           "виде аудио"
+                           "виде аудио. Продолжительность видео максимум 10 минут"
         super().__init__(names, help_text, detail_help_text, args=1)
 
     def start(self):
@@ -43,6 +43,8 @@ class Music(CommonCommand):
         except youtube_dl.utils.DownloadError:
             return "Не смог найти видео по этой ссылке"
         audio_urls = []
+        if video_info['duration'] > 600:
+            return "Нельзя грузить музяку > 10 минут"
         if 'formats' in video_info:
             for _format in video_info['formats']:
                 if _format['ext'] == 'm4a':

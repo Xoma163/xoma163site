@@ -42,10 +42,11 @@ class Command(BaseCommand):
                     if notify.attachments and notify.attachments != "null":
                         notify_attachments = json.loads(notify.attachments)
                         attachments = get_attachments_for_upload(vk_bot, notify_attachments)
+                    result_msg = {'msg': message, 'attachments': attachments}
                     if notify.chat:
-                        vk_bot.send_message(notify.chat.chat_id, message, attachments)
+                        vk_bot.parse_and_send_msgs_thread(notify.chat.chat_id, result_msg)
                     else:
-                        vk_bot.send_message(notify.author.user_id, message, attachments)
+                        vk_bot.parse_and_send_msgs_thread(notify.author.user_id, result_msg)
 
                     # Если отложенная команда
                     if notify.text.startswith('/'):

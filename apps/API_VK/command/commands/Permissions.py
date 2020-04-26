@@ -12,7 +12,7 @@ class Permissions(CommonCommand):
     def __init__(self):
         names = ["права"]
         help_text = "Права - присылает список ваших прав"
-        detail_help_text = "Права - присылает ваши права. " \
+        detail_help_text = "Права - присылает ваши права\n" \
                            "Права [N] - права пользователя в беседе. N - имя, фамилия, логин/id, никнейм"
 
         super().__init__(names, help_text, detail_help_text)

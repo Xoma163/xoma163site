@@ -21,7 +21,7 @@ def draw_on_images(image_url, faces):
 
     width, height, _ = _image.shape
     scale = width * height / 1920 / 1080
-    scale = max(scale, 0.8)
+    scale = max(scale, 0.9)
     for x in font_scale:
         font_scale[x] *= scale
     for x in thickness:

@@ -48,6 +48,8 @@ class ExchangeRates(CommonCommand):
                 msg = self.get_rate_for_key(ex_rates, "KZT", value)
             elif any(ext in self.vk_event.args[1].lower() for ext in ['uah', "гривн"]):
                 msg = self.get_rate_for_key(ex_rates, "UAH", value)
+            elif any(ext in self.vk_event.args[1].lower() for ext in ['nok', "крон"]):
+                msg = self.get_rate_for_key(ex_rates, "NOK", value)
             else:
                 return "Пока не знаю как переводить из этой валюты"
 

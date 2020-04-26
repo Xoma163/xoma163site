@@ -110,7 +110,7 @@ class Roulette(CommonCommand):
                     [self.vk_bot.get_attachment_by_id('photo', None, 457242125),
                      self.vk_bot.get_attachment_by_id('photo', None, 457242126)],
                     [90, 10])
-                return {'attachments': attachment}
+                return {'attachments': [attachment]}
             if self.vk_event.args[0] == 'бонус':
                 datetime_now = localize_datetime(datetime.datetime.utcnow(), "Europe/Moscow")
                 datetime_last = localize_datetime(remove_tz(gamer.roulette_points_today), "Europe/Moscow")

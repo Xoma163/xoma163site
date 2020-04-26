@@ -1,7 +1,6 @@
 import json
 import random
 import re
-import threading
 
 import pytz
 
@@ -30,7 +29,7 @@ def random_probability(probability):
 def random_event(events, weights=None):
     if weights is None:
         weights = [1 for _ in events]
-    return random.choices(events, weights=weights)
+    return random.choices(events, weights=weights)[0]
 
 
 # Есть ли кириллица
@@ -48,17 +47,6 @@ def check_user_group(user, role):
 def get_user_groups(user):
     groups = user.groups.all().values()
     return [group['name'] for group in groups]
-
-
-def _send_messages_thread(vk_bot, users, message):
-    for user in users:
-        vk_bot.parse_and_send_msgs(user.user_id, message)
-
-
-# Отправляет сообщения в потоке всем пользователям
-def send_messages(vk_bot, users, message):
-    thread = threading.Thread(target=_send_messages_thread, args=(vk_bot, users, message,))
-    thread.start()
 
 
 # Убирает временную зону у datetime

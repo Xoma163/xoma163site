@@ -1,6 +1,5 @@
 import datetime
 import json
-import threading
 
 from django.http import HttpResponse, JsonResponse
 
@@ -182,11 +181,8 @@ def petrovich_api(request):
     vk_event_object = VkEvent(vk_event)
     res = vk_bot.menu(vk_event_object, send=False)
     if send:
-        x1 = threading.Thread(target=send_messages,
-                              args=(vk_bot, vk_event['peer_id'], f"{user}(Алиса):\n{msg}",))
-        x1.start()
-        x2 = threading.Thread(target=send_messages, args=(vk_bot, vk_event['peer_id'], res,))
-        x2.start()
+        vk_bot.parse_and_send_msgs_thread(vk_event['peer_id'], f"{user}(Алиса):\n{msg}")
+        vk_bot.parse_and_send_msgs_thread(vk_event['peer_id'], res)
     return send_json({'res': res})
 
 
@@ -213,15 +209,8 @@ def chat_api(request):
     if not chat:
         return send_json({'error': 'User chat is not registered'})
 
-    x1 = threading.Thread(target=send_messages,
-                          args=(vk_bot, chat.chat_id, f"{user}:\n{msg}",))
-    x1.start()
-
-    return JsonResponse({'res': 'success'}, json_dumps_params={'ensure_ascii': False})
-
-
-def send_messages(vk_bot, peer_id, msgs):
-    vk_bot.parse_and_send_msgs(peer_id, msgs)
+    vk_bot.parse_and_send_msgs_thread(chat.chat_id, f"{user}:\n{msg}")
+    return send_json({'res': 'success'})
 
 
 def get_user_by_imei(imei):

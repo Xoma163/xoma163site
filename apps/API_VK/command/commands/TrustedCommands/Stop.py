@@ -1,5 +1,4 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command.CommonMethods import send_messages
 from apps.API_VK.command._DoTheLinuxComand import do_the_linux_command
 from apps.API_VK.models import VkUser
 from apps.service.models import Service
@@ -39,7 +38,9 @@ class Stop(CommonCommand):
                     message = "Финишируем майн 1.12!"
                     users_notify = VkUser.objects.filter(groups__name='minecraft_notify') \
                         .exclude(id=self.vk_event.sender.id)
-                    send_messages(self.vk_bot, users_notify, message + f"\nИнициатор - {self.vk_event.sender}")
+                    users_chat_id_notify = [user.user_id for user in users_notify]
+                    self.vk_bot.parse_and_send_msgs_thread(users_chat_id_notify,
+                                                           message + f"\nИнициатор - {self.vk_event.sender}")
 
                     return message
                 elif (len(self.vk_event.args) >= 2 and (
@@ -53,7 +54,9 @@ class Stop(CommonCommand):
                     message = "Финишируем майн 1.15.1"
                     users_notify = VkUser.objects.filter(groups__name='minecraft_notify') \
                         .exclude(id=self.vk_event.sender.id)
-                    send_messages(self.vk_bot, users_notify, message + f"\nИнициатор - {self.vk_event.sender}")
+                    users_chat_id_notify = [user.user_id for user in users_notify]
+                    self.vk_bot.parse_and_send_msgs_thread(users_chat_id_notify,
+                                                           message + f"\nИнициатор - {self.vk_event.sender}")
 
                     return message
                 else:

@@ -99,8 +99,16 @@ class VkBotClass(threading.Thread):
                               dont_parse_links=dont_parse_links
                               )
 
+    # Отправляет сообщения юзерам в разных потоках
+    def parse_and_send_msgs_thread(self, chat_ids, message):
+        if not isinstance(chat_ids, list):
+            chat_ids = [chat_ids]
+        for chat_id in chat_ids:
+            thread = threading.Thread(target=self.parse_and_send_msgs, args=(chat_id, message,))
+            thread.start()
+
     def parse_and_send_msgs(self, peer_id, result):
-        if isinstance(result, str) or isinstance(result, int):
+        if isinstance(result, str) or isinstance(result, int) or isinstance(result, float):
             result = {'msg': result}
         if isinstance(result, dict):
             result = [result]
@@ -237,7 +245,7 @@ class VkBotClass(threading.Thread):
                     have_audio_message = False
                     have_action = vk_event['message']['action'] is not None
 
-                    all_attachments = vk_event['message']['attachments']
+                    all_attachments = vk_event['message']['attachments'].copy()
                     if vk_event['fwd']:
                         all_attachments += vk_event['fwd'][0]['attachments']
                     for attachment in all_attachments:

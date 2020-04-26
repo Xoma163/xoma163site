@@ -14,8 +14,6 @@ def check_server_by_info(ip, port, version):
 
 
 def stop_mine_by_version(online, no_players, version):
-    from apps.API_VK.command.CommonMethods import send_messages
-
     # Если сервак онлайн и нет игроков
     if online and no_players:
         obj, created = Service.objects.get_or_create(name=f'stop_minecraft_{version}')
@@ -24,7 +22,8 @@ def stop_mine_by_version(online, no_players, version):
         if created:
             message = f"Если никто не зайдёт на сервак по майну {version}, то через полчаса я его остановлю"
             users_notify = VkUser.objects.filter(groups__name='minecraft_notify')
-            send_messages(vk_bot, users_notify, message)
+            users_chat_id_notify = [user.user_id for user in users_notify]
+            vk_bot.parse_and_send_msgs_thread(users_chat_id_notify, message)
 
         # Если событие уже было создано, значит пора отрубать
         else:
@@ -39,7 +38,8 @@ def stop_mine_by_version(online, no_players, version):
 
                 message = f"Вырубаю майн {version}"
                 users_notify = VkUser.objects.filter(groups__name='minecraft_notify')
-                send_messages(vk_bot, users_notify, message)
+                users_chat_id_notify = [user.user_id for user in users_notify]
+                vk_bot.parse_and_send_msgs_thread(users_chat_id_notify, message)
             else:
                 obj.delete()
 

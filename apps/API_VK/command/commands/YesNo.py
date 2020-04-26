@@ -64,6 +64,6 @@ class YesNo(CommonCommand):
                          ["Ну тут даже я хз", "ДА НЕ ЗНАЮ Я", "Хз", "Спроси у другого бота", "Да нет наверное"]]
         probability_events1 = [48, 48, 4]
         probability_events2 = [80, 5, 5, 5, 5]
-        selected_event = random_event(random_events, probability_events1)[0]
-        selected_event2 = random_event(selected_event, probability_events2)[0]
+        selected_event = random_event(random_events, probability_events1)
+        selected_event2 = random_event(selected_event, probability_events2)
         return selected_event2

@@ -57,3 +57,7 @@ class Wikipedia(CommonCommand):
             else:
                 msg += "Я что-то нашёл, но так как такого кейса никогда не было, то я не знаю, что выводить, хд"
             return msg
+
+# Если он серит в консоль, то
+#  lib/wikipedia/wikipedia.py:389
+#  lis = BeautifulSoup(html, 'html.parser').find_all('li')
