@@ -7,10 +7,11 @@ CLIENT_SECRET = secrets['everypixel']['client_secret']
 
 
 def get_image_quality(image_url):
-    params = {'url': image_url}
-    response = requests.get('https://api.everypixel.com/v1/quality_ugc',
-                            params=params,
-                            auth=(CLIENT_ID, CLIENT_SECRET)).json()
+    URL = 'https://api.everypixel.com/v1/quality_ugc'
+    params = {
+        'url': image_url
+    }
+    response = requests.get(URL, params, auth=(CLIENT_ID, CLIENT_SECRET)).json()
 
     if response['status'] == 'error':
         print(response)

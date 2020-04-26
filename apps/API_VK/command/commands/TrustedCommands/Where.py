@@ -21,7 +21,7 @@ class Where(CommonCommand):
             return str(e)
 
         if self.vk_event.sender.city and self.vk_event.sender.city.timezone:
-            timezone = self.vk_event.sender.city.timezone
+            timezone = self.vk_event.sender.city.timezone.name
         else:
             timezone = TIME_ZONE
         today = localize_datetime(datetime.datetime.utcnow(), timezone)

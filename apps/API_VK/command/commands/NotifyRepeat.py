@@ -25,7 +25,7 @@ class NotifyRepeat(CommonCommand):
     def start(self):
         if self.vk_event.sender.city is None:
             return "Не знаю ваш город. /город"
-        user_timezone = self.vk_event.sender.city.timezone
+        user_timezone = self.vk_event.sender.city.timezone.name
 
         date = get_time(self.vk_event.args[0])
         if not date:

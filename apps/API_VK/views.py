@@ -62,7 +62,7 @@ def where_is_me(request):
             "university": {0: "Я в универе", 1: "Выхожу из универа", "count": 0},
         }
 
-        today = localize_datetime(datetime.datetime.utcnow(), author.city.timezone)
+        today = localize_datetime(datetime.datetime.utcnow(), author.city.timezone.name)
         today_logs = Log.objects.filter(date__year=today.year, date__month=today.month, date__day=today.day,
                                         author=author)
         for today_log in today_logs:

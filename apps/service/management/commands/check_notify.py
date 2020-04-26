@@ -34,7 +34,7 @@ class Command(BaseCommand):
                     flag = delta_time.days == 0 and delta_time.seconds <= 60
 
                 if flag:
-                    notify_datetime = localize_datetime(remove_tz(notify.date), notify.author.city.timezone)
+                    notify_datetime = localize_datetime(remove_tz(notify.date), notify.author.city.timezone.name)
                     message = f"Напоминалка на {notify_datetime.strftime('%H:%M')}\n" \
                               f"[id{notify.author.user_id}|{notify.author}]:\n" \
                               f"{notify.text}"
@@ -73,7 +73,7 @@ class Command(BaseCommand):
                     if notify.repeat:
                         # Для постоянных уведомлений дата должа быть на завтрашний день обязательно. Это важно для сортировки
                         new_datetime = datetime.combine(DATETIME_NOW.date(), notify.date.time()) + timedelta(days=1)
-                        new_datetime = localize_datetime(remove_tz(new_datetime), notify.author.city.timezone)
+                        new_datetime = localize_datetime(remove_tz(new_datetime), notify.author.city.timezone.name)
                         notify.date = new_datetime
                         notify.save()
                     else:

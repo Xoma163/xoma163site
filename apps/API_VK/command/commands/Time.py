@@ -22,5 +22,5 @@ class Time(CommonCommand):
         if not city.timezone:
             return "Таймзона у города не найдена"
 
-        new_date = localize_datetime(datetime.datetime.utcnow(), city.timezone)
+        new_date = localize_datetime(datetime.datetime.utcnow(), city.timezone.name)
         return new_date.strftime("%d.%m.%Y\n%H:%M:%S")

@@ -17,9 +17,14 @@ def get_weather(city):
 
     TOKEN = secrets['yandex']['weather']
 
-    URL = f"https://api.weather.yandex.ru/v1/informers?lat={city.lat}&lon={city.lon}&lang=ru_RU"
+    URL = f"https://api.weather.yandex.ru/v1/informers"
+    params = {
+        'lat': city.lat,
+        'lon': city.lon,
+        'lang': 'ru_RU'
+    }
     HEADERS = {'X-Yandex-API-Key': TOKEN}
-    response = requests.get(URL, headers=HEADERS).json()
+    response = requests.get(URL, params, headers=HEADERS).json()
     if 'status' in response:
         if response['status'] == 403:
             return "На сегодня я исчерпал все запросы к Yandex Weather :("

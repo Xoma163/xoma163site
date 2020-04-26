@@ -9,7 +9,7 @@ class Statistics(CommonCommand):
         help_text = "Стата - статистика по победителям игр"
         detail_help_text = "Стата [модуль=все]- статистика. Модули:\n" \
                            "петрович, ставки, крестики, рулетка, коднеймс"
-        super().__init__(names, help_text, detail_help_text)
+        super().__init__(names, help_text, detail_help_text, conversation=True)
 
     def start(self):
         args_translator = {'петрович': self.get_petrovich,
@@ -43,9 +43,8 @@ class Statistics(CommonCommand):
             msg += "%s - %s\n" % (result[0], result[1])
         return msg
 
-    @staticmethod
-    def get_rates():
-        gamers = Gamer.objects.exclude(points=0).order_by('-points')
+    def get_rates(self):
+        gamers = Gamer.objects.filter(user__chats=self.vk_event.chat).exclude(points=0).order_by('-points')
         result_list = []
         for gamer in gamers:
             result_list.append([gamer, gamer.points])
@@ -55,9 +54,9 @@ class Statistics(CommonCommand):
             msg += "%s - %s\n" % (result[0], result[1])
         return msg
 
-    @staticmethod
-    def get_tic_tac_toe():
-        gamers = Gamer.objects.exclude(tic_tac_toe_points=0).order_by('-tic_tac_toe_points')
+    def get_tic_tac_toe(self):
+        gamers = Gamer.objects.filter(user__chats=self.vk_event.chat).exclude(tic_tac_toe_points=0).order_by(
+            '-tic_tac_toe_points')
         result_list = []
         for gamer in gamers:
             result_list.append([gamer, gamer.tic_tac_toe_points])
@@ -68,9 +67,9 @@ class Statistics(CommonCommand):
 
         return msg
 
-    @staticmethod
-    def get_codenames():
-        gamers = Gamer.objects.exclude(codenames_points=0).order_by('-codenames_points')
+    def get_codenames(self):
+        gamers = Gamer.objects.filter(user__chats=self.vk_event.chat).exclude(codenames_points=0).order_by(
+            '-codenames_points')
         result_list = []
         for gamer in gamers:
             result_list.append([gamer, gamer.codenames_points])
@@ -82,7 +81,8 @@ class Statistics(CommonCommand):
         return msg
 
     def get_roulettes(self):
-        gamers = Gamer.objects.exclude(roulette_points=0).filter(user__chats=self.vk_event.chat).order_by(
+        gamers = Gamer.objects.filter(user__chats=self.vk_event.chat).exclude(roulette_points=0).filter(
+            user__chats=self.vk_event.chat).order_by(
             '-roulette_points')
         result_list = []
         for gamer in gamers:

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from apps.service.models import Statistic, Issue, Service, Counter, Cat, Meme, Notify, City, AudioList, LaterMessage, \
-    Donations
+    Donations, TimeZone
 
 
 @admin.register(Statistic)
@@ -45,6 +45,11 @@ class NotifyAdmin(admin.ModelAdmin):
 @admin.register(City)
 class CityAdmin(admin.ModelAdmin):
     list_display = ('name', 'synonyms', 'timezone', 'lat', 'lon')
+
+
+@admin.register(TimeZone)
+class TimeZoneAdmin(admin.ModelAdmin):
+    list_display = ('name',)
 
 
 @admin.register(AudioList)

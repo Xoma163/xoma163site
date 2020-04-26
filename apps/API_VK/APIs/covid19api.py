@@ -4,9 +4,9 @@ import requests
 
 
 def get_detail_by_country(country_name, status='confirmed'):
-    url = f"https://api.covid19api.com/dayone/country/{country_name}/status/{status}"
+    URL = f"https://api.covid19api.com/dayone/country/{country_name}/status/{status}"
 
-    response = requests.get(url, timeout=5).json()
+    response = requests.get(URL, timeout=5).json()
     groups = []
     for _, group in groupby(response, lambda x: x['Date']):
         list_group = list(group)

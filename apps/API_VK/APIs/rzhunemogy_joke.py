@@ -2,9 +2,12 @@ import requests
 
 
 def get_joke(_type=1):
-    URL = f"http://rzhunemogu.ru/RandJSON.aspx?CType={_type}"
+    URL = f"http://rzhunemogu.ru/RandJSON.aspx"
+    params = {
+        'CType': _type
+    }
     try:
-        response = requests.get(URL, timeout=10)
+        response = requests.get(URL, params, timeout=10)
     except Exception as e:
         return f"Проблемы с апи. Подробности:\n{str(e)}"
 

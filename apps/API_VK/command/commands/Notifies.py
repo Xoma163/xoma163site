@@ -36,7 +36,7 @@ class Notifies(CommonCommand):
     def start(self):
         if self.vk_event.sender.city is None:
             return "Не знаю ваш город. /город"
-        user_timezone = self.vk_event.sender.city.timezone
+        user_timezone = self.vk_event.sender.city.timezone.name
 
         if self.vk_event.args:
             if self.vk_event.args[0].lower() in ["удалить", "удали"]:
