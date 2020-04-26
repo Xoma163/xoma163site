@@ -95,17 +95,26 @@ class CommonCommand:
         pass
 
     # Проверяет роль отправителя
-    def check_sender(self, role):
-        if role == 'admin':
-            if self.vk_event.sender.user_id != secrets['vk']['admin_id']:
-                return False
-        if check_user_group(self.vk_event.sender, role):
-            return True
-        if role == 'conference_admin':
-            if self.vk_event.chat.admin == self.vk_event.sender:
+    def check_sender(self, roles):
+        if isinstance(roles, str):
+            roles = [roles]
+        for role in roles:
+            if role == 'admin' and check_user_group(self.vk_event.sender, role):
+                if self.vk_event.sender.user_id == secrets['vk']['admin_id']:
+                    return True
+            if check_user_group(self.vk_event.sender, role):
                 return True
-        error = f"Команда доступна только для пользователей с уровнем прав {role_translator[role]}"
-        raise RuntimeError(error)
+            if role == 'conference_admin':
+                if self.vk_event.chat.admin == self.vk_event.sender:
+                    return True
+            if len(roles) == 1:
+                error = f"Команда доступна только для пользователей с уровнем прав - {role_translator[role]}"
+            else:
+                rus_roles = [role_translator[x] for x in roles]
+
+                error = f"Команда доступна только для пользователей с уровнями прав - {', '.join(rus_roles)}"
+
+            raise RuntimeError(error)
 
     # Проверяет количество переданных аргументов
     def check_args(self, args=None):
@@ -240,5 +249,6 @@ role_translator = {
     'student': "студент",
     'minecraft_notify': "уведомления майна",
     'user': 'пользователь',
-    'banned': 'забанен'
+    'banned': 'забанен',
+    'trusted': 'доверенный'
 }

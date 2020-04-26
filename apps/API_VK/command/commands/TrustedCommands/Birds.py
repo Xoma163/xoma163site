@@ -12,7 +12,7 @@ class Birds(CommonCommand):
                     {'text': 'Синички 20', 'color': 'blue', 'row': 2, 'col': 2},
                     {'text': 'Синички 100', 'color': 'blue', 'row': 2, 'col': 3}]
 
-        super().__init__(names, help_text, detail_help_text, keyboard, int_args=[0], api=False)
+        super().__init__(names, help_text, detail_help_text, keyboard, int_args=[0], access='trusted', api=False)
 
     def start(self):
         attachments = []

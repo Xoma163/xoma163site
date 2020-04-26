@@ -59,17 +59,25 @@ def generate_help_text():
             if isinstance(help_text, list):
                 for text in help_text:
                     if command.enabled:
+                        # ToDo: duplicate
                         # Если команда игра, то в отдельный список
                         if command.__class__.__module__.split('.')[-2] == 'Games':
                             help_text_list['games'].append(text['text'])
                         else:
-                            help_text_list[text['for']].append(text['text'])
+                            text_for = text['for'][0] if isinstance(text['for'], list) else text['for']
+                            if text_for in help_text_list:
+                                help_text_list[text_for].append(text['text'])
+                            else:
+                                print(f"Warn: Ошибка в генерации клавиатуры. Ключ {text_for} не найден")
                         if command.api is None or command.api:
-
                             if command.__class__.__module__.split('.')[-2] == 'Games':
                                 api_help_text_list['games'].append(text['text'])
                             else:
-                                api_help_text_list[text['for']].append(text['text'])
+                                text_for = text['for'][0] if isinstance(text['for'], list) else text['for']
+                                if text_for in api_help_text_list:
+                                    api_help_text_list[text_for].append(text['text'])
+                                else:
+                                    print(f"Warn: Ошибка в генерации клавиатуры. Ключ {text_for} не найден")
 
     for group in GROUPS_WITH_GAMES:
         help_text_list[group].sort()
@@ -92,7 +100,11 @@ def generate_keyboard():
                     if 'for' in elem:
                         keys[elem['for']].append(elem)
                     else:
-                        keys[command.access].append(elem)
+                        command_access = command.access[0] if isinstance(command.access, list) else command.access
+                        if command_access in keys:
+                            keys[command_access].append(elem)
+                        else:
+                            print(f"Warn: Ошибка в генерации клавиатуры. Ключ {command_access} не найден")
 
     buttons = {group: [] for group in GROUPS}
     for k in keys:

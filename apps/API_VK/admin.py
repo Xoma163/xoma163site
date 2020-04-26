@@ -12,7 +12,9 @@ class VkUserAdmin(admin.ModelAdmin):
     )
     list_filter = ('gender',
                    ('city', admin.RelatedOnlyFieldListFilter),
-                   ('groups', admin.RelatedOnlyFieldListFilter),)
+                   ('groups', admin.RelatedOnlyFieldListFilter),
+                   'chats__name')
+    search_fields = ['name', 'surname', 'nickname', 'nickname_real', 'id']
 
 
 @admin.register(VkChat)

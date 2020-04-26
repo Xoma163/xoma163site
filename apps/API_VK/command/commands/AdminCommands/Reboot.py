@@ -7,7 +7,7 @@ class Reboot(CommonCommand):
         names = ["ребут"]
         help_text = "Ребут - перезагружает сервер."
         detail_help_text = "Ребут - перезагружает весь сервер аппаратно. Поднимется ли обратно - полностью на твоей ответственности"
-        super().__init__(names, help_text, detail_help_text, access='admin')
+        super().__init__(names, help_text, detail_help_text, access=['admin', 'trusted'])
 
     def start(self):
         do_the_linux_command('sudo systemctl reboot -i')

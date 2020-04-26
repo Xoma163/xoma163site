@@ -8,7 +8,7 @@ class VkChat(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
     chat_id = models.CharField(verbose_name='ID чата', max_length=20, default="")
     name = models.CharField(verbose_name='Название', max_length=40, default="", blank=True)
-    admin = models.ForeignKey('VkUser', verbose_name='Админ конфы', blank=True, null=True, on_delete=models.SET_NULL)
+    admin = models.ForeignKey('VkUser', verbose_name='Админ', blank=True, null=True, on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = "Чат"

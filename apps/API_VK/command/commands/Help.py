@@ -55,6 +55,9 @@ class Help(CommonCommand):
         if check_user_group(self.vk_event.sender, 'terraria') and help_texts['terraria']:
             output += "\n\n— команды для игроков террарии —\n"
             output += help_texts['terraria']
+        if check_user_group(self.vk_event.sender, 'trusted') and help_texts['trusted']:
+            output += "\n\n— команды для доверенных пользователей —\n"
+            output += help_texts['trusted']
         if help_texts['games']:
             output += "\n\n— игры —\n"
             output += help_texts['games']

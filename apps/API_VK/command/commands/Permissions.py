@@ -31,6 +31,10 @@ class Permissions(CommonCommand):
         roles = get_roles(user)
         if len(roles) > 0:
             result = "\n".join(roles)
-            return str(result)
+
+            if self.vk_event.chat and self.vk_event.chat.admin == self.vk_event.sender:
+                result += "\n" \
+                          "админ конфы"
+            return result
         else:
             return "Нет прав :("

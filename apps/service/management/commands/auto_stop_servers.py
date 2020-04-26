@@ -8,7 +8,7 @@ from xoma163site.wsgi import vk_bot
 
 
 def check_server_by_info(ip, port, version):
-    from apps.API_VK.command.commands.Status import get_minecraft_server_info
+    from apps.API_VK.command.commands.TrustedCommands.Status import get_minecraft_server_info
     res = get_minecraft_server_info(ip, port, version)
     stop_mine_by_version(res.find("запущен") != -1, res.find("Игроки") == -1, version)
 

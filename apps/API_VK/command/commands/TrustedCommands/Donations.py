@@ -6,7 +6,7 @@ class Donations(CommonCommand):
     def __init__(self):
         names = ["донаты"]
         help_text = "Донаты - список всех донатов"
-        super().__init__(names, help_text)
+        super().__init__(names, help_text, access='trusted')
 
     def start(self):
         donations = DonationsModel.objects.all()

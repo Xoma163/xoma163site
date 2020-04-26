@@ -165,7 +165,7 @@ class VkBotClass(threading.Thread):
                     self.parse_and_send_msgs(vk_event.peer_id, msg)
                 return msg
             except Exception as e:
-                msg = "Ошибка. /Логи"
+                msg = "Непредвиденная ошибка. Сообщите разработчику"
                 tb = traceback.format_exc()
                 print(tb)
                 logs = f"Exception: {str(e)}\n" \
@@ -360,7 +360,7 @@ class VkBotClass(threading.Thread):
             raise RuntimeError("2 и более пользователей подходит под поиск")
 
         if len(user) == 0:
-            raise RuntimeError("Пользователь не найден")
+            raise RuntimeError("Пользователь не найден. Возможно опечатка или он мне ещё ни разу не писал")
 
         return user.first()
 

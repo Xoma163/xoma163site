@@ -64,9 +64,9 @@ def get_bot_logs(command):
 
 class Logs(CommonCommand):
     def __init__(self):
-        names = ["лог", "логи", "logs", "log"]
-        help_text = "Лог - логи"
-        detail_help_text = "Лог [сервис=бот] [кол-во строк=50] - логи. \n" \
+        names = ["логи", "лог", "logs", "log"]
+        help_text = "Логи - логи бота или сервера"
+        detail_help_text = "Логи [сервис=бот] [кол-во строк=50] - логи. \n" \
                            "Сервис - бот или сервер"
         keyboard = {'for': 'moderator', 'text': 'Логи', 'color': 'blue', 'row': 1, 'col': 1}
         super().__init__(names, help_text, detail_help_text, access='moderator', keyboard=keyboard)

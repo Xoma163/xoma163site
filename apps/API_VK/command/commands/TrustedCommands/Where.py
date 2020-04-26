@@ -11,7 +11,7 @@ class Where(CommonCommand):
         names = ["где"]
         help_text = "Где - информация о чекточках"
         detail_help_text = "Где (N) - информация о чекточках, где N - имя, фамилия, логин/id, никнейм"
-        super().__init__(names, help_text, detail_help_text, args=1)
+        super().__init__(names, help_text, detail_help_text, args=1, access='trusted')
 
     def start(self):
 

@@ -9,7 +9,7 @@ class Restart(CommonCommand):
         detail_help_text = "Рестарт [сервис=бот [версия=1.15.1]] - перезагружает сервис\n" \
                            "Сервис - бот/веб/майнкрафт/террария/сайт\n" \
                            "Если майнкрафт, то может быть указана версия, 1.12.2 или 1.15.1"
-        super().__init__(names, help_text, detail_help_text)
+        super().__init__(names, help_text, detail_help_text, access='trusted')
 
     def start(self):
         if self.vk_event.args:
@@ -35,11 +35,11 @@ class Restart(CommonCommand):
                 do_the_linux_command('sudo systemctl start terraria')
                 return "Рестартим террарию!"
             elif self.vk_event.args[0] in ['бот', 'bot']:
-                self.check_sender('admin')
+                self.check_sender(['admin'])
                 do_the_linux_command('sudo systemctl restart xoma163bot')
                 return 'Рестартим бота'
             elif self.vk_event.args[0] in ['веб', 'web', 'сайт', 'site']:
-                self.check_sender('admin')
+                self.check_sender(['admin'])
                 do_the_linux_command('sudo systemctl restart xoma163site')
                 return 'Рестартим веб'
             else:

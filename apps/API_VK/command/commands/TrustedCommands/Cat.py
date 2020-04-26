@@ -9,7 +9,7 @@ class Cat(CommonCommand):
         names = ["кот"]
         help_text = "Кот - добавить всратого кота в базу"
         detail_help_text = "Кот (Изображения/Пересылаемое сообщение с изображениями) - добавляет кота в БД"
-        super().__init__(names, help_text, detail_help_text, api=False)
+        super().__init__(names, help_text, detail_help_text, access='trusted', api=False)
 
     def add_cat(self, cat_image):
         cat = CatModel(author=self.vk_event.sender)
