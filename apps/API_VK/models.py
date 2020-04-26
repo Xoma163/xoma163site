@@ -93,7 +93,8 @@ class Log(models.Model):
 class QuoteBook(models.Model):
     text = models.TextField(verbose_name="Текст", max_length=5000)
     date = models.DateTimeField(verbose_name="Дата", auto_now_add=True, blank=True)
-    peer_id = models.CharField(verbose_name='ID чата', max_length=20, default=0)
+    vk_user = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.SET_NULL, null=True, blank=True)
+    vk_chat = models.ForeignKey(VkChat, verbose_name="Чат", on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
         verbose_name = "Цитата"

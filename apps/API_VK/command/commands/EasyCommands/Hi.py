@@ -1,4 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import random_event
 
 
 class Hi(CommonCommand):
@@ -8,4 +9,4 @@ class Hi(CommonCommand):
         super().__init__(names)
 
     def start(self):
-        return "Хай"
+        return random_event(self.names)

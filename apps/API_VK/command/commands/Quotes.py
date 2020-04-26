@@ -43,12 +43,14 @@ class Quotes(CommonCommand):
                 except ValueError:
                     text_filter = self.vk_event.args[0]
 
-        if text_filter:
-            objs = QuoteBook.objects.filter(text__icontains=text_filter)
+        if self.vk_event.chat:
+            objs = QuoteBook.objects.filter(vk_chat=self.vk_event.chat)
         else:
-            objs = QuoteBook.objects.all()
+            objs = QuoteBook.objects.filter(vk_user=self.vk_event.sender)
 
-        objs = objs.filter(peer_id=self.vk_event.peer_id).order_by('-date')
+        if text_filter:
+            objs = objs.filter(text__icontains=text_filter)
+        objs = objs.order_by('-date')
         p = Paginator(objs, 5)
 
         if page <= 0:

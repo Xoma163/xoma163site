@@ -34,8 +34,8 @@ class LogAdmin(admin.ModelAdmin):
 
 @admin.register(QuoteBook)
 class QuoteBookAdmin(admin.ModelAdmin):
-    list_display = ('peer_id', 'date', 'text')
-    list_filter = ('peer_id',)
+    list_display = ('vk_chat', 'vk_user', 'date', 'text')
+    list_filter = (('vk_chat', admin.RelatedOnlyFieldListFilter), ('vk_user', admin.RelatedOnlyFieldListFilter),)
 
 
 @admin.register(Words)
