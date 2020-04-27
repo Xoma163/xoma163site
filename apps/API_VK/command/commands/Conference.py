@@ -11,8 +11,7 @@ class Conference(CommonCommand):
     def accept(self, vk_event):
         if vk_event.chat and (vk_event.chat.name is None or vk_event.chat.name == "") or vk_event.command in self.names:
             return True
-        if vk_event.action and vk_event.action['type'] == 'chat_invite_user':
-            return True
+
         return False
 
     def start(self):
@@ -30,14 +29,5 @@ class Conference(CommonCommand):
                 else:
                     return "Конфа не имеет названия"
             return f"Поменял название беседы на {self.vk_event.original_args}"
-        elif self.vk_event.action:
-            if self.vk_event.chat.admin is None:
-                self.vk_event.chat.admin = self.vk_event.sender
-                self.vk_event.chat.save()
-                return f"Администратором конфы является {self.vk_event.sender}\n" \
-                       f"Задайте имя конфы:\n" \
-                       "/конфа {Название конфы}"
-            else:
-                return "ВсЕм ПрИфФкИ в ЭтОм ЧаТиКе =)))))))"
         else:
             return "Не задано имя конфы, задайте его командой /конфа (название конфы)"

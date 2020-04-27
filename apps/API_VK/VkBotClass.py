@@ -188,10 +188,11 @@ class VkBotClass(threading.Thread):
         tanimoto_max = 0
         for command in commands:
             for name in command.names:
-                tanimoto_current = self.tanimoto(vk_event.command, name)
-                if tanimoto_current > tanimoto_max:
-                    tanimoto_max = tanimoto_current
-                    similar_command = name
+                if name:
+                    tanimoto_current = self.tanimoto(vk_event.command, name)
+                    if tanimoto_current > tanimoto_max:
+                        tanimoto_max = tanimoto_current
+                        similar_command = name
 
         msg = f"Я не понял команды \"{vk_event.command}\"\n"
         tanimoto_max = min(1, tanimoto_max)
@@ -394,6 +395,8 @@ class VkBotClass(threading.Thread):
         return vk_chats.first()
 
     def get_bot_by_id(self, bot_id):
+        if bot_id < 0:
+            bot_id -= 1
         vk_bot = VkBot.objects.filter(bot_id=bot_id)
         if len(vk_bot) > 0:
             vk_bot = vk_bot.first()
@@ -423,6 +426,12 @@ class VkBotClass(threading.Thread):
         chats = vk_user.chats
         if chat not in chats.all():
             chats.add(chat)
+
+    @staticmethod
+    def remove_group_from_user(vk_user, chat):
+        chats = vk_user.chats
+        if chat in chats.all():
+            chats.remove(chat)
 
     @staticmethod
     def get_group_id(_id):

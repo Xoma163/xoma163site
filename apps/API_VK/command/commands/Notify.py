@@ -25,8 +25,9 @@ def get_time(arg1, arg2):
     if arg1 in time_translator:
         delta_days = time_translator[arg1] - datetime.today().isoweekday()
         if delta_days < 0:
-            # Здесь 6 потому что если мы прибавляем дни после прошедшего дня, то 7 дней это следующий день недели.
             delta_days += 6
+        if delta_days == 0:
+            delta_days += 7
         arg1 = (datetime.today().date() + timedelta(days=delta_days)).strftime("%d.%m.%Y")
     try:
         date = datetime.strptime(str(datetime.today().date()) + " " + arg1, "%Y-%m-%d %H:%M")
