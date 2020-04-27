@@ -101,11 +101,20 @@ class Cat(models.Model):
 
 
 class Meme(models.Model):
+    types = [
+        ('photo', 'Фото'),
+        ('video', 'Видео'),
+        ('audio', 'Аудио'),
+        ('doc', 'Документ'),
+    ]
+
     id = models.AutoField(primary_key=True)
     name = models.CharField(verbose_name="Название", max_length=1000, default="")
     link = models.CharField(verbose_name="Ссылка", max_length=1000, default="", null=True, blank=True)
-    image = models.ImageField(upload_to='service/memes/', verbose_name="Изображение", null=True, blank=True)
     author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
+    type = models.CharField(verbose_name="Тип", max_length=5, choices=types, blank=True)
+
+    approved = models.BooleanField(verbose_name="Разрешённый", default=False)
 
     class Meta:
         verbose_name = "мем"
@@ -115,24 +124,22 @@ class Meme(models.Model):
     def __str__(self):
         return str(self.name)
 
-    def save_remote_image(self, url, ext_image=None):
-        if not self.image:
-            ext, image = get_image_from_url(url)
-            if ext_image:
-                ext = ext_image
-            self.image.save(f"{self.name}.{ext}", File(image))
-        self.save()
-
-    def preview(self):
-        if self.image:
+    def preview_image(self):
+        if self.link:
             from django.utils.safestring import mark_safe
-            return mark_safe(u'<img src="{0}" width="150"/>'.format(self.image.url))
+            return mark_safe(u'<img src="{0}" width="150"/>'.format(self.link))
+        else:
+            return '(Нет изображения)'
+
+    def preview_link(self):
+        if self.link:
+            from django.utils.safestring import mark_safe
+            return mark_safe(u'<a href="{0}">{0}</a>'.format(self.link))
         else:
             return '(Нет изображения)'
 
 
 @receiver(pre_delete, sender=Cat, dispatch_uid='question_delete_signal')
-@receiver(pre_delete, sender=Meme, dispatch_uid='question_delete_signal')
 def log_deleted_question(sender, instance, using, **kwargs):
     if instance.image:
         delete_path = f'{MEDIA_ROOT}/{instance.image}'

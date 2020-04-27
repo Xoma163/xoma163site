@@ -2,6 +2,7 @@ import json
 import re
 
 from secrets.secrets import secrets
+from xoma163site.settings import VK_URL
 
 
 def auto_str(cls):
@@ -75,7 +76,7 @@ class VkEvent:
                 if attachment['type'] in ['photo', 'video', 'audio', 'doc']:
                     new_attachment[
                         'vk_url'] = f"{attachment['type']}{attachment_type['owner_id']}_{attachment_type['id']}"
-                    new_attachment['url'] = f"https://vk.com/{new_attachment['vk_url']}"
+                    new_attachment['url'] = f"{VK_URL}{new_attachment['vk_url']}"
                 if attachment['type'] == 'photo':
                     max_size_image = attachment_type['sizes'][0]
                     max_size_width = max_size_image['width']
@@ -124,39 +125,34 @@ class VkEvent:
 
     def __init__(self, vk_event):
         self.mentions = secrets['vk']['bot']['mentions']
+        if 'message' in vk_event:
+            text = self.delete_slash_and_mentions(vk_event['message'].get('text'), self.mentions)
+            parsed = self.parse_msg(text)
+            self.msg = parsed.get('msg')
+            self.command = parsed.get('command')
+            self.args = parsed.get('args')
+            self.original_args = parsed.get('original_args')
 
-        vk_event['message']['text'] = self.delete_slash_and_mentions(vk_event['message']['text'], self.mentions)
-        vk_event['parsed'] = self.parse_msg(vk_event['message']['text'])
-        vk_event['attachments'] = self.parse_attachments(vk_event.get('message').get('attachments'))
+            self.attachments = self.parse_attachments(vk_event['message'].get('attachments'))
+            self.action = vk_event['message'].get('action')
+
+            self.payload = None
+            if 'payload' in vk_event['message'] and vk_event['message']['payload']:
+                self.payload = json.loads(vk_event['message']['payload'])
+                self.msg = None
+                self.command = self.payload['command']
+                self.args = None
+                self.original_args = None
+                if 'args' in self.payload:
+                    if isinstance(self.payload['args'], dict):
+                        self.args = [arg for arg in self.payload['args'].values()]
+                    elif isinstance(self.payload['args'], list):
+                        self.args = self.payload['args']
+                    self.original_args = " ".join([str(arg) for arg in self.args])
 
         self.sender = vk_event.get('sender')
         self.chat = vk_event.get('chat')
         self.peer_id = vk_event.get('peer_id')
-
-        # Если переданы скрытые параметры с кнопок
-        if 'message' in vk_event and 'payload' in vk_event['message'] and vk_event['message']['payload']:
-            self.payload = json.loads(vk_event['message']['payload'])
-            self.msg = None
-            self.command = self.payload['command']
-            if 'args' in self.payload:
-                if isinstance(self.payload['args'], dict):
-                    self.args = [arg for arg in self.payload['args'].values()]
-                elif isinstance(self.payload['args'], list):
-                    self.args = self.payload['args']
-                str_args = [str(arg) for arg in self.args]
-                self.original_args = " ".join(str_args)
-            else:
-                self.args = None
-        else:
-            parsed = vk_event.get('parsed')
-            if parsed:
-                self.msg = parsed.get('msg')
-                self.command = parsed.get('command')
-                self.args = parsed.get('args')
-                self.original_args = parsed.get('original_args')
-            self.payload = None
-
-        self.action = vk_event.get('message').get('action')
 
         if self.chat:
             self.from_chat = True
@@ -165,22 +161,6 @@ class VkEvent:
             self.from_user = True
             self.from_chat = False
 
-        if 'attachments' in vk_event:
-            self.attachments = vk_event['attachments']
-        else:
-            self.attachments = None
-
-        if 'fwd' in vk_event:
-            self.fwd = vk_event['fwd']
-        else:
-            self.fwd = None
-
-        if 'api' in vk_event:
-            self.from_api = vk_event['api']
-        else:
-            self.from_api = False
-
-        if 'yandex' in vk_event:
-            self.yandex = vk_event['yandex']
-        else:
-            self.yandex = None
+        self.fwd = vk_event.get('fwd', None)
+        self.from_api = vk_event.get('api', None)
+        self.yandex = vk_event.get('yandex', None)
