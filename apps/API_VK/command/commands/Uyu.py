@@ -3,7 +3,7 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 
 class Uyu(CommonCommand):
     def __init__(self):
-        names = ["уъу", "бля", "ъуъ"]
+        names = ["уъу", "ъуъ"]
         help_text = "Уъу - уъуфикация текста"
         detail_help_text = "Уъу (Пересланные сообщения) [новое слово] - уъуфикация текста"
         super().__init__(names, help_text, detail_help_text)

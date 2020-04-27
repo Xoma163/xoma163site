@@ -19,7 +19,6 @@ class Actions(CommonCommand):
                 if self.vk_event.action['member_id'] > 0:
                     user = self.vk_bot.get_user_by_id(self.vk_event.action['member_id'])
                     self.vk_bot.add_group_to_user(user, self.vk_event.chat)
-                    return 'add'
                 else:
                     if self.vk_event.action['member_id'] == -int(secrets['vk']['bot']['group_id']):
                         if self.vk_event.chat.admin is None:
@@ -37,7 +36,6 @@ class Actions(CommonCommand):
                 if self.vk_event.action['member_id'] > 0:
                     user = self.vk_bot.get_user_by_id(self.vk_event.action['member_id'])
                     self.vk_bot.remove_group_from_user(user, self.vk_event.chat)
-                    return 'remove'
             # По изменению чата конфы
             # elif self.vk_event.action['type'] == 'chat_title_update':
             #     self.vk_event.chat.name = self.vk_event.action['text']

@@ -3,7 +3,7 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 
 class Debug(CommonCommand):
     def __init__(self):
-        names = ["дебаг", "debug"]
+        names = ["дебаг"]
         help_text = "Дебаг - отображение распаршенного сообщения"
         super().__init__(names, help_text, access='moderator')
 

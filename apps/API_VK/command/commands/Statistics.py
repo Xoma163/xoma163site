@@ -31,9 +31,10 @@ class Statistics(CommonCommand):
         return msg
 
     def get_petrovich(self):
-        if not self.vk_event.chat:
-            return ""
-        players = PetrovichUser.objects.filter(chat=self.vk_event.chat).order_by('-wins')
+        players = PetrovichUser.objects \
+            .filter(chat=self.vk_event.chat) \
+            .filter(user__chats=self.vk_event.chat) \
+            .order_by('-wins')
         result_list = []
         for player in players:
             result_list.append([player, player.wins])
@@ -81,8 +82,7 @@ class Statistics(CommonCommand):
         return msg
 
     def get_roulettes(self):
-        gamers = Gamer.objects.filter(user__chats=self.vk_event.chat).exclude(roulette_points=0).filter(
-            user__chats=self.vk_event.chat).order_by(
+        gamers = Gamer.objects.filter(user__chats=self.vk_event.chat).exclude(roulette_points=0).order_by(
             '-roulette_points')
         result_list = []
         for gamer in gamers:

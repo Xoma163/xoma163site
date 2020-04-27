@@ -137,9 +137,9 @@ class CodenamesUser(models.Model):
 class CodenamesSession(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
     chat = models.ForeignKey(VkChat, verbose_name="Чат", on_delete=models.SET_NULL, null=True)
-    # red, blue, red_wait, blue_wait, red_extra, blue_extra
+    # red, blue, red_wait, blue_wait, red_wait
     next_step_list = [('red', "Синие"), ('blue', "Красные"), ('blue_wait', "Капитан синих"),
-                      ('red_extra', "Капитан красных")]
+                      ('red_wait', "Капитан красных")]
     next_step = models.CharField(verbose_name="Следующий шаг", null=True, blank=True, choices=next_step_list,
                                  default="blue_wait", max_length=10)
     count = models.IntegerField(verbose_name="Загадано слов", null=True, blank=True)

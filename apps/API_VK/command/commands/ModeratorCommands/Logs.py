@@ -64,7 +64,7 @@ def get_bot_logs(command):
 
 class Logs(CommonCommand):
     def __init__(self):
-        names = ["логи", "лог", "logs", "log"]
+        names = ["логи", "лог"]
         help_text = "Логи - логи бота или сервера"
         detail_help_text = "Логи [сервис=бот] [кол-во строк=50] - логи. \n" \
                            "Сервис - бот или сервер"

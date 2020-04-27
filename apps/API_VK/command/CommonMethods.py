@@ -177,7 +177,12 @@ def find_command_by_name(command_name):
 
 # Получает detail_help_text для команды
 def get_help_for_command(command):
-    if command.detail_help_text:
-        return command.detail_help_text
+    if len(command.names) > 1:
+        command_names = f"Названия команды: {', '.join(command.names)}\n\n"
     else:
-        return "У данной команды нет подробного описания"
+        command_names = ""
+
+    if command.detail_help_text:
+        return command_names + command.detail_help_text
+    else:
+        return command_names + "У данной команды нет подробного описания"

@@ -115,7 +115,7 @@ def get_str_players(players):
 
 class Codenames(CommonCommand):
     def __init__(self):
-        names = ["коднеймс", "codenames", "кн"]
+        names = ["коднеймс", "кн"]
         help_text = "Коднеймс - игра коднеймс"
         detail_help_text = "Коднеймс - игра коднеймс\n" \
                            "Правила: https://tesera.ru/images/items/657300/codenames_rules_ru_1_5.pdf\n\n" \
@@ -125,8 +125,15 @@ class Codenames(CommonCommand):
                            "Коднеймс клава - текущая клавиатура игры\n" \
                            "Коднеймс инфо - команды, кол-во слов, чей ход, загаданное слово\n" \
                            "Коднеймс загадать (кол-во слов) (слово) \n" \
-                           "Коднеймс слово (слово) - выбрать слово. Либо тык в клаву\n\n" \
-                           "Коднеймс удалить - удаляет сессию игры. Только для админа конфы"
+                           "Коднеймс слово (слово) - выбрать слово. Либо тык в клаву\n" \
+                           "Коднеймс фиксклавы - рекомендации для фикса стилей клавиатуры\n" \
+                           "Коднеймс удалить - удаляет сессию игры. Только для админа конфы\n\n" \
+                           "Небольшая информация для тех, кто хочет поиграть в коднеймс без урезания слов на " \
+                           "клавиатурах контактом. Как я выяснил, с мобилок официальный клиент урезает клавиатуру. " \
+                           "Нормально отображаёт её только Kate Mobile и вроде бы VK Coffee. Для ПК дела получше, " \
+                           "слов умещается больше, но всё равно некоторые урезаются. Для того, чтобы этого избежать " \
+                           "можно поправить стили контакта, чтобы они не урезали почти половину полезного места. Для " \
+                           "этого я сделал отдельную инструкцию, которую можно получить по команде /кн фиксклавы"
         super().__init__(names, help_text, detail_help_text, api=False, args=1)
 
     def init_var(self):
@@ -147,7 +154,6 @@ class Codenames(CommonCommand):
         with lock:
             self.init_var()
 
-            # if self.vk_event.args:
             if self.vk_event.args[0].lower() in ['рег', 'регистрация']:
                 if len(Gamer.objects.filter(user=self.vk_event.sender)) == 0:
                     Gamer(user=self.vk_event.sender).save()
@@ -214,12 +220,11 @@ class Codenames(CommonCommand):
                     word = self.vk_event.args[1]
                     count = self.vk_event.args[2]
 
-                # count = int(self.vk_event.args[1])
                 if count > 9:
                     count = 9
                 elif count < 1:
                     return "Число загадываемых слов не может быть меньше 1"
-                # word = self.vk_event.args[2]
+
                 self.do_the_riddle(command, count, word)
                 return 'Отправил в конфу'
             elif self.vk_event.args[0].lower() in ['слово'] or self.vk_event.payload:
@@ -283,11 +288,27 @@ class Codenames(CommonCommand):
                 else:
                     self.session.delete()
                     return "Удалил"
+            elif self.vk_event.args[0].lower() in ['фикс', 'фиксклавы']:
+                msg = "1) Устанавливаем stylish (" \
+                      "https://chrome.google.com/webstore/detail/stylish-custom-themes-for/fjnbnpbmkenffdnngjfgmeleoegfcffe?hl=ru)\n" \
+                      "2) Создаём свой стиль\n" \
+                      "3) Копируем туда следующий код:\n\n" \
+                      ".Button--size-m:not(.Button--link) {\n" \
+                      "padding:0 !important;\n" \
+                      "}\n" \
+                      ".Button--overflow {\n" \
+                      "overflow: visible !important;\n" \
+                      "}\n" \
+                      ".BotButtonLabel{\n" \
+                      "max-width:100%\n" \
+                      "}\n\n" \
+                      "4) Сохраняем\n" \
+                      "5) Обновляем страницу с перезагрузкой кэша (Ctrl+F5)\n" \
+                      "6) Ура! Теперь клава будет нормально выводиться у всех ботов"
+                attachments = ['photo-186416119_457243904']
+                return {'msg': msg, 'attachments': attachments}
             else:
                 return "Не знаю такого аргумента. /ман коднеймс"
-            # Регистрация
-            # else:
-            #     return 'Не переданы аргументы. /ман коднеймс'
 
             return 'Как ты сюда попал?'
 
@@ -360,7 +381,6 @@ class Codenames(CommonCommand):
         session.save()
         self.session = session
 
-        # self.send_keyboard(board)
         self.vk_bot.send_message(self.vk_event.peer_id, msg=self.get_info(), keyboard=self.get_keyboard(board))
 
         for captain in captains:
@@ -377,35 +397,33 @@ class Codenames(CommonCommand):
         another_command = get_another_command(command)
         selected_word = board[row][col]
         selected_word['state'] = 'open'
+        self.session.board = json.dumps(board)
+        board = json.loads(self.session.board)
 
         if selected_word['type'] == command:
             self.session.count -= 1
-
             if self.session.count == 0:
                 self.session.next_step = f"{another_command}_wait"
                 self.vk_bot.send_message(self.session.chat.chat_id,
-                                         f"Угадали!\nПередаём ход капитану {translator_commands[another_command]} команды ")
-
+                                         f"Угадали!\nПередаём ход капитану {translator_commands[another_command]} "
+                                         f"команды",
+                                         keyboard=self.get_keyboard(board))
                 for captain in self.players_captains:
-                    # another_captain = self.players_captains.filter(command=another_command).first()
                     self.send_captain_keyboard(board, captain)
-
             else:
                 self.vk_bot.send_message(self.session.chat.chat_id,
-                                         f"Угадали!\nПродолжайте угадывать")
-            self.session.board = json.dumps(board)
+                                         f"Угадали!\nПродолжайте угадывать",
+                                         keyboard=self.get_keyboard(board))
             self.session.save()
         elif selected_word['type'] == another_command or selected_word['type'] == 'neutral':
             self.session.next_step = f"{another_command}_wait"
-            self.session.board = json.dumps(board)
             self.session.save()
 
             self.vk_bot.send_message(self.session.chat.chat_id,
-                                     f"Не угадали :(\nПередаём ход капитану {translator_commands[another_command]} команды")
+                                     f"Не угадали :(\nПередаём ход капитану {translator_commands[another_command]} команды",
+                                     keyboard=self.get_keyboard(board))
             for captain in self.players_captains:
-                # another_captain = self.players_captains.filter(command=another_command).first()
                 self.send_captain_keyboard(board, captain)
-
         elif selected_word['type'] == 'death':
             self.vk_bot.send_message(self.session.chat.chat_id, f"Смэрт")
             self.game_over(another_command, board)
@@ -415,9 +433,6 @@ class Codenames(CommonCommand):
         if is_game_over:
             self.game_over(is_game_over, board)
             return
-
-        # self.send_keyboard(board)
-        return {"msg": "Лови клаву", "keyboard": self.get_keyboard(board)}
 
     # Загадка капитана
     def do_the_riddle(self, command, count, word):
@@ -432,7 +447,6 @@ class Codenames(CommonCommand):
 
         board = json.loads(self.session.board)
         return {"msg": "Лови клаву", "keyboard": self.get_keyboard(board)}
-        # self.send_keyboard(board)
 
     # Метод получает количество оставшихся закрытых слов команд
     @staticmethod
@@ -577,22 +591,6 @@ class Codenames(CommonCommand):
             "color": get_color()
         }
 
-    # Клава для вывода в линию
-    def get_inline_keyboard(self, table, for_captain=False):
-        keyboards = []
-
-        for row in table:
-            rows = []
-            for elem in row:
-                rows.append(self.get_elem(elem, for_captain))
-
-            keyboards.append({
-                "one_time": False,
-                "buttons": [rows],
-                "inline": True,
-            })
-        return keyboards
-
     # Обычная клава
     def get_keyboard(self, table, for_captain=False, game_over=False):
         buttons = []
@@ -612,12 +610,6 @@ class Codenames(CommonCommand):
         keyboard = self.get_keyboard(board)
         self.vk_bot.send_message(self.session.chat.chat_id, msg="Лови клаву", keyboard=keyboard)
 
-        # keyboards = self.get_inline_keyboard(board)
-        # for keyboard in keyboards:
-        #     labels = [button['action']['label'] for button in keyboard['buttons'][0]]
-        #     keyboard_str = ", ".join(labels)
-        #     self.vk_bot.send_message(self.session.chat.chat_id, msg=keyboard_str, keyboard=keyboard)
-
     def send_captain_keyboard(self, board, captain=None, msg="Лови клаву"):
         if captain:
             peer_id = captain.user.user_id
@@ -626,10 +618,3 @@ class Codenames(CommonCommand):
 
         keyboard = self.get_keyboard(board, for_captain=True)
         self.vk_bot.send_message(peer_id, msg=msg, keyboard=keyboard)
-
-        # keyboards = self.get_inline_keyboard(board, for_captain=True)
-        #
-        # for keyboard in keyboards:
-        #     labels = [button['action']['label'] for button in keyboard['buttons'][0]]
-        #     keyboard_str = ", ".join(labels)
-        #     self.vk_bot.send_message(peer_id, msg=keyboard_str, keyboard=keyboard)

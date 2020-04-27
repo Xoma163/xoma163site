@@ -4,7 +4,7 @@ from apps.service.management.commands.get_words import Command
 
 class Words(CommonCommand):
     def __init__(self):
-        names = ["слова", "get_words"]
+        names = ["слова"]
         help_text = "Слова - принудительно затягивает слова с Google Drive"
         super().__init__(names, help_text, access='moderator')
 
