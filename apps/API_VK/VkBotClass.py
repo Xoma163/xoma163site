@@ -469,8 +469,8 @@ class VkBotClass(threading.Thread):
             if allowed_exts_url:
                 if file_like_object.split('.')[-1].lower() not in allowed_exts_url:
                     raise RuntimeError(f"Загрузка по URL доступна только для {' '.join(allowed_exts_url)}")
-
-            response = requests.get(file_like_object, stream=True)
+            # ToDo: возможно timeout=2 это мало, а возможно нет. Хз
+            response = requests.get(file_like_object, stream=True, timeout=2)
             obj = response.raw
         # path
         else:
@@ -479,7 +479,13 @@ class VkBotClass(threading.Thread):
 
     def upload_photo(self, image):
         image = self._prepare_obj_to_upload(image, ['jpg', 'jpeg', 'png'])
-        vk_photo = self.upload.photo_messages(image)[0]
+        try:
+            vk_photo = self.upload.photo_messages(image)[0]
+        except vk_api.exceptions.ApiError as e:
+            print(e)
+            if e.code == 100:
+                raise RuntimeError("Не смог найти картинку из источника")
+            raise RuntimeError("Ошибка загрузки картинки")
         return self.get_attachment_by_id('photo', vk_photo['owner_id'], vk_photo['id'])
 
     def upload_document(self, document, peer_id, title='Документ'):

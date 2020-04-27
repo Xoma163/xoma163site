@@ -31,7 +31,7 @@ class ExchangeRates(CommonCommand):
             self.parse_args('float')
 
             value = self.vk_event.args[0]
-            if any(ext in self.vk_event.args[1].lower() for ext in ['rub', "руб"]):
+            if any(ext in self.vk_event.args[1].lower() for ext in ['rub', "руб", 'р']):
                 msg = "Перевод в другие валюты:\n"
                 for ex_rate in ex_rates:
                     total_value = round(value / ex_rates[ex_rate], 2)

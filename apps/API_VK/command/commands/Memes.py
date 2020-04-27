@@ -48,7 +48,9 @@ class Memes(CommonCommand):
                 memes = memes.filter(name__icontains=arg)
             memes_sliced = memes[:20]
             meme_names = [meme.name for meme in memes_sliced]
-            meme_names_str = "\n".join(meme_names)
+            meme_names_str = ";\n".join(meme_names)
             if len(memes) > len(memes_sliced):
                 meme_names_str += "\n..."
+            else:
+                meme_names_str += '.'
             return f"{meme_names_str}\n\nВсего - {len(memes)}"

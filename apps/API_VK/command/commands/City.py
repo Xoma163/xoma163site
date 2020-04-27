@@ -20,7 +20,6 @@ class City(CommonCommand):
             if self.vk_event.args[0] == 'добавить':
                 self.check_args(2)
                 city_name = self.vk_event.args[1:len(self.vk_event.args)]
-                print(city_name)
                 city_name = " ".join(city_name)
                 city = self.add_city_to_db(city_name)
                 return f"Добавил новый город - {city.name}"

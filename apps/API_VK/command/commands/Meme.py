@@ -17,7 +17,8 @@ class Meme(CommonCommand):
         detail_help_text = "Мем (название) - присылает нужный мем\n" \
                            "Мем р - присылает рандомный мем\n" \
                            "Мем добавить ...(название) (url) - добавляет мем\n" \
-                           "Мем добавить (Вложение/Пересланное сообщение с вложением) (название) - добавляет мем\n" \
+                           "Мем добавить (Вложение/Пересланное сообщение с вложением) (название) - добавляет мем. " \
+                           "Можно добавлять картинки/гифки/аудио/видео\n" \
                            "Мем удалить (название) - удаляет созданный вами мем\n" \
                            "Мем конфа (название конфы) (название/рандом) - отправляет мем в конфу"
         super().__init__(names, help_text, detail_help_text, args=1)
@@ -35,7 +36,7 @@ class Meme(CommonCommand):
             return memes.first()
         else:
             for meme in memes:
-                if meme.name == self.vk_event.original_args:
+                if meme.name == " ".join(filter_list):
                     # if check_name_exists(self.vk_event.original_args):
                     return meme
             memes10 = memes[:10]
@@ -76,7 +77,7 @@ class Meme(CommonCommand):
                 attachment = self.vk_bot.upload_photo(meme.image.path)
             msg = {'msg': meme_name, 'attachments': [attachment]}
         else:
-            return "Какая-то хрень с мемом"
+            return "Какая-то хрень с вложениями"
         if send_keyboard:
             msg['keyboard'] = get_inline_keyboard(self.names[0], args={"random": "р"})
         return msg

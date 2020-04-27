@@ -5,7 +5,7 @@ from apps.API_VK.command.CommonMethods import has_cyrillic
 
 class Translate(CommonCommand):
     def __init__(self):
-        names = ["перевод"]
+        names = ["перевод", "переведи"]
         help_text = "Перевод - автоматический переводчик"
         detail_help_text = "Перевод (Текст/Пересылаемые сообщения) - в зависимости от текста переводит на нужный " \
                            "язык(английский или русский)"
