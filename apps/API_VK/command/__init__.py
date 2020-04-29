@@ -41,6 +41,17 @@ def generate_groups():
 
 
 def generate_help_text():
+    def append_to_list(_list):
+        # Если команда игра, то в отдельный список
+        if command.__class__.__module__.split('.')[-2] == 'Games':
+            _list['games'].append(text['text'])
+        else:
+            text_for = text['for'][0] if isinstance(text['for'], list) else text['for']
+            if text_for in _list:
+                _list[text_for].append(text['text'])
+            else:
+                print(f"Warn: Ошибка в генерации клавиатуры. Ключ {text_for} не найден")
+
     GROUPS_WITH_GAMES = GROUPS + ["games"]
     help_text_generated = {group: "" for group in GROUPS_WITH_GAMES}
     api_help_text_generated = {group: "" for group in GROUPS_WITH_GAMES}
@@ -59,25 +70,9 @@ def generate_help_text():
             if isinstance(help_text, list):
                 for text in help_text:
                     if command.enabled:
-                        # ToDo: duplicate
-                        # Если команда игра, то в отдельный список
-                        if command.__class__.__module__.split('.')[-2] == 'Games':
-                            help_text_list['games'].append(text['text'])
-                        else:
-                            text_for = text['for'][0] if isinstance(text['for'], list) else text['for']
-                            if text_for in help_text_list:
-                                help_text_list[text_for].append(text['text'])
-                            else:
-                                print(f"Warn: Ошибка в генерации клавиатуры. Ключ {text_for} не найден")
+                        append_to_list(help_text_list)
                         if command.api is None or command.api:
-                            if command.__class__.__module__.split('.')[-2] == 'Games':
-                                api_help_text_list['games'].append(text['text'])
-                            else:
-                                text_for = text['for'][0] if isinstance(text['for'], list) else text['for']
-                                if text_for in api_help_text_list:
-                                    api_help_text_list[text_for].append(text['text'])
-                                else:
-                                    print(f"Warn: Ошибка в генерации клавиатуры. Ключ {text_for} не найден")
+                            append_to_list(api_help_text_list)
 
     for group in GROUPS_WITH_GAMES:
         help_text_list[group].sort()

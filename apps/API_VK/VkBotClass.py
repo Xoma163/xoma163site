@@ -19,6 +19,7 @@ from apps.API_VK.command.CommonMethods import check_user_group
 from apps.API_VK.models import VkUser, VkChat, VkBot
 from apps.service.views import append_command_to_statistics
 from secrets.secrets import secrets
+from xoma163site.settings import TEST_CHAT_ID
 
 logger = logging.getLogger('commands')
 
@@ -39,6 +40,7 @@ class VkBotClass(threading.Thread):
 
         self.BOT_CAN_WORK = True
         self.DEBUG = False
+        self.DEVELOP_DEBUG = False
 
     @staticmethod
     def parse_date(date):
@@ -235,6 +237,11 @@ class VkBotClass(threading.Thread):
                         },
                         'fwd': None
                     }
+                    # Если я запустился из под дебага, реагируй только на меня и только в моей конфе
+                    if self.DEVELOP_DEBUG \
+                            and str(vk_event['user_id']) != secrets['vk']['admin_id'] \
+                            and vk_event['chat_id'] == TEST_CHAT_ID:
+                        continue
 
                     # Обработка вложенных сообщений в vk_event['fwd']. reply и fwd для вк это разные вещи.
                     if event.message.reply_message:
