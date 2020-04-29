@@ -16,12 +16,14 @@ class Uyu(CommonCommand):
         msgs = self.vk_event.fwd
         if msgs is None:
             return add_word
-        if len(msgs) == 1:
-            new_msg = msgs[0]['text']
-        else:
-            new_msg = ""
-            for msg in msgs:
+        new_msg = ""
+        for msg in msgs:
+            if msg['text']:
                 new_msg += msg['text'] + "\n"
+
+        if new_msg:
+            return "Нет текста в сообщении или пересланных сообщениях"
+
         symbols_first_priority = ['...']
         symbols_left = ['.', ',', '?', '!', ':']
         symbols_right = [' —', ' -']

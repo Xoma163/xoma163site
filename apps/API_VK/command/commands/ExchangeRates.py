@@ -25,7 +25,6 @@ class ExchangeRates(CommonCommand):
         ex_rates = get_exchange_rates(_filters_list)
 
         if self.vk_event.args:
-            self.vk_event.args[0] = self.vk_event.args[0].replace('к', '000').replace('k', '000')
             self.check_args(2)
             self.float_args = [0]
             self.parse_args('float')

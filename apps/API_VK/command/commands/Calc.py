@@ -87,11 +87,11 @@ class BinaryOperator(Symbol):
         return expr.find(self.character) > 0
 
     def separations(self, expr):
-        split = expr.split(self.character)
+        _split = expr.split(self.character)
         result = []
-        for i in range(1, len(split)):
-            left_expr = self.character.join(split[0:i])
-            right_expr = self.character.join(split[i:len(split)])
+        for i in range(1, len(_split)):
+            left_expr = self.character.join(_split[0:i])
+            right_expr = self.character.join(_split[i:len(_split)])
             result.append((left_expr, right_expr))
         return result
 
@@ -234,14 +234,14 @@ class Grammar:
             else:
                 child_node = build_subtree(expr, get_possible_grammars(self.left))
                 if child_node:
-                    return Node(self, None, child_node)
+                    return Node(self, left_child=child_node)
                 return None
         else:
             if not self.symbol.match(expr):
                 return None
             splits = self.symbol.separations(expr)
-            for split in splits:
-                possible_node = self.check_separation(split[0], split[1])
+            for _split in splits:
+                possible_node = self.check_separation(_split[0], _split[1])
                 if possible_node is not None:
                     return possible_node
             return None
@@ -253,7 +253,7 @@ class Grammar:
         right_child = build_subtree(right_expr, get_possible_grammars(self.right))
         if right_expr and right_child is None:
             return None
-        return Node(self, None, left_child, right_child)
+        return Node(self, left_child=left_child, right_child=right_child)
 
 
 # grammar compilation

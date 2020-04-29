@@ -1,7 +1,7 @@
 import json
 
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command._DoTheLinuxComand import do_the_linux_command
+from apps.API_VK.command.DoTheLinuxComand import do_the_linux_command
 from xoma163site.settings import MAIN_DOMAIN
 
 
@@ -15,7 +15,7 @@ class Status(CommonCommand):
     def start(self):
         res_1_12 = get_minecraft_server_info("localhost", "25565", "1.12.2")
         res_1_15_1 = get_minecraft_server_info("localhost", "25566", "1.15.1")
-        terraria = get_terraria_server_info("localhost", "7777", "хз")
+        terraria = get_terraria_server_info("7777")
 
         total_str = f"{res_1_12}\n\n" \
                     f"{res_1_15_1}\n\n" \
@@ -37,7 +37,7 @@ def get_minecraft_server_info(ip, port, v):
     return result
 
 
-def get_terraria_server_info(ip, port, v):
+def get_terraria_server_info(port):
     command = "systemctl status terraria"
     response = do_the_linux_command(command)
     index1 = response.find("Active: ") + len("Active: ")

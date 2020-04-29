@@ -21,8 +21,11 @@ class Translate(CommonCommand):
         else:
             text = ""
             for msg in fwd:
-                text += f"{msg['text']}\n"
+                if msg['text']:
+                    text += f"{msg['text']}\n"
 
+        if not text:
+            return "Нет текста в сообщении или пересланных сообщениях"
         if has_cyrillic(text):
             lang = 'ru-en'
         else:

@@ -36,9 +36,9 @@ class Birds(CommonCommand):
                 return str(e)
             attachment = self.vk_bot.upload_document(document, self.vk_event.peer_id, "Синички")
             attachments.append(attachment)
-
-        return {'msg': 'https://birds.xoma163.xyz',
-                'attachments': attachments,
-                "keyboard": get_inline_keyboard(self.names[0], args={"frames": frames}),
-                'dont_parse_links': True
-                }
+        attachments.append('https://birds.xoma163.xyz')
+        return {
+            'attachments': attachments,
+            "keyboard": get_inline_keyboard(self.names[0], args={"frames": frames}),
+            'dont_parse_links': True
+        }

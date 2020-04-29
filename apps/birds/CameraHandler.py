@@ -16,9 +16,9 @@ class CameraHandler(threading.Thread):
         self.time_on_frame = MaxSizeList(self.MAX_FRAMES)
         self.time_on_frame.init_0()
 
-    def __init__(self, MAX_FRAMES=200):
+    def __init__(self, max_frames=200):
         super().__init__()
-        self.MAX_FRAMES = MAX_FRAMES
+        self.MAX_FRAMES = max_frames
         self._MAX_WIDTH = 1600
         self._running = True
         self.gif = None
@@ -128,10 +128,10 @@ class MaxSizeList(object):
 
     def init_frames(self):
         frame = np.zeros((100, 100, 3), np.uint8)
-        self.ls = [frame for i in range(self.max_length)]
+        self.ls = [frame for _ in range(self.max_length)]
 
     def init_0(self):
-        self.ls = [0 for i in range(self.max_length)]
+        self.ls = [0 for _ in range(self.max_length)]
 
     def push(self, st):
         if len(self.ls) == self.max_length:

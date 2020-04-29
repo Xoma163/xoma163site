@@ -24,5 +24,8 @@ class Fix(CommonCommand):
     def start(self):
         msgs = ""
         for msg in self.vk_event.fwd:
-            msgs += f"{fix_layout(msg['text'], has_cyrillic(msg['text']))}\n"
+            if msg['text']:
+                msgs += f"{fix_layout(msg['text'], has_cyrillic(msg['text']))}\n"
+        if not msgs:
+            return "Нет текста в сообщении или пересланных сообщениях"
         return msgs

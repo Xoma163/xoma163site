@@ -496,19 +496,19 @@ class Codenames(CommonCommand):
         def get_commands():
             def get_command_msg(command_name, command_players):
                 team_msg = f"{translator[command_name].capitalize()}:\n"
-                for player in command_players:
-                    if player.role == 'captain':
-                        team_msg += f'{player} - Капитан\n'
+                for _player in command_players:
+                    if _player.role == 'captain':
+                        team_msg += f'{_player} - Капитан\n'
                     else:
-                        team_msg += f'{player}\n'
+                        team_msg += f'{_player}\n'
                 return team_msg + "\n\n"
 
-            commands = {'red': [], 'blue': []}
+            _commands = {'red': [], 'blue': []}
             commands_msg = {'red': None, 'blue': None}
-            for player in self.players:
-                commands[player.command].append(player)
-            for command in commands:
-                commands_msg[command] = get_command_msg(command, commands[command])
+            for _player in self.players:
+                _commands[_player.command].append(_player)
+            for _command in _commands:
+                commands_msg[_command] = get_command_msg(_command, _commands[_command])
 
             return commands_msg
 
@@ -569,7 +569,7 @@ class Codenames(CommonCommand):
                 return elem['name']
             else:
                 name_translate = {
-                    'open': "".join(["ᅠ" for i in range(2)]),
+                    'open': "".join(["ᅠ" for _ in range(2)]),
                     'close': elem['name']
                 }
                 return name_translate[elem['state']]

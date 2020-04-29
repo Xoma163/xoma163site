@@ -29,8 +29,12 @@ class Transliteration(CommonCommand):
             msgs = [{'text': self.vk_event.original_args, 'from_id': int(self.vk_event.sender.user_id)}]
         translite_text = ""
         for msg in msgs:
-            text = msg['text']
-            translite_text += f"{text}\n\n"
+            if msg['text']:
+                text = msg['text']
+                translite_text += f"{text}\n\n"
+
+        if not translite_text:
+            return "Нет текста в сообщении или пересланных сообщениях"
 
         if has_cyrillic(translite_text):
             return get_en_transliterate(translite_text)

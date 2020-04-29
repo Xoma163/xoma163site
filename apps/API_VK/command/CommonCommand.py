@@ -148,6 +148,7 @@ class CommonCommand:
             error = f"Значение может быть в диапазоне [{val1};{val2}]"
             raise RuntimeError(error)
 
+    # ToDo: опять разделяем на parse_int и parse_float
     # Парсит аргументы в int или float
     def parse_args(self, arg_type):
         if not self.vk_event.args:
@@ -159,6 +160,10 @@ class CommonCommand:
         else:
             raise RuntimeError("Неверный тип в parse_args")
         for checked_arg_index in args:
+            # find_k = self.vk_event.args[checked_arg_index].count('k') + self.vk_event.args[checked_arg_index].count('к')
+            # if find_k > 0:
+            #     pass
+            # ToDo: сделать фичу с k
             try:
                 if len(self.vk_event.args) - 1 >= checked_arg_index:
                     if arg_type == 'int':

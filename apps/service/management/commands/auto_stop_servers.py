@@ -33,7 +33,7 @@ def stop_mine_by_version(online, no_players, version):
                 obj.delete()
                 Service.objects.get_or_create(name=f"minecraft_{version}")
 
-                from apps.API_VK.command._DoTheLinuxComand import do_the_linux_command
+                from apps.API_VK.command.DoTheLinuxComand import do_the_linux_command
                 do_the_linux_command(f'sudo systemctl stop minecraft_{version}')
 
                 message = f"Вырубаю майн {version}"

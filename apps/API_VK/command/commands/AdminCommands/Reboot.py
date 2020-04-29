@@ -1,5 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command._DoTheLinuxComand import do_the_linux_command
+from apps.API_VK.command.DoTheLinuxComand import do_the_linux_command
 
 
 class Reboot(CommonCommand):
