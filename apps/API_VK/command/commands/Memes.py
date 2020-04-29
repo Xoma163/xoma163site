@@ -16,7 +16,7 @@ class Memes(CommonCommand):
         try:
             if self.vk_event.args:
                 self.int_args = [0]
-                self.parse_args('int')
+                self.parse_int()
                 page = self.vk_event.args[0]
             else:
                 page = 1

@@ -14,7 +14,7 @@ class Bash(CommonCommand):
     def start(self):
         quotes_count = 5
         if self.vk_event.args:
-            self.parse_args('int')
+            self.parse_int()
             quotes_count = self.vk_event.args[0]
             self.check_number_arg_range(quotes_count, 1, MAX_QUOTES)
         msg = parse_bash(quotes_count)

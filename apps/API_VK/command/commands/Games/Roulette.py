@@ -128,7 +128,7 @@ class Roulette(CommonCommand):
                 self.args = 3
                 self.int_args = [-1]
                 self.check_args()
-                self.parse_args('int')
+                self.parse_int()
 
                 points_transfer = self.vk_event.args[-1]
                 if points_transfer > gamer.roulette_points:
@@ -155,7 +155,7 @@ class Roulette(CommonCommand):
                 self.args = 3
                 self.int_args = [-1]
                 self.check_args()
-                self.parse_args('int')
+                self.parse_int()
 
                 points_transfer = self.vk_event.args[-1]
 
@@ -193,7 +193,7 @@ class Roulette(CommonCommand):
                     rate = gamer.roulette_points
                 else:
                     self.int_args = [-1]
-                    self.parse_args('int')
+                    self.parse_int()
                     rate = self.vk_event.args[-1]
                 if rate <= 0:
                     return "Ставка не может быть ⩽0"
@@ -204,7 +204,7 @@ class Roulette(CommonCommand):
                     self.args = 3
                     self.int_args = [1, 2]
                     self.check_args()
-                    self.parse_args('int')
+                    self.parse_int()
                     rowcol = self.vk_event.args[1]
                     self.check_number_arg_range(rowcol, 1, 3)
 

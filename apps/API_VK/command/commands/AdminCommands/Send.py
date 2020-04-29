@@ -11,7 +11,7 @@ class Control(CommonCommand):
     def start(self):
         try:
             self.int_args = [0]
-            self.parse_args('int')
+            self.parse_int()
             msg_chat_id = self.vk_event.args[0]
             chat = self.vk_bot.get_group_id(msg_chat_id)
         except RuntimeError:

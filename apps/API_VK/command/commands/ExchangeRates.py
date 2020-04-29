@@ -27,7 +27,7 @@ class ExchangeRates(CommonCommand):
         if self.vk_event.args:
             self.check_args(2)
             self.float_args = [0]
-            self.parse_args('float')
+            self.parse_float()
 
             value = self.vk_event.args[0]
             if any(ext in self.vk_event.args[1].lower() for ext in ['rub', "руб", 'р']):

@@ -49,4 +49,4 @@ class Find(CommonCommand):
                 break
         if len(attachments) == 0:
             return "Ничего не нашёл 2"
-        return {'msg': '', 'attachments': attachments}
+        return {'msg': f'Результаты по запросу "{query}"', 'attachments': attachments}

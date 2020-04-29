@@ -211,12 +211,12 @@ class Codenames(CommonCommand):
                     return "Недостаточно аргументов"
                 self.int_args = [1]
                 try:
-                    self.parse_args('int')
+                    self.parse_int()
                     count = self.vk_event.args[1]
                     word = self.vk_event.args[2]
                 except RuntimeError:
                     self.int_args = [2]
-                    self.parse_args('int')
+                    self.parse_int()
                     word = self.vk_event.args[1]
                     count = self.vk_event.args[2]
 

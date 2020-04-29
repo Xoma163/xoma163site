@@ -32,7 +32,7 @@ class Command(BaseCommand):
                 if gamer:
                     gamer.roulette_points += 10000
                     gamer.save()
-                    vk_bot.send_message(chat.chat_id, f"Начислил 10 000 очков рулетки")
+                    vk_bot.send_message(chat.chat_id, f"На ваш счет зачислено 10 000 бонусных очков.")
 
     def add_arguments(self, parser):
         parser.add_argument('chat_id', nargs='+', type=str,

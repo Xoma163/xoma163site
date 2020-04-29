@@ -44,7 +44,8 @@ class Meme(CommonCommand):
                 'name': " ".join(self.vk_event.args[1:]),
                 'type': attachment['type'],
                 'author': self.vk_event.sender,
-                'approved': check_user_group(self.vk_event.sender, 'moderator')
+                'approved': check_user_group(self.vk_event.sender, 'moderator') or check_user_group(
+                    self.vk_event.sender, 'trusted')
             }
 
             if MemeModel.objects.filter(name=new_meme['name']).exists():
@@ -101,7 +102,7 @@ class Meme(CommonCommand):
                 return meme_to_send
             else:
                 self.int_args = [1]
-                self.parse_args('int')
+                self.parse_int()
                 non_approved_meme = MemeModel.objects.filter(id=self.vk_event.args[1]).first()
                 if not non_approved_meme:
                     return "Не нашёл мема с таким id"
@@ -118,7 +119,7 @@ class Meme(CommonCommand):
         elif self.vk_event.args[0] in ['отклонить', '-']:
             self.check_sender('moderator')
             self.int_args = [1]
-            self.parse_args('int')
+            self.parse_int()
             non_approved_meme = MemeModel.objects.filter(id=self.vk_event.args[1]).first()
             if not non_approved_meme:
                 return "Не нашёл мема с таким id"

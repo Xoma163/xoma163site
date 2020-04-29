@@ -85,9 +85,9 @@ class CommonCommand:
         if self.args:
             self.check_args()
         if self.int_args:
-            self.parse_args('int')
+            self.parse_int()
         if self.float_args:
-            self.parse_args('float')
+            self.parse_float()
         if self.attachments:
             self.check_attachments()
 
@@ -148,37 +148,41 @@ class CommonCommand:
             error = f"Значение может быть в диапазоне [{val1};{val2}]"
             raise RuntimeError(error)
 
-    # ToDo: опять разделяем на parse_int и parse_float
-    # Парсит аргументы в int или float
-    def parse_args(self, arg_type):
+    @staticmethod
+    def _transform_k(arg):
+        count_k = arg.count('k') + arg.count('к')
+        if count_k > 0:
+            arg = arg.replace('k', '').replace('к', '')
+            arg = float(arg)
+            arg *= 10 ** (3 * count_k)
+        return arg
+
+    # Парсит аргументы в тип int
+    def parse_int(self):
         if not self.vk_event.args:
             return True
-        if arg_type == 'int':
-            args = self.int_args
-        elif arg_type == 'float':
-            args = self.float_args
-        else:
-            raise RuntimeError("Неверный тип в parse_args")
-        for checked_arg_index in args:
-            # find_k = self.vk_event.args[checked_arg_index].count('k') + self.vk_event.args[checked_arg_index].count('к')
-            # if find_k > 0:
-            #     pass
-            # ToDo: сделать фичу с k
-            try:
-                if len(self.vk_event.args) - 1 >= checked_arg_index:
-                    if arg_type == 'int':
-                        self.vk_event.args[checked_arg_index] = int(self.vk_event.args[checked_arg_index])
-                    elif arg_type == 'float':
-                        self.vk_event.args[checked_arg_index] = float(self.vk_event.args[checked_arg_index])
-
-            except ValueError:
-                if arg_type == 'int':
+        for checked_arg_index in self.int_args:
+            if len(self.vk_event.args) - 1 >= checked_arg_index:
+                try:
+                    self.vk_event.args[checked_arg_index] = self._transform_k(self.vk_event.args[checked_arg_index])
+                    self.vk_event.args[checked_arg_index] = int(self.vk_event.args[checked_arg_index])
+                except ValueError:
                     error = "Аргумент должен быть целочисленным"
-                elif arg_type == 'float':
+                    raise RuntimeError(error)
+        return True
+
+    # Парсит аргументы в тип float
+    def parse_float(self):
+        if not self.vk_event.args:
+            return True
+        for checked_arg_index in self.float_args:
+            if len(self.vk_event.args) - 1 >= checked_arg_index:
+                try:
+                    self.vk_event.args[checked_arg_index] = self._transform_k(self.vk_event.args[checked_arg_index])
+                    self.vk_event.args[checked_arg_index] = float(self.vk_event.args[checked_arg_index])
+                except ValueError:
                     error = "Аргумент должен быть с плавающей запятой"
-                else:
-                    error = "wut?"
-                raise RuntimeError(error)
+                    raise RuntimeError(error)
         return True
 
     # Проверяет, прислано ли сообщение в лс
