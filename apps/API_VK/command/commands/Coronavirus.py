@@ -52,7 +52,6 @@ class Coronavirus(CommonCommand):
             if detail in ["Gist", "Graphic"]:
                 self.api = False
                 self.check_api()
-                attachments = []
                 if detail == "Gist":
                     datas = [get_detail_by_country(country_transliterate, status) for status in ALL_STATUSES]
 
@@ -93,8 +92,7 @@ class Coronavirus(CommonCommand):
                     plt.savefig(graphic)
                     plt.cla()
 
-                    attachment = self.vk_bot.upload_photo(graphic)
-                    attachments.append(attachment)
+                    attachments = self.vk_bot.upload_photos(graphic)
                     return {'msg': msg, 'attachments': attachments}
             else:
                 return msg

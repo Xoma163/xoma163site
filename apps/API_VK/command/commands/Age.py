@@ -66,7 +66,7 @@ class Age(CommonCommand):
             if len(response['faces']) == 0:
                 return "Не нашёл лиц на фото"
             file_path = draw_on_images(image['download_url'], response['faces'])
-            attachments = self.vk_bot.upload_photo(file_path)
+            attachments = self.vk_bot.upload_photos(file_path)
             return {"attachments": attachments}
         else:
             return "Wtf"

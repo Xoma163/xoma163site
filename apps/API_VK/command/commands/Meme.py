@@ -179,7 +179,7 @@ class Meme(CommonCommand):
         if meme.type == 'video' or meme.type == 'audio':
             msg['attachments'] = [meme.link.replace(VK_URL, '')]
         elif meme.type == 'photo':
-            msg['attachments'] = self.vk_bot.upload_photo(meme.link)
+            msg['attachments'] = self.vk_bot.upload_photos(meme.link)
         elif meme.type == 'doc':
             msg['attachments'] = self.vk_bot.upload_document(meme.link, self.vk_event.peer_id)
         else:

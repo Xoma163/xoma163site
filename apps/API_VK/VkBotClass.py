@@ -6,6 +6,7 @@ import traceback
 from urllib.parse import urlparse
 
 import requests
+import urllib3
 import vk_api
 from django.contrib.auth.models import Group
 from vk_api import VkUpload
@@ -493,16 +494,35 @@ class VkBotClass(threading.Thread):
             obj = file_like_object
         return obj
 
-    def upload_photo(self, image):
-        image = self._prepare_obj_to_upload(image, ['jpg', 'jpeg', 'png'])
+    def upload_photos(self, images, max_count=10):
+        if not isinstance(images, list):
+            images = [images]
+
+        attachments = []
+        images_to_load = []
+        for image in images:
+            image = self._prepare_obj_to_upload(image, ['jpg', 'jpeg', 'png'])
+            # Если Content-Length > 50mb
+            bytes_count = None
+            if isinstance(image, io.BytesIO):
+                bytes_count = image.getbuffer().nbytes
+            elif isinstance(image, urllib3.response.HTTPResponse):
+                bytes_count = image.headers.get('Content-Length')
+            else:
+                print("ШТО ТЫ ТАКОЕ", type(image))
+            if int(bytes_count) / 1024 / 1024 > 50:
+                continue
+            images_to_load.append(image)
+
+            if len(images_to_load) >= max_count:
+                break
         try:
-            vk_photo = self.upload.photo_messages(image)[0]
+            vk_photos = self.upload.photo_messages(images_to_load)
+            for vk_photo in vk_photos:
+                attachments.append(self.get_attachment_by_id('photo', vk_photo['owner_id'], vk_photo['id']))
         except vk_api.exceptions.ApiError as e:
             print(e)
-            if e.code == 100:
-                raise RuntimeError("Не смог найти картинку из источника")
-            raise RuntimeError("Ошибка загрузки картинки")
-        return self.get_attachment_by_id('photo', vk_photo['owner_id'], vk_photo['id'])
+        return attachments
 
     def upload_document(self, document, peer_id, title='Документ'):
         document = self._prepare_obj_to_upload(document)

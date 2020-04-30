@@ -19,10 +19,10 @@ class Waifu(CommonCommand):
         else:
             waifu_number = random.randint(0, WAIFUS_COUNT)
         URL = f"https://www.thiswaifudoesnotexist.net/example-{waifu_number}.jpg"
-        attachment = self.vk_bot.upload_photo(URL)
+        attachment = self.vk_bot.upload_photos(URL)
 
         if self.vk_event.args:
             keyboard = get_inline_keyboard(self.names[0], "Следующая", args={"waifu_number": waifu_number + 1})
         else:
             keyboard = get_inline_keyboard(self.names[0])
-        return {"msg": waifu_number, "attachments": [attachment], "keyboard": keyboard}
+        return {"msg": waifu_number, "attachments": attachment, "keyboard": keyboard}

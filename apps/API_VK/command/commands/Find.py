@@ -36,17 +36,7 @@ class Find(CommonCommand):
         urls = [r.get('media') for r in response]
         if len(urls) == 0:
             return "Ничего не нашёл"
-        attachments = []
-        for url in urls:
-            try:
-                attachment = self.vk_bot.upload_photo(url)
-                attachments.append(attachment)
-            except RuntimeError:
-                pass
-            except requests.exceptions.ConnectionError:
-                pass
-            if len(attachments) >= count:
-                break
+        attachments = self.vk_bot.upload_photos(urls, 5)
         if len(attachments) == 0:
             return "Ничего не нашёл 2"
         return {'msg': f'Результаты по запросу "{query}"', 'attachments': attachments}

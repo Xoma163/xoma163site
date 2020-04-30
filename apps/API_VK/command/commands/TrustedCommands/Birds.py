@@ -27,7 +27,7 @@ class Birds(CommonCommand):
             frames = self.vk_event.args[0]
             self.check_number_arg_range(frames, 0, cameraHandler.MAX_FRAMES)
 
-        attachment = self.vk_bot.upload_photo(image)
+        attachment = self.vk_bot.upload_photos(image)
         attachments.append(attachment)
         if frames != 0:
             try:

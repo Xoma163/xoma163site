@@ -4,9 +4,14 @@ import requests
 
 
 def get_detail_by_country(country_name, status='confirmed'):
-    URL = f"https://api.covid19api.com/dayone/country/{country_name}/status/{status}"
-
-    response = requests.get(URL, timeout=5).json()
+    url = f"https://api.covid19api.com/dayone/country/{country_name}/status/{status}"
+    try:
+        response = requests.get(url, timeout=5)
+    except requests.exceptions.ReadTimeout:
+        raise RuntimeError("Проблемы с API")
+    if not response:
+        raise RuntimeError("Проблемы с API")
+    response = response.json()
     groups = []
     for _, group in groupby(response, lambda x: x['Date']):
         list_group = list(group)
@@ -27,7 +32,13 @@ def get_by_country(country_name):
                f"Болеют - {data['TotalConfirmed'] - data['TotalDeaths'] - data['TotalRecovered']}, смертей - {data['TotalDeaths']}, выздоровело - {data['TotalRecovered']}"
 
     url = f"https://api.covid19api.com/summary"
-    response = requests.get(url, timeout=5).json()
+    try:
+        response = requests.get(url, timeout=5)
+    except requests.exceptions.ReadTimeout:
+        raise RuntimeError("Проблемы с API")
+    if not response:
+        raise RuntimeError("Проблемы с API")
+    response = response.json()
 
     if country_name is None:
         return set_data(response["Global"])
