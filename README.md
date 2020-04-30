@@ -112,10 +112,12 @@ A: В CommonCommand есть следующие методы:
 -   `check_sender(role)` - Проверяет роль пользователя
 -   `check_args(count)` - Проверяет количество аргументов
 -   `check_number_arg_range(arg,val1,val2,banned_list)` - Проверяет вхождение аргумента в диапазон `[val1;val2]` и также проверяет, чтобы значение не входило в banned_list 
--   `parse_args(type)` - Проверяет на type(int/float) выбранные позиции аргументов (параметр int_args/float_args)
--   `check_pm` - Проверяет на личные сообщения боту
--   `check_conversation` - Проверяет на беседу
--   `check_fwd` - Проверяет, есть ли пересланные сообщения 
+-   `parse_int()` - Проверяет на int выбранные позиции аргументов (параметр int_args)
+-   `parse_float()` - Проверяет на float выбранные позиции аргументов (параметр float_args)
+-   `check_pm()` - Проверяет на личные сообщения боту
+-   `check_conversation()` - Проверяет на беседу
+-   `check_api()` - Проверяет на API/VK
+-   `check_fwd()` - Проверяет, есть ли пересланные сообщения 
 -   `check_command_time(name,time)` - Проверяет, не вышло ли время для повторного использования какого-либо функционала (см Start/Stop/Restart в ModeratorCommand)
 -   `check_attachments` - Проверяет, есть ли вложения
 
