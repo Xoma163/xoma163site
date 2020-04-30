@@ -9,10 +9,12 @@ def get_exchange_rates(_filters_list):
     response = requests.get(URL, stream=True)
     tree = ElementTree.fromstring(response.content)
 
-    _filters = {x: 0 for x in _filters_list}
+    _filters = {x: {'name': None, 'value': 0} for x in _filters_list}
     for elem in tree:
         for _filter in _filters:
             if elem.find("CharCode").text == _filter:
-                _filters[_filter] = float(elem.find("Value").text.replace(',', '.')) / float(
+                _filters[_filter]['name'] = elem.find('Name').text.lower()
+                _filters[_filter]['value'] = float(elem.find("Value").text.replace(',', '.')) / float(
                     elem.find("Nominal").text.replace(',', '.'))
+
     return _filters

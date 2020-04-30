@@ -163,6 +163,8 @@ class CommonCommand:
             return True
         for checked_arg_index in self.int_args:
             if len(self.vk_event.args) - 1 >= checked_arg_index:
+                if isinstance(self.vk_event.args[checked_arg_index], int):
+                    continue
                 try:
                     self.vk_event.args[checked_arg_index] = self._transform_k(self.vk_event.args[checked_arg_index])
                     self.vk_event.args[checked_arg_index] = int(self.vk_event.args[checked_arg_index])
@@ -177,6 +179,8 @@ class CommonCommand:
             return True
         for checked_arg_index in self.float_args:
             if len(self.vk_event.args) - 1 >= checked_arg_index:
+                if isinstance(self.vk_event.args[checked_arg_index], float):
+                    continue
                 try:
                     self.vk_event.args[checked_arg_index] = self._transform_k(self.vk_event.args[checked_arg_index])
                     self.vk_event.args[checked_arg_index] = float(self.vk_event.args[checked_arg_index])

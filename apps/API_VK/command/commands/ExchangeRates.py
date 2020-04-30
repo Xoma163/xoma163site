@@ -3,15 +3,6 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 
 
 class ExchangeRates(CommonCommand):
-
-    @staticmethod
-    def get_rate_for_key(ex_rates, key, value):
-        ex_rate = ex_rates[key]
-        total_value = round(value * ex_rate, 2)
-        msg = "Перевод в рубли:\n"
-        msg += f"{total_value} руб."
-        return msg
-
     def __init__(self):
         names = ["курс"]
         help_text = "Курс - курс валют"
@@ -30,31 +21,25 @@ class ExchangeRates(CommonCommand):
             self.parse_float()
 
             value = self.vk_event.args[0]
-            if any(ext in self.vk_event.args[1].lower() for ext in ['rub', "руб", 'р']):
+            currency = self.vk_event.args[1].lower()
+            if any(ext in currency for ext in ['rub', "руб"]):
                 msg = "Перевод в другие валюты:\n"
                 for ex_rate in ex_rates:
-                    total_value = round(value / ex_rates[ex_rate], 2)
+                    total_value = round(value / ex_rates[ex_rate]['value'], 2)
                     msg += f"{total_value} {ex_rate}\n"
-            elif any(ext in self.vk_event.args[1].lower() for ext in ['eur', "евро", "€"]):
-                msg = self.get_rate_for_key(ex_rates, "EUR", value)
-            elif any(ext in self.vk_event.args[1].lower() for ext in ['usd', "доллар", "$"]):
-                msg = self.get_rate_for_key(ex_rates, "USD", value)
-            elif any(ext in self.vk_event.args[1].lower() for ext in ['jpy', "йен"]):
-                msg = self.get_rate_for_key(ex_rates, "JPY", value)
-            elif any(ext in self.vk_event.args[1].lower() for ext in ['gbp', "фунт"]):
-                msg = self.get_rate_for_key(ex_rates, "GBP", value)
-            elif any(ext in self.vk_event.args[1].lower() for ext in ['kzt', "тенг"]):
-                msg = self.get_rate_for_key(ex_rates, "KZT", value)
-            elif any(ext in self.vk_event.args[1].lower() for ext in ['uah', "гривн"]):
-                msg = self.get_rate_for_key(ex_rates, "UAH", value)
-            elif any(ext in self.vk_event.args[1].lower() for ext in ['nok', "крон"]):
-                msg = self.get_rate_for_key(ex_rates, "NOK", value)
+                return msg
             else:
+                for code in ex_rates:
+                    if currency in ex_rates[code]['name'] or currency in code.lower():
+                        total_value = round(value * ex_rates[code]['value'], 2)
+                        msg = "Перевод в рубли:\n"
+                        msg += f"{total_value} руб."
+                        return msg
                 return "Пока не знаю как переводить из этой валюты"
 
         else:
             msg = "Курс валют:\n"
             for ex_rate in ex_rates:
-                ex_rates[ex_rate] = round(ex_rates[ex_rate], 2)
-                msg += f"{ex_rate} - {ex_rates[ex_rate]} руб.\n"
-        return msg
+                ex_rates[ex_rate]['value'] = round(ex_rates[ex_rate]['value'], 2)
+                msg += f"{ex_rate} - {ex_rates[ex_rate]['value']} руб.\n"
+            return msg

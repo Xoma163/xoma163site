@@ -199,7 +199,7 @@ class VkBotClass(threading.Thread):
         msg = f"Я не понял команды \"{vk_event.command}\"\n"
         tanimoto_max = min(1, tanimoto_max)
         if tanimoto_max != 0:
-            msg += f"Возможно вы имели в виду {similar_command} с вероятностью {round(tanimoto_max * 100, 2)}%"
+            msg += f"Возможно вы имели в виду команду {similar_command} с вероятностью {round(tanimoto_max * 100, 2)}%"
 
         logger.debug(f"{{result: {msg}}}")
         if send:

@@ -8,7 +8,7 @@ from apps.service.models import LaterMessage
 
 class Discord(CommonCommand):
     def __init__(self):
-        names = ["потом"]
+        names = ["потом", "позже"]
         help_text = "Потом - добавляет сообщения и вложения из пересланных сообщений, чтобы посмотреть потом"
         detail_help_text = "Потом (Пересланные сообщения) - добавляет сообщения и вложения из пересланных сообщений, " \
                            "чтобы посмотреть потом\n" \
