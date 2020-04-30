@@ -239,10 +239,11 @@ class VkBotClass(threading.Thread):
                         'fwd': None
                     }
                     # Если я запустился из под дебага, реагируй только на меня и только в моей конфе
-                    if self.DEVELOP_DEBUG \
-                            and str(vk_event['user_id']) != secrets['vk']['admin_id'] \
-                            and vk_event['chat_id'] == TEST_CHAT_ID:
-                        continue
+                    if self.DEVELOP_DEBUG:
+                        from_test_chat = vk_event['chat_id'] == TEST_CHAT_ID
+                        from_me = str(vk_event['user_id']) == secrets['vk']['admin_id']
+                        if not from_test_chat or not from_me:
+                            continue
 
                     # Обработка вложенных сообщений в vk_event['fwd']. reply и fwd для вк это разные вещи.
                     if event.message.reply_message:

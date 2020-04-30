@@ -1,6 +1,9 @@
 import json
 from datetime import datetime, timedelta
 
+import dateutil
+from dateutil import parser
+
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import localize_datetime, normalize_datetime, remove_tz
 from apps.service.models import Notify as NotifyModel
@@ -29,20 +32,15 @@ def get_time(arg1, arg2):
         if delta_days == 0:
             delta_days += 7
         arg1 = (datetime.today().date() + timedelta(days=delta_days)).strftime("%d.%m.%Y")
+
+    default_datetime = datetime.now().replace(hour=10, minute=0, second=0, microsecond=0) + timedelta(days=1)
     try:
-        date = datetime.strptime(str(datetime.today().date()) + " " + arg1, "%Y-%m-%d %H:%M")
-        return date, 1
-    except ValueError:
+        return parser.parse(f"{arg1} {arg2}", default=default_datetime, dayfirst=True), 2
+    except dateutil.parser._parser.ParserError:
         try:
-            date = datetime.strptime(arg1 + " " + arg2, "%d.%m.%Y %H:%M")
-            return date, 2
-        except ValueError:
-            try:
-                date = datetime.strptime(arg1 + " 10:00", "%d.%m.%Y %H:%M")
-                return date, 1
-            except ValueError:
-                pass
-    return None, None
+            return parser.parse(arg1, default=default_datetime, dayfirst=True), 1
+        except dateutil.parser._parser.ParserError:
+            return None, None
 
 
 class Notify(CommonCommand):
