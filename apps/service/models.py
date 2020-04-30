@@ -113,7 +113,7 @@ class Meme(models.Model):
     link = models.CharField(verbose_name="Ссылка", max_length=1000, default="", null=True, blank=True)
     author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
     type = models.CharField(verbose_name="Тип", max_length=5, choices=types, blank=True)
-
+    uses = models.PositiveIntegerField(verbose_name="Использований", default=0)
     approved = models.BooleanField(verbose_name="Разрешённый", default=False)
 
     class Meta:

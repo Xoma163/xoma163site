@@ -30,7 +30,7 @@ class CatAdmin(admin.ModelAdmin):
 
 @admin.register(Meme)
 class MemeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'preview_image', 'preview_link', 'author', 'approved', 'type')
+    list_display = ('id', 'name', 'preview_image', 'preview_link', 'author', 'approved', 'type', 'uses')
     search_fields = ['name', 'link']
     list_filter = (('author', admin.RelatedOnlyFieldListFilter), 'type', 'approved')
 

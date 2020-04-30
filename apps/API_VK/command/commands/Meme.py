@@ -139,6 +139,8 @@ class Meme(CommonCommand):
             return msg
         else:
             meme = self.get_meme(self.vk_event.args)
+            meme.uses += 1
+            meme.save()
             return self.prepare_meme_to_send(meme)
 
     @staticmethod
