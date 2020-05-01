@@ -11,7 +11,7 @@ class Find(CommonCommand):
         super().__init__(names, help_text, detail_help_text, args=1, api=False)
 
     def start(self):
-        self.vk_bot.set_activity('typing', self.vk_event.peer_id)
+        self.vk_bot.set_activity(self.vk_event.peer_id)
 
         query = self.vk_event.original_args
         count = 5

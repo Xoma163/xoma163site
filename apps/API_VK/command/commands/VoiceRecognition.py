@@ -5,6 +5,7 @@ import speech_recognition as sr
 from pydub import AudioSegment
 
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import get_attachments_from_attachments_or_fwd
 
 MAX_DURATION = 20
 
@@ -29,7 +30,8 @@ class VoiceRecognition(CommonCommand):
         return False
 
     def start(self):
-        from apps.API_VK.command.CommonMethods import get_attachments_from_attachments_or_fwd
+        self.vk_bot.set_activity(self.vk_event.peer_id, 'audiomessage')
+
         audio_messages = get_attachments_from_attachments_or_fwd(self.vk_event, 'audio_message')
         if not audio_messages:
             return "Не нашёл голосового сообщения"

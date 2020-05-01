@@ -23,7 +23,7 @@ class Coronavirus(CommonCommand):
         super().__init__(names, help_text, detail_help_text)
 
     def start(self):
-        self.vk_bot.set_activity('typing', self.vk_event.peer_id)
+        self.vk_bot.set_activity(self.vk_event.peer_id)
 
         detail = False
         if self.vk_event.args:

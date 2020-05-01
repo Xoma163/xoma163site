@@ -80,10 +80,9 @@ class VkBotClass(threading.Thread):
                 return True
         return False
 
-    def set_activity(self, activity, peer_id):
+    def set_activity(self, peer_id, activity='typing'):
         if activity not in ['typing', 'audiomessage']:
             raise RuntimeError("Не знаю такого типа активности")
-        print('set_activity', activity)
         self.vk.messages.setActivity(type=activity, peer_id=peer_id, group_id=self.group_id)
 
     def send_message(self, peer_id, msg="ᅠ", attachments=None, keyboard=None, dont_parse_links=False, **kwargs):
