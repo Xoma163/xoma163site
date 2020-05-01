@@ -502,7 +502,10 @@ class VkBotClass(threading.Thread):
         attachments = []
         images_to_load = []
         for image in images:
-            image = self._prepare_obj_to_upload(image, ['jpg', 'jpeg', 'png'])
+            try:
+                image = self._prepare_obj_to_upload(image, ['jpg', 'jpeg', 'png'])
+            except RuntimeError:
+                continue
             # Если Content-Length > 50mb
             bytes_count = None
             if isinstance(image, io.BytesIO):

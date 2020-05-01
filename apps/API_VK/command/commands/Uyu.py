@@ -21,7 +21,7 @@ class Uyu(CommonCommand):
             if msg['text']:
                 new_msg += msg['text'] + "\n"
 
-        if new_msg:
+        if not new_msg:
             return "Нет текста в сообщении или пересланных сообщениях"
 
         symbols_first_priority = ['...']

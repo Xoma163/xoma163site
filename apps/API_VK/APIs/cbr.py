@@ -1,16 +1,15 @@
-from xml.etree import ElementTree
-
 import requests
+from bs4 import BeautifulSoup
 
 URL = "https://www.cbr-xml-daily.ru/daily.xml"
 
 
 def get_exchange_rates(_filters_list):
     response = requests.get(URL, stream=True)
-    tree = ElementTree.fromstring(response.content)
+    elems = BeautifulSoup(response.content, 'xml').find('ValCurs').find_all("Valute")
 
     _filters = {x: {'name': None, 'value': 0} for x in _filters_list}
-    for elem in tree:
+    for elem in elems:
         for _filter in _filters:
             if elem.find("CharCode").text == _filter:
                 _filters[_filter]['name'] = elem.find('Name').text.lower()

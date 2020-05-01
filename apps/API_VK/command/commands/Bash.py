@@ -1,3 +1,4 @@
+from apps.API_VK.APIs.bash import parse_bash
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import get_inline_keyboard
 
@@ -8,7 +9,7 @@ class Bash(CommonCommand):
     def __init__(self):
         names = ["баш"]
         help_text = "Баш - рандомная цитата с баша"
-        detail_help_text = "Баш [количество=5] - рандомная цитата с баша. Максимум 25 цитат"
+        detail_help_text = "Баш [количество=5] - рандомная цитата с баша. Максимум 20 цитат"
         super().__init__(names, help_text, detail_help_text, int_args=[0])
 
     def start(self):
@@ -22,20 +23,3 @@ class Bash(CommonCommand):
             return msg
         else:
             return {"msg": msg, "keyboard": get_inline_keyboard(self.names[0], args={"quotes_count": quotes_count})}
-
-
-def parse_bash(quotes_count):
-    try:
-        import requests
-        from lxml import html
-        r = requests.get('http://bash.im/random')
-        doc = html.document_fromstring(r.text)
-        html_quotes = doc.xpath('//*[@class="quotes"]/article/div/div[@class="quote__body"]')
-        bash_quotes = []
-        for i in range(quotes_count):
-            html_quote = "\n".join(html_quotes[i].xpath('text()'))
-            bash_quotes.append(html_quote.strip('\n').strip(' ').strip('\n'))
-        return "\n——————————————————\n".join(bash_quotes)
-    except Exception as e:
-        print(e)
-        return "Ошибка"
