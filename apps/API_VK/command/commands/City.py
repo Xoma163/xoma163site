@@ -21,7 +21,7 @@ class City(CommonCommand):
                 self.check_args(2)
                 city_name = self.vk_event.args[1:len(self.vk_event.args)]
                 city_name = " ".join(city_name)
-                city = self.add_city_to_db(city_name)
+                city = add_city_to_db(city_name)
                 return f"Добавил новый город - {city.name}"
             elif self.vk_event.args[0] == 'initial':
                 self.check_sender('admin')
@@ -55,26 +55,26 @@ class City(CommonCommand):
 
             city = CityModel.objects.filter(synonyms__icontains=user['city']['title']).first()
             if not city:
-                city = self.add_city_to_db(user['city']['title'])
+                city = add_city_to_db(user['city']['title'])
             self.vk_event.sender.city = city
             self.vk_event.sender.save()
             return f"Изменил город на {city.name}"
 
-    @staticmethod
-    def add_city_to_db(city_name):
-        city_info = get_city_info_by_name(city_name)
-        if not city_info:
-            raise RuntimeError("Не смог найти координаты для города")
-        city = CityModel.objects.filter(name=city_info['name'])
-        if len(city) != 0:
-            raise RuntimeError("Такой город уже есть")
-        city_info['synonyms'] = city_info['name'].lower()
-        timezone_name = get_timezone_by_coordinates(city_info['lat'], city_info['lon'])
-        if not timezone_name:
-            raise RuntimeError("Не смог найти таймзону для города")
-        timezone_obj, _ = TimeZone.objects.get_or_create(name=timezone_name)
 
-        city_info['timezone'] = timezone_obj
-        city = CityModel(**city_info)
-        city.save()
-        return city
+def add_city_to_db(city_name):
+    city_info = get_city_info_by_name(city_name)
+    if not city_info:
+        raise RuntimeError("Не смог найти координаты для города")
+    city = CityModel.objects.filter(name=city_info['name'])
+    if len(city) != 0:
+        raise RuntimeError("Такой город уже есть")
+    city_info['synonyms'] = city_info['name'].lower()
+    timezone_name = get_timezone_by_coordinates(city_info['lat'], city_info['lon'])
+    if not timezone_name:
+        raise RuntimeError("Не смог найти таймзону для города")
+    timezone_obj, _ = TimeZone.objects.get_or_create(name=timezone_name)
+
+    city_info['timezone'] = timezone_obj
+    city = CityModel(**city_info)
+    city.save()
+    return city

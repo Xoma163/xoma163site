@@ -17,6 +17,7 @@ from apps.API_VK.VkEvent import VkEvent
 from apps.API_VK.VkUserClass import VkUserClass
 from apps.API_VK.command import get_commands
 from apps.API_VK.command.CommonMethods import check_user_group
+from apps.API_VK.command.commands.City import add_city_to_db
 from apps.API_VK.models import VkUser, VkChat, VkBot
 from apps.service.views import append_command_to_statistics
 from secrets.secrets import secrets
@@ -336,8 +337,10 @@ class VkBotClass(threading.Thread):
                 if len(city) > 0:
                     city = city.first()
                 else:
-                    city = City(name=city_name, synonyms=city_name)
-                    city.save()
+                    try:
+                        city = add_city_to_db(city_name)
+                    except:
+                        city = None
                 vk_user.city = city
             else:
                 vk_user.city = None
