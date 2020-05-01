@@ -18,7 +18,8 @@ class Meme(CommonCommand):
         help_text = "Мем - присылает нужный мем"
         detail_help_text = "Мем (название) - присылает нужный мем\n" \
                            "Мем р - присылает рандомный мем\n" \
-                           "Мем добавить (Вложение/Пересланное сообщение с вложением) (название) - добавляет мем. " \
+                           "Мем добавить (Вложение/Пересланное сообщение с вложением) (название) - добавляет мем. \n" \
+                           "Мем обновить (Вложение/Пересланное сообщение с вложением) (название) - обновляет созданный вами мем. \n" \
                            "Можно добавлять картинки/гифки/аудио/видео\n" \
                            "Мем удалить (название) - удаляет созданный вами мем\n" \
                            "Мем конфа (название конфы) (название/рандом) - отправляет мем в конфу\n\n" \
@@ -68,6 +69,40 @@ class Meme(CommonCommand):
                                       f"{new_meme_obj.name} ({new_meme_obj.id})"
                 self.vk_bot.parse_and_send_msgs(self.vk_bot.get_group_id(TEST_CHAT_ID), meme_to_send)
                 return "Добавил. Воспользоваться мемом можно после проверки модераторами."
+        elif self.vk_event.args[0] in ['обновить']:
+            self.check_args(2)
+            attachments = get_attachments_from_attachments_or_fwd(self.vk_event, ['audio', 'video', 'photo', 'doc'])
+            if len(attachments) == 0:
+                return "Не нашёл вложений в сообщении или пересланном сообщении"
+            attachment = attachments[0]
+            if attachment['type'] == 'video' or attachment['type'] == 'audio':
+                new_meme_link = attachment['url']
+            elif attachment['type'] == 'photo' or attachment['type'] == 'doc':
+                new_meme_link = attachment['download_url']
+            else:
+                return "Невозможно"
+
+            if check_user_group(self.vk_event.sender, 'moderator') or check_user_group(self.vk_event.sender, 'trusted'):
+                meme = self.get_meme(self.vk_event.args[1:])
+                meme.link = new_meme_link
+                meme.type = attachment['type']
+                meme.save()
+                return f'Обновил мем "{meme.name}"'
+            else:
+                meme = self.get_meme(self.vk_event.args[1:], self.vk_event.sender)
+                meme.link = new_meme_link
+                meme.approved = False
+                meme.type = attachment['type']
+                meme.save()
+
+                meme_to_send = self.prepare_meme_to_send(meme)
+                meme_to_send['msg'] = "Запрос на обновление мема:\n" \
+                                      f"{meme.author}\n" \
+                                      f"{meme.name} ({meme.id})"
+                self.vk_bot.parse_and_send_msgs(self.vk_bot.get_group_id(TEST_CHAT_ID), meme_to_send)
+                return "Обновил. Воспользоваться мемом можно после проверки модераторами."
+
+
         elif self.vk_event.args[0] in ['удалить']:
             self.check_args(2)
             if check_user_group(self.vk_event.sender, 'moderator'):

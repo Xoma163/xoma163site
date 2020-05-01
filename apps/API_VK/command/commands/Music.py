@@ -30,6 +30,7 @@ class Music(CommonCommand):
         super().__init__(names, help_text, detail_help_text, args=1)
 
     def start(self):
+        self.vk_bot.set_activity('typing', self.vk_event.peer_id)
         url = self.vk_event.args[0]
         ydl_params = {
             'outtmpl': '%(id)s%(ext)s',

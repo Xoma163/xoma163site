@@ -14,6 +14,8 @@ class Wikipedia(CommonCommand):
         super().__init__(names, help_text, detail_help_text, args=1)
 
     def start(self):
+        self.vk_bot.set_activity('typing', self.vk_event.peer_id)
+
         is_random = False
         if self.vk_event.args[0].lower() in ["рандом", "р"]:
             is_random = True
