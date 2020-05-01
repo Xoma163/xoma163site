@@ -51,9 +51,9 @@ class Product(models.Model):
 
     name = models.CharField(max_length=100, verbose_name="Название", null=True, blank=True, default="")
     count = models.PositiveIntegerField(verbose_name="Количество", default=0)
-    tare = models.ForeignKey(Tare, verbose_name="Тара", on_delete=models.SET_NULL, null=True, blank=True)
+    tare = models.ForeignKey(Tare, verbose_name="Тара", on_delete=models.CASCADE, null=True, blank=True)
     price = models.PositiveIntegerField(verbose_name="Стоимость", default=0)
-    user = models.ForeignKey(User, verbose_name="Купил", on_delete=models.SET_NULL, null=True, blank=True)
+    user = models.ForeignKey(User, verbose_name="Купил", on_delete=models.CASCADE, null=True, blank=True)
     is_bought = models.BooleanField(verbose_name="Куплено", default=False)
 
     def __str__(self):

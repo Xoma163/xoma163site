@@ -54,7 +54,7 @@ class Counter(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(verbose_name="Имя", max_length=50, blank=True)
     count = models.IntegerField(verbose_name="Количество", default=0)
-    chat = models.ForeignKey(VkChat, verbose_name='Чат', null=True, blank=True, on_delete=models.SET_NULL)
+    chat = models.ForeignKey(VkChat, verbose_name='Чат', null=True, blank=True, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = "счётчик"
@@ -154,8 +154,8 @@ class Notify(models.Model):
     date = models.DateTimeField(verbose_name="Дата напоминания")
     text = models.CharField(verbose_name="Текст/команда", max_length=1000, default="")
     text_for_filter = models.CharField(verbose_name="Текст для поиска", max_length=1000, default="")
-    chat = models.ForeignKey(VkChat, verbose_name='Чат', null=True, on_delete=models.SET_NULL, blank=True)
-    author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
+    chat = models.ForeignKey(VkChat, verbose_name='Чат', null=True, on_delete=models.CASCADE, blank=True)
+    author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.CASCADE, null=True)
     repeat = models.BooleanField(verbose_name="Повторять", default=False)
     attachments = JSONField(null=True, verbose_name="Вложения", blank=True)
 
@@ -200,7 +200,7 @@ class City(models.Model):
 
 class AudioList(models.Model):
     id = models.AutoField(primary_key=True)
-    author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
+    author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.CASCADE, null=True)
     name = models.CharField(verbose_name="Название", max_length=300)
     attachment = models.CharField(verbose_name="Вложение", max_length=100, default="", null=True, blank=True)
 
@@ -215,8 +215,8 @@ class AudioList(models.Model):
 
 class LaterMessage(models.Model):
     id = models.AutoField(primary_key=True)
-    author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
-    message_author = models.ForeignKey(VkUser, verbose_name="Автор сообщения", on_delete=models.SET_NULL, null=True,
+    author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.CASCADE, null=True)
+    message_author = models.ForeignKey(VkUser, verbose_name="Автор сообщения", on_delete=models.CASCADE, null=True,
                                        related_name="message_author_%(class)ss", blank=True)
     message_bot = models.ForeignKey(VkBot, verbose_name="Автор сообщения(бот)", on_delete=models.SET_NULL, null=True,
                                     blank=True)

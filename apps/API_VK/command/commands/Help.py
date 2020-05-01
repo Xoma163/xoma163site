@@ -4,7 +4,7 @@ from apps.API_VK.command.CommonMethods import check_user_group, find_command_by_
 
 class Help(CommonCommand):
     def __init__(self):
-        names = ["помощь", "хелп", "ман", "команды", "помоги", "памаги", "спаси", "хелб", "манул", "help", "start"]
+        names = ["помощь", "хелп", "ман", "команды", "помоги", "памаги", "спаси", "хелб", "манул", "help"]
         detail_help_text = "Формат детальной помощи по командам:\n" \
                            "Команда - выполняет команду\n" \
                            "Команда параметр - выполняет команду с параметром\n" \
@@ -17,6 +17,14 @@ class Help(CommonCommand):
 
         keyboard = {'text': 'Помощь', 'color': 'blue', 'row': 1, 'col': 2}
         super().__init__(names, keyboard=keyboard, detail_help_text=detail_help_text)
+
+    def accept(self, vk_event):
+        if vk_event.command in self.names:
+            return True
+        # Самая первая кнопка клавы у бота
+        if vk_event.payload and vk_event.payload['command'] == 'start':
+            return True
+        return False
 
     def start(self):
         if self.vk_event.args:

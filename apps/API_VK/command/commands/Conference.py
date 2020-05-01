@@ -17,17 +17,33 @@ class Conference(CommonCommand):
     def start(self):
         if self.vk_event.command in self.names:
             if self.vk_event.args:
-                self.check_sender('conference_admin')
-                same_chats = VkChat.objects.filter(name=self.vk_event.original_args)
-                if len(same_chats) > 0:
-                    return "Конфа с таким названием уже есть. Придумайте другое"
-                self.vk_event.chat.name = self.vk_event.original_args
-                self.vk_event.chat.save()
+                try:
+                    self.check_sender('conference_admin')
+                    same_chats = VkChat.objects.filter(name=self.vk_event.original_args)
+                    if len(same_chats) > 0:
+                        return "Конфа с таким названием уже есть. Придумайте другое"
+                    self.vk_event.chat.name = self.vk_event.original_args
+                    self.vk_event.chat.save()
+                    return f"Поменял название беседы на {self.vk_event.original_args}"
+                except RuntimeError as e:
+                    if self.vk_event.chat.admin is None:
+                        msg = "Так как администратора конфы не было, то теперь вы стали администратором конфы!"
+                        self.vk_event.chat.admin = self.vk_event.sender
+                        same_chats = VkChat.objects.filter(name=self.vk_event.original_args)
+                        if len(same_chats) > 0:
+                            msg += "\nКонфа с таким названием уже есть. Придумайте другое"
+                            return msg
+                        self.vk_event.chat.name = self.vk_event.original_args
+                        self.vk_event.chat.save()
+                        msg += f"\nПоменял название беседы на {self.vk_event.original_args}"
+                        return msg
+                    else:
+                        return str(e)
+
             else:
                 if self.vk_event.chat.name and self.vk_event.chat.name != "":
                     return self.vk_event.chat.name
                 else:
                     return "Конфа не имеет названия"
-            return f"Поменял название беседы на {self.vk_event.original_args}"
         else:
             return "Не задано имя конфы, задайте его командой /конфа (название конфы)"

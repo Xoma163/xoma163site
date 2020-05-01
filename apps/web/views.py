@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 
 from apps.web.models import Order, Tare, User, Session
+from secrets.secrets import secrets
 
 
 def index(request):
@@ -29,7 +30,8 @@ def calc_session(request, session_id):
 
 
 def chat(request):
-    return render(request, "web/chat.html")
+    petrovich_group_id = secrets['vk']['bot']['group_id']
+    return render(request, "web/chat.html", {'petrovich_group_id': petrovich_group_id})
 
 
 def eugene(request):

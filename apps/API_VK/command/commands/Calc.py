@@ -8,7 +8,7 @@ class Calc(CommonCommand):
     def __init__(self):
         names = ["калькулятор", "кальк", "к", "="]
         help_text = "Калькулятор - считает простые выражения"
-        detail_help_text = "=(выражение) - считает выражение. Умеет работать с + - * / ^ ( )"
+        detail_help_text = "=(выражение) - калькулятор выражений. Умеет работать с + - * / ^ ( )"
         super().__init__(names, help_text, detail_help_text)
 
     def accept(self, vk_event):

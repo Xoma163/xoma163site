@@ -93,8 +93,8 @@ class Log(models.Model):
 class QuoteBook(models.Model):
     text = models.TextField(verbose_name="Текст", max_length=5000)
     date = models.DateTimeField(verbose_name="Дата", auto_now_add=True, blank=True)
-    vk_user = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.SET_NULL, null=True, blank=True)
-    vk_chat = models.ForeignKey(VkChat, verbose_name="Чат", on_delete=models.SET_NULL, null=True, blank=True)
+    vk_user = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.CASCADE, null=True, blank=True)
+    vk_chat = models.ForeignKey(VkChat, verbose_name="Чат", on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         verbose_name = "Цитата"
@@ -129,8 +129,8 @@ class Words(models.Model):
 class APIUser(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
     user_id = models.CharField(verbose_name="ID пользователя", max_length=100)
-    vk_user = models.ForeignKey(VkUser, verbose_name="Вк юзер", on_delete=models.SET_NULL, null=True, blank=True)
-    vk_chat = models.ForeignKey(VkChat, verbose_name="Вк чат", on_delete=models.SET_NULL, null=True, blank=True)
+    vk_user = models.ForeignKey(VkUser, verbose_name="Вк юзер", on_delete=models.CASCADE, null=True, blank=True)
+    vk_chat = models.ForeignKey(VkChat, verbose_name="Вк чат", on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         verbose_name = "API Пользователь"
@@ -148,8 +148,8 @@ def random_digits():
 class APITempUser(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
     user_id = models.CharField(verbose_name="ID пользователя", max_length=100)
-    vk_user = models.ForeignKey(VkUser, verbose_name="Вк юзер", on_delete=models.SET_NULL, null=True, blank=True)
-    vk_chat = models.ForeignKey(VkChat, verbose_name="Вк чат", on_delete=models.SET_NULL, null=True, blank=True)
+    vk_user = models.ForeignKey(VkUser, verbose_name="Вк юзер", on_delete=models.CASCADE, null=True, blank=True)
+    vk_chat = models.ForeignKey(VkChat, verbose_name="Вк чат", on_delete=models.CASCADE, null=True, blank=True)
     code = models.CharField(verbose_name="Код подтверждения", default=random_digits, max_length=6)
     tries = models.IntegerField(verbose_name="Кол-во попыток", default=5)
 

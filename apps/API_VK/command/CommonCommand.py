@@ -256,6 +256,7 @@ class CommonCommand:
 
 role_translator = {
     'admin': "администратор",
+    'conference_admin': "администратор",
     'moderator': "модератор",
     'minecraft': "майнкрафт",
     'terraria': "террария",
