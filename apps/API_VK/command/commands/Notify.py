@@ -18,14 +18,18 @@ time_translator = {
     'воскресенье': 7, 'воскресение': 7, 'вс': 7,
 }
 
-
+# Возвращает datetime, кол-во аргументов использованных для получения даты,  была ли передана точная дата
 def get_time(arg1, arg2):
+    exact_time_flag = True
     if arg1 == "завтра":
+        exact_time_flag = False
         arg1 = (datetime.today().date() + timedelta(days=1)).strftime("%d.%m.%Y")
     if arg1 == "послезавтра":
+        exact_time_flag = False
         arg1 = (datetime.today().date() + timedelta(days=2)).strftime("%d.%m.%Y")
 
     if arg1 in time_translator:
+        exact_time_flag = False
         delta_days = time_translator[arg1] - datetime.today().isoweekday()
         if delta_days <= 0:
             delta_days += 7
@@ -33,10 +37,10 @@ def get_time(arg1, arg2):
 
     default_datetime = datetime.now().replace(hour=10, minute=0, second=0, microsecond=0)  # + timedelta(days=1)
     try:
-        return parser.parse(f"{arg1} {arg2}", default=default_datetime, dayfirst=True), 2
+        return parser.parse(f"{arg1} {arg2}", default=default_datetime, dayfirst=True), 2, exact_time_flag
     except dateutil.parser._parser.ParserError:
         try:
-            return parser.parse(arg1, default=default_datetime, dayfirst=True), 1
+            return parser.parse(arg1, default=default_datetime, dayfirst=True), 1, exact_time_flag
         except dateutil.parser._parser.ParserError:
             return None, None
 
@@ -58,7 +62,7 @@ class Notify(CommonCommand):
             return "Нельзя добавлять более 5 напоминаний"
         user_timezone = self.vk_event.sender.city.timezone.name
 
-        date, args_count = get_time(self.vk_event.args[0], self.vk_event.args[1])
+        date, args_count, exact_time_flag = get_time(self.vk_event.args[0], self.vk_event.args[1])
         if args_count == 2:
             self.check_args(3)
         if not date:
@@ -68,10 +72,10 @@ class Notify(CommonCommand):
 
         if (date - datetime_now).seconds < 60:
             return "Нельзя добавлять напоминание на ближайшую минуту"
-        if (date - datetime_now).days < 0 or (datetime_now - date).seconds < 0:
+        if not exact_time_flag and ((date - datetime_now).days < 0 or (datetime_now - date).seconds < 0):
             date = date + timedelta(days=1)
-            if (date - datetime_now).days < 0 or (datetime_now - date).seconds < 0:
-                return "Нельзя указывать дату в прошлом"
+        if (date - datetime_now).days < 0 or (datetime_now - date).seconds < 0:
+            return "Нельзя указывать дату в прошлом"
 
         text = self.vk_event.original_args.split(' ', args_count)[args_count]
         if text[0] == '/':
