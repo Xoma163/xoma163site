@@ -75,6 +75,9 @@ class Music(CommonCommand):
                 break
 
         response = requests.get(audio_link)
+        if response.status_code == 403:
+            return "Нет доступа к ссылке, не могу скачать((\n" \
+                   "Пока сам не понял как решить эту проблему, думаю над этим"
         i = io.BytesIO(response.content)
         i.seek(0)
         o = io.BytesIO()

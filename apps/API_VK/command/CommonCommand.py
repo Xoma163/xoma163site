@@ -150,9 +150,15 @@ class CommonCommand:
 
     @staticmethod
     def _transform_k(arg):
-        count_k = arg.count('k') + arg.count('к')
+        arg = arg.lower()
+        count_m = arg.count('m') + arg.count('м')
+        count_k = arg.count('k') + arg.count('к') + count_m * 2
         if count_k > 0:
-            arg = arg.replace('k', '').replace('к', '')
+            arg = arg \
+                .replace('k', '') \
+                .replace('к', '') \
+                .replace('м', '') \
+                .replace('m', '')
             arg = float(arg)
             arg *= 10 ** (3 * count_k)
         return arg

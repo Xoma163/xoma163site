@@ -339,7 +339,7 @@ class VkBotClass(threading.Thread):
                 else:
                     try:
                         city = add_city_to_db(city_name)
-                    except:
+                    except Exception:
                         city = None
                 vk_user.city = city
             else:
