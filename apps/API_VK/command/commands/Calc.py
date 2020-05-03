@@ -24,11 +24,11 @@ class Calc(CommonCommand):
             expression = self.vk_event.original_args
         expression = expression \
             .lower() \
-            .replace(' ', '') \
-            .replace('k', '000') \
-            .replace('к', '000') \
-            .replace('m', "000000") \
-            .replace('м', "000000")
+            .replace(' ', '')  # \
+        # .replace('k', '000') \
+        # .replace('к', '000') \
+        # .replace('m', "000000") \
+        # .replace('м', "000000")
 
         # ToDo: пофиксить баг с низкой скоростью подсчёта
         operations = ['-', '+', '*', '/', '^']

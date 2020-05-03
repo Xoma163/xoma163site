@@ -16,7 +16,7 @@ from vk_api.utils import get_random_id
 from apps.API_VK.VkEvent import VkEvent
 from apps.API_VK.VkUserClass import VkUserClass
 from apps.API_VK.command import get_commands
-from apps.API_VK.command.CommonMethods import check_user_group
+from apps.API_VK.command.CommonMethods import check_user_group, get_user_groups
 from apps.API_VK.command.commands.City import add_city_to_db
 from apps.API_VK.models import VkUser, VkChat, VkBot
 from apps.service.views import append_command_to_statistics
@@ -195,7 +195,15 @@ class VkBotClass(threading.Thread):
 
         similar_command = commands[0].names[0]
         tanimoto_max = 0
+        user_groups = get_user_groups(vk_event.sender)
         for command in commands:
+            # Выдача пользователю только тех команд, которые ему доступны
+            command_access = command.access
+            if isinstance(command_access, str):
+                command_access = [command_access]
+            if not all([access in user_groups for access in command_access]):
+                continue
+
             for name in command.names:
                 if name:
                     tanimoto_current = self.tanimoto(vk_event.command, name)
@@ -206,7 +214,7 @@ class VkBotClass(threading.Thread):
         msg = f"Я не понял команды \"{vk_event.command}\"\n"
         tanimoto_max = min(1, tanimoto_max)
         if tanimoto_max != 0:
-            msg += f"Возможно вы имели в виду команду {similar_command} с вероятностью {round(tanimoto_max * 100, 2)}%"
+            msg += f"Возможно вы имели в виду команду \"{similar_command}\" с вероятностью {round(tanimoto_max * 100, 2)}%"
 
         logger.debug(f"{{result: {msg}}}")
         if send:

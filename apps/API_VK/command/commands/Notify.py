@@ -27,13 +27,11 @@ def get_time(arg1, arg2):
 
     if arg1 in time_translator:
         delta_days = time_translator[arg1] - datetime.today().isoweekday()
-        if delta_days < 0:
-            delta_days += 6
-        if delta_days == 0:
+        if delta_days <= 0:
             delta_days += 7
         arg1 = (datetime.today().date() + timedelta(days=delta_days)).strftime("%d.%m.%Y")
 
-    default_datetime = datetime.now().replace(hour=10, minute=0, second=0, microsecond=0) + timedelta(days=1)
+    default_datetime = datetime.now().replace(hour=10, minute=0, second=0, microsecond=0)  # + timedelta(days=1)
     try:
         return parser.parse(f"{arg1} {arg2}", default=default_datetime, dayfirst=True), 2
     except dateutil.parser._parser.ParserError:

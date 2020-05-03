@@ -30,7 +30,8 @@ class Notifies(CommonCommand):
         help_text = "Напоминания - список напоминаний"
         detail_help_text = "Напоминания - список напоминаний. Отправляет в лс все напоминания, когда-либо созданные, в группу - только напоминания внутри группы\n" \
                            "Напоминания удалить (текст напоминания) - удаляет напоминания\n" \
-                           "Напоминания конфа - выводит все напоминания по конфе"
+                           "Напоминания конфа - выводит все напоминания по конфе\n" \
+                           "Админ конфы может удалять напоминания остальных участников"
         super().__init__(names, help_text, detail_help_text)
 
     def start(self):
@@ -43,7 +44,11 @@ class Notifies(CommonCommand):
                 self.check_args(2)
                 notifies = Notify.objects.filter(author=self.vk_event.sender).order_by("date")
                 if self.vk_event.chat:
-                    notifies = notifies.filter(chat=self.vk_event.chat)
+                    try:
+                        self.check_sender('conference_admin')
+                        notifies = Notify.objects.filter(chat=self.vk_event.chat).order_by("date")
+                    except RuntimeError:
+                        notifies = notifies.filter(chat=self.vk_event.chat)
                 filter_list = self.vk_event.args[1:]
                 for _filter in filter_list:
                     notifies = notifies.filter(text_for_filter__icontains=_filter)
@@ -52,7 +57,7 @@ class Notifies(CommonCommand):
                     return "Не нашёл напоминаний по такому тексту"
                 if len(notifies) > 1:
                     notifies10 = notifies[:10]
-                    notifies_texts = [notify.text_for_filter for notify in notifies10]
+                    notifies_texts = [notify.author + " " + notify.text_for_filter for notify in notifies10]
                     notifies_texts_str = "\n".join(notifies_texts)
                     return f"Нашёл сразу несколько. Уточните:\n" \
                            f"{notifies_texts_str}"
