@@ -193,6 +193,8 @@ class VkBotClass(threading.Thread):
                     self.parse_and_send_msgs(vk_event.peer_id, msg)
                 return msg
 
+        if not vk_event.chat.need_reaction:
+            return None
         similar_command = commands[0].names[0]
         tanimoto_max = 0
         user_groups = get_user_groups(vk_event.sender)
