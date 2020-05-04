@@ -71,10 +71,10 @@ class VkBotClass(threading.Thread):
             return True
         if have_action:
             return True
-        if from_user:
-            return True
         if len(message) == 0:
             return False
+        if from_user:
+            return True
         if message[0] == '/':
             return True
         for mention in self.mentions:
@@ -194,7 +194,7 @@ class VkBotClass(threading.Thread):
                     self.parse_and_send_msgs(vk_event.peer_id, msg)
                 return msg
 
-        if not vk_event.chat.need_reaction:
+        if vk_event.chat and not vk_event.chat.need_reaction:
             return None
         similar_command = commands[0].names[0]
         tanimoto_max = 0
@@ -250,8 +250,6 @@ class VkBotClass(threading.Thread):
                             'payload': event.message.payload,
                             'attachments': event.message.attachments,
                             'action': event.message.action
-                        },
-                        'parsed': {
                         },
                         'fwd': None
                     }
