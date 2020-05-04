@@ -25,7 +25,8 @@ class CounterAdmin(admin.ModelAdmin):
 
 @admin.register(Cat)
 class CatAdmin(admin.ModelAdmin):
-    list_display = ('id', 'image', 'preview', 'author')
+    list_display = ('id', 'image', 'preview', 'author', 'to_send')
+    list_filter = (('author', admin.RelatedOnlyFieldListFilter), 'to_send',)
 
 
 @admin.register(Meme)

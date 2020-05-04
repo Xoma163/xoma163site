@@ -19,7 +19,7 @@ class VkUserAdmin(admin.ModelAdmin):
 
 @admin.register(VkChat)
 class VkChatAdmin(admin.ModelAdmin):
-    list_display = ('chat_id', 'name', 'admin')
+    list_display = ('chat_id', 'name', 'admin', 'need_reaction')
 
 
 @admin.register(VkBot)

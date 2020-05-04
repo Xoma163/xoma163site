@@ -1,6 +1,7 @@
 import io
 import json
 import logging
+import os
 import threading
 import traceback
 from urllib.parse import urlparse
@@ -530,6 +531,8 @@ class VkBotClass(threading.Thread):
                 bytes_count = image.getbuffer().nbytes
             elif isinstance(image, urllib3.response.HTTPResponse):
                 bytes_count = image.headers.get('Content-Length')
+            elif os.path.exists(image):
+                bytes_count = os.path.getsize(image)
             else:
                 print("ШТО ТЫ ТАКОЕ", type(image))
             if int(bytes_count) / 1024 / 1024 > 50:

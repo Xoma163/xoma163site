@@ -78,6 +78,7 @@ class Cat(models.Model):
     id = models.AutoField(primary_key=True)
     image = models.ImageField(upload_to='service/cats/', verbose_name="Изображение")
     author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
+    to_send = models.BooleanField(verbose_name="Ещё не было", default=True)
 
     class Meta:
         verbose_name = "кот"
