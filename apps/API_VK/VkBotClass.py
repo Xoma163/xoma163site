@@ -533,6 +533,8 @@ class VkBotClass(threading.Thread):
                 bytes_count = os.path.getsize(image)
             else:
                 print("ШТО ТЫ ТАКОЕ", type(image))
+            if not bytes_count:
+                continue
             if int(bytes_count) / 1024 / 1024 > 50:
                 continue
             images_to_load.append(image)

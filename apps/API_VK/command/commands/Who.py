@@ -23,8 +23,7 @@ class Who(CommonCommand):
         if arg in ['moderators', 'moderator', 'moders', 'moder', 'модераторы', 'модератор', 'модеры', 'модер']:
             who = Role.MODERATOR.name
         elif arg in ['administrations', 'administration', 'admin', 'администрация', 'админы', 'админ', 'главный',
-                     'власть',
-                     'господин']:
+                     'власть', 'господин']:
             who = Role.ADMIN.name
         elif arg in ['students', 'student', 'студенты', 'студент']:
             who = Role.TERRARIA.name
