@@ -1,3 +1,4 @@
+from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.service.models import Donations as DonationsModel
 
@@ -6,7 +7,7 @@ class Donations(CommonCommand):
     def __init__(self):
         names = ["донаты"]
         help_text = "Донаты - список всех донатов"
-        super().__init__(names, help_text, access='trusted')
+        super().__init__(names, help_text, access=Role.TRUSTED.name)
 
     def start(self):
         donations = DonationsModel.objects.all()

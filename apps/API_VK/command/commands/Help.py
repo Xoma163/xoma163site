@@ -1,3 +1,4 @@
+from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import check_user_group, find_command_by_name, get_help_for_command
 
@@ -41,32 +42,33 @@ class Help(CommonCommand):
         else:
             help_texts = HELP_TEXT
         output = "— общие команды —\n"
-        output += help_texts['user']
+        output += help_texts[Role.USER.name]
 
-        if check_user_group(self.vk_event.sender, 'student') and help_texts['student']:
+        if check_user_group(self.vk_event.sender, Role.TERRARIA.name) and help_texts[Role.TERRARIA.name]:
             output += "\n\n— команды для группы 6221 —\n"
-            output += help_texts['student']
-        if check_user_group(self.vk_event.sender, 'moderator') and help_texts['moderator']:
+            output += help_texts[Role.TERRARIA.name]
+        if check_user_group(self.vk_event.sender, Role.MODERATOR.name) and help_texts[Role.MODERATOR.name]:
             output += "\n\n— команды для модераторов —\n"
-            output += help_texts['moderator']
-        if check_user_group(self.vk_event.sender, 'admin') and help_texts['admin']:
+            output += help_texts[Role.MODERATOR.name]
+        if check_user_group(self.vk_event.sender, Role.ADMIN.name) and help_texts[Role.ADMIN.name]:
             output += "\n\n— команды для администраторов —\n"
-            output += help_texts['admin']
-        if check_user_group(self.vk_event.sender, 'banned') and help_texts['banned']:
+            output += help_texts[Role.ADMIN.name]
+        if check_user_group(self.vk_event.sender, Role.BANNED.name) and help_texts[Role.BANNED.name]:
             output += "\n\n— команды для забаненных —\n"
-            output += help_texts['banned']
-        if check_user_group(self.vk_event.sender, 'minecraft') and help_texts['minecraft']:
+            output += help_texts[Role.BANNED.name]
+        if check_user_group(self.vk_event.sender, Role.MINECRAFT.name) and help_texts[Role.MINECRAFT.name]:
             output += "\n\n— команды для игроков майнкрафта —\n"
-            output += help_texts['minecraft']
-        if check_user_group(self.vk_event.sender, 'minecraft_notify') and help_texts['minecraft_notify']:
+            output += help_texts[Role.MINECRAFT.name]
+        if check_user_group(self.vk_event.sender, Role.MINECRAFT_NOTIFY.name) and help_texts[
+            Role.MINECRAFT_NOTIFY.name]:
             output += "\n\n— команды для уведомлённых майнкрафтеров —\n"
-            output += help_texts['minecraft_notify']
-        if check_user_group(self.vk_event.sender, 'terraria') and help_texts['terraria']:
+            output += help_texts[Role.MINECRAFT_NOTIFY.name]
+        if check_user_group(self.vk_event.sender, Role.TERRARIA.name) and help_texts[Role.TERRARIA.name]:
             output += "\n\n— команды для игроков террарии —\n"
-            output += help_texts['terraria']
-        if check_user_group(self.vk_event.sender, 'trusted') and help_texts['trusted']:
+            output += help_texts[Role.TERRARIA.name]
+        if check_user_group(self.vk_event.sender, Role.TRUSTED.name) and help_texts[Role.TRUSTED.name]:
             output += "\n\n— команды для доверенных пользователей —\n"
-            output += help_texts['trusted']
+            output += help_texts[Role.TRUSTED.name]
         if help_texts['games']:
             output += "\n\n— игры —\n"
             output += help_texts['games']

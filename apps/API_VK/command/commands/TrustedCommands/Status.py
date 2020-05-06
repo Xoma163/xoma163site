@@ -1,5 +1,6 @@
 import json
 
+from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.DoTheLinuxComand import do_the_linux_command
 from xoma163site.settings import MAIN_DOMAIN
@@ -9,8 +10,8 @@ class Status(CommonCommand):
     def __init__(self):
         names = ["статус", "ранд"]
         help_text = "Статус - статус серверов по играм"
-        keyboard = {'for': 'minecraft', 'text': 'Статус', 'color': 'green', 'row': 1, 'col': 1}
-        super().__init__(names, help_text, int_args=[0, 1], keyboard=keyboard, access='trusted')
+        keyboard = {'for': Role.MINECRAFT.name, 'text': 'Статус', 'color': 'green', 'row': 1, 'col': 1}
+        super().__init__(names, help_text, int_args=[0, 1], keyboard=keyboard, access=Role.TRUSTED.name)
 
     def start(self):
         res_1_12 = get_minecraft_server_info("localhost", "25565", "1.12.2")

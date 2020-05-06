@@ -1,6 +1,7 @@
 import json
 from datetime import datetime, timedelta
 
+from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import localize_datetime, normalize_datetime, remove_tz, check_user_group
 from apps.service.models import Notify as NotifyModel
@@ -26,7 +27,7 @@ class NotifyRepeat(CommonCommand):
     def start(self):
         if self.vk_event.sender.city is None:
             return "Не знаю ваш город. /город"
-        if not check_user_group(self.vk_event.sender, 'trusted') and \
+        if not check_user_group(self.vk_event.sender, Role.TRUSTED.name) and \
                 len(NotifyModel.objects.filter(author=self.vk_event.sender)) >= 5:
             return "Нельзя добавлять более 5 напоминаний"
         user_timezone = self.vk_event.sender.city.timezone.name

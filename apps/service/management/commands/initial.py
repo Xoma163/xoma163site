@@ -5,6 +5,7 @@ from django.core.management.base import BaseCommand
 
 from apps.API_VK.APIs.timezonedb import get_timezone_by_coordinates
 from apps.API_VK.APIs.yandex_geo import get_city_info_by_name
+from apps.API_VK.command import Role
 from apps.API_VK.models import VkUser, APIUser
 from apps.service.models import City, TimeZone
 
@@ -13,8 +14,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def init_groups():
-        from apps.API_VK.command.CommonCommand import role_translator
-        groups = [{'name': x} for x in role_translator]
+        groups = [{'name': x} for x in Role]
         for group in groups:
             Group.objects.update_or_create(name=group['name'], defaults=group)
 
@@ -26,7 +26,7 @@ class Command(BaseCommand):
             'surname': 'Анонимов'
         }
         anon_user, _ = VkUser.objects.update_or_create(user_id=anonymous_user['user_id'], defaults=anonymous_user)
-        group_user = Group.objects.get(name='user')
+        group_user = Group.objects.get(name=Role.USER.name)
         anon_user.groups.add(group_user)
         anon_user.save()
 

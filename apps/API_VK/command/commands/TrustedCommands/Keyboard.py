@@ -1,3 +1,4 @@
+from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import get_user_groups
 
@@ -7,7 +8,7 @@ class Keyboard(CommonCommand):
         names = ["клава", "клавиатура"]
         help_text = "Клава - показать клавиатуру"
         # ToDo: access trusted это временное решение. Нужно будет пересмотреть политику клавиатур
-        super().__init__(names, help_text, api=False, access='trusted')
+        super().__init__(names, help_text, api=False, access=Role.TRUSTED.name)
 
     def start(self):
         return {"keyboard": get_keyboard(self.vk_event.sender)}

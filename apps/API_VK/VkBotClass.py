@@ -16,7 +16,7 @@ from vk_api.utils import get_random_id
 
 from apps.API_VK.VkEvent import VkEvent
 from apps.API_VK.VkUserClass import VkUserClass
-from apps.API_VK.command import get_commands
+from apps.API_VK.command import get_commands, Role
 from apps.API_VK.command.CommonMethods import check_user_group, get_user_groups
 from apps.API_VK.command.commands.City import add_city_to_db
 from apps.API_VK.models import VkUser, VkChat, VkBot
@@ -133,7 +133,7 @@ class VkBotClass(threading.Thread):
 
         # Проверяем не остановлен ли бот, если так, то проверяем вводимая команда = старт?
         if not self.check_bot_working():
-            if not check_user_group(vk_event.sender, 'admin'):
+            if not check_user_group(vk_event.sender, Role.ADMIN.name):
                 return
 
             if vk_event.command in ['старт']:
@@ -145,7 +145,7 @@ class VkBotClass(threading.Thread):
                 return msg
             return
 
-        group = vk_event.sender.groups.filter(name='banned')
+        group = vk_event.sender.groups.filter(name=Role.BANNED.name)
         if len(group) > 0:
             return
 
@@ -356,7 +356,7 @@ class VkBotClass(threading.Thread):
             if 'screen_name' in user:
                 vk_user.nickname = user['screen_name']
             vk_user.save()
-            group_user = Group.objects.get(name='user')
+            group_user = Group.objects.get(name=Role.USER.name)
             vk_user.groups.add(group_user)
             vk_user.save()
         return vk_user

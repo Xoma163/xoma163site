@@ -1,10 +1,11 @@
-from apps.API_VK.command.CommonCommand import CommonCommand, role_translator
+from apps.API_VK.command import Role
+from apps.API_VK.command.CommonCommand import CommonCommand
 
 
 def get_roles(user):
     active_roles = []
     for group in user.groups.all():
-        active_roles.append(role_translator[group.name])
+        active_roles.append(Role[group.name].value)
     return active_roles
 
 

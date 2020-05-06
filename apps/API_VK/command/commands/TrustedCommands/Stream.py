@@ -1,3 +1,4 @@
+from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.service.models import Service
 
@@ -8,7 +9,7 @@ class Stream(CommonCommand):
         help_text = "Стрим - ссылка на стрим"
         detail_help_text = "Стрим - ссылка на стрим\n" \
                            "Стрим [новая ссылка] - меняет ссылку на стрим. Требуются права модератора"
-        super().__init__(names, help_text, detail_help_text, access='trusted')
+        super().__init__(names, help_text, detail_help_text, access=Role.TRUSTED.name)
 
     def start(self):
         if self.vk_event.args is None:
@@ -19,6 +20,6 @@ class Stream(CommonCommand):
             else:
                 return stream_link
         else:
-            self.check_sender(['trusted', 'moderator'])
+            self.check_sender([Role.TRUSTED.name, Role.MODERATOR.name])
             Service.objects.update_or_create(name="stream", defaults={'value': self.vk_event.args[0]})
             return "Ссылка изменена на " + self.vk_event.args[0]

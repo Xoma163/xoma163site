@@ -1,3 +1,4 @@
+from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.models import VkUser
 
@@ -20,22 +21,23 @@ class Who(CommonCommand):
     def start(self):
         arg = self.vk_event.original_args.lower()
         if arg in ['moderators', 'moderator', 'moders', 'moder', 'модераторы', 'модератор', 'модеры', 'модер']:
-            who = 'moderator'
-        elif arg in ['administrations', 'administration', 'администрация', 'админы', 'админ', 'главный', 'власть',
+            who = Role.MODERATOR.name
+        elif arg in ['administrations', 'administration', 'admin', 'администрация', 'админы', 'админ', 'главный',
+                     'власть',
                      'господин']:
-            who = 'admin'
+            who = Role.ADMIN.name
         elif arg in ['students', 'student', 'студенты', 'студент']:
-            who = 'student'
+            who = Role.TERRARIA.name
         elif arg in ['minecraft', 'майнкрафт']:
-            who = 'minecraft'
+            who = Role.MINECRAFT.name
         elif arg in ['minecraft_notify', 'майнкрафт уведомления']:
-            who = 'minecraft_notify'
+            who = Role.MINECRAFT_NOTIFY.name
         elif arg in ['terraria', 'террария']:
-            who = 'terraria'
+            who = Role.TERRARIA.name
         elif arg in ['banned', 'ban', 'забанены', 'забанен', 'бан']:
-            who = 'banned'
+            who = Role.BANNED.name
         elif arg in ['доверенный', 'проверенный', 'trusted']:
-            who = 'trusted'
+            who = Role.TRUSTED.name
         elif arg in ['conference admin', 'chat admin', 'админ конфы', 'админ беседы', 'админ конференции',
                      'администратор конфы', 'админ чата', 'администратор беседы', 'администратор конференции',
                      'администратор чата']:

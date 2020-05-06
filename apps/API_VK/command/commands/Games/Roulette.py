@@ -3,6 +3,7 @@ import json
 import random
 from threading import Lock
 
+from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import random_event, localize_datetime, remove_tz, decl_of_num
 from apps.games.models import RouletteRate, Gamer
@@ -150,7 +151,7 @@ class Roulette(CommonCommand):
                 vk_user_gamer.save()
                 return f"Передал игроку {vk_user_gamer.user} {points_transfer} {decl_of_num(points_transfer, ['очко', 'очка', 'очков'])}"
             if self.vk_event.args[0] in ['выдать']:
-                self.check_sender('admin')
+                self.check_sender(Role.ADMIN.name)
                 self.check_conversation()
                 self.args = 3
                 self.int_args = [-1]

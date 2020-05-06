@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.core.management.base import BaseCommand
 
+from apps.API_VK.command import Role
 from apps.API_VK.models import VkUser
 from apps.service.models import Service
 from xoma163site.wsgi import vk_bot
@@ -21,7 +22,7 @@ def stop_mine_by_version(online, no_players, version):
         # Создание событие. Уведомление, что мы скоро всё отрубим
         if created:
             message = f"Если никто не зайдёт на сервак по майну {version}, то через полчаса я его остановлю"
-            users_notify = VkUser.objects.filter(groups__name='minecraft_notify')
+            users_notify = VkUser.objects.filter(groups__name=Role.MINECRAFT_NOTIFY.name)
             users_chat_id_notify = [user.user_id for user in users_notify]
             vk_bot.parse_and_send_msgs_thread(users_chat_id_notify, message)
 
@@ -37,7 +38,7 @@ def stop_mine_by_version(online, no_players, version):
                 do_the_linux_command(f'sudo systemctl stop minecraft_{version}')
 
                 message = f"Вырубаю майн {version}"
-                users_notify = VkUser.objects.filter(groups__name='minecraft_notify')
+                users_notify = VkUser.objects.filter(groups__name=Role.MINECRAFT_NOTIFY.name)
                 users_chat_id_notify = [user.user_id for user in users_notify]
                 vk_bot.parse_and_send_msgs_thread(users_chat_id_notify, message)
             else:

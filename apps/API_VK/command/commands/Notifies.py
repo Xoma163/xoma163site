@@ -1,3 +1,4 @@
+from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import localize_datetime, remove_tz
 from apps.service.models import Notify
@@ -45,7 +46,7 @@ class Notifies(CommonCommand):
                 notifies = Notify.objects.filter(author=self.vk_event.sender).order_by("date")
                 if self.vk_event.chat:
                     try:
-                        self.check_sender('conference_admin')
+                        self.check_sender(Role.CONFERENCE_ADMIN.name)
                         notifies = Notify.objects.filter(chat=self.vk_event.chat).order_by("date")
                     except RuntimeError:
                         notifies = notifies.filter(chat=self.vk_event.chat)

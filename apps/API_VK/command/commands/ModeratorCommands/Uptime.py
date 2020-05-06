@@ -1,3 +1,4 @@
+from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.DoTheLinuxComand import do_the_linux_command
 
@@ -6,7 +7,7 @@ class Uptime(CommonCommand):
     def __init__(self):
         names = ["аптайм", "uptime"]
         help_text = "Аптайм - аптайм сервера"
-        super().__init__(names, help_text, access='moderator')
+        super().__init__(names, help_text, access=Role.MODERATOR.name)
 
     def start(self):
         command = "uptime"

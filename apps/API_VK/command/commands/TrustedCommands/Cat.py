@@ -1,3 +1,4 @@
+from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import get_attachments_from_attachments_or_fwd, get_inline_keyboard
 from apps.service.models import Cat as CatModel
@@ -23,7 +24,7 @@ class Cat(CommonCommand):
 
     def start(self):
         if self.vk_event.args and self.vk_event.args[0] in ['аватар']:
-            self.check_sender('admin')
+            self.check_sender(Role.ADMIN.name)
             cat = CatModel.objects.filter(to_send=True).order_by('?').first()
             cat.to_send = False
             cat.save()
@@ -41,7 +42,7 @@ class Cat(CommonCommand):
                 "keyboard": get_inline_keyboard(self.names[0])
             }
         else:
-            self.check_sender('trusted')
+            self.check_sender(Role.TRUSTED.name)
             new_urls = []
             for image in images:
                 new_url = self.add_cat(image)

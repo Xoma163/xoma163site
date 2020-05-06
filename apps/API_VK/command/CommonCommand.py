@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from apps.API_VK.command.CommonMethods import check_user_group, get_help_for_command
+from apps.API_VK.command.Consts import Role
 from apps.service.models import Service
 from secrets.secrets import secrets
 
@@ -24,7 +25,7 @@ class CommonCommand:
                  help_text=None,
                  detail_help_text=None,
                  keyboard=None,
-                 access='user',
+                 access=None,
                  pm=False,
                  conversation=False,
                  fwd=False,
@@ -36,6 +37,8 @@ class CommonCommand:
                  enabled=True,
                  priority=0,
                  ):
+        if access is None:
+            access = [Role.USER.name]
         self.names = names
         self.help_text = help_text
         self.detail_help_text = detail_help_text
@@ -99,18 +102,18 @@ class CommonCommand:
         if isinstance(roles, str):
             roles = [roles]
         for role in roles:
-            if role == 'admin' and check_user_group(self.vk_event.sender, role):
+            if role == Role.ADMIN.name and check_user_group(self.vk_event.sender, role):
                 if self.vk_event.sender.user_id == secrets['vk']['admin_id']:
                     return True
             if check_user_group(self.vk_event.sender, role):
                 return True
-            if role == 'conference_admin':
+            if role == Role.CONFERENCE_ADMIN.name:
                 if self.vk_event.chat.admin == self.vk_event.sender:
                     return True
             if len(roles) == 1:
-                error = f"Команда доступна только для пользователей с уровнем прав {role_translator[role]}"
+                error = f"Команда доступна только для пользователей с уровнем прав {getattr(Role, role).value}"
             else:
-                rus_roles = [role_translator[x] for x in roles]
+                rus_roles = [getattr(Role, role).value for role in roles]
 
                 error = f"Команда доступна только для пользователей с уровнями прав {', '.join(rus_roles)}"
 
@@ -258,17 +261,3 @@ class CommonCommand:
 
         error = "Пришлите вложения"
         raise RuntimeError(error)
-
-
-role_translator = {
-    'admin': "администратор",
-    'conference_admin': "администратор",
-    'moderator': "модератор",
-    'minecraft': "майнкрафт",
-    'terraria': "террария",
-    'student': "студент",
-    'minecraft_notify': "уведомления майна",
-    'user': 'пользователь',
-    'banned': 'забанен',
-    'trusted': 'доверенный'
-}

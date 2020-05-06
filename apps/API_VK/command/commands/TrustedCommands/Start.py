@@ -1,3 +1,4 @@
+from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.DoTheLinuxComand import do_the_linux_command
 from apps.API_VK.models import VkUser
@@ -12,21 +13,21 @@ class Start(CommonCommand):
                            "Сервис - бот/синички/майнкрафт/террария\n" \
                            "Если майнкрафт, то может быть указана версия, 1.12.2 или 1.15.1"
 
-        keyboard = [{'for': 'admin', 'text': 'Старт', 'color': 'green', 'row': 1, 'col': 1},
-                    {'for': 'admin', 'text': 'Старт синички', 'color': 'green', 'row': 1, 'col': 3}]
-        super().__init__(names, help_text, detail_help_text, keyboard=keyboard, access='trusted')
+        keyboard = [{'for': Role.ADMIN.name, 'text': 'Старт', 'color': 'green', 'row': 1, 'col': 1},
+                    {'for': Role.ADMIN.name, 'text': 'Старт синички', 'color': 'green', 'row': 1, 'col': 3}]
+        super().__init__(names, help_text, detail_help_text, keyboard=keyboard, access=Role.TRUSTED.name)
 
     def start(self):
         if self.vk_event.args:
             if self.vk_event.args[0] == "синички":
-                self.check_sender('admin')
+                self.check_sender(Role.ADMIN.name)
                 if not cameraHandler.is_active():
                     cameraHandler.resume()
                     return "Стартуем синичек!"
                 else:
                     return "Синички уже стартовали"
             elif self.vk_event.args[0] in ["майн", "майнкрафт", "mine", "minecraft"]:
-                self.check_sender('minecraft')
+                self.check_sender(Role.MINECRAFT.name)
                 if len(self.vk_event.args) >= 2 and (
                         self.vk_event.args[1] == '1.12' or self.vk_event.args[1] == '1.12.2'):
                     self.check_command_time('minecraft_1.12.2', 90)
@@ -34,7 +35,7 @@ class Start(CommonCommand):
                     do_the_linux_command('sudo systemctl start minecraft_1.12.2')
 
                     message = "Стартуем майн 1.12!"
-                    users_notify = VkUser.objects.filter(groups__name='minecraft_notify') \
+                    users_notify = VkUser.objects.filter(groups__name=Role.MINECRAFT_NOTIFY.name) \
                         .exclude(id=self.vk_event.sender.id)
                     users_chat_id_notify = [user.user_id for user in users_notify]
                     self.vk_bot.parse_and_send_msgs_thread(users_chat_id_notify,
@@ -49,7 +50,7 @@ class Start(CommonCommand):
                     do_the_linux_command('sudo systemctl start minecraft_1.15.1')
 
                     message = "Стартуем майн 1.15.1"
-                    users_notify = VkUser.objects.filter(groups__name='minecraft_notify') \
+                    users_notify = VkUser.objects.filter(groups__name=Role.MINECRAFT_NOTIFY.name) \
                         .exclude(id=self.vk_event.sender.id)
                     users_chat_id_notify = [user.user_id for user in users_notify]
                     self.vk_bot.parse_and_send_msgs_thread(users_chat_id_notify,
@@ -57,14 +58,14 @@ class Start(CommonCommand):
                     return message
                 else:
                     return "Я не знаю такой версии"
-            elif self.vk_event.args[0] in ['террария', 'terraria']:
-                self.check_sender('terraria')
-                self.check_command_time('terraria', 10)
+            elif self.vk_event.args[0] in ['террария', Role.TERRARIA.name]:
+                self.check_sender(Role.TERRARIA.name)
+                self.check_command_time(Role.TERRARIA.name, 10)
                 do_the_linux_command('sudo systemctl start terraria')
                 return "Стартуем террарию!"
             else:
                 return "Не найден такой модуль"
         else:
-            self.check_sender(['admin'])
+            self.check_sender([Role.ADMIN.name])
             self.vk_bot.BOT_CAN_WORK = True
             return "Стартуем!"

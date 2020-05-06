@@ -1,3 +1,4 @@
+from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.DoTheLinuxComand import do_the_linux_command
 
@@ -68,8 +69,8 @@ class Logs(CommonCommand):
         help_text = "Логи - логи бота или сервера"
         detail_help_text = "Логи [сервис=бот] [кол-во строк=50] - логи. \n" \
                            "Сервис - бот или сервер"
-        keyboard = {'for': 'moderator', 'text': 'Логи', 'color': 'blue', 'row': 1, 'col': 1}
-        super().__init__(names, help_text, detail_help_text, access='moderator', keyboard=keyboard)
+        keyboard = {'for': Role.MODERATOR.name, 'text': 'Логи', 'color': 'blue', 'row': 1, 'col': 1}
+        super().__init__(names, help_text, detail_help_text, access=Role.MODERATOR.name, keyboard=keyboard)
 
     def start(self):
         count = 50

@@ -1,3 +1,4 @@
+from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import get_inline_keyboard, get_attachments_from_attachments_or_fwd, \
     check_user_group, get_one_chat_with_user
@@ -45,8 +46,8 @@ class Meme(CommonCommand):
                 'name': " ".join(self.vk_event.args[1:]),
                 'type': attachment['type'],
                 'author': self.vk_event.sender,
-                'approved': check_user_group(self.vk_event.sender, 'moderator') or check_user_group(
-                    self.vk_event.sender, 'trusted')
+                'approved': check_user_group(self.vk_event.sender, Role.MODERATOR.name) or check_user_group(
+                    self.vk_event.sender, Role.TRUSTED.name)
             }
 
             if MemeModel.objects.filter(name=new_meme['name']).exists():
@@ -82,7 +83,8 @@ class Meme(CommonCommand):
             else:
                 return "Невозможно"
 
-            if check_user_group(self.vk_event.sender, 'moderator') or check_user_group(self.vk_event.sender, 'trusted'):
+            if check_user_group(self.vk_event.sender, Role.MODERATOR.name) or check_user_group(self.vk_event.sender,
+                                                                                               Role.TRUSTED.name):
                 meme = self.get_meme(self.vk_event.args[1:])
                 meme.link = new_meme_link
                 meme.type = attachment['type']
@@ -105,7 +107,7 @@ class Meme(CommonCommand):
 
         elif self.vk_event.args[0] in ['удалить']:
             self.check_args(2)
-            if check_user_group(self.vk_event.sender, 'moderator'):
+            if check_user_group(self.vk_event.sender, Role.MODERATOR.name):
                 meme = self.get_meme(self.vk_event.args[1:])
                 self.vk_bot.send_message(meme.author.user_id, f'Мем с названием "{meme.name}" удалён поскольку он не '
                                                               f'соответствует правилам.')
@@ -128,7 +130,7 @@ class Meme(CommonCommand):
             meme = self.get_random_meme()
             return self.prepare_meme_to_send(meme, print_name=True, send_keyboard=True)
         elif self.vk_event.args[0] in ['подтвердить', 'принять', '+']:
-            self.check_sender('moderator')
+            self.check_sender(Role.MODERATOR.name)
             if len(self.vk_event.args) == 1:
                 meme = self.get_meme(approved=False)
                 meme_to_send = self.prepare_meme_to_send(meme)
@@ -152,7 +154,7 @@ class Meme(CommonCommand):
                 non_approved_meme.save()
                 return msg
         elif self.vk_event.args[0] in ['отклонить', '-']:
-            self.check_sender('moderator')
+            self.check_sender(Role.MODERATOR.name)
             self.int_args = [1]
             self.parse_int()
             non_approved_meme = MemeModel.objects.filter(id=self.vk_event.args[1]).first()

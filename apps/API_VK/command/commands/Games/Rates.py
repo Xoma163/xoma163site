@@ -1,6 +1,7 @@
 import random
 from threading import Lock
 
+from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.models import VkUser
 from apps.games.models import Rate as RateModel
@@ -26,7 +27,7 @@ class Rates(CommonCommand):
 
             gamers = RateModel.objects.filter(chat=self.vk_event.chat).order_by("date")
             if self.vk_event.args and self.vk_event.args[0] == 'f':
-                self.check_sender('conference_admin')
+                self.check_sender(Role.CONFERENCE_ADMIN.name)
                 if len(gamers) < 1:
                     return "Ну ты ваще обалдел? Хотя бы один игрок-то пусть будет"
 

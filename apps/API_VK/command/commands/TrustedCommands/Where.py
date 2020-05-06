@@ -1,5 +1,6 @@
 import datetime
 
+from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import localize_datetime, remove_tz
 from apps.API_VK.models import Log
@@ -11,7 +12,7 @@ class Where(CommonCommand):
         names = ["где"]
         help_text = "Где - информация о чекточках"
         detail_help_text = "Где (N) - информация о чекточках, где N - имя, фамилия, логин/id, никнейм"
-        super().__init__(names, help_text, detail_help_text, args=1, access='trusted')
+        super().__init__(names, help_text, detail_help_text, args=1, access=Role.TRUSTED.name)
 
     def start(self):
 

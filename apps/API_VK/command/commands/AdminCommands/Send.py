@@ -1,3 +1,4 @@
+from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 
 
@@ -6,7 +7,7 @@ class Control(CommonCommand):
         names = ["отправить", "сообщение"]
         help_text = "Отправить - отправление сообщение в любую конфу"
         detail_help_text = "Отправить (id чата/название чата) (сообщение)"
-        super().__init__(names, help_text, detail_help_text, access='admin', args=2)
+        super().__init__(names, help_text, detail_help_text, access=Role.ADMIN.name, args=2)
 
     def start(self):
         try:

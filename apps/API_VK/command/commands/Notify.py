@@ -4,19 +4,12 @@ from datetime import datetime, timedelta
 import dateutil
 from dateutil import parser
 
+from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import localize_datetime, normalize_datetime, remove_tz, check_user_group
+from apps.API_VK.command.Consts import week_translator
 from apps.service.models import Notify as NotifyModel
 
-time_translator = {
-    'понедельник': 1, 'пн': 1,
-    'вторник': 2, 'вт': 2,
-    'среда': 3, 'ср': 3,
-    'четверг': 4, 'чт': 4,
-    'пятница': 5, 'пт': 5,
-    'суббота': 6, 'сб': 6,
-    'воскресенье': 7, 'воскресение': 7, 'вс': 7,
-}
 
 # Возвращает datetime, кол-во аргументов использованных для получения даты,  была ли передана точная дата
 def get_time(arg1, arg2):
@@ -28,9 +21,9 @@ def get_time(arg1, arg2):
         exact_time_flag = False
         arg1 = (datetime.today().date() + timedelta(days=2)).strftime("%d.%m.%Y")
 
-    if arg1 in time_translator:
+    if arg1 in week_translator:
         exact_time_flag = False
-        delta_days = time_translator[arg1] - datetime.today().isoweekday()
+        delta_days = week_translator[arg1] - datetime.today().isoweekday()
         if delta_days <= 0:
             delta_days += 7
         arg1 = (datetime.today().date() + timedelta(days=delta_days)).strftime("%d.%m.%Y")
@@ -57,7 +50,7 @@ class Notify(CommonCommand):
     def start(self):
         if self.vk_event.sender.city is None:
             return "Не знаю ваш город. /город"
-        if not check_user_group(self.vk_event.sender, 'trusted') and \
+        if not check_user_group(self.vk_event.sender, Role.TRUSTED.name) and \
                 len(NotifyModel.objects.filter(author=self.vk_event.sender)) >= 5:
             return "Нельзя добавлять более 5 напоминаний"
         user_timezone = self.vk_event.sender.city.timezone.name

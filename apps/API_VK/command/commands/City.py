@@ -1,5 +1,6 @@
 from apps.API_VK.APIs.timezonedb import get_timezone_by_coordinates
 from apps.API_VK.APIs.yandex_geo import get_city_info_by_name
+from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.models import VkUser
 from apps.service.models import City as CityModel, TimeZone
@@ -24,7 +25,7 @@ class City(CommonCommand):
                 city = add_city_to_db(city_name)
                 return f"Добавил новый город - {city.name}"
             elif self.vk_event.args[0] == 'initial':
-                self.check_sender('admin')
+                self.check_sender(Role.ADMIN.name)
                 users = VkUser.objects.all().exclude(user_id='ANONYMOUS')
                 for user in users:
                     vk_user = self.vk_bot.vk.users.get(user_id=int(user.user_id),

@@ -2,6 +2,7 @@ import json
 import random
 from threading import Lock
 
+from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.games.models import CodenamesUser, CodenamesSession, Gamer
 
@@ -282,7 +283,7 @@ class Codenames(CommonCommand):
                     return "Сейчас зарегистрированы:\n" \
                            f"{get_str_players(self.players)}\n"
             elif self.vk_event.args[0].lower() in ['удалить']:
-                self.check_sender('conference_admin')
+                self.check_sender(Role.CONFERENCE_ADMIN.name)
                 if self.session is None:
                     return "Нечего удалять"
                 else:

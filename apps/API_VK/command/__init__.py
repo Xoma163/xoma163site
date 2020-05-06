@@ -2,6 +2,8 @@ import importlib
 import os
 import pkgutil
 
+from apps.API_VK.command.Consts import Role
+
 
 def import_all_commands():
     from xoma163site.settings import BASE_DIR
