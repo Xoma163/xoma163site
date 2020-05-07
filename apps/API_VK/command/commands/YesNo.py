@@ -19,6 +19,9 @@ class YesNo(CommonCommand):
         return False
 
     def start(self):
+        if self.vk_event.msg in ['идиот?']:
+            return "Мне потанцевать нельзя?"
+
         bad_words = get_bad_words()
 
         if not check_user_group(self.vk_event.sender, Role.ADMIN.name):
