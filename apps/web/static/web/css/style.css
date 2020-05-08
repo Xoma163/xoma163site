@@ -10,11 +10,13 @@ tbody tr:last-child .del-elem i {
     visibility: visible;
 }
 
-#order td, #order th {
+#order td,
+#order th {
     vertical-align: middle;
 }
 
-#order td:nth-child(1), #order th:nth-child(1) {
+#order td:nth-child(1),
+#order th:nth-child(1) {
     width: 1%;
     min-width: 15px;
 }
@@ -54,21 +56,25 @@ tbody tr:last-child .del-elem i {
     min-width: 20px;
 }
 
-#users th:nth-child(1), #users td:nth-child(1) {
+#users th:nth-child(1),
+#users td:nth-child(1) {
     max-width: 200px;
 }
 
-#users th:nth-child(2), #users td:nth-child(2) {
+#users th:nth-child(2),
+#users td:nth-child(2) {
     min-width: 50px;
 }
 
 
 @media screen and (max-width: 768px) {
-    html, body {
+    html,
+    body {
         font-size: 14px;
     }
 
-    .table td, .table th {
+    .table td,
+    .table th {
         padding: 0.5rem;
     }
 
@@ -84,11 +90,13 @@ tbody tr:last-child .del-elem i {
 }
 
 @media screen and (max-width: 576px) {
-    html, body {
+    html,
+    body {
         font-size: 11px;
     }
 
-    .table td, .table th {
+    .table td,
+    .table th {
         padding: 0.3rem;
     }
 
