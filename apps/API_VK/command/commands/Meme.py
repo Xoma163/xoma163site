@@ -207,7 +207,7 @@ class Meme(CommonCommand):
                   f"{meme_names_str}" + '.'
             if len(memes) > 10:
                 msg += f"\n..."
-            raise RuntimeError(msg)
+            raise RuntimeWarning(msg)
 
     @staticmethod
     def get_random_meme():

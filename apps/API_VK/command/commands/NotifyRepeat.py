@@ -11,8 +11,7 @@ def get_time(time):
     try:
         date = datetime.strptime(str(datetime.today().date()) + " " + time, "%Y-%m-%d %H:%M")
         return date
-    except Exception as e:
-        print(e)
+    except RuntimeWarning:
         return None
 
 

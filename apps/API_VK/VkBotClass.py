@@ -84,7 +84,7 @@ class VkBotClass(threading.Thread):
 
     def set_activity(self, peer_id, activity='typing'):
         if activity not in ['typing', 'audiomessage']:
-            raise RuntimeError("Не знаю такого типа активности")
+            raise RuntimeWarning("Не знаю такого типа активности")
         self.vk.messages.setActivity(type=activity, peer_id=peer_id, group_id=self.group_id)
 
     def send_message(self, peer_id, msg="ᅠ", attachments=None, keyboard=None, dont_parse_links=False, **kwargs):
@@ -176,9 +176,15 @@ class VkBotClass(threading.Thread):
                     append_command_to_statistics(vk_event.command)
                     logger.debug(f"{{result: {result}}}")
                     return result
+            except RuntimeWarning as e:
+                msg = str(e)
+                logger.debug(f"{{RuntimeWarning: {msg}}}")
+                if send:
+                    self.parse_and_send_msgs(vk_event.peer_id, msg)
+                return msg
             except RuntimeError as e:
                 msg = str(e)
-                logger.warning(f"{{RunTimeException: {msg}}}")
+                logger.warning(f"{{RuntimeError: {msg}}}")
                 if send:
                     self.parse_and_send_msgs(vk_event.peer_id, msg)
                 return msg
@@ -371,14 +377,14 @@ class VkBotClass(threading.Thread):
             gamer.save()
             return gamer
         elif len(gamers) > 1:
-            raise RuntimeError("Два и более игрока подходит под поиск")
+            raise RuntimeWarning("Два и более игрока подходит под поиск")
         else:
             return gamers.first()
 
     @staticmethod
     def get_user_by_name(args, filter_chat=None):
         if not args:
-            raise RuntimeError("Отсутствуют аргументы")
+            raise RuntimeWarning("Отсутствуют аргументы")
         if isinstance(args, str):
             args = [args]
         vk_users = VkUser.objects
@@ -396,17 +402,17 @@ class VkBotClass(threading.Thread):
                         user = vk_users.filter(nickname=args[0])
 
         if len(user) > 1:
-            raise RuntimeError("2 и более пользователей подходит под поиск")
+            raise RuntimeWarning("2 и более пользователей подходит под поиск")
 
         if len(user) == 0:
-            raise RuntimeError("Пользователь не найден. Возможно опечатка или он мне ещё ни разу не писал")
+            raise RuntimeWarning("Пользователь не найден. Возможно опечатка или он мне ещё ни разу не писал")
 
         return user.first()
 
     @staticmethod
     def get_chat_by_name(args):
         if not args:
-            raise RuntimeError("Отсутствуют аргументы")
+            raise RuntimeWarning("Отсутствуют аргументы")
         if isinstance(args, str):
             args = [args]
         vk_chats = VkChat.objects
@@ -414,10 +420,10 @@ class VkBotClass(threading.Thread):
             vk_chats = vk_chats.filter(name__icontains=arg)
 
         if len(vk_chats) > 1:
-            raise RuntimeError("2 и более чатов подходит под поиск")
+            raise RuntimeWarning("2 и более чатов подходит под поиск")
 
         if len(vk_chats) == 0:
-            raise RuntimeError("Чат не найден")
+            raise RuntimeWarning("Чат не найден")
         return vk_chats.first()
 
     def get_bot_by_id(self, bot_id):
@@ -503,7 +509,7 @@ class VkBotClass(threading.Thread):
         elif urlparse(file_like_object).hostname:
             if allowed_exts_url:
                 if file_like_object.split('.')[-1].lower() not in allowed_exts_url:
-                    raise RuntimeError(f"Загрузка по URL доступна только для {' '.join(allowed_exts_url)}")
+                    raise RuntimeWarning(f"Загрузка по URL доступна только для {' '.join(allowed_exts_url)}")
             # ToDo: возможно timeout=2 это мало, а возможно нет. Хз
             response = requests.get(file_like_object, stream=True, timeout=2)
             obj = response.raw

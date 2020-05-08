@@ -24,7 +24,7 @@ class Permissions(CommonCommand):
             self.check_conversation()
             try:
                 user = self.vk_bot.get_user_by_name(self.vk_event.args, self.vk_event.chat)
-            except RuntimeError as e:
+            except RuntimeWarning as e:
                 return str(e)
         else:
             user = self.vk_event.sender

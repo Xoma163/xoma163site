@@ -13,10 +13,7 @@ class Ban(CommonCommand):
         super().__init__(names, help_text, detail_help_text, access=Role.ADMIN.name, args=1)
 
     def start(self):
-        try:
-            user = self.vk_bot.get_user_by_name(self.vk_event.args, self.vk_event.chat)
-        except RuntimeError as e:
-            return str(e)
+        user = self.vk_bot.get_user_by_name(self.vk_event.args, self.vk_event.chat)
 
         if check_user_group(user, Role.ADMIN.name):
             return "Нельзя банить админа"

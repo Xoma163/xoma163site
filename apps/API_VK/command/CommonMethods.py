@@ -72,7 +72,7 @@ def get_one_chat_with_user(chat_name, user_id):
     from apps.API_VK.models import VkChat
     chats = VkChat.objects.filter(name__icontains=chat_name)
     if len(chats) == 0:
-        raise RuntimeError("Не нашёл такого чата")
+        raise RuntimeWarning("Не нашёл такого чата")
 
     chats_with_user = []
     for chat in chats:
@@ -81,11 +81,11 @@ def get_one_chat_with_user(chat_name, user_id):
             chats_with_user.append(chat)
 
     if len(chats_with_user) == 0:
-        raise RuntimeError("Не нашёл доступного чата с пользователем в этом чате")
+        raise RuntimeWarning("Не нашёл доступного чата с пользователем в этом чате")
     elif len(chats_with_user) > 1:
         chats_str = '\n'.join(chats_with_user)
-        raise RuntimeError("Нашёл несколько чатов. Уточните какой:\n"
-                           f"{chats_str}")
+        raise RuntimeWarning("Нашёл несколько чатов. Уточните какой:\n"
+                             f"{chats_str}")
 
     elif len(chats_with_user) == 1:
         return chats_with_user[0]

@@ -16,10 +16,7 @@ class Where(CommonCommand):
 
     def start(self):
 
-        try:
-            user = self.vk_bot.get_user_by_name(self.vk_event.args, self.vk_event.chat)
-        except RuntimeError as e:
-            return str(e)
+        user = self.vk_bot.get_user_by_name(self.vk_event.args, self.vk_event.chat)
 
         if self.vk_event.sender.city and self.vk_event.sender.city.timezone:
             timezone = self.vk_event.sender.city.timezone.name

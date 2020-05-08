@@ -1,4 +1,4 @@
-from vk_api import ApiError
+import vk_api
 
 from apps.API_VK.command.CommonCommand import CommonCommand
 
@@ -19,6 +19,6 @@ class ShortLinks(CommonCommand):
             long_link = self.vk_event.args[0]
         try:
             short_link = self.vk_bot.get_short_link(long_link)
-        except ApiError:
+        except vk_api.ApiError:
             return "Неверный формат ссылки"
         return short_link

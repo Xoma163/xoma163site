@@ -18,7 +18,5 @@ class Control(CommonCommand):
         except RuntimeError:
             msg_chat_name = self.vk_event.args[0]
             chat = self.vk_bot.get_chat_by_name(msg_chat_name)
-        if not chat:
-            return "Не нашёл такого чата"
         msg = self.vk_event.original_args.split(' ', 1)[1]
         self.vk_bot.send_message(chat.chat_id, msg)

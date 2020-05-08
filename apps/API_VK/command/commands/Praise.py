@@ -46,7 +46,7 @@ def get_praise_or_scold(vk_bot, vk_event, _type):
                 translator_key = 'ж1'
             else:
                 translator_key = 'м1'
-        except RuntimeError:
+        except RuntimeWarning:
             translator_key = 'м1'
     if vk_event.args:
         recipient = " ".join(vk_event.args)

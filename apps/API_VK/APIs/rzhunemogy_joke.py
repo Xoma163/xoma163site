@@ -6,10 +6,7 @@ def get_joke(_type=1):
     params = {
         'CType': _type
     }
-    try:
-        response = requests.get(URL, params, timeout=10)
-    except Exception as e:
-        return f"Проблемы с апи. Подробности:\n{str(e)}"
+    response = requests.get(URL, params, timeout=10)
 
     if response.status_code != 200:
         return "Чёто не работает. Пинайте этого лентяя"

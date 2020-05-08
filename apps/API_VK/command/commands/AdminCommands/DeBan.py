@@ -12,10 +12,7 @@ class DeBan(CommonCommand):
         super().__init__(names, help_text, detail_help_text, access=Role.ADMIN.name, args=1, api=False)
 
     def start(self):
-        try:
-            user = self.vk_bot.get_user_by_name(self.vk_event.args, self.vk_event.chat)
-        except RuntimeError as e:
-            return str(e)
+        user = self.vk_bot.get_user_by_name(self.vk_event.args, self.vk_event.chat)
         group_banned = Group.objects.get(name=Role.BANNED.name)
         user.groups.remove(group_banned)
         user.save()

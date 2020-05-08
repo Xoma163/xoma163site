@@ -6,7 +6,7 @@ import requests
 def get_detail_by_country(country_name, status='confirmed'):
     url = f"https://api.covid19api.com/dayone/country/{country_name}/status/{status}"
     try:
-        response = requests.get(url, timeout=5)
+        response = requests.get(url, timeout=10)
     except requests.exceptions.ReadTimeout:
         raise RuntimeError("Проблемы с API")
     if not response:
