@@ -417,8 +417,6 @@ class Command(BaseCommand):
             City.objects.update_or_create(name=city_info['name'], defaults=city_info)
             print(f'add/update {city_info["name"]}')
 
-        pass
-
     def handle(self, *args, **options):
         self.init_groups()
         print('done init groups')

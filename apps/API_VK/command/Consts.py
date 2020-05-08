@@ -36,6 +36,7 @@ on_off_translator = {
     'включить': True,
     'включи': True,
     'вруби': True,
+    'подключи': True,
 
     'выкл': False,
     'off': False,
@@ -43,7 +44,8 @@ on_off_translator = {
     'false': False,
     'выключить': False,
     'выключи': False,
-    'выруби': False
+    'выруби': False,
+    'отключи': False
 }
 
 true_false_translator = {

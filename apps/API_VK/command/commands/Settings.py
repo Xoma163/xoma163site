@@ -52,6 +52,6 @@ class Settings(CommonCommand):
                 msg += f"Реагировать на неправильные команды - {true_false_translator[reaction]}\n"
 
             if check_user_group(self.vk_event.sender, Role.TRUSTED.name):
-                minecraft_notify = check_user_group(self.vk_event.sender, Role.MINECRAFT_NOTIFY)
+                minecraft_notify = check_user_group(self.vk_event.sender, Role.MINECRAFT_NOTIFY.name)
                 msg += f"Уведомления по майну - {true_false_translator[minecraft_notify]}\n"
             return msg

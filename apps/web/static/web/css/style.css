@@ -52,7 +52,6 @@ tbody tr:last-child .del-elem i {
 }
 
 #order td:nth-child(8) {
-  /*width: 5%;*/
   min-width: 20px;
 }
 
@@ -66,7 +65,6 @@ tbody tr:last-child .del-elem i {
   min-width: 50px;
 }
 
-
 @media screen and (max-width: 768px) {
   html,
   body {
@@ -79,9 +77,8 @@ tbody tr:last-child .del-elem i {
   }
 
   .form-control {
-    padding: .2rem .4rem;
-    height: calc(1.2em + .75rem + 2px);
-
+    padding: 0.2rem 0.4rem;
+    height: calc(1.2em + 0.75rem + 2px);
   }
 
   .del-elem i {
@@ -101,7 +98,7 @@ tbody tr:last-child .del-elem i {
   }
 
   .form-control {
-    padding: 0.175rem .35rem;
+    padding: 0.175rem 0.35rem;
     height: calc(1.2em + 0.75rem + 2px);
   }
 }
