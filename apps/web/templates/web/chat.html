@@ -2,42 +2,42 @@
 {% load static %}
 
 {% block title %}
-    Чат
+  Чат
 {% endblock %}
 {% block body %}
-    <div class="container-fluid">
-        <div>
-            <label>Команда</label>
-        </div>
-        <div>
-            <input type="text" style="width:600px;" name="command">
-        </div>
-        <div>
-            <label>Ответ</label>
-        </div>
-        <div>
-            <textarea name="result" style="width:600px;" cols="16" rows="16"></textarea>
-        </div>
-        <div>
-            <button class="btn btn-success" onclick="sendCommand()">Отправить</button>
-        </div>
+  <div class="container-fluid">
+    <div>
+      <label>Команда</label>
     </div>
+    <div>
+      <input type="text" style="width:600px;" name="command">
+    </div>
+    <div>
+      <label>Ответ</label>
+    </div>
+    <div>
+      <textarea name="result" style="width:600px;" cols="16" rows="16"></textarea>
+    </div>
+    <div>
+      <button class="btn btn-success" onclick="sendCommand()">Отправить</button>
+    </div>
+  </div>
 {% endblock %}
 
 {% block js %}
-    <script type="application/javascript" src="{% static "web/js/chat.js" %}"></script>
-    <script type="text/javascript" src="https://vk.com/js/api/openapi.js?168"></script>
+  <script type="application/javascript" src="{% static "web/js/chat.js" %}"></script>
+  <script type="text/javascript" src="https://vk.com/js/api/openapi.js?168"></script>
 
-    <!-- VK Widget -->
-    <script type="text/javascript">
+  <!-- VK Widget -->
+  <script type="text/javascript">
 
-        VK.Widgets.CommunityMessages("vk_community_messages", {{ petrovich_group_id }}, {
-            expanded: "0",
-            disableExpandChatSound: "1",
-            disableNewMessagesSound: "1",
-            disableButtonTooltip: "1",
-        });
-    </script>
-    <div id="vk_community_messages"></div>
+      VK.Widgets.CommunityMessages("vk_community_messages", {{ petrovich_group_id }}, {
+          expanded: "0",
+          disableExpandChatSound: "1",
+          disableNewMessagesSound: "1",
+          disableButtonTooltip: "1",
+      });
+  </script>
+  <div id="vk_community_messages"></div>
 {% endblock %}
 

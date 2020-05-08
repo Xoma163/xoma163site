@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup, NavigableString
 def parse_bash(quotes_count):
     try:
         import requests
-        from lxml import html
         r = requests.get('http://bash.im/random')
         bsop = BeautifulSoup(r.text, 'html.parser')
         html_quotes = bsop.find('section', {'class': 'quotes'}).find_all('div', {'class': 'quote__body'})[:quotes_count]
