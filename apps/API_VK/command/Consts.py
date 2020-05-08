@@ -29,19 +29,24 @@ week_translator = {
 }
 
 on_off_translator = {
-    'on': True,
     'вкл': True,
+    'on': True,
     '1': True,
     'true': True,
     'включить': True,
     'включи': True,
     'вруби': True,
 
-    'off': False,
     'выкл': False,
+    'off': False,
     '0': False,
     'false': False,
     'выключить': False,
     'выключи': False,
     'выруби': False
+}
+
+true_false_translator = {
+    True: 'вкл ✅',
+    False: 'выкл ⛔'
 }

@@ -18,6 +18,10 @@ class Find(CommonCommand):
 
         urls = get_urls(query)
 
+        # Возможное решение, но возможно и нет
+        # for i, _ in enumerate(urls):
+        #     urls[i] = urls[i].split('?')[0]
+
         if len(urls) == 0:
             return "Ничего не нашёл"
         attachments = self.vk_bot.upload_photos(urls, count)
