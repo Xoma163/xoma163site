@@ -9,7 +9,7 @@ class TimeTable(CommonCommand):
         names = ["расписание", "расп"]
         help_text = "Расписание - картинка с расписанием"
         keyboard_student = {'text': 'Расписание', 'color': 'blue', 'row': 1, 'col': 1}
-        super().__init__(names, help_text, access=Role.TERRARIA.name, keyboard=keyboard_student, enabled=False)
+        super().__init__(names, help_text, access=Role.STUDENT.name, keyboard=keyboard_student, enabled=False)
 
     def start(self):
         attachments = []

@@ -13,11 +13,12 @@ class Counter(CommonCommand):
         name = self.vk_event.original_args.capitalize()
         if len(name) >= 50:
             return "Длина названия счётчика не может превышать 50"
-        counter, _ = CounterModel.objects.update_or_create(name=name, chat=self.vk_event.chat,
-                                                           defaults={
-                                                               'name': name,
-                                                               'chat': self.vk_event.chat
-                                                           })
+        counter, _ = CounterModel.objects.update_or_create(
+            name=name, chat=self.vk_event.chat,
+            defaults={
+                'name': name,
+                'chat': self.vk_event.chat
+            })
         counter.count += 1
         counter.save()
         return "++"

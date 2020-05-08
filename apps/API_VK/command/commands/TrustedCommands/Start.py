@@ -18,54 +18,57 @@ class Start(CommonCommand):
         super().__init__(names, help_text, detail_help_text, keyboard=keyboard, access=Role.TRUSTED.name)
 
     def start(self):
+        module = "bot"
         if self.vk_event.args:
-            if self.vk_event.args[0] == "синички":
-                self.check_sender(Role.ADMIN.name)
-                if not cameraHandler.is_active():
-                    cameraHandler.resume()
-                    return "Стартуем синичек!"
-                else:
-                    return "Синички уже стартовали"
-            elif self.vk_event.args[0] in ["майн", "майнкрафт", "mine", "minecraft"]:
-                self.check_sender(Role.MINECRAFT.name)
-                if len(self.vk_event.args) >= 2 and (
-                        self.vk_event.args[1] == '1.12' or self.vk_event.args[1] == '1.12.2'):
-                    self.check_command_time('minecraft_1.12.2', 90)
-
-                    do_the_linux_command('sudo systemctl start minecraft_1.12.2')
-
-                    message = "Стартуем майн 1.12!"
-                    users_notify = VkUser.objects.filter(groups__name=Role.MINECRAFT_NOTIFY.name) \
-                        .exclude(id=self.vk_event.sender.id)
-                    users_chat_id_notify = [user.user_id for user in users_notify]
-                    self.vk_bot.parse_and_send_msgs_thread(users_chat_id_notify,
-                                                           message + f"\nИнициатор - {self.vk_event.sender}")
-
-                    return message
-                elif (len(self.vk_event.args) >= 2 and (
-                        self.vk_event.args[1] == '1.15.1' or self.vk_event.args[1] == '1.15')) or len(
-                    self.vk_event.args) == 1:
-                    self.check_command_time('minecraft_1.15.1', 30)
-
-                    do_the_linux_command('sudo systemctl start minecraft_1.15.1')
-
-                    message = "Стартуем майн 1.15.1"
-                    users_notify = VkUser.objects.filter(groups__name=Role.MINECRAFT_NOTIFY.name) \
-                        .exclude(id=self.vk_event.sender.id)
-                    users_chat_id_notify = [user.user_id for user in users_notify]
-                    self.vk_bot.parse_and_send_msgs_thread(users_chat_id_notify,
-                                                           message + f"\nИнициатор - {self.vk_event.sender}")
-                    return message
-                else:
-                    return "Я не знаю такой версии"
-            elif self.vk_event.args[0] in ['террария', Role.TERRARIA.name]:
-                self.check_sender(Role.TERRARIA.name)
-                self.check_command_time(Role.TERRARIA.name, 10)
-                do_the_linux_command('sudo systemctl start terraria')
-                return "Стартуем террарию!"
+            module = module
+        if module in ["синички"]:
+            self.check_sender(Role.ADMIN.name)
+            if not cameraHandler.is_active():
+                cameraHandler.resume()
+                return "Стартуем синичек!"
             else:
-                return "Не найден такой модуль"
-        else:
-            self.check_sender([Role.ADMIN.name])
+                return "Синички уже стартовали"
+        elif module in ["майн", "майнкрафт", "mine", "minecraft"]:
+            self.check_sender(Role.MINECRAFT.name)
+            if len(self.vk_event.args) >= 2 and (
+                    self.vk_event.args[1] == '1.12' or self.vk_event.args[1] == '1.12.2'):
+                self.check_command_time('minecraft_1.12.2', 90)
+
+                do_the_linux_command('sudo systemctl start minecraft_1.12.2')
+
+                message = "Стартуем майн 1.12!"
+                users_notify = VkUser.objects.filter(groups__name=Role.MINECRAFT_NOTIFY.name) \
+                    .exclude(id=self.vk_event.sender.id)
+                users_chat_id_notify = [user.user_id for user in users_notify]
+                self.vk_bot.parse_and_send_msgs_thread(users_chat_id_notify,
+                                                       message + f"\nИнициатор - {self.vk_event.sender}")
+
+                return message
+            elif (len(self.vk_event.args) >= 2 and (
+                    self.vk_event.args[1] == '1.15.1' or self.vk_event.args[1] == '1.15')) or len(
+                self.vk_event.args) == 1:
+                self.check_command_time('minecraft_1.15.1', 30)
+
+                do_the_linux_command('sudo systemctl start minecraft_1.15.1')
+
+                message = "Стартуем майн 1.15.1"
+                users_notify = VkUser.objects.filter(groups__name=Role.MINECRAFT_NOTIFY.name) \
+                    .exclude(id=self.vk_event.sender.id)
+                users_chat_id_notify = [user.user_id for user in users_notify]
+                self.vk_bot.parse_and_send_msgs_thread(users_chat_id_notify,
+                                                       message + f"\nИнициатор - {self.vk_event.sender}")
+                return message
+            else:
+                return "Я не знаю такой версии"
+        elif module in ['террария', Role.TERRARIA.name]:
+            self.check_sender(Role.TERRARIA.name)
+            self.check_command_time(Role.TERRARIA.name, 10)
+            do_the_linux_command('sudo systemctl start terraria')
+            return "Стартуем террарию!"
+        elif module in ['бот', 'bot']:
+            self.check_sender(Role.ADMIN.name)
             self.vk_bot.BOT_CAN_WORK = True
+            cameraHandler.resume()
             return "Стартуем!"
+        else:
+            return "Не найден такой модуль"

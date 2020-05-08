@@ -21,6 +21,7 @@ admin.site.register(Service)
 @admin.register(Counter)
 class CounterAdmin(admin.ModelAdmin):
     list_display = ('name', 'count', 'chat')
+    list_filter = (('chat', admin.RelatedOnlyFieldListFilter),)
 
 
 @admin.register(Cat)

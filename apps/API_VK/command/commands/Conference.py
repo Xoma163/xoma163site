@@ -43,7 +43,7 @@ class Conference(CommonCommand):
 
             else:
                 if self.vk_event.chat.name and self.vk_event.chat.name != "":
-                    return self.vk_event.chat.name
+                    return f"Название конфы - {self.vk_event.chat.name}"
                 else:
                     return "Конфа не имеет названия"
         else:

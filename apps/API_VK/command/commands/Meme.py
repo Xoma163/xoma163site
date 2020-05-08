@@ -119,6 +119,8 @@ class Meme(CommonCommand):
         elif self.vk_event.args[0] in ['конфа']:
             self.check_args(3)
             chat = get_one_chat_with_user(self.vk_event.args[1], self.vk_event.sender.user_id)
+            if self.vk_event.chat == chat:
+                return "Зачем мне отправлять мем в эту же конфу?"
             if self.vk_event.args[-1] in ['рандом', 'р']:
                 meme = self.get_random_meme()
             else:

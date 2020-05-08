@@ -33,7 +33,7 @@ class VkBotClass(threading.Thread):
         super().__init__()
         self._TOKEN = secrets['vk']['bot']['TOKEN']
         self.group_id = secrets['vk']['bot']['group_id']
-        vk_session = vk_api.VkApi(token=self._TOKEN, api_version="5.103")
+        vk_session = vk_api.VkApi(token=self._TOKEN, api_version="5.103", config_filename="secrets/vk_bot_config.json")
         self.longpoll = MyVkBotLongPoll(vk_session, group_id=self.group_id)
         self.upload = VkUpload(vk_session)
         self.vk = vk_session.get_api()
@@ -527,7 +527,7 @@ class VkBotClass(threading.Thread):
         for image in images:
             try:
                 image = self._prepare_obj_to_upload(image, ['jpg', 'jpeg', 'png'])
-            except RuntimeError:
+            except RuntimeWarning:
                 continue
             # Если Content-Length > 50mb
             bytes_count = None

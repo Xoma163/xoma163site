@@ -35,7 +35,7 @@ class Permissions(CommonCommand):
 
             if self.vk_event.chat and self.vk_event.chat.admin == user:
                 result += "\n" \
-                          "админ конфы"
+                          "админ конфы (в этой)"
             return result
         else:
             return "Нет прав :("

@@ -14,7 +14,7 @@ def parse_bash(quotes_count):
             text_quotes = []
             for content in quote.contents:
                 if isinstance(content, NavigableString):
-                    text_quotes.append(content.strip('\n').strip(' '))
+                    text_quotes.append(content.strip())
             bash_quotes.append("\n".join(text_quotes))
         return "\n——————————————————\n".join(bash_quotes)
     except Exception as e:

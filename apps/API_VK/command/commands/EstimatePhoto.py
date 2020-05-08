@@ -16,4 +16,4 @@ class EstimatePhoto(CommonCommand):
         if not images:
             return "Не нашёл картинки"
         image = images[0]
-        return get_image_quality(image['download_url'])
+        return f"Качество картинки - {get_image_quality(image['download_url'])}"

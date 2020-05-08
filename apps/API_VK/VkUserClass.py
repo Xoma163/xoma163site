@@ -9,7 +9,8 @@ class VkUserClass:
         self.id = secrets['vk']['user']['id']
         vk_session = vk_api.VkApi(secrets['vk']['user']['login'],
                                   secrets['vk']['user']['password'],
-                                  auth_handler=self.auth_handler)
+                                  auth_handler=self.auth_handler,
+                                  config_filename="secrets/vk_user_config.json")
         vk_session.auth()
         self.upload = VkUpload(vk_session)
         self.vk = vk_session.get_api()

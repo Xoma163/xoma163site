@@ -25,7 +25,7 @@ class CommonCommand:
                  help_text=None,
                  detail_help_text=None,
                  keyboard=None,
-                 access=None,
+                 access=Role.USER.name,
                  pm=False,
                  conversation=False,
                  fwd=False,
@@ -37,8 +37,6 @@ class CommonCommand:
                  enabled=True,
                  priority=0,
                  ):
-        if access is None:
-            access = [Role.USER.name]
         self.names = names
         self.help_text = help_text
         self.detail_help_text = detail_help_text
@@ -77,8 +75,7 @@ class CommonCommand:
     def checks(self):
         # Если команда не для api
         self.check_api()
-        if self.access != 'user':
-            self.check_sender(self.access)
+        self.check_sender(self.access)
         if self.pm:
             self.check_pm()
         if self.conversation:
@@ -98,26 +95,20 @@ class CommonCommand:
         pass
 
     # Проверяет роль отправителя
-    def check_sender(self, roles):
-        if isinstance(roles, str):
-            roles = [roles]
-        for role in roles:
-            if role == Role.ADMIN.name and check_user_group(self.vk_event.sender, role):
+    def check_sender(self, role):
+        if check_user_group(self.vk_event.sender, role):
+            if role == Role.ADMIN.name:
                 if self.vk_event.sender.user_id == secrets['vk']['admin_id']:
                     return True
-            if check_user_group(self.vk_event.sender, role):
-                return True
-            if role == Role.CONFERENCE_ADMIN.name:
-                if self.vk_event.chat.admin == self.vk_event.sender:
-                    return True
-            if len(roles) == 1:
-                error = f"Команда доступна только для пользователей с уровнем прав {getattr(Role, role).value}"
+                else:
+                    print("Попытка доступа под админом не с моего id O_o")
             else:
-                rus_roles = [getattr(Role, role).value for role in roles]
-
-                error = f"Команда доступна только для пользователей с уровнями прав {', '.join(rus_roles)}"
-
-            raise RuntimeError(error)
+                return True
+        if role == Role.CONFERENCE_ADMIN.name:
+            if self.vk_event.chat.admin == self.vk_event.sender:
+                return True
+        error = f"Команда доступна только для пользователей с уровнем прав {getattr(Role, role).value}"
+        raise RuntimeError(error)
 
     # Проверяет количество переданных аргументов
     def check_args(self, args=None):

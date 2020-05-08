@@ -20,6 +20,6 @@ class Stream(CommonCommand):
             else:
                 return stream_link
         else:
-            self.check_sender([Role.TRUSTED.name, Role.MODERATOR.name])
+            self.check_sender(Role.MODERATOR.name)
             Service.objects.update_or_create(name="stream", defaults={'value': self.vk_event.args[0]})
             return "Ссылка изменена на " + self.vk_event.args[0]

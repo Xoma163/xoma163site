@@ -47,9 +47,11 @@ class City(CommonCommand):
                     self.vk_event.sender.save()
                     return f"Изменил город на {city.name}"
         else:
+            if self.vk_event.sender.city is not None:
+                return f"Ваш город - {self.vk_event.sender.city}"
             user = self.vk_bot.vk.users.get(user_id=self.vk_event.sender.user_id,
                                             lang='ru',
-                                            fields='sex, bdate, city, screen_name')[0]
+                                            fields='city')[0]
             if 'city' not in user:
                 return "Город в профиле скрыт или не установлен. Пришлите название в аргументах - /город (название " \
                        "города)"

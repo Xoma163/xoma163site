@@ -21,6 +21,7 @@ class Uyu(CommonCommand):
             if msg['text']:
                 new_msg += msg['text'] + "\n"
 
+        new_msg = new_msg.strip()
         if not new_msg:
             return "Нет текста в сообщении или пересланных сообщениях"
 
