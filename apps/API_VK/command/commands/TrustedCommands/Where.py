@@ -1,8 +1,8 @@
 import datetime
 
-from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import localize_datetime, remove_tz
+from apps.API_VK.command.Consts import Role
 from apps.API_VK.models import Log
 from xoma163site.settings import TIME_ZONE
 

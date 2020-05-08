@@ -1,8 +1,8 @@
 import random
 from threading import Lock
 
-from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.Consts import Role
 from apps.API_VK.models import VkUser
 from apps.games.models import Rate as RateModel
 

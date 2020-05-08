@@ -1,6 +1,6 @@
-from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import get_inline_keyboard
+from apps.API_VK.command.Consts import Role
 from xoma163site.wsgi import cameraHandler
 
 

@@ -1,5 +1,5 @@
-from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.Consts import Role
 from apps.service.models import Service
 
 

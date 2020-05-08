@@ -2,8 +2,8 @@ import json
 import random
 from threading import Lock
 
-from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.Consts import Role
 from apps.games.models import CodenamesUser, CodenamesSession, Gamer
 
 lock = Lock()

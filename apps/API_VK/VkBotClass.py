@@ -16,8 +16,9 @@ from vk_api.utils import get_random_id
 
 from apps.API_VK.VkEvent import VkEvent
 from apps.API_VK.VkUserClass import VkUserClass
-from apps.API_VK.command import get_commands, Role
+from apps.API_VK.command import get_commands
 from apps.API_VK.command.CommonMethods import check_user_group, get_user_groups
+from apps.API_VK.command.Consts import Role
 from apps.API_VK.command.commands.City import add_city_to_db
 from apps.API_VK.models import VkUser, VkChat, VkBot
 from apps.service.views import append_command_to_statistics

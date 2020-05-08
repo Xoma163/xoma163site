@@ -1,9 +1,9 @@
 import json
 from datetime import datetime, timedelta
 
-from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import localize_datetime, normalize_datetime, remove_tz, check_user_group
+from apps.API_VK.command.Consts import Role
 from apps.service.models import Notify as NotifyModel
 
 

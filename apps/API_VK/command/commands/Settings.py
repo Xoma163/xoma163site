@@ -1,8 +1,8 @@
 from django.contrib.auth.models import Group
 
-from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import check_user_group
+from apps.API_VK.command.Consts import Role
 from apps.API_VK.command.Consts import on_off_translator, true_false_translator
 
 

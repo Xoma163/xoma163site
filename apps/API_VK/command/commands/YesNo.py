@@ -1,8 +1,8 @@
 import random
 
-from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import check_user_group, random_event
+from apps.API_VK.command.Consts import Role
 from apps.API_VK.static_texts import get_bad_words, get_bad_answers
 
 

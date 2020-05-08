@@ -1,8 +1,7 @@
-from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import get_inline_keyboard, get_attachments_from_attachments_or_fwd, \
     check_user_group, get_one_chat_with_user
-
+from apps.API_VK.command.Consts import Role
 from apps.service.models import Meme as MemeModel
 from xoma163site.settings import VK_URL, TEST_CHAT_ID
 

@@ -1,6 +1,6 @@
-from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import get_attachments_from_attachments_or_fwd, get_inline_keyboard
+from apps.API_VK.command.Consts import Role
 from apps.service.models import Cat as CatModel
 from xoma163site.settings import MAIN_SITE
 

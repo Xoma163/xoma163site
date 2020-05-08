@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.core.management.base import BaseCommand
 
-from apps.API_VK.command import Role
+from apps.API_VK.command.Consts import Role
 from apps.API_VK.models import VkUser
 from apps.service.models import Service
 from xoma163site.wsgi import vk_bot

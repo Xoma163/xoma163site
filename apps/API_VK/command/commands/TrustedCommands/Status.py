@@ -1,7 +1,7 @@
 import json
 
-from apps.API_VK.command import Role
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.Consts import Role
 from apps.API_VK.command.DoTheLinuxComand import do_the_linux_command
 from xoma163site.settings import MAIN_DOMAIN
 
