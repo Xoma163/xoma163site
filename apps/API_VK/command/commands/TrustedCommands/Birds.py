@@ -17,20 +17,21 @@ class Birds(CommonCommand):
                          api=False)
 
     def start(self):
+        self.vk_bot.set_activity(self.vk_event.peer_id)
         attachments = []
         try:
             image = cameraHandler.get_img()
         except RuntimeError as e:
             print(e)
             return "какая-то дичь с синичками. Зовите разраба"
-        frames = 20
+        attachment = self.vk_bot.upload_photos(image)[0]
+        attachments.append(attachment)
 
+        frames = 20
         if self.vk_event.args:
             frames = self.vk_event.args[0]
             self.check_number_arg_range(frames, 0, cameraHandler.MAX_FRAMES)
 
-        attachment = self.vk_bot.upload_photos(image)[0]
-        attachments.append(attachment)
         if frames != 0:
             try:
                 document = cameraHandler.get_gif(frames)

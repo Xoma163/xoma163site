@@ -46,6 +46,8 @@ class Memes(CommonCommand):
             memes = MemeModel.objects
             for arg in self.vk_event.args:
                 memes = memes.filter(name__icontains=arg)
+            if len(memes) == 0:
+                return "Не нашёл мемов по заданному запросу"
             memes_sliced = memes[:20]
             meme_names = [meme.name for meme in memes_sliced]
             meme_names_str = ";\n".join(meme_names)

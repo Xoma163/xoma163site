@@ -57,6 +57,8 @@ class CameraHandler(threading.Thread):
                 except Exception as e:
                     print("EXCEPTION IN CAMERAHANDLER" + str(e))
                     self.wait()
+            else:
+                self.wait()
 
     def terminate(self):
         self._running = False
@@ -100,6 +102,8 @@ class CameraHandler(threading.Thread):
 
     def get_img(self):
         if not self._running:
+            self.images.init_frames()
+            self.time_on_frame.init_0()
             self.resume()
             while self.time_on_frame.get_last() == 0:
                 self.wait()

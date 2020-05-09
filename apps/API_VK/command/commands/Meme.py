@@ -108,8 +108,10 @@ class Meme(CommonCommand):
             self.check_args(2)
             if check_user_group(self.vk_event.sender, Role.MODERATOR.name):
                 meme = self.get_meme(self.vk_event.args[1:])
-                self.vk_bot.send_message(meme.author.user_id, f'Мем с названием "{meme.name}" удалён поскольку он не '
-                                                              f'соответствует правилам.')
+                if meme.author != self.vk_event.sender:
+                    self.vk_bot.send_message(meme.author.user_id,
+                                             f'Мем с названием "{meme.name}" удалён поскольку он не '
+                                             f'соответствует правилам или был удалён автором.')
             else:
                 meme = self.get_meme(self.vk_event.args[1:], self.vk_event.sender)
             meme_name = meme.name
