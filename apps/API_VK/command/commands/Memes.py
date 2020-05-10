@@ -1,7 +1,17 @@
 from django.core.paginator import Paginator
 
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import check_user_group
+from apps.API_VK.command.Consts import Role
 from apps.service.models import Meme as MemeModel
+
+
+def get_memes_names(memes, sender):
+    if check_user_group(sender, Role.MODERATOR.name):
+        meme_names = [f"{meme.name} (id - {meme.id})" for meme in memes]
+    else:
+        meme_names = [meme.name for meme in memes]
+    return meme_names
 
 
 class Memes(CommonCommand):
@@ -9,7 +19,8 @@ class Memes(CommonCommand):
         names = ["мемы"]
         help_text = "Мемы - список мемов"
         detail_help_text = "Мемы [страница=1] - присылает список мемов на странице\n" \
-                           "Мемы (поисковая фраза) - присылает список мемов, подходящих поисковому запросу"
+                           "Мемы (поисковая фраза) - присылает список мемов, подходящих поисковому запросу\n\n"
+
         super().__init__(names, help_text, detail_help_text, api=False)
 
     def start(self):
@@ -32,7 +43,7 @@ class Memes(CommonCommand):
             msg_header = f"Страница {page}/{p.num_pages}"
 
             memes_on_page = p.page(page)
-            meme_names = [meme.name for meme in memes_on_page]
+            meme_names = get_memes_names(memes_on_page, self.vk_event.sender)
             msg_body = ";\n".join(meme_names) + '.'
 
             if page != p.num_pages:
@@ -49,7 +60,7 @@ class Memes(CommonCommand):
             if len(memes) == 0:
                 return "Не нашёл мемов по заданному запросу"
             memes_sliced = memes[:20]
-            meme_names = [meme.name for meme in memes_sliced]
+            meme_names = get_memes_names(memes_sliced, self.vk_event.sender)
             meme_names_str = ";\n".join(meme_names)
             if len(memes) > len(memes_sliced):
                 meme_names_str += "\n..."

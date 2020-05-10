@@ -18,8 +18,8 @@ class Meme(CommonCommand):
         help_text = "Мем - присылает нужный мем"
         detail_help_text = "Мем (название) - присылает нужный мем\n" \
                            "Мем р - присылает рандомный мем\n" \
-                           "Мем добавить (Вложение/Пересланное сообщение с вложением) (название) - добавляет мем. \n" \
-                           "Мем обновить (Вложение/Пересланное сообщение с вложением) (название) - обновляет созданный вами мем. \n" \
+                           "Мем добавить (название) (Вложение/Пересланное сообщение с вложением) - добавляет мем. \n" \
+                           "Мем обновить (название) (Вложение/Пересланное сообщение с вложением) - обновляет созданный вами мем. \n" \
                            "Можно добавлять картинки/гифки/аудио/видео\n" \
                            "Мем удалить (название) - удаляет созданный вами мем\n" \
                            "Мем конфа (название конфы) (название/рандом) - отправляет мем в конфу\n\n" \
@@ -27,7 +27,9 @@ class Meme(CommonCommand):
                            "Мем подтвердить - присылает мем на подтверждение\n" \
                            "Мем подтвердить (id) - подтверждает мем\n" \
                            "Мем отклонить (id) [причина] - отклоняет мем\n" \
-                           "Мем удалить (название) - удаляет мем"
+                           "Мем переименовать (id) (новое название) - переименовывает мем\n" \
+                           "Мем удалить (название) - удаляет мем" \
+                           "Мем удалить (id) [причина] - удаляет мем"
         super().__init__(names, help_text, detail_help_text, args=1)
 
     def start(self):
@@ -82,8 +84,8 @@ class Meme(CommonCommand):
             else:
                 return "Невозможно"
 
-            if check_user_group(self.vk_event.sender, Role.MODERATOR.name) or check_user_group(self.vk_event.sender,
-                                                                                               Role.TRUSTED.name):
+            if (check_user_group(self.vk_event.sender, Role.MODERATOR.name) or
+                    check_user_group(self.vk_event.sender, Role.TRUSTED.name)):
                 meme = self.get_meme(self.vk_event.args[1:])
                 meme.link = new_meme_link
                 meme.type = attachment['type']
@@ -102,16 +104,27 @@ class Meme(CommonCommand):
                                       f"{meme.name} ({meme.id})"
                 self.vk_bot.parse_and_send_msgs(self.vk_bot.get_group_id(TEST_CHAT_ID), meme_to_send)
                 return "Обновил. Воспользоваться мемом можно после проверки модераторами."
-
-
         elif self.vk_event.args[0] in ['удалить']:
             self.check_args(2)
             if check_user_group(self.vk_event.sender, Role.MODERATOR.name):
-                meme = self.get_meme(self.vk_event.args[1:])
+                try:
+                    self.int_args = [1]
+                    self.parse_int()
+                    meme_id = self.vk_event.args[1]
+                    meme = MemeModel.objects.filter(id=meme_id).first()
+                    reason = " ".join(self.vk_event.args[2:])
+                    if reason:
+                        msg = f'Мем с названием "{meme.name}" удалён. Причина: {reason}'
+                    else:
+                        msg = f'Мем с названием "{meme.name}" удалён поскольку он не ' \
+                              f'соответствует правилам или был удалён автором.'
+                except RuntimeError:
+                    meme = self.get_meme(self.vk_event.args[1:])
+                    msg = f'Мем с названием "{meme.name}" удалён поскольку он не ' \
+                          f'соответствует правилам или был удалён автором.'
+                print(msg)
                 if meme.author != self.vk_event.sender:
-                    self.vk_bot.send_message(meme.author.user_id,
-                                             f'Мем с названием "{meme.name}" удалён поскольку он не '
-                                             f'соответствует правилам или был удалён автором.')
+                    self.vk_bot.send_message(meme.author.user_id, msg)
             else:
                 meme = self.get_meme(self.vk_event.args[1:], self.vk_event.sender)
             meme_name = meme.name
@@ -177,6 +190,23 @@ class Meme(CommonCommand):
             msg = f'Мем "{non_approved_meme.name}" ({non_approved_meme.id}) отклонён'
             non_approved_meme.delete()
             return msg
+        elif self.vk_event.args[0] in ['переименовать', 'правка']:
+            self.check_sender(Role.MODERATOR.name)
+            self.int_args = [1]
+            self.parse_int()
+            renamed_meme = MemeModel.objects.filter(id=self.vk_event.args[1]).first()
+            if not renamed_meme:
+                return "Не нашёл мема с таким id"
+
+            new_name = None
+            if len(self.vk_event.args) > 2:
+                new_name = " ".join(self.vk_event.args[2:])
+            user_msg = f'Мем с названием "{renamed_meme.name}" переименован.\n' \
+                       f'Новое название - "{new_name}"'
+            self.vk_bot.send_message(renamed_meme.author.user_id, user_msg)
+            renamed_meme.name = new_name
+            renamed_meme.save()
+            return user_msg
         else:
             meme = self.get_meme(self.vk_event.args)
             meme.uses += 1

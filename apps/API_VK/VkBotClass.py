@@ -101,14 +101,21 @@ class VkBotClass(threading.Thread):
         if len(msg) > 4096:
             msg = msg[:4092]
             msg += "\n..."
-        self.vk.messages.send(peer_id=peer_id,
-                              message=msg,
-                              access_token=self._TOKEN,
-                              random_id=get_random_id(),
-                              attachment=','.join(attachments),
-                              keyboard=keyboard,
-                              dont_parse_links=dont_parse_links
-                              )
+        try:
+            self.vk.messages.send(peer_id=peer_id,
+                                  message=msg,
+                                  access_token=self._TOKEN,
+                                  random_id=get_random_id(),
+                                  attachment=','.join(attachments),
+                                  keyboard=keyboard,
+                                  dont_parse_links=dont_parse_links
+                                  )
+        except vk_api.exceptions.ApiError as e:
+            if e.code == 901:
+                pass
+            else:
+                print("Ошибка отправки сообщения\n"
+                      f"{e}")
 
     # Отправляет сообщения юзерам в разных потоках
     def parse_and_send_msgs_thread(self, chat_ids, message):

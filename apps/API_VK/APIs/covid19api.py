@@ -34,8 +34,8 @@ def get_by_country(country_name):
                f"Заболело - {data['TotalConfirmed']}\n" \
                f"Смертей- {data['TotalDeaths']}\n" \
                f"Выздоровело - {data['TotalRecovered']}\n" \
-               f"Болеют сейчас - {data['TotalConfirmed'] - data['TotalDeaths'] - data['TotalRecovered']}\n" \
- \
+               f"Болеют сейчас - {data['TotalConfirmed'] - data['TotalDeaths'] - data['TotalRecovered']}\n"
+
     url = f"https://api.covid19api.com/summary"
     try:
         response = requests.get(url, timeout=5)
