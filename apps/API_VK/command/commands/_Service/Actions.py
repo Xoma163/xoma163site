@@ -12,7 +12,6 @@ class Actions(CommonCommand):
         return False
 
     def start(self):
-        print(self.vk_event.action)
         if self.vk_event.action:
             # По приглашению пользователя
             if self.vk_event.action['type'] in ['chat_invite_user', 'chat_invite_user_by_link']:

@@ -147,7 +147,7 @@ def log_deleted_question(sender, instance, using, **kwargs):
         try:
             os.remove(delete_path)
         except FileNotFoundError:
-            print("Warn: Кот/Мем удалён, но файл картинки не найден")
+            print("Warn: Кот удалён, но файл картинки не найден")
 
 
 class Notify(models.Model):

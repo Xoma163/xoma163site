@@ -60,7 +60,6 @@ class Age(CommonCommand):
         if response['status'] == 'error':
             if response['message'] == 'ratelimit exceeded 100 requests per 86400 seconds':
                 return "Сегодняшний лимит исчерпан"
-            print(response)
             return "Ошибка"
         elif response['status'] == "ok":
             if len(response['faces']) == 0:

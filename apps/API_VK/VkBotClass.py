@@ -435,7 +435,7 @@ class VkBotClass(threading.Thread):
         return vk_chats.first()
 
     def get_bot_by_id(self, bot_id):
-        if bot_id < 0:
+        if bot_id > 0:
             bot_id -= 1
         vk_bot = VkBot.objects.filter(bot_id=bot_id)
         if len(vk_bot) > 0:

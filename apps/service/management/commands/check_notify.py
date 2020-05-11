@@ -19,7 +19,6 @@ class Command(BaseCommand):
 
         DATETIME_NOW = datetime.utcnow()
         # DATETIME_NOW = datetime(2020, 4, 18, 12, 30, 1)
-        print(f'DATETIME_NOW: {DATETIME_NOW}\n')
         for notify in notifies:
             try:
                 if notify.repeat:
@@ -50,9 +49,7 @@ class Command(BaseCommand):
 
                     # Если отложенная команда
                     if notify.text.startswith('/'):
-                        print('startswith /')
                         msg = notify.text[1:]
-                        print("msg:", msg)
                         vk_event = {
                             'message': {
                                 'text': msg
@@ -67,10 +64,7 @@ class Command(BaseCommand):
                             vk_event['peer_id'] = notify.author.user_id
 
                         vk_event_object = VkEvent(vk_event)
-                        print('start menu')
-                        menu_res = vk_bot.menu(vk_event_object, send=True)
-                        print('menu_res:', menu_res)
-                        print('end menu')
+                        vk_bot.menu(vk_event_object, send=True)
                     if notify.repeat:
                         # Для постоянных уведомлений дата должа быть на завтрашний день обязательно. Это важно для сортировки
                         new_datetime = datetime.combine(DATETIME_NOW.date(), notify.date.time()) + timedelta(days=1)

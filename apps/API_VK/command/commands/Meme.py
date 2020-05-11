@@ -122,7 +122,6 @@ class Meme(CommonCommand):
                     meme = self.get_meme(self.vk_event.args[1:])
                     msg = f'Мем с названием "{meme.name}" удалён поскольку он не ' \
                           f'соответствует правилам или был удалён автором.'
-                print(msg)
                 if meme.author != self.vk_event.sender:
                     self.vk_bot.send_message(meme.author.user_id, msg)
             else:
@@ -203,7 +202,8 @@ class Meme(CommonCommand):
                 new_name = " ".join(self.vk_event.args[2:])
             user_msg = f'Мем с названием "{renamed_meme.name}" переименован.\n' \
                        f'Новое название - "{new_name}"'
-            self.vk_bot.send_message(renamed_meme.author.user_id, user_msg)
+            if renamed_meme.author != self.vk_event.sender:
+                self.vk_bot.send_message(renamed_meme.author.user_id, user_msg)
             renamed_meme.name = new_name
             renamed_meme.save()
             return user_msg
