@@ -28,7 +28,7 @@ def random_probability(probability):
 # Возвращает случайное событие с указанными весами этих событий
 def random_event(events, weights=None):
     if weights is None:
-        weights = [1 for _ in events]
+        return random.choice(events)
     return random.choices(events, weights=weights)[0]
 
 

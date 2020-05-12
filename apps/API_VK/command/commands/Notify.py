@@ -13,16 +13,16 @@ from apps.service.models import Notify as NotifyModel
 
 # Возвращает datetime, кол-во аргументов использованных для получения даты,  была ли передана точная дата
 def get_time(arg1, arg2):
-    exact_time_flag = True
+    exact_datetime_flag = True
     if arg1 == "завтра":
-        exact_time_flag = False
+        exact_datetime_flag = False
         arg1 = (datetime.today().date() + timedelta(days=1)).strftime("%d.%m.%Y")
     if arg1 == "послезавтра":
-        exact_time_flag = False
+        exact_datetime_flag = False
         arg1 = (datetime.today().date() + timedelta(days=2)).strftime("%d.%m.%Y")
 
     if arg1 in week_translator:
-        exact_time_flag = False
+        exact_datetime_flag = False
         delta_days = week_translator[arg1] - datetime.today().isoweekday()
         if delta_days <= 0:
             delta_days += 7
@@ -30,12 +30,13 @@ def get_time(arg1, arg2):
 
     default_datetime = datetime.now().replace(hour=10, minute=0, second=0, microsecond=0)  # + timedelta(days=1)
     try:
-        return parser.parse(f"{arg1} {arg2}", default=default_datetime, dayfirst=True), 2, exact_time_flag
+        return parser.parse(f"{arg1} {arg2}", default=default_datetime, dayfirst=True), 2, exact_datetime_flag
     except dateutil.parser._parser.ParserError:
         try:
-            return parser.parse(arg1, default=default_datetime, dayfirst=True), 1, exact_time_flag
+            exact_datetime_flag = False
+            return parser.parse(arg1, default=default_datetime, dayfirst=True), 1, exact_datetime_flag
         except dateutil.parser._parser.ParserError:
-            return None, None
+            return None, None, None
 
 
 class Notify(CommonCommand):
