@@ -80,7 +80,6 @@ class TicTacToe(CommonCommand):
                     return "Начинаем игру. Ждём второго игрока"
 
     def step_game(self, session):
-
         sender = self.vk_event.sender
         args = self.vk_event.args
         if sender != session.next_step:

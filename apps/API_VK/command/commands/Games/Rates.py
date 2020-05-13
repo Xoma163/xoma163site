@@ -20,7 +20,6 @@ class Rates(CommonCommand):
 
     def start(self):
         with lock:
-
             MIN_GAMERS = int(len(VkUser.objects.filter(chats=self.vk_event.chat)) / 2)
             if MIN_GAMERS < 2:
                 MIN_GAMERS = 2
@@ -30,8 +29,6 @@ class Rates(CommonCommand):
                 self.check_sender(Role.CONFERENCE_ADMIN.name)
                 if len(gamers) <= 1:
                     return "Ну ты ваще обалдел? Хотя бы один игрок-то пусть будет"
-
-
             else:
                 if len(gamers) < MIN_GAMERS:
                     return f"Минимальное количество игроков - {MIN_GAMERS}"

@@ -11,7 +11,7 @@ from apps.API_VK.command.Consts import week_translator
 from apps.service.models import Notify as NotifyModel
 
 
-# Возвращает datetime, кол-во аргументов использованных для получения даты,  была ли передана точная дата
+# Возвращает datetime, кол-во аргументов использованных для получения даты, была ли передана точная дата и время
 def get_time(arg1, arg2):
     exact_datetime_flag = True
     if arg1 == "завтра":

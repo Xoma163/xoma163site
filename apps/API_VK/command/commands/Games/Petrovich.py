@@ -49,39 +49,32 @@ class Petrovich(CommonCommand):
                     return "Ок"
                 else:
                     return "А ты и не зареган"
-            return "не понял команды. /ман Петрович"
-        with lock:
-            winner_today = PetrovichGames.objects.filter(chat=self.vk_event.chat).last()
-            if winner_today:
-                datetime_now = localize_datetime(datetime.datetime.utcnow(), "Europe/Moscow")
-                datetime_last = localize_datetime(remove_tz(winner_today.date), "Europe/Moscow")
-                if (datetime_now.date() - datetime_last.date()).days <= 0:
-                    if winner_today.user.name in ["Евгений", "Женя"]:
-                        return f"Женя дня - {winner_today.user}"
-                    elif winner_today.user.name in ["Светлана"]:
-                        return f"Лапушка дня - {winner_today.user}"
-                    else:
-                        return f"Петрович дня - {winner_today.user}"
+            return "Не понял команды. /ман Петрович"
+        else:
+            with lock:
+                winner_today = PetrovichGames.objects.filter(chat=self.vk_event.chat).last()
+                if winner_today:
+                    datetime_now = localize_datetime(datetime.datetime.utcnow(), "Europe/Moscow")
+                    datetime_last = localize_datetime(remove_tz(winner_today.date), "Europe/Moscow")
+                    if (datetime_now.date() - datetime_last.date()).days <= 0:
+                        if winner_today.user.name in ["Евгений", "Женя"]:
+                            return f"Женя дня - {winner_today.user}"
+                        elif winner_today.user.name in ["Светлана"]:
+                            return f"Лапушка дня - {winner_today.user}"
+                        else:
+                            return f"Петрович дня - {winner_today.user}"
 
-            winner = PetrovichUser.objects.filter(chat=self.vk_event.chat, active=True).order_by("?").first()
-            if winner:
-                winner = winner.user
-            else:
-                return "Нет участников игры. Зарегистрируйтесь! /петрович рег"
+                winner = PetrovichUser.objects.filter(chat=self.vk_event.chat, active=True).order_by("?").first()
+                if winner:
+                    winner = winner.user
+                else:
+                    return "Нет участников игры. Зарегистрируйтесь! /петрович рег"
 
-            PetrovichGames.objects.filter(chat=self.vk_event.chat).delete()
-            PetrovichGames(user=winner, chat=self.vk_event.chat).save()
-            winner_petrovich = PetrovichUser.objects.filter(user=winner, chat=self.vk_event.chat).first()
-            winner_petrovich.wins += 1
-            winner_petrovich.save()
-            messages = ["Такс такс такс, кто тут у нас"]
-            who = "Петрович"
-            if winner.name in ["Евгений", "Женя"]:
-                who = "Женя"
-            if winner.name in ["Светлана"]:
-                messages.append(
-                    f"Наша сегодняшняя лапушка дня - [{winner.nickname}|{winner.name} {winner.surname}]")
-            else:
-                messages.append(
-                    f"Наш сегодняшний {who} дня - [{winner.nickname}|{winner.name} {winner.surname}]")
-            return messages
+                PetrovichGames.objects.filter(chat=self.vk_event.chat).delete()
+                PetrovichGames(user=winner, chat=self.vk_event.chat).save()
+                winner_petrovich = PetrovichUser.objects.filter(user=winner, chat=self.vk_event.chat).first()
+                winner_petrovich.wins += 1
+                winner_petrovich.save()
+                messages = ["Такс такс такс, кто тут у нас",
+                            f"Наш сегодняшний Петрович дня - [{winner.nickname}|{winner.name} {winner.surname}]"]
+                return messages

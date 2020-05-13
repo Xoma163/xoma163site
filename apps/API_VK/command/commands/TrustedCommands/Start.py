@@ -62,7 +62,7 @@ class Start(CommonCommand):
                 return "Я не знаю такой версии"
         elif module in ['террария', Role.TERRARIA.name]:
             self.check_sender(Role.TERRARIA.name)
-            self.check_command_time(Role.TERRARIA.name, 10)
+            self.check_command_time('terraria', 10)
             do_the_linux_command('sudo systemctl start terraria')
             return "Стартуем террарию!"
         elif module in ['бот', 'bot']:

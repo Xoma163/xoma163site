@@ -8,5 +8,4 @@ class GameConference(CommonCommand):
         super().__init__(names, help_text)
 
     def start(self):
-        # return 'https://vk.me/join/AJQ1d0fAnhYSoISi2sowQoe3'
         return 'https://vk.me/join/AJQ1d9ppmRflxVoEplfcaUHv'

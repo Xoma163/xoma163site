@@ -20,26 +20,24 @@ class Who(CommonCommand):
 
     def start(self):
         arg = self.vk_event.original_args.lower()
-        if arg in ['moderators', 'moderator', 'moders', 'moder', 'модераторы', 'модератор', 'модеры', 'модер']:
-            who = Role.MODERATOR.name
-        elif arg in ['administrations', 'administration', 'admin', 'администрация', 'админы', 'админ', 'главный',
-                     'власть', 'господин']:
+        if arg in ['администрация', 'администратор', 'админы', 'админ', 'главный', 'власть', 'господин']:
             who = Role.ADMIN.name
-        elif arg in ['students', 'student', 'студенты', 'студент']:
+        elif arg in ['moderators', 'moderator' 'модераторы', 'модератор', 'модеры', 'модер']:
+            who = Role.MODERATOR.name
+        elif arg in ['студент']:
             who = Role.TERRARIA.name
-        elif arg in ['minecraft', 'майнкрафт']:
-            who = Role.MINECRAFT.name
-        elif arg in ['minecraft_notify', 'майнкрафт уведомления']:
+        elif arg in ['майнкрафт уведомления', 'майн уведомления']:
             who = Role.MINECRAFT_NOTIFY.name
-        elif arg in ['terraria', 'террария']:
+        elif arg in ['майнкрафт', 'майн']:
+            who = Role.MINECRAFT.name
+        elif arg in ['террария']:
             who = Role.TERRARIA.name
-        elif arg in ['banned', 'ban', 'забанены', 'забанен', 'бан']:
+        elif arg in ['забанен', 'бан']:
             who = Role.BANNED.name
-        elif arg in ['доверенный', 'проверенный', 'trusted']:
+        elif arg in ['доверенный', 'проверенный']:
             who = Role.TRUSTED.name
-        elif arg in ['conference admin', 'chat admin', 'админ конфы', 'админ беседы', 'админ конференции',
-                     'администратор конфы', 'админ чата', 'администратор беседы', 'администратор конференции',
-                     'администратор чата']:
+        elif arg in ['админ конфы', 'админ беседы', 'админ конференции', 'админ чата',
+                     'администратор конфы', 'администратор беседы', 'администратор конференции', 'администратор чата']:
             return str(self.vk_event.chat.admin)
         else:
             return "Не знаю такой роли"

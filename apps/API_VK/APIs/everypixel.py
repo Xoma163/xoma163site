@@ -13,13 +13,11 @@ def get_image_quality(image_url):
     }
     response = requests.get(URL, params, auth=(CLIENT_ID, CLIENT_SECRET)).json()
 
-    if response['status'] == 'error':
-        print(response)
-        return "Ошибка"
-    elif response['status'] == 'ok':
+    if response['status'] == 'ok':
         return f"{round(response['quality']['score'] * 100, 2)}%"
     else:
-        return "Wtf"
+        print(response)
+        return "Ошибка"
 
 
 def get_faces_on_photo(image_url):

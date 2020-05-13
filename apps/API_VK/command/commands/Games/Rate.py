@@ -1,7 +1,7 @@
 from threading import Lock
 
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command.CommonMethods import get_random_item_from_list
+from apps.API_VK.command.CommonMethods import random_event
 from apps.API_VK.models import VkUser
 from apps.games.models import Rate as RateModel
 
@@ -48,7 +48,7 @@ class Rate(CommonCommand):
                     available_list.pop(available_list.index(rate_entity.rate))
                 if len(available_list) == 0:
                     return "Какая-то жесть, 100 игроков в ставке, я не могу больше придумать чисел, играйте(("
-                arg = get_random_item_from_list(available_list)
+                arg = random_event(available_list)
 
             existed_another_rate = RateModel.objects.filter(chat=self.vk_event.chat, rate=arg)
             if len(existed_another_rate) > 0:
@@ -61,6 +61,5 @@ class Rate(CommonCommand):
             else:
                 rate_gamer_str += f"{gamer} - {arg}\n"
 
-            # RateDelete(**{'chat': self.vk_event.chat, 'message_id': self.vk_event.message_id}).save()
             return f"Игроки {len(rates_gamers) + 1}/{MIN_GAMERS}:\n" \
                    f"{rate_gamer_str}"

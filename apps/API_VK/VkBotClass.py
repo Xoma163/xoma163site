@@ -408,6 +408,8 @@ class VkBotClass(threading.Thread):
                     user = vk_users.filter(surname=args[0].capitalize())
                     if len(user) == 0:
                         user = vk_users.filter(nickname=args[0])
+                        if len(user) == 0:
+                            user = vk_users.filter(user_id=args[0])
 
         if len(user) > 1:
             raise RuntimeWarning("2 и более пользователей подходит под поиск")
@@ -476,22 +478,6 @@ class VkBotClass(threading.Thread):
     @staticmethod
     def get_group_id(_id):
         return 2000000000 + int(_id)
-
-    def update_users(self):
-        users = VkUser.objects.all()
-        for vk_user in users:
-            user = self.vk.users.get(user_id=vk_user.user_id, lang='ru', fields='sex, bdate, city, screen_name')[0]
-            vk_user.name = user['first_name']
-            vk_user.surname = user['last_name']
-            if 'sex' in user:
-                vk_user.gender = user['sex']
-            if vk_user.birthday is None and 'bdate' in user:
-                vk_user.birthday = self.parse_date(user['bdate'])
-            if vk_user.city is None and 'city' in user:
-                vk_user.city = user['city']['title']
-            if vk_user.nickname is None and 'screen_name' in user:
-                vk_user.nickname = user['screen_name']
-            vk_user.save()
 
     def get_short_link(self, long_link):
         result = self.vk.utils.getShortLink(url=long_link)

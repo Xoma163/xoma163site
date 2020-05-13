@@ -1,7 +1,7 @@
 import time
 
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command.CommonMethods import get_random_item_from_list, random_probability
+from apps.API_VK.command.CommonMethods import random_probability, random_event
 
 
 class Apologize(CommonCommand):
@@ -12,7 +12,7 @@ class Apologize(CommonCommand):
 
     def start(self):
         phrases = ["Извини", "Нет", "Сам извинись", "за что?", "КАВО", "Ты уверен?"]
-        phrase = get_random_item_from_list(phrases)
+        phrase = random_event(phrases)
         self.vk_bot.send_message(self.vk_event.peer_id, phrase)
 
         # ToDo: запускать асинхронную таску по отправке сообщения, результат ретёрнить

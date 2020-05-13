@@ -1,5 +1,5 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command.CommonMethods import get_random_item_from_list
+from apps.API_VK.command.CommonMethods import random_event
 from apps.API_VK.models import Words
 from apps.API_VK.static_texts import get_bad_answers
 
@@ -54,7 +54,7 @@ def get_praise_or_scold(vk_bot, vk_event, _type):
 
         if "петрович" in recipient.lower():
             if _type == 'bad':
-                msg = get_random_item_from_list(get_bad_answers())
+                msg = random_event(get_bad_answers())
             elif _type == 'good':
                 msg = "спс))"
             else:

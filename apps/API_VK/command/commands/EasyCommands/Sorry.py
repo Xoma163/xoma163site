@@ -1,6 +1,8 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command.CommonMethods import get_random_item_from_list
-from apps.API_VK.static_texts import get_sorry_phrases
+from apps.API_VK.command.CommonMethods import random_event
+
+sorry_phrases = ["лан", "нет", "окей", "ничего страшного", "Петрович любит тебя", "я подумаю", "ой всё",
+                 "ну а чё ты :(", "всё хорошо", "каво", "сь", '...', 'оке', 'ладно, но больше так не делай']
 
 
 class Sorry(CommonCommand):
@@ -9,5 +11,4 @@ class Sorry(CommonCommand):
         super().__init__(names)
 
     def start(self):
-        phrases = get_sorry_phrases()
-        return get_random_item_from_list(phrases)
+        return random_event(sorry_phrases)

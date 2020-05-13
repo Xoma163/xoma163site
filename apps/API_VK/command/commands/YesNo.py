@@ -3,7 +3,15 @@ import random
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import check_user_group, random_event
 from apps.API_VK.command.Consts import Role
-from apps.API_VK.static_texts import get_bad_words, get_bad_answers
+from apps.API_VK.static_texts import get_bad_answers
+
+
+def get_bad_words():
+    return ['еба', 'ебa', 'eба', 'eбa', 'ёба', 'ёбa', 'пидор', 'пидoр', 'пидоp', 'пидop', 'пидар', 'пидaр',
+            'пидаp', 'пидap', "пидр", "пидp", 'гандон', 'годнон', 'хуй', 'пизд', 'бля', 'шлюха', 'мудак',
+            'говно', 'моча', 'залупа', 'гей', 'дурак', 'говно', 'жопа', 'ублюдок', 'мудак',
+            'сука', 'сукa', 'сyка', 'сyкa', 'cука', 'cукa', 'cyка', 'cyкa', 'суkа', 'суka', 'сykа', 'сyka', 'cуkа',
+            'cуka', 'cykа', 'cyka']
 
 
 class YesNo(CommonCommand):
@@ -66,8 +74,8 @@ class YesNo(CommonCommand):
         random_events = [["Да", "Ага", "Канеш", "Само собой", "Абсолютно"],
                          ["Нет", "Неа", "Ни за что", "Невозможно", "NO"],
                          ["Ну тут даже я хз", "ДА НЕ ЗНАЮ Я", "Хз", "Спроси у другого бота", "Да нет наверное"]]
-        probability_events1 = [48, 48, 4]
-        probability_events2 = [80, 5, 5, 5, 5]
+        probability_events1 = [47, 47, 6]
+        probability_events2 = [40, 15, 15, 15, 15]
         selected_event = random_event(random_events, probability_events1)
         selected_event2 = random_event(selected_event, probability_events2)
         return selected_event2

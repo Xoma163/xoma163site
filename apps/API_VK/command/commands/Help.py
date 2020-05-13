@@ -41,36 +41,24 @@ class Help(CommonCommand):
             help_texts = API_HELP_TEXT
         else:
             help_texts = HELP_TEXT
-        output = "— общие команды —\n"
-        output += help_texts[Role.USER.name]
 
-        if check_user_group(self.vk_event.sender, Role.TERRARIA.name) and help_texts[Role.TERRARIA.name]:
-            output += "\n\n— команды для группы 6221 —\n"
-            output += help_texts[Role.TERRARIA.name]
-        if check_user_group(self.vk_event.sender, Role.MODERATOR.name) and help_texts[Role.MODERATOR.name]:
-            output += "\n\n— команды для модераторов —\n"
-            output += help_texts[Role.MODERATOR.name]
-        if check_user_group(self.vk_event.sender, Role.ADMIN.name) and help_texts[Role.ADMIN.name]:
-            output += "\n\n— команды для администраторов —\n"
-            output += help_texts[Role.ADMIN.name]
-        if check_user_group(self.vk_event.sender, Role.BANNED.name) and help_texts[Role.BANNED.name]:
-            output += "\n\n— команды для забаненных —\n"
-            output += help_texts[Role.BANNED.name]
-        if check_user_group(self.vk_event.sender, Role.MINECRAFT.name) and help_texts[Role.MINECRAFT.name]:
-            output += "\n\n— команды для игроков майнкрафта —\n"
-            output += help_texts[Role.MINECRAFT.name]
-        if check_user_group(self.vk_event.sender, Role.MINECRAFT_NOTIFY.name) and help_texts[
-            Role.MINECRAFT_NOTIFY.name]:
-            output += "\n\n— команды для уведомлённых майнкрафтеров —\n"
-            output += help_texts[Role.MINECRAFT_NOTIFY.name]
-        if check_user_group(self.vk_event.sender, Role.TERRARIA.name) and help_texts[Role.TERRARIA.name]:
-            output += "\n\n— команды для игроков террарии —\n"
-            output += help_texts[Role.TERRARIA.name]
-        if check_user_group(self.vk_event.sender, Role.TRUSTED.name) and help_texts[Role.TRUSTED.name]:
-            output += "\n\n— команды для доверенных пользователей —\n"
-            output += help_texts[Role.TRUSTED.name]
+        ordered_roles = [
+            {"role": Role.USER.name, "text": "общие команды"},
+            {"role": Role.ADMIN.name, "text": "команды для администраторов"},
+            {"role": Role.MODERATOR.name, "text": "команды для модераторов"},
+            {"role": Role.MINECRAFT.name, "text": "команды для игроков майнкрафта"},
+            {"role": Role.TRUSTED.name, "text": "команды для доверенных пользователей"},
+            {"role": Role.STUDENT.name, "text": "команды для группы 6221"},
+            {"role": Role.MINECRAFT_NOTIFY.name, "text": "команды для уведомлённых майнкрафтеров"},
+            {"role": Role.TERRARIA.name, "text": "команды для игроков террарии"},
+        ]
+        output = ""
+        for role in ordered_roles:
+            if check_user_group(self.vk_event.sender, role['role']) and help_texts[role['role']]:
+                output += f"\n\n— {role['text']} —\n"
+                output += help_texts[role['role']]
         if help_texts['games']:
             output += "\n\n— игры —\n"
             output += help_texts['games']
-
+        output = output.rstrip()
         return output
