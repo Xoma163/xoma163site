@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from apps.service.models import Statistic, Issue, Service, Counter, Cat, Meme, Notify, City, AudioList, LaterMessage, \
-    Donations, TimeZone, LaterMessageSession
+    Donations, TimeZone, LaterMessageSession, YoutubeSubscribe
 
 
 @admin.register(Statistic)
@@ -75,3 +75,9 @@ class LaterMessageAdmin(admin.ModelAdmin):
 class LaterMessageSessionAdmin(admin.ModelAdmin):
     list_display = ('author', 'date')
     list_filter = (('author', admin.RelatedOnlyFieldListFilter),)
+
+
+@admin.register(YoutubeSubscribe)
+class YoutubeSubscribeAdmin(admin.ModelAdmin):
+    list_display = ('author', 'chat', 'title', 'date',)
+    list_filter = (('author', admin.RelatedOnlyFieldListFilter), ('chat', admin.RelatedOnlyFieldListFilter),)

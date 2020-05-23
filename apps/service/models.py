@@ -246,6 +246,7 @@ class LaterMessageSession(models.Model):
     def __str__(self):
         return f"{self.pk}"
 
+
 class Donations(models.Model):
     username = models.CharField(verbose_name="Имя", max_length=100, blank=True)
     amount = models.CharField(verbose_name="Количество", max_length=10, blank=True)
@@ -260,3 +261,20 @@ class Donations(models.Model):
 
     def __str__(self):
         return f"{self.username}. {self.amount}"
+
+
+class YoutubeSubscribe(models.Model):
+    author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.CASCADE, null=True)
+    chat = models.ForeignKey(VkChat, verbose_name='Чат', null=True, on_delete=models.CASCADE, blank=True)
+
+    channel_id = models.CharField(verbose_name="ID канала", max_length=100)
+    title = models.CharField(verbose_name="Название канала", max_length=100)
+    date = models.DateTimeField(verbose_name="Дата последней публикации")
+
+    class Meta:
+        verbose_name = "Подписка ютуба"
+        verbose_name_plural = "Подписки ютуба"
+        ordering = ['title']
+
+    def __str__(self):
+        return self.title
