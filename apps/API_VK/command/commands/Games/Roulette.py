@@ -168,8 +168,14 @@ class Roulette(CommonCommand):
 
                 vk_user_gamer.roulette_points += points_transfer
                 vk_user_gamer.save()
-                return f"Начислил игроку {vk_user_gamer.user} {points_transfer} " \
-                       f"{decl_of_num(points_transfer, ['очко', 'очка', 'очков'])}"
+                if points_transfer > 0:
+                    return f"Начислил игроку {vk_user_gamer.user} {points_transfer} " \
+                           f"{decl_of_num(points_transfer, ['очко', 'очка', 'очков'])}"
+                elif points_transfer < 0:
+                    return f"Забрал у игрока {vk_user_gamer.user} {-points_transfer} " \
+                           f"{decl_of_num(-points_transfer, ['очко', 'очка', 'очков'])}"
+                else:
+                    return "ммм"
 
             if self.vk_event.args[0] in ['ставки']:
                 if self.vk_event.from_chat:

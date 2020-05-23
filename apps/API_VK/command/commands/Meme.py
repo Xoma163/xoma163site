@@ -225,7 +225,7 @@ class Meme(CommonCommand):
             memes = memes.filter(author=filter_user)
 
         if len(memes) == 0:
-            raise RuntimeError("Не нашёл :(")
+            raise RuntimeWarning("Не нашёл :(")
         elif len(memes) == 1:
             return memes.first()
         else:

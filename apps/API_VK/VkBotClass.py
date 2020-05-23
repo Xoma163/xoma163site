@@ -321,6 +321,7 @@ class VkBotClass(threading.Thread):
 
             except Exception as e:
                 print('VkBot exception\n:', e)
+                logger.error('VkBot exception\n:' + str(e))
                 print(traceback.format_exc())
 
     def run(self):
@@ -577,4 +578,5 @@ class MyVkBotLongPoll(VkBotLongPoll):
                 for event in self.check():
                     yield event
             except Exception as e:
+                logger.error('Longpoll Error (VK):' + str(e))
                 print('Longpoll Error (VK):', e)
