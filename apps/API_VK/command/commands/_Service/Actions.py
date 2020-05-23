@@ -4,7 +4,7 @@ from secrets.secrets import secrets
 
 class Actions(CommonCommand):
     def __init__(self):
-        super().__init__([None], priority=200)
+        super().__init__([None], priority=100)
 
     def accept(self, vk_event):
         if vk_event.action:

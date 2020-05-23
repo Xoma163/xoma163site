@@ -20,6 +20,7 @@ from apps.API_VK.command import get_commands
 from apps.API_VK.command.CommonMethods import check_user_group, get_user_groups
 from apps.API_VK.command.Consts import Role
 from apps.API_VK.command.commands.City import add_city_to_db
+from apps.API_VK.command.commands.VoiceRecognition import have_audio_message
 from apps.API_VK.models import VkUser, VkChat, VkBot
 from apps.service.views import append_command_to_statistics
 from secrets.secrets import secrets
@@ -281,19 +282,13 @@ class VkBotClass(threading.Thread):
                         vk_event['fwd'] = event.message.fwd_messages
 
                     # Проверка есть ли аудиосообщения
-                    have_audio_message = False
+                    have_audio_message_flag = have_audio_message(vk_event)
+
+                    # Проверка есть ли в сообщении action
                     have_action = vk_event['message']['action'] is not None
-
-                    all_attachments = vk_event['message']['attachments'].copy()
-                    if vk_event['fwd']:
-                        all_attachments += vk_event['fwd'][0]['attachments']
-                    for attachment in all_attachments:
-                        if attachment['type'] == 'audio_message':
-                            have_audio_message = True
-                            break
-
+                    
                     # Сообщение либо мне в лс, либо упоминание меня, либо есть аудиосообщение, либо есть экшн
-                    if not self.need_a_response(vk_event, have_audio_message, have_action):
+                    if not self.need_a_response(vk_event, have_audio_message_flag, have_action):
                         continue
 
                     # Узнаём пользователя

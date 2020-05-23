@@ -19,7 +19,7 @@ class YesNo(CommonCommand):
         names = ["вопрос", "?"]
         help_text = "...? - вернёт да или нет"
         detail_help_text = "...? - вернёт да или нет. Для вызова команды просто в конце нужно написать знак вопроса"
-        super().__init__(names, help_text, detail_help_text, priority=50)
+        super().__init__(names, help_text, detail_help_text, priority=80)
 
     def accept(self, vk_event):
         if (vk_event.msg and vk_event.msg[-1] == '?') or vk_event.command in self.names:

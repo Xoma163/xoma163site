@@ -7,7 +7,7 @@ class Conference(CommonCommand):
     def __init__(self):
         names = ["конфа", "конференция", "беседа"]
         help_text = "Конфа - назвать конфу"
-        super().__init__(names, help_text, conversation=True, priority=100)
+        super().__init__(names, help_text, conversation=True, priority=90)
 
     def accept(self, vk_event):
         if vk_event.chat and (vk_event.chat.name is None or vk_event.chat.name == "") or vk_event.command in self.names:
