@@ -16,7 +16,7 @@ class Meme(CommonCommand):
     def __init__(self):
         names = ["мем"]
         help_text = "Мем - присылает нужный мем"
-        detail_help_text = "Мем (название) - присылает нужный мем\n" \
+        detail_help_text = "Мем (название) - присылает нужный мем. Можно использовать * вместо символов поиска. Например /мем ж*па\n" \
                            "Мем р - присылает рандомный мем\n" \
                            "Мем добавить (название) (Вложение/Пересланное сообщение с вложением) - добавляет мем. \n" \
                            "Мем обновить (название) (Вложение/Пересланное сообщение с вложением) - обновляет созданный вами мем. \n" \
@@ -217,9 +217,16 @@ class Meme(CommonCommand):
     def get_meme(filter_list=None, filter_user=None, approved=True):
         memes = MemeModel.objects.filter(approved=approved)
 
+        flag_regex = False
         if filter_list:
             for _filter in filter_list:
-                memes = memes.filter(name__icontains=_filter)
+                if '*' in _filter:
+                    _filter = _filter.replace('*', '.')
+                    regex_filter = fr'.*{_filter}.*'
+                    memes = memes.filter(name__iregex=regex_filter)
+                    flag_regex = True
+                else:
+                    memes = memes.filter(name__icontains=_filter)
 
         if filter_user:
             memes = memes.filter(author=filter_user)
@@ -229,8 +236,11 @@ class Meme(CommonCommand):
         elif len(memes) == 1:
             return memes.first()
         else:
+            filters_str = " ".join(filter_list)
             for meme in memes:
-                if meme.name == " ".join(filter_list):
+                if meme.name == filters_str:
+                    return meme
+                if flag_regex and len(meme.name) == len(filters_str):
                     return meme
             memes = memes[:10]
             meme_names = [meme.name for meme in memes]
