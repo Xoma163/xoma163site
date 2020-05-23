@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from apps.service.models import Statistic, Issue, Service, Counter, Cat, Meme, Notify, City, AudioList, LaterMessage, \
-    Donations, TimeZone
+    Donations, TimeZone, LaterMessageSession
 
 
 @admin.register(Statistic)
@@ -66,7 +66,12 @@ class DonationsAdmin(admin.ModelAdmin):
 
 @admin.register(LaterMessage)
 class LaterMessageAdmin(admin.ModelAdmin):
-    list_display = ('author', 'message_author', 'message_bot', 'text', 'date', 'attachments')
-    list_filter = (('author', admin.RelatedOnlyFieldListFilter),
-                   ('message_author', admin.RelatedOnlyFieldListFilter),
+    list_display = ('message_author', 'message_bot', 'text', 'date', 'attachments')
+    list_filter = (('message_author', admin.RelatedOnlyFieldListFilter),
                    ('message_bot', admin.RelatedOnlyFieldListFilter))
+
+
+@admin.register(LaterMessageSession)
+class LaterMessageSessionAdmin(admin.ModelAdmin):
+    list_display = ('author', 'date')
+    list_filter = ('author', admin.RelatedOnlyFieldListFilter)

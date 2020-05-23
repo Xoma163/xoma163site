@@ -216,7 +216,6 @@ class AudioList(models.Model):
 
 class LaterMessage(models.Model):
     id = models.AutoField(primary_key=True)
-    author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.CASCADE, null=True)
     message_author = models.ForeignKey(VkUser, verbose_name="Автор сообщения", on_delete=models.CASCADE, null=True,
                                        related_name="message_author_%(class)ss", blank=True)
     message_bot = models.ForeignKey(VkBot, verbose_name="Автор сообщения(бот)", on_delete=models.SET_NULL, null=True,
@@ -231,7 +230,13 @@ class LaterMessage(models.Model):
         ordering = ['-date']
 
     def __str__(self):
-        return f"{self.id}. {self.author}"
+        return f"{self.id}"
+
+
+class LaterMessageSession(models.Model):
+    author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.CASCADE, null=True)
+    later_messages = models.ManyToManyField(LaterMessage, verbose_name="Сообщения")
+    date = models.DateTimeField(verbose_name="Дата сообщения")
 
 
 class Donations(models.Model):
