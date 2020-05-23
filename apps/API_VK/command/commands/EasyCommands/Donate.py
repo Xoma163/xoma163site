@@ -9,4 +9,5 @@ class Donate(CommonCommand):
 
     def start(self):
         attachment = self.vk_bot.get_attachment_by_id('photo', None, 457243301)
-        return {'msg': 'https://www.donationalerts.com/r/xoma163', 'attachments': [attachment]}
+        url = 'https://www.donationalerts.com/r/xoma163'
+        return {'msg': url, 'attachments': [attachment, url]}

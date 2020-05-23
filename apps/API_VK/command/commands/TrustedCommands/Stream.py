@@ -18,7 +18,7 @@ class Stream(CommonCommand):
             if len(stream_link) < 5:
                 return "Стрим пока не идёт"
             else:
-                return stream_link
+                return {'msg': stream_link, 'attachments': stream_link}
         else:
             self.check_sender(Role.MODERATOR.name)
             Service.objects.update_or_create(name="stream", defaults={'value': self.vk_event.args[0]})

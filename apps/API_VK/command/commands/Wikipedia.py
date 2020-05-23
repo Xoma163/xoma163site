@@ -30,9 +30,9 @@ class Wikipedia(CommonCommand):
                 msg = f"{page.original_title}\n\n{page.content}\n\nПодробнее: {page.url}"
             if self.vk_event.from_api:
                 return msg
-            output = {'msg': msg}
+            output = {'msg': msg, 'attachments': [page.url]}
             if page.images:
-                output['attachments'] = self.vk_bot.upload_photos(page.images, 3)
+                output['attachments'] += self.vk_bot.upload_photos(page.images, 3)
             if is_random:
                 output['keyboard'] = get_inline_keyboard(self.names[0], args={"random": "р"})
             return output

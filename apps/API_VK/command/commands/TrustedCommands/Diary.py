@@ -9,4 +9,5 @@ class Diary(CommonCommand):
         super().__init__(names, help_text, access=Role.TRUSTED.name)
 
     def start(self):
-        return 'https://diary.xoma163.xyz/'
+        url = 'https://diary.xoma163.xyz/'
+        return {'msg': url, 'attachments': url}

@@ -9,4 +9,5 @@ class Discord(CommonCommand):
         super().__init__(names, help_text, access=Role.TRUSTED.name)
 
     def start(self):
-        return "https://discord.gg/kYGSNzv"
+        url = 'https://discord.gg/kYGSNzv'
+        return {'msg': url, 'attachments': url}
