@@ -9,7 +9,7 @@ Nice=1
 SuccessExitStatus=0 1
 WorkingDirectory=/var/www/xoma163.site/
 ExecStart=/var/www/xoma163.site/venv/bin/uwsgi --ini /var/www/xoma163.site/uWSGI_nginx/uwsgi.ini
-ExecStop = /var/www/xoma163.site/venv/bin/uwsgi --stop /var/www/xoma163.site/uWSGI_nginx/uwsgi.pid
+ExecStop = /var/www/xoma163.site/venv/bin/uwsgi --stop /var/www/xoma163.site/uWSGI_nginx/xoma163site.pid
 #ExecStopPost=/bin/rm /var/www/xoma163.site/thread.lock
 
 [Install]
