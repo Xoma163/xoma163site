@@ -21,6 +21,10 @@ class VkChat(models.Model):
 
 
 class VkUser(models.Model):
+    GENDER_CHOICES = (('1', 'женский'),
+                      ('2', 'мужской'),
+                      ('', 'не указан'))
+
     id = models.AutoField(primary_key=True, verbose_name='ID')
 
     user_id = models.CharField(verbose_name='ID пользователя', max_length=20)
@@ -28,7 +32,8 @@ class VkUser(models.Model):
     surname = models.CharField(verbose_name='Фамилия', max_length=40, default="")
     nickname = models.CharField(verbose_name="Никнейм", max_length=40, blank=True, default="")
     nickname_real = models.CharField(verbose_name="Прозвище", max_length=40, blank=True, default="")
-    gender = models.CharField(verbose_name='Пол', max_length=2, blank=True, default="")
+    # 1 = female
+    gender = models.CharField(verbose_name='Пол', max_length=2, blank=True, default="", choices=GENDER_CHOICES)
     birthday = models.DateField(verbose_name='Дата рождения', null=True, blank=True)
     # Здесь такой странный ForeignKey потому что проблема импортов
     city = models.ForeignKey('service.City', verbose_name='Город', null=True, blank=True, on_delete=models.SET_NULL)
@@ -64,14 +69,15 @@ class VkBot(models.Model):
 
 
 class Log(models.Model):
+    EVENTS_CHOICES = (('home', 'дома'),
+                      ('work', 'работа'),
+                      ('university', 'университет'),
+                      ('somewhere', 'где-то'))
     id = models.AutoField(primary_key=True, verbose_name='ID')
     date = models.DateTimeField(verbose_name="Дата", auto_now_add=True, blank=True)
     imei = models.CharField(verbose_name='IMEI', max_length=20, null=True)
     author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
-    event = models.CharField(verbose_name='Событие', choices=(('home', 'дома'),
-                                                              ('work', 'работа'),
-                                                              ('university', 'университет'),
-                                                              ('somewhere', 'где-то')),
+    event = models.CharField(verbose_name='Событие', choices=EVENTS_CHOICES,
                              max_length=20,
                              null=True)
     msg = models.CharField(verbose_name='Сообщение', max_length=2000)

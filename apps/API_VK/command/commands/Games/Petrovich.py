@@ -57,12 +57,11 @@ class Petrovich(CommonCommand):
                     datetime_now = localize_datetime(datetime.datetime.utcnow(), "Europe/Moscow")
                     datetime_last = localize_datetime(remove_tz(winner_today.date), "Europe/Moscow")
                     if (datetime_now.date() - datetime_last.date()).days <= 0:
-                        if winner_today.user.name in ["Евгений", "Женя"]:
-                            return f"Женя дня - {winner_today.user}"
-                        elif winner_today.user.name in ["Светлана"]:
-                            return f"Лапушка дня - {winner_today.user}"
+                        if winner_today.user.gender == '1':
+                            winner_gender = "Петровна"
                         else:
-                            return f"Петрович дня - {winner_today.user}"
+                            winner_gender = "Петрович"
+                        return f"{winner_gender} дня - {winner_today.user}"
 
                 winner = PetrovichUser.objects.filter(chat=self.vk_event.chat, active=True).order_by("?").first()
                 if winner:
@@ -75,6 +74,10 @@ class Petrovich(CommonCommand):
                 winner_petrovich = PetrovichUser.objects.filter(user=winner, chat=self.vk_event.chat).first()
                 winner_petrovich.wins += 1
                 winner_petrovich.save()
+                if winner_today.user.gender == '1':
+                    winner_gender = "Наша сегодняшняя Петровна дня"
+                else:
+                    winner_gender = "Наш сегодняшний Петрович дня"
                 messages = ["Такс такс такс, кто тут у нас",
-                            f"Наш сегодняшний Петрович дня - [{winner.nickname}|{winner.name} {winner.surname}]"]
+                            f"{winner_gender} - [{winner.nickname}|{winner.name} {winner.surname}]"]
                 return messages
