@@ -74,7 +74,7 @@ class Petrovich(CommonCommand):
                 winner_petrovich = PetrovichUser.objects.filter(user=winner, chat=self.vk_event.chat).first()
                 winner_petrovich.wins += 1
                 winner_petrovich.save()
-                if winner_today.user.gender == '1':
+                if winner_petrovich.user.gender == '1':
                     winner_gender = "Наша сегодняшняя Петровна дня"
                 else:
                     winner_gender = "Наш сегодняшний Петрович дня"
