@@ -74,4 +74,4 @@ class LaterMessageAdmin(admin.ModelAdmin):
 @admin.register(LaterMessageSession)
 class LaterMessageSessionAdmin(admin.ModelAdmin):
     list_display = ('author', 'date')
-    list_filter = ('author', admin.RelatedOnlyFieldListFilter)
+    list_filter = (('author', admin.RelatedOnlyFieldListFilter),)

@@ -238,6 +238,13 @@ class LaterMessageSession(models.Model):
     later_messages = models.ManyToManyField(LaterMessage, verbose_name="Сообщения")
     date = models.DateTimeField(verbose_name="Дата сообщения")
 
+    class Meta:
+        verbose_name = "Потом сообщение (сессия)"
+        verbose_name_plural = "Потом сообщения (сессия)"
+        ordering = ['-date']
+
+    def __str__(self):
+        return f"{self.pk}"
 
 class Donations(models.Model):
     username = models.CharField(verbose_name="Имя", max_length=100, blank=True)
