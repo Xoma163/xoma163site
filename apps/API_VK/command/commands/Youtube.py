@@ -45,7 +45,7 @@ class YouTube(CommonCommand):
                 response = requests.get(url)
                 bsop = BeautifulSoup(response.content, 'html.parser')
                 channel_id = bsop.find_all('link', {'rel': 'canonical'})[0].attrs['href'].split('/')[-1]
-            except:
+            except Exception:
                 pass
 
             if self.vk_event.chat:
@@ -85,7 +85,6 @@ class YouTube(CommonCommand):
         elif action in ['конфа']:
             self.check_conversation()
             return self.get_subs(conversation=True)
-            pass
 
     def get_sub(self, channel, for_delete=False):
         if self.vk_event.chat:
