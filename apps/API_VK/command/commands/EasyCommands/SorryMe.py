@@ -1,7 +1,7 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
 
 
-class Sorry(CommonCommand):
+class SorryMe(CommonCommand):
     def __init__(self):
         names = ['извиниться']
         super().__init__(names)

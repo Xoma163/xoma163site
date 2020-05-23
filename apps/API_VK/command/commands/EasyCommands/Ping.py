@@ -1,7 +1,7 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
 
 
-class Shit(CommonCommand):
+class Ping(CommonCommand):
     def __init__(self):
         names = ["пинг"]
         super().__init__(names)
