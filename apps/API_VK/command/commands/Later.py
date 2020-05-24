@@ -19,7 +19,6 @@ class Discord(CommonCommand):
 
     def _append_message_to_lms(self, fwd, lms):
         lm = LaterMessage(
-            author=self.vk_event.sender,
             text=fwd['text'],
             date=normalize_datetime(
                 datetime.fromtimestamp(fwd['date']), "UTC"))
