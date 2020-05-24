@@ -26,7 +26,7 @@ class YouTube(CommonCommand):
             f"Ютуб удалить (название канала) - удаляет вашу подписку на канал." \
             f"(если в конфе, то только по конфе, в лс только по лс). Максимум подписок - {MAX_USER_SUBS_COUNT} шт. " \
             f"Админ конфы может удалять подписки в конфе\n" \
-            "Ютуб подписки - пришлёт твои активные подписки (если в конфе, то только подписки по конфе)\n" \
+            "Ютуб подписки - пришлёт ваши активные подписки (если в конфе, то только подписки по конфе)\n" \
             "Ютуб конфа - пришлёт активные подписки по конфе\n" \
             "\n" \
             "Чтобы узнать id канала нужно перейти на канал и скопировать содержимое после " \
@@ -76,8 +76,8 @@ class YouTube(CommonCommand):
             return f'Подписал на канал {youtube_info["title"]}'
         elif action in ['удалить', 'отписаться', 'отписка']:
             self.check_args(2)
-            channel_title = self.vk_event.args[1]
-            yt_sub = self.get_sub(channel_title, True)
+            channel_filter = self.vk_event.args[1:]
+            yt_sub = self.get_sub(channel_filter, True)
             yt_sub_title = yt_sub.title
             yt_sub.delete()
             return f"Удалил подписку на канал {yt_sub_title}"
@@ -87,7 +87,7 @@ class YouTube(CommonCommand):
             self.check_conversation()
             return self.get_subs(conversation=True)
 
-    def get_sub(self, channel, for_delete=False):
+    def get_sub(self, filters, for_delete=False):
         if self.vk_event.chat:
             yt_subs = YoutubeSubscribe.objects.filter(chat=self.vk_event.chat)
             if self.vk_event.chat.admin != self.vk_event.sender:
@@ -96,7 +96,9 @@ class YouTube(CommonCommand):
             yt_subs = YoutubeSubscribe.objects.filter(author=self.vk_event.sender)
             if for_delete:
                 yt_subs = yt_subs.filter(chat__isnull=True)
-        yt_subs = yt_subs.filter(title__icontains=channel)
+
+        for _filter in filters:
+            yt_subs = yt_subs.filter(title__icontains=_filter)
 
         yt_subs_count = yt_subs.count()
         if yt_subs_count == 0:
@@ -104,6 +106,10 @@ class YouTube(CommonCommand):
         elif yt_subs_count == 1:
             return yt_subs.first()
         else:
+            filters_str = " ".join(filters)
+            for yt_sub in yt_subs:
+                if yt_sub.title == filters_str:
+                    return yt_sub
             yt_subs = yt_subs[:10]
             yt_subs_titles = [yt_sub.title for yt_sub in yt_subs]
             yt_subs_titles_str = ";\n".join(yt_subs_titles)

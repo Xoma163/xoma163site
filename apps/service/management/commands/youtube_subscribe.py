@@ -1,3 +1,5 @@
+import time
+
 from django.core.management import BaseCommand
 
 from apps.API_VK.APIs.youtube import get_youtube_channel_info
@@ -25,3 +27,4 @@ class Command(BaseCommand):
                 vk_bot.parse_and_send_msgs(peer_id, res)
                 yt_sub.date = yt_info['last_video']['date']
                 yt_sub.save()
+            time.sleep(2)

@@ -286,7 +286,7 @@ class VkBotClass(threading.Thread):
 
                     # Проверка есть ли в сообщении action
                     have_action = vk_event['message']['action'] is not None
-                    
+
                     # Сообщение либо мне в лс, либо упоминание меня, либо есть аудиосообщение, либо есть экшн
                     if not self.need_a_response(vk_event, have_audio_message_flag, have_action):
                         continue
