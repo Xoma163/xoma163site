@@ -127,21 +127,28 @@ def get_attachments_for_upload(vk_bot, attachments):
 
 
 # Получает все вложения из сообщения и пересланного сообщения
-def get_attachments_from_attachments_or_fwd(vk_event, _type):
+def get_attachments_from_attachments_or_fwd(vk_event, _type=None, from_first_fwd=True):
+    attachments = []
+
+    if _type is None:
+        _type = ['audio', 'video', 'photo', 'doc']
     if _type is str:
         _type = [_type]
-    attachments = []
     if vk_event.attachments:
         for att in vk_event.attachments:
             if att['type'] in _type:
                 attachments.append(att)
     if vk_event.fwd:
-        msg = vk_event.fwd[0]
-        if msg['attachments']:
-            fwd_attachments = vk_event.parse_attachments(msg['attachments'])
-            for att in fwd_attachments:
-                if att['type'] in _type:
-                    attachments.append(att)
+        if from_first_fwd:
+            msgs = vk_event.fwd[0]
+        else:
+            msgs = vk_event.fwd
+        for msg in msgs:
+            if msg['attachments']:
+                fwd_attachments = vk_event.parse_attachments(msg['attachments'])
+                for att in fwd_attachments:
+                    if att['type'] in _type:
+                        attachments.append(att)
 
     return attachments
 

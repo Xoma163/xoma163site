@@ -10,6 +10,7 @@ import requests
 import urllib3
 import vk_api
 from django.contrib.auth.models import Group
+from requests.exceptions import ReadTimeout
 from vk_api import VkUpload
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.utils import get_random_id
@@ -35,7 +36,7 @@ class VkBotClass(threading.Thread):
         super().__init__()
         self._TOKEN = secrets['vk']['bot']['TOKEN']
         self.group_id = secrets['vk']['bot']['group_id']
-        vk_session = vk_api.VkApi(token=self._TOKEN, api_version="5.103", config_filename="secrets/vk_bot_config.json")
+        vk_session = vk_api.VkApi(token=self._TOKEN, api_version="5.107", config_filename="secrets/vk_bot_config.json")
         self.longpoll = MyVkBotLongPoll(vk_session, group_id=self.group_id)
         self.upload = VkUpload(vk_session)
         self.vk = vk_session.get_api()
@@ -518,6 +519,8 @@ class VkBotClass(threading.Thread):
             try:
                 image = self._prepare_obj_to_upload(image, ['jpg', 'jpeg', 'png'])
             except RuntimeWarning:
+                continue
+            except ReadTimeout:
                 continue
             # Если Content-Length > 50mb
             bytes_count = None

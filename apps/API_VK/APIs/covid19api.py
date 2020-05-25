@@ -8,9 +8,9 @@ def get_detail_by_country(country_name, status='confirmed'):
     try:
         response = requests.get(url, timeout=10)
     except requests.exceptions.ReadTimeout:
-        raise RuntimeError("Проблемы с API")
+        raise RuntimeError("Проблемы с API. Слишком долго ждал")
     if not response:
-        raise RuntimeError("Проблемы с API")
+        raise RuntimeError(f"Проблемы с API. {response.status_code}")
     response = response.json()
     groups = []
     for _, group in groupby(response, lambda x: x['Date']):
@@ -40,9 +40,9 @@ def get_by_country(country_name):
     try:
         response = requests.get(url, timeout=5)
     except requests.exceptions.ReadTimeout:
-        raise RuntimeError("Проблемы с API")
+        raise RuntimeError("Проблемы с API. Слишком долго ждал")
     if not response:
-        raise RuntimeError("Проблемы с API")
+        raise RuntimeError(f"Проблемы с API. {response.status_code}")
     response = response.json()
 
     if country_name is None:
