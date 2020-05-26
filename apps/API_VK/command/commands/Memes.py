@@ -21,7 +21,7 @@ class Memes(CommonCommand):
         detail_help_text = "Мемы [страница=1] - присылает список мемов на странице\n" \
                            "Мемы (поисковая фраза) - присылает список мемов, подходящих поисковому запросу\n\n"
 
-        super().__init__(names, help_text, detail_help_text, api=False)
+        super().__init__(names, help_text, detail_help_text)
 
     def start(self):
         try:

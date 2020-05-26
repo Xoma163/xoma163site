@@ -13,7 +13,6 @@ lock = Lock()
 
 
 class Coronavirus(CommonCommand):
-
     def __init__(self):
         names = ["коронавирус", "корона", "вирус"]
         help_text = "Коронавирус - статистика по коронавирусу в разных странах"

@@ -15,7 +15,7 @@ class Discord(CommonCommand):
                            "Потом 1 (Пересланные сообщения) - добавляет сообщения и вложения из пересланных сообщений " \
                            "ПО ОДНОМУ чтобы посмотреть потом\n" \
                            "Потом - присылает последние сохранённые сообщения и удалет их из базы"
-        super().__init__(names, help_text, detail_help_text)
+        super().__init__(names, help_text, detail_help_text, api=False)
 
     def _append_message_to_lms(self, fwd, lms):
         lm = LaterMessage(

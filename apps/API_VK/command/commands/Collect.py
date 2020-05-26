@@ -9,7 +9,7 @@ def parting(_list, items_count):
 class Collect(CommonCommand):
     def __init__(self):
         names = ["собрать"]
-        super().__init__(names, enabled=False)
+        super().__init__(names, enabled=False, api=False)
 
     def start(self):
         attachments = get_attachments_from_attachments_or_fwd(self.vk_event, from_first_fwd=False)

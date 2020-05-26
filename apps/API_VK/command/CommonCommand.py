@@ -25,7 +25,7 @@ class CommonCommand:
                  help_text=None,
                  detail_help_text=None,
                  keyboard=None,
-                 access=Role.USER.name,
+                 access=None,
                  pm=False,
                  conversation=False,
                  fwd=False,
@@ -41,7 +41,7 @@ class CommonCommand:
         self.help_text = help_text
         self.detail_help_text = detail_help_text
         self.keyboard = keyboard
-        self.access = access
+        self.access = access or Role.USER.name
         self.pm = pm
         self.conversation = conversation
         self.fwd = fwd
