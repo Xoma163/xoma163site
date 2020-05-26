@@ -123,7 +123,8 @@ class Roulette(CommonCommand):
                     return "Выдал пособие по безработице"
                 else:
                     return "Приходи завтра"
-            if self.vk_event.args[0] in ['передать', 'перевод', 'перевести', 'подать']:
+            arg0 = self.vk_event.args[0].lower()
+            if arg0 in ['передать', 'перевод', 'перевести', 'подать']:
                 self.check_conversation()
                 self.args = 3
                 self.int_args = [-1]
@@ -149,7 +150,7 @@ class Roulette(CommonCommand):
                 vk_user_gamer.roulette_points += points_transfer
                 vk_user_gamer.save()
                 return f"Передал игроку {vk_user_gamer.user} {points_transfer} {decl_of_num(points_transfer, ['очко', 'очка', 'очков'])}"
-            if self.vk_event.args[0] in ['выдать']:
+            if arg0 in ['выдать']:
                 self.check_sender(Role.ADMIN.name)
                 self.check_conversation()
                 self.args = 3
@@ -175,8 +176,7 @@ class Roulette(CommonCommand):
                            f"{decl_of_num(-points_transfer, ['очко', 'очка', 'очков'])}"
                 else:
                     return "ммм"
-
-            if self.vk_event.args[0] in ['ставки']:
+            if arg0 in ['ставки']:
                 if self.vk_event.from_chat:
                     rrs = RouletteRate.objects.filter(chat=self.vk_event.chat)
                 else:
@@ -190,7 +190,7 @@ class Roulette(CommonCommand):
                     msg += f"{rr.gamer.user} поставил на {rate_on_dict['verbose_name']} {rr.rate} очков\n"
                 return msg
 
-            rate_on = self.vk_event.args[0]
+            rate_on = self.vk_event.args[0].lower()
             # rate_is_int = str_is_int(rate_on)
             if rate_on in TRANSLATOR:  # or rate_is_int:
                 self.args = 2

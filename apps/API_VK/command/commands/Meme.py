@@ -33,7 +33,8 @@ class Meme(CommonCommand):
         super().__init__(names, help_text, detail_help_text, args=1)
 
     def start(self):
-        if self.vk_event.args[0] in ['добавить']:
+        arg0 = self.vk_event.args[0].lower()
+        if arg0 in ['добавить']:
             self.check_args(2)
             attachments = get_attachments_from_attachments_or_fwd(self.vk_event, ['audio', 'video', 'photo', 'doc'])
             if len(attachments) == 0:
@@ -71,7 +72,7 @@ class Meme(CommonCommand):
                                       f"{new_meme_obj.name} ({new_meme_obj.id})"
                 self.vk_bot.parse_and_send_msgs(self.vk_bot.get_group_id(TEST_CHAT_ID), meme_to_send)
                 return "Добавил. Воспользоваться мемом можно после проверки модераторами."
-        elif self.vk_event.args[0] in ['обновить']:
+        elif arg0 in ['обновить']:
             self.check_args(2)
             attachments = get_attachments_from_attachments_or_fwd(self.vk_event, ['audio', 'video', 'photo', 'doc'])
             if len(attachments) == 0:
@@ -104,7 +105,7 @@ class Meme(CommonCommand):
                                       f"{meme.name} ({meme.id})"
                 self.vk_bot.parse_and_send_msgs(self.vk_bot.get_group_id(TEST_CHAT_ID), meme_to_send)
                 return "Обновил. Воспользоваться мемом можно после проверки модераторами."
-        elif self.vk_event.args[0] in ['удалить']:
+        elif arg0 in ['удалить']:
             self.check_args(2)
             if check_user_group(self.vk_event.sender, Role.MODERATOR.name):
                 try:
@@ -129,22 +130,22 @@ class Meme(CommonCommand):
             meme_name = meme.name
             meme.delete()
             return f'Удалил мем "{meme_name}"'
-        elif self.vk_event.args[0] in ['конфа']:
+        elif arg0 in ['конфа']:
             self.check_args(3)
             chat = get_one_chat_with_user(self.vk_event.args[1], self.vk_event.sender.user_id)
             if self.vk_event.chat == chat:
                 return "Зачем мне отправлять мем в эту же конфу?"
-            if self.vk_event.args[-1] in ['рандом', 'р']:
+            if self.vk_event.args[-1].lower() in ['рандом', 'р']:
                 meme = self.get_random_meme()
             else:
                 meme = self.get_meme(self.vk_event.args[2:])
             prepared_meme = self.prepare_meme_to_send(meme, print_name=True)
             self.vk_bot.parse_and_send_msgs(chat.chat_id, prepared_meme)
             return "Отправил"
-        elif self.vk_event.args[0] in ['р', 'рандом']:
+        elif arg0 in ['р', 'рандом']:
             meme = self.get_random_meme()
             return self.prepare_meme_to_send(meme, print_name=True, send_keyboard=True)
-        elif self.vk_event.args[0] in ['подтвердить', 'принять', '+']:
+        elif arg0 in ['подтвердить', 'принять', '+']:
             self.check_sender(Role.MODERATOR.name)
             if len(self.vk_event.args) == 1:
                 meme = self.get_meme(approved=False)
@@ -168,7 +169,7 @@ class Meme(CommonCommand):
                 non_approved_meme.approved = True
                 non_approved_meme.save()
                 return msg
-        elif self.vk_event.args[0] in ['отклонить', '-']:
+        elif arg0 in ['отклонить', '-']:
             self.check_sender(Role.MODERATOR.name)
             self.int_args = [1]
             self.parse_int()
@@ -189,7 +190,7 @@ class Meme(CommonCommand):
             msg = f'Мем "{non_approved_meme.name}" ({non_approved_meme.id}) отклонён'
             non_approved_meme.delete()
             return msg
-        elif self.vk_event.args[0] in ['переименовать', 'правка']:
+        elif arg0 in ['переименовать', 'правка']:
             self.check_sender(Role.MODERATOR.name)
             self.int_args = [1]
             self.parse_int()

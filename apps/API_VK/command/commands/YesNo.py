@@ -25,7 +25,7 @@ class YesNo(CommonCommand):
         return False
 
     def start(self):
-        if self.vk_event.msg in ['идиот?', 'ты идиот?']:
+        if self.vk_event.msg.lower() in ['идиот?', 'ты идиот?']:
             return "Мне потанцевать нельзя?"
 
         bad_words = get_bad_words()

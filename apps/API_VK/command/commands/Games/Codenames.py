@@ -119,7 +119,7 @@ class Codenames(CommonCommand):
         names = ["коднеймс", "кн"]
         help_text = "Коднеймс - игра коднеймс"
         detail_help_text = "Коднеймс - игра коднеймс\n" \
-                           "Правила: https://tesera.ru/images/items/657300/codenames_rules_ru_1_5.pdf\n\n" \
+                           "Коднеймс правила - правила игры\n" \
                            "Коднеймс рег [роль=рандом] - регистрация в игре. Роли: капитан, игрок\n" \
                            "Коднеймс дерег - дерегистрация в игре\n" \
                            "Коднеймс старт - старт игры\n" \
@@ -155,7 +155,8 @@ class Codenames(CommonCommand):
         with lock:
             self.init_var()
 
-            if self.vk_event.args[0].lower() in ['рег', 'регистрация']:
+            arg0 = self.vk_event.args[0].lower()
+            if arg0 in ['рег', 'регистрация']:
                 if len(Gamer.objects.filter(user=self.vk_event.sender)) == 0:
                     Gamer(user=self.vk_event.sender).save()
 
@@ -167,9 +168,9 @@ class Codenames(CommonCommand):
 
                 role_preference = None
                 if len(self.vk_event.args) >= 2:
-                    if self.vk_event.args[1] in ["кэп", "капитан"]:
+                    if self.vk_event.args[1].lower() in ["кэп", "капитан"]:
                         role_preference = "captain"
-                    elif self.vk_event.args[1] in ["игрок"]:
+                    elif self.vk_event.args[1].lower() in ["игрок"]:
                         role_preference = "player"
                     else:
                         return "Не знаю такой роли для регистрации"
@@ -188,20 +189,23 @@ class Codenames(CommonCommand):
                         codenames_user.command = 'red'
                     codenames_user.save()
                     return f"Зарегистрировал. Ты в {translator_commands[codenames_user.command]} команде"
-            elif self.vk_event.args[0].lower() in ['дерег']:
+            elif arg0 in ['правила']:
+                attachment = self.vk_bot.get_attachment_by_id('doc', None, '550553057')
+                return {'attachments': attachment}
+            elif arg0 in ['дерег']:
                 self.check_conversation()
                 check_not_session(self.session)
                 self.player.delete()
                 return "Дерегнул. Сейчас зарегистрированы:\n" \
                        f"{get_str_players(self.players)}\n"
-            elif self.vk_event.args[0].lower() in ['старт']:
+            elif arg0 in ['старт']:
                 self.check_conversation()
                 check_not_session(self.session)
                 if len(self.players) < MIN_USERS:
                     return f"Минимальное количество игроков - {MIN_USERS}. Сейчас зарегистрированы:\n" \
                            f"{get_str_players(self.players)}\n"
                 return self.prepare_game()
-            elif self.vk_event.args[0].lower() in ['загадать']:
+            elif arg0 in ['загадать']:
                 check_session(self.session)
                 check_player(self.player)
                 self.check_pm()
@@ -228,7 +232,7 @@ class Codenames(CommonCommand):
 
                 self.do_the_riddle(command, count, word)
                 return 'Отправил в конфу'
-            elif self.vk_event.args[0].lower() in ['слово'] or self.vk_event.payload:
+            elif arg0 in ['слово'] or self.vk_event.payload:
                 self.check_conversation()
                 check_session(self.session)
                 check_player(self.player)
@@ -259,7 +263,7 @@ class Codenames(CommonCommand):
                                 break
                     self.select_word(find_row, find_col)
                     return
-            elif self.vk_event.args[0].lower() in ['клава']:
+            elif arg0 in ['клава']:
                 check_session(self.session)
                 check_player(self.player)
                 board = json.loads(self.session.board)
@@ -274,7 +278,7 @@ class Codenames(CommonCommand):
                     self.check_conversation()
                     self.send_keyboard(board)
                 return
-            elif self.vk_event.args[0].lower() in ['инфо', 'инфа', 'информация']:
+            elif arg0 in ['инфо', 'инфа', 'информация']:
                 self.check_conversation()
                 if self.session:
                     msg = self.get_info()
@@ -282,14 +286,14 @@ class Codenames(CommonCommand):
                 else:
                     return "Сейчас зарегистрированы:\n" \
                            f"{get_str_players(self.players)}\n"
-            elif self.vk_event.args[0].lower() in ['удалить']:
+            elif arg0 in ['удалить']:
                 self.check_sender(Role.CONFERENCE_ADMIN.name)
                 if self.session is None:
                     return "Нечего удалять"
                 else:
                     self.session.delete()
                     return "Удалил"
-            elif self.vk_event.args[0].lower() in ['фикс', 'фиксклавы']:
+            elif arg0 in ['фикс', 'фиксклавы']:
                 msg = "1) Устанавливаем stylish (" \
                       "https://chrome.google.com/webstore/detail/stylish-custom-themes-for/fjnbnpbmkenffdnngjfgmeleoegfcffe?hl=ru)\n" \
                       "2) Создаём свой стиль\n" \
@@ -306,8 +310,8 @@ class Codenames(CommonCommand):
                       "4) Сохраняем\n" \
                       "5) Обновляем страницу с перезагрузкой кэша (Ctrl+F5)\n" \
                       "6) Ура! Теперь клава будет нормально выводиться у всех ботов"
-                attachments = ['photo-186416119_457243904']
-                return {'msg': msg, 'attachments': attachments}
+                attachment = self.vk_bot.get_attachment_by_id('photo', None, '457243904')
+                return {'msg': msg, 'attachments': attachment}
             else:
                 return "Не знаю такого аргумента. /ман коднеймс"
 

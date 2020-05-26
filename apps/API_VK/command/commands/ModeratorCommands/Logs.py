@@ -83,10 +83,10 @@ class Logs(CommonCommand):
                 pass
 
         if self.vk_event.args:
-            if self.vk_event.args[0] in ['веб', 'web', 'сайт', 'site']:
+            if self.vk_event.args[0].lower() in ['веб', 'web', 'сайт', 'site']:
                 command = f"systemctl status xoma163site -n{count}"
                 return get_server_logs(command)
-            elif self.vk_event.args[0] in ['бот', 'bot']:
+            elif self.vk_event.args[0].lower() in ['бот', 'bot']:
                 command = f"systemctl status xoma163bot -n{count}"
                 return get_bot_logs(command)
             else:

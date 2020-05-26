@@ -21,7 +21,7 @@ class Stop(CommonCommand):
     def start(self):
         module = "bot"
         if self.vk_event.args:
-            module = self.vk_event.args[0]
+            module = self.vk_event.args[0].lower()
         if module in ["синички"]:
             self.check_sender(Role.ADMIN.name)
             if cameraHandler.is_active():

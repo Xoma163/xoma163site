@@ -20,18 +20,18 @@ class Settings(CommonCommand):
     def start(self):
         if self.vk_event.args:
             self.check_args(2)
-            if self.vk_event.args[1] in on_off_translator:
+            if self.vk_event.args[1].lower() in on_off_translator:
                 value = on_off_translator[self.vk_event.args[1]]
             else:
                 return "Не понял, включить или выключить?"
-
-            if self.vk_event.args[0] in ['реагировать', 'реагируй', 'реагирование']:
+            arg0 = self.vk_event.args[0].lower()
+            if arg0 in ['реагировать', 'реагируй', 'реагирование']:
                 self.check_conversation()
                 self.check_sender(Role.CONFERENCE_ADMIN.name)
                 self.vk_event.chat.need_reaction = value
                 self.vk_event.chat.save()
                 return "Сохранил настройку"
-            if self.vk_event.args[0] in ['майнкрафт', 'майн', 'minecraft', 'mine']:
+            if arg0 in ['майнкрафт', 'майн', 'minecraft', 'mine']:
                 self.check_sender(Role.TRUSTED.name)
 
                 group_minecraft_notify = Group.objects.get(name=Role.MINECRAFT_NOTIFY.name)

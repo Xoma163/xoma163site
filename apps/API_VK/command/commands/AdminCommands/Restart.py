@@ -14,7 +14,7 @@ class Restart(CommonCommand):
     def start(self):
         module = "bot"
         if self.vk_event.args:
-            module = self.vk_event.args[0]
+            module = self.vk_event.args[0].lower()
         if module in ['бот']:
             do_the_linux_command('sudo systemctl restart xoma163bot')
             return 'Рестартим бота'

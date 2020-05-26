@@ -66,11 +66,11 @@ class VkBotClass(threading.Thread):
 
         return c / (a + b - c)
 
-    def need_a_response(self, vk_event, have_audio_message, have_action):
+    def need_a_response(self, vk_event, _have_audio_message, have_action):
         message = vk_event['message']['text']
         from_user = vk_event['from_user']
 
-        if have_audio_message:
+        if _have_audio_message:
             return True
         if have_action:
             return True

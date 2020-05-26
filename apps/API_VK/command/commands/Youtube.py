@@ -37,7 +37,7 @@ class YouTube(CommonCommand):
         super().__init__(names, help_text, detail_help_text, args=1)
 
     def start(self):
-        action = self.vk_event.args[0]
+        action = self.vk_event.args[0].lower()
         if action in ['добавить', 'подписаться', 'подписка']:
             self.check_args(2)
             channel_id = self.vk_event.args[1]
