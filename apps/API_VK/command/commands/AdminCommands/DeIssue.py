@@ -14,4 +14,4 @@ class DeIssue(CommonCommand):
         issue = Issue.objects.last()
         issue_text = issue.text
         issue.delete()
-        return f'Ишю "{issue_text}" удалено'
+        return f'Ишю удалено:\n{issue_text}'
