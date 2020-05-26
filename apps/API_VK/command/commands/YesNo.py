@@ -1,7 +1,5 @@
-import random
-
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command.CommonMethods import check_user_group, random_event
+from apps.API_VK.command.CommonMethods import check_user_group, random_event, get_random_int
 from apps.API_VK.command.Consts import Role
 from apps.API_VK.static_texts import get_bad_answers
 
@@ -61,7 +59,7 @@ class YesNo(CommonCommand):
                             len_bad = len(self.vk_event.msg)
 
                 bad_answers = get_bad_answers()
-                rand_int = random.randint(0, len(bad_answers) - 1)
+                rand_int = get_random_int(len(bad_answers) - 1)
                 messages = [bad_answers[rand_int]]
                 name = self.vk_event.sender.name
                 if self.vk_event.sender.gender == '1':

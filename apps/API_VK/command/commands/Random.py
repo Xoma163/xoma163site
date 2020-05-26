@@ -1,6 +1,5 @@
-import random
-
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import get_random_int
 
 
 class Random(CommonCommand):
@@ -27,5 +26,5 @@ class Random(CommonCommand):
         if int1 > int2:
             int1, int2 = int2, int1
 
-        rand_int = random.randint(int1, int2)
+        rand_int = get_random_int(int1, int2)
         return str(rand_int)

@@ -1,7 +1,7 @@
-import random
 from threading import Lock
 
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import get_random_int
 from apps.API_VK.command.Consts import Role
 from apps.API_VK.models import VkUser
 from apps.games.models import Rate as RateModel
@@ -34,7 +34,7 @@ class Rates(CommonCommand):
                     return f"Минимальное количество игроков - {MIN_GAMERS}"
             messages = ["Ставки сделаны, ставок больше нет."]
 
-            rnd = random.randint(1, 100)
+            rnd = get_random_int(1, 100)
 
             winner_rates = ([abs(rnd - gamer.rate) for gamer in gamers])
             min_val = min(winner_rates)

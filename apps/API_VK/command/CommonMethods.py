@@ -1,24 +1,14 @@
 import json
-import random
 import re
 
 import pytz
-
-
-def get_random_item_from_list(my_list, arg=None):
-    rand_int = random.randint(0, len(my_list) - 1)
-    if arg:
-        msg = f"{arg}, ты {my_list[rand_int].lower()}"
-    else:
-        msg = my_list[rand_int]
-    return msg
 
 
 # Вероятность события в процентах
 def random_probability(probability):
     if 1 > probability > 99:
         raise RuntimeError("Вероятность события должна быть от 1 до 99")
-    rand_int = random.randint(1, 100)
+    rand_int = get_random_int(1, 100)
     if rand_int <= probability:
         return True
     else:
@@ -27,9 +17,21 @@ def random_probability(probability):
 
 # Возвращает случайное событие с указанными весами этих событий
 def random_event(events, weights=None):
+    import random
     if weights is None:
         return random.choice(events)
     return random.choices(events, weights=weights)[0]
+
+
+# Возвращает рандомное число в заданном диапазоне. Если передан seed, то по seed
+def get_random_int(val1, val2=None, seed=None):
+    import random
+    if not val2:
+        val2 = val1
+        val1 = 0
+    if seed:
+        random.seed(seed)
+    return random.randint(val1, val2)
 
 
 # Есть ли кириллица
@@ -140,7 +142,7 @@ def get_attachments_from_attachments_or_fwd(vk_event, _type=None, from_first_fwd
                 attachments.append(att)
     if vk_event.fwd:
         if from_first_fwd:
-            msgs = vk_event.fwd[0]
+            msgs = [vk_event.fwd[0]]
         else:
             msgs = vk_event.fwd
         for msg in msgs:

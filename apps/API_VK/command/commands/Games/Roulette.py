@@ -1,10 +1,9 @@
 import datetime
 import json
-import random
 from threading import Lock
 
 from apps.API_VK.command.CommonCommand import CommonCommand
-from apps.API_VK.command.CommonMethods import random_event, localize_datetime, remove_tz, decl_of_num
+from apps.API_VK.command.CommonMethods import random_event, localize_datetime, remove_tz, decl_of_num, get_random_int
 from apps.API_VK.command.Consts import Role
 from apps.games.models import RouletteRate, Gamer
 
@@ -239,7 +238,7 @@ class Roulette(CommonCommand):
                 if len(rrs) == 0:
                     return "Ставок нет"
                 msg1 = "Ставки сделаны. Ставок больше нет\n"
-                roulette_ball = random.randint(0, MAX_NUMBERS)
+                roulette_ball = get_random_int(MAX_NUMBERS)
                 msg2 = f"Крутим колесо. Выпало - {roulette_ball}\n\n"
 
                 winners = []

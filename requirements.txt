@@ -6,7 +6,7 @@ pysocks
 django-hosts
 opencv-python~=4.1.1.26
 pillow~=7.1.2
-requests~=2.22.0
+requests~=2.23.0
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
