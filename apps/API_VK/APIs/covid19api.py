@@ -1,12 +1,28 @@
+import time
 from itertools import groupby
 
 import requests
 
+TRIES = 10
 
-def get_detail_by_country(country_name, status='confirmed'):
-    url = f"https://api.covid19api.com/dayone/country/{country_name}/status/{status}"
+
+def do_the_request(url, **kwargs):
+    tries = TRIES
+    status_code = None
+    response = None
+    while tries > 0 and status_code != 200:
+        response = requests.get(url, **kwargs)
+        tries -= 1
+        status_code = response.status_code
+        time.sleep(1)
+    return response
+
+
+def get_detail_by_country(country_name):
+    url = f"https://api.covid19api.com/dayone/country/{country_name}"
     try:
-        response = requests.get(url, timeout=10)
+        response = do_the_request(url, timeout=20)
+        time.sleep(1)
     except requests.exceptions.ReadTimeout:
         raise RuntimeError("Проблемы с API. Слишком долго ждал")
     if not response:
@@ -19,9 +35,16 @@ def get_detail_by_country(country_name, status='confirmed'):
             groups.append(list_group)
 
     # Суммирование сгрупированных данных
-    data = [sum([y['Cases'] for y in x]) for x in groups]
-    date = [x[0]['Date'] for x in groups]
-    return data, date
+    data = {'Confirmed': [], 'Deaths': [], "Recovered": [], "Dates": []}
+    for group in groups:
+        confirmed = sum([x['Confirmed'] for x in group])
+        deaths = sum([x['Deaths'] for x in group])
+        recovered = sum([x['Recovered'] for x in group])
+        data['Confirmed'].append(confirmed - deaths - recovered)
+        data['Deaths'].append(deaths)
+        data['Recovered'].append(recovered)
+        data['Dates'].append(group[0]['Date'])
+    return data
 
 
 def get_by_country(country_name):
@@ -32,13 +55,13 @@ def get_by_country(country_name):
                f"Выздоровело - {data['NewRecovered']}\n\n" \
                f"На данный момент:\n" \
                f"Заболело - {data['TotalConfirmed']}\n" \
-               f"Смертей- {data['TotalDeaths']}\n" \
+               f"Смертей - {data['TotalDeaths']}\n" \
                f"Выздоровело - {data['TotalRecovered']}\n" \
                f"Болеют сейчас - {data['TotalConfirmed'] - data['TotalDeaths'] - data['TotalRecovered']}\n"
 
     url = f"https://api.covid19api.com/summary"
     try:
-        response = requests.get(url, timeout=5)
+        response = do_the_request(url, timeout=10)
     except requests.exceptions.ReadTimeout:
         raise RuntimeError("Проблемы с API. Слишком долго ждал")
     if not response:

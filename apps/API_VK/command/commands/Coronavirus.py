@@ -8,7 +8,6 @@ from apps.API_VK.APIs.yandex_translate import get_translate
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import has_cyrillic
 
-ALL_STATUSES = ['confirmed', 'recovered', 'deaths']
 lock = Lock()
 
 
@@ -54,35 +53,30 @@ class Coronavirus(CommonCommand):
                 self.api = False
                 self.check_api()
                 if detail == "Gist":
-                    datas = [get_detail_by_country(country_transliterate, status) for status in ALL_STATUSES]
-
-                    for i, _ in enumerate(datas[0][0]):
-                        datas[0][0][i] -= datas[1][0][i] + datas[2][0][i]
+                    datas = get_detail_by_country(country_transliterate)
                     _, a = plt.subplots()
-                    x = datas[0][1]
-                    y1 = datas[0][0]
-                    y2 = datas[2][0]
+                    x = datas['Dates']
+                    y1 = datas['Confirmed']
+                    y2 = datas['Deaths']
+                    y3 = datas['Recovered']
                     y2_bottom = y1
-                    y3 = datas[1][0]
-                    y3_bottom = [x + y for x, y in zip(datas[2][0], datas[0][0])]
-                    a.bar(x, y1, label="Болеют", color="#46aada")
-                    a.bar(x, y2, bottom=y2_bottom, label="Умершие", color="red")
-                    a.bar(x, y3, bottom=y3_bottom, label="Выздоровевшие", color="green")
+                    y3_bottom = [x + y for x, y in zip(y1, y2)]
+                    a.bar(x, y1, label="Болеют", color="#46aada", width=1)
+                    a.bar(x, y2, bottom=y2_bottom, label="Умершие", color="red", width=1)
+                    a.bar(x, y3, bottom=y3_bottom, label="Выздоровевшие", color="green", width=1)
                     a.xaxis.set_visible(False)
                 elif detail == "Graphic":
-                    datas = [get_detail_by_country(country_transliterate, status)[0] for status in ALL_STATUSES]
+                    datas = get_detail_by_country(country_transliterate)
 
-                    max_len = max([len(x) for x in datas])
-                    for i, _ in enumerate(datas):
-                        empty_list = [0] * (max_len - len(datas[i]))
-                        datas[i] = empty_list + datas[i]
+                    # Возможно надо, яхз
+                    # max_len = max([len(x) for x in datas])
+                    # for i, _ in enumerate(datas):
+                    #     empty_list = [0] * (max_len - len(datas[i]))
+                    #     datas[i] = empty_list + datas[i]
 
-                    for i, _ in enumerate(datas[0]):
-                        datas[0][i] -= datas[1][i] + datas[2][i]
-
-                    plt.plot(datas[1], "bo-", label="Выздоровевшие", color="green")
-                    plt.plot(datas[0], "bo-", label="Больные", color="#46aada")
-                    plt.plot(datas[2], "bo-", label="Умершие", color="red")
+                    plt.plot(datas['Recovered'], "bo-", label="Выздоровевшие", color="green")
+                    plt.plot(datas['Confirmed'], "bo-", label="Больные", color="#46aada")
+                    plt.plot(datas['Deaths'], "bo-", label="Умершие", color="red")
 
                 plt.title(country.capitalize())
                 plt.xlabel('День')
