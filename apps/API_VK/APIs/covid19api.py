@@ -1,5 +1,4 @@
 import time
-from itertools import groupby
 
 import requests
 
@@ -19,31 +18,24 @@ def do_the_request(url, **kwargs):
 
 
 def get_detail_by_country(country_name):
-    url = f"https://api.covid19api.com/dayone/country/{country_name}"
+    url = f"https://api.covid19api.com/total/country/{country_name}"
     try:
-        response = do_the_request(url, timeout=20)
+        response = do_the_request(url, timeout=10)
         time.sleep(1)
     except requests.exceptions.ReadTimeout:
         raise RuntimeError("Проблемы с API. Слишком долго ждал")
     if not response:
         raise RuntimeError(f"Проблемы с API. {response.status_code}")
     response = response.json()
-    groups = []
-    for _, group in groupby(response, lambda x: x['Date']):
-        list_group = list(group)
-        if len(list_group) > 0:
-            groups.append(list_group)
 
     # Суммирование сгрупированных данных
-    data = {'Confirmed': [], 'Deaths': [], "Recovered": [], "Dates": []}
-    for group in groups:
-        confirmed = sum([x['Confirmed'] for x in group])
-        deaths = sum([x['Deaths'] for x in group])
-        recovered = sum([x['Recovered'] for x in group])
-        data['Confirmed'].append(confirmed - deaths - recovered)
-        data['Deaths'].append(deaths)
-        data['Recovered'].append(recovered)
-        data['Dates'].append(group[0]['Date'])
+    data = {'Confirmed': [], 'Deaths': [], "Recovered": [], "Dates": [], 'Active': []}
+    for item in response:
+        data['Active'].append(item['Active'])
+        data['Confirmed'].append(item['Confirmed'])
+        data['Deaths'].append(item['Deaths'])
+        data['Recovered'].append(item['Recovered'])
+        data['Dates'].append(item['Date'])
     return data
 
 
@@ -52,7 +44,8 @@ def get_by_country(country_name):
         return f"Сегодня:\n" \
                f"Заболело - {data['NewConfirmed']}\n" \
                f"Смертей - {data['NewDeaths']}\n" \
-               f"Выздоровело - {data['NewRecovered']}\n\n" \
+               f"Выздоровело - {data['NewRecovered']}\n" \
+               f"\n" \
                f"На данный момент:\n" \
                f"Заболело - {data['TotalConfirmed']}\n" \
                f"Смертей - {data['TotalDeaths']}\n" \

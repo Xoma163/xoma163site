@@ -29,8 +29,9 @@ class Coronavirus(CommonCommand):
             if len(self.vk_event.args) >= 2:
                 if self.vk_event.args[1].lower() == "график":
                     detail = 'Graphic'
-                if self.vk_event.args[1].lower() in ["гист", "гистограмма", 'гиста', 'киста', 'глиста', 'коса',
-                                                     'попса']:
+                type = self.vk_event.args[1].lower()
+                # ))
+                if type in ["гист", "гистограмма"] or type.endswith('ста') or type.endswith('са'):
                     detail = 'Gist'
         else:
             country = "Мир"
@@ -56,7 +57,7 @@ class Coronavirus(CommonCommand):
                     datas = get_detail_by_country(country_transliterate)
                     _, a = plt.subplots()
                     x = datas['Dates']
-                    y1 = datas['Confirmed']
+                    y1 = datas['Active']
                     y2 = datas['Deaths']
                     y3 = datas['Recovered']
                     y2_bottom = y1
@@ -75,7 +76,7 @@ class Coronavirus(CommonCommand):
                     #     datas[i] = empty_list + datas[i]
 
                     plt.plot(datas['Recovered'], "bo-", label="Выздоровевшие", color="green")
-                    plt.plot(datas['Confirmed'], "bo-", label="Больные", color="#46aada")
+                    plt.plot(datas['Active'], "bo-", label="Больные", color="#46aada")
                     plt.plot(datas['Deaths'], "bo-", label="Умершие", color="red")
 
                 plt.title(country.capitalize())
