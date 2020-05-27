@@ -7,7 +7,7 @@ class ExchangeRates(CommonCommand):
         names = ["курс"]
         help_text = "Курс - курс валют"
         detail_help_text = "Курс - курс валют\n" \
-                           "Курс (количество) (валюта) - перевод в другие валюты конкретное количество валюты"
+                           "Курс [количество=1] (валюта) - перевод в другие валюты конкретное количество валюты"
         super().__init__(names, help_text, detail_help_text)
 
     def start(self):
@@ -16,12 +16,16 @@ class ExchangeRates(CommonCommand):
         ex_rates = get_exchange_rates(_filters_list)
 
         if self.vk_event.args:
-            self.check_args(2)
-            self.float_args = [0]
-            self.parse_float()
+            self.check_args(1)
+            if len(self.vk_event.args) == 1:
+                value = 1
+                currency = self.vk_event.args[0].lower()
+            else:
+                self.float_args = [0]
+                self.parse_float()
 
-            value = self.vk_event.args[0]
-            currency = self.vk_event.args[1].lower()
+                value = self.vk_event.args[0]
+                currency = self.vk_event.args[1].lower()
             if any(ext in currency for ext in ['rub', "руб"]):
                 msg = "Перевод в другие валюты:\n"
                 for ex_rate in ex_rates:
