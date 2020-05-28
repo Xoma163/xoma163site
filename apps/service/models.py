@@ -278,3 +278,7 @@ class YoutubeSubscribe(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Horoscope(models.Model):
+    memes = models.ManyToManyField(Meme)

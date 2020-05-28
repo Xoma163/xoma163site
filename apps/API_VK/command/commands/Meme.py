@@ -258,19 +258,23 @@ class Meme(CommonCommand):
         return MemeModel.objects.order_by('?').first()
 
     def prepare_meme_to_send(self, meme, print_name=False, send_keyboard=False):
-        msg = {}
-        if meme.type == 'video' or meme.type == 'audio':
-            msg['attachments'] = [meme.link.replace(VK_URL, '')]
-        elif meme.type == 'photo':
-            msg['attachments'] = self.vk_bot.upload_photos(meme.link)
-        elif meme.type == 'doc':
-            msg['attachments'] = self.vk_bot.upload_document(meme.link, self.vk_event.peer_id)
-        else:
-            raise RuntimeError("У мема нет типа. Тыкай разраба")
+        return prepare_meme_to_send(self.vk_bot, self.vk_event, meme, print_name, send_keyboard, self.names[0])
 
-        if print_name:
-            msg['msg'] = meme.name
 
-        if send_keyboard:
-            msg['keyboard'] = get_inline_keyboard(self.names[0], args={"random": "р"})
-        return msg
+def prepare_meme_to_send(vk_bot, vk_event, meme, print_name=False, send_keyboard=False, name=None):
+    msg = {}
+    if meme.type == 'video' or meme.type == 'audio':
+        msg['attachments'] = [meme.link.replace(VK_URL, '')]
+    elif meme.type == 'photo':
+        msg['attachments'] = vk_bot.upload_photos(meme.link)
+    elif meme.type == 'doc':
+        msg['attachments'] = vk_bot.upload_document(meme.link, vk_event.peer_id)
+    else:
+        raise RuntimeError("У мема нет типа. Тыкай разраба")
+
+    if print_name:
+        msg['msg'] = meme.name
+
+    if send_keyboard:
+        msg['keyboard'] = get_inline_keyboard(name, args={"random": "р"})
+    return msg
