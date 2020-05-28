@@ -34,7 +34,7 @@ class ExchangeRates(CommonCommand):
                 return msg
             else:
                 for code in ex_rates:
-                    if currency in ex_rates[code]['name'] or currency in code.lower():
+                    if currency[:5] in ex_rates[code]['name'] or currency in code.lower():
                         total_value = round(value * ex_rates[code]['value'], 2)
                         msg = "Перевод в рубли:\n"
                         msg += f"{total_value} руб."

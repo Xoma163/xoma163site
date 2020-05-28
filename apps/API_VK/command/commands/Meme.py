@@ -28,7 +28,7 @@ class Meme(CommonCommand):
                            "Мем подтвердить (id) - подтверждает мем\n" \
                            "Мем отклонить (id) [причина] - отклоняет мем\n" \
                            "Мем переименовать (id) (новое название) - переименовывает мем\n" \
-                           "Мем удалить (название) - удаляет мем" \
+                           "Мем удалить (название) - удаляет мем\n" \
                            "Мем удалить (id) [причина] - удаляет мем"
         super().__init__(names, help_text, detail_help_text, args=1)
 
@@ -201,6 +201,8 @@ class Meme(CommonCommand):
             new_name = None
             if len(self.vk_event.args) > 2:
                 new_name = " ".join(self.vk_event.args[2:])
+            if MemeModel.objects.filter(name=new_name).exists():
+                return "Мем с таким названием уже есть"
             user_msg = f'Мем с названием "{renamed_meme.name}" переименован.\n' \
                        f'Новое название - "{new_name}"'
             if renamed_meme.author != self.vk_event.sender:
