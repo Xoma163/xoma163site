@@ -28,7 +28,8 @@ class Issue(CommonCommand):
                 username = self.vk_bot.get_bot_by_id(fwd_user_id).name
             issue_text += f"{username}:\n{text}\n\n"
 
-        issue = IssueModel()
-        issue.text = issue_text
+        issue = IssueModel(
+            author=self.vk_event.sender,
+            text=issue_text)
         issue.save()
         return "Сохранено"

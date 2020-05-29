@@ -12,7 +12,7 @@ class VkUserAdmin(admin.ModelAdmin):
 
 @admin.register(Issue)
 class FeatureAdmin(admin.ModelAdmin):
-    list_display = ('text',)
+    list_display = ('author', 'text',)
 
 
 admin.site.register(Service)

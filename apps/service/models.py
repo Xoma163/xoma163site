@@ -27,6 +27,7 @@ class Statistic(models.Model):
 
 class Issue(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
+    author = models.ForeignKey(VkUser, verbose_name="Автор", on_delete=models.SET_NULL, null=True)
     text = models.TextField(verbose_name='Фича', max_length=5000)
 
     class Meta:
