@@ -27,11 +27,11 @@ class Coronavirus(CommonCommand):
         if self.vk_event.args:
             country = self.vk_event.args[0]
             if len(self.vk_event.args) >= 2:
-                if self.vk_event.args[1].lower() == "график":
-                    detail = 'Graphic'
                 _type = self.vk_event.args[1].lower()
+                if _type == "график" or _type.endswith('фик'):
+                    detail = 'Graphic'
                 # ))
-                if type in ["гист", "гистограмма"] or _type.endswith('ста') or _type.endswith('са'):
+                if _type in ["гист", "гистограмма"] or _type.endswith('ста') or _type.endswith('са'):
                     detail = 'Gist'
         else:
             country = "Мир"
