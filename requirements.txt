@@ -21,3 +21,4 @@ SpeechRecognition
 numpy~=1.17.2
 cv2
 youtube_dl
+wakeonlan

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from apps.service.models import Statistic, Issue, Service, Counter, Cat, Meme, Notify, City, AudioList, LaterMessage, \
-    Donations, TimeZone, LaterMessageSession, YoutubeSubscribe
+    Donations, TimeZone, LaterMessageSession, YoutubeSubscribe, WakeOnLanUserData
 
 
 @admin.register(Statistic)
@@ -81,3 +81,8 @@ class LaterMessageSessionAdmin(admin.ModelAdmin):
 class YoutubeSubscribeAdmin(admin.ModelAdmin):
     list_display = ('author', 'chat', 'title', 'date',)
     list_filter = (('author', admin.RelatedOnlyFieldListFilter), ('chat', admin.RelatedOnlyFieldListFilter),)
+
+
+@admin.register(WakeOnLanUserData)
+class WakeOnLanUserDataAdmin(admin.ModelAdmin):
+    list_display = ('name', 'ip', 'port', 'mac',)

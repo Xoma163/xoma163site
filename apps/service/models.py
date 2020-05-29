@@ -283,3 +283,18 @@ class YoutubeSubscribe(models.Model):
 
 class Horoscope(models.Model):
     memes = models.ManyToManyField(Meme)
+
+
+class WakeOnLanUserData(models.Model):
+    user = models.ForeignKey(VkUser, verbose_name="Пользователь", on_delete=models.CASCADE, null=True)
+    name = models.CharField(verbose_name="Название", max_length=100)
+    ip = models.CharField(verbose_name="IP", max_length=16)
+    port = models.SmallIntegerField(verbose_name="Порт")
+    mac = models.CharField(verbose_name="MAC адрес", max_length=17)
+
+    class Meta:
+        verbose_name = "WOL устройство"
+        verbose_name_plural = "WOL устройства"
+
+    def __str__(self):
+        return f"{self.user}-{self.name} {self.ip}:{self.port}"
