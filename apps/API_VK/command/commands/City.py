@@ -1,5 +1,5 @@
-from apps.API_VK.APIs.timezonedb import get_timezone_by_coordinates
-from apps.API_VK.APIs.yandex_geo import get_city_info_by_name
+from apps.API_VK.APIs.TimezoneDBAPI import TimezoneDBAPI
+from apps.API_VK.APIs.YandexGeoAPI import YandexGeoAPI
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.service.models import City as CityModel, TimeZone
 
@@ -50,14 +50,16 @@ class City(CommonCommand):
 
 
 def add_city_to_db(city_name):
-    city_info = get_city_info_by_name(city_name)
+    yandexgeo_api = YandexGeoAPI()
+    city_info = yandexgeo_api.get_city_info_by_name(city_name)
     if not city_info:
         raise RuntimeError("Не смог найти координаты для города")
     city = CityModel.objects.filter(name=city_info['name'])
     if len(city) != 0:
         raise RuntimeError("Такой город уже есть")
     city_info['synonyms'] = city_info['name'].lower()
-    timezone_name = get_timezone_by_coordinates(city_info['lat'], city_info['lon'])
+    timezonedb_api = TimezoneDBAPI()
+    timezone_name = timezonedb_api.get_timezone_by_coordinates(city_info['lat'], city_info['lon'])
     if not timezone_name:
         raise RuntimeError("Не смог найти таймзону для города")
     timezone_obj, _ = TimeZone.objects.get_or_create(name=timezone_name)

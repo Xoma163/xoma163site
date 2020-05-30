@@ -3,7 +3,7 @@ import json
 
 from django.http import HttpResponse, JsonResponse
 
-from apps.API_VK.APIs.yandex_geo import get_address
+from apps.API_VK.APIs.YandexGeoAPI import YandexGeoAPI
 from apps.API_VK.models import VkUser, Log, APIUser, APITempUser
 from xoma163site.wsgi import vk_bot
 
@@ -44,7 +44,8 @@ def where_is_me(request):
     if event == 'somewhere':
         lat = request.GET.get('lat', None)
         lon = request.GET.get('lon', None)
-        address = get_address(lat, lon)
+        yandexgeo_api = YandexGeoAPI()
+        address = yandexgeo_api.get_address(lat, lon)
         if address is not None:
             msg1 = f"Я нахожусь примерно тут:\n" \
                    f"{address}\n"

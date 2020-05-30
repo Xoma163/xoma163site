@@ -1,5 +1,6 @@
 import json
 
+from apps.API_VK.APIs.YandexWeatherAPI import YandexWeatherAPI
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.Consts import Role, WEATHER_TRANSLATE
 from apps.service.models import Service, City
@@ -14,7 +15,6 @@ class WeatherChange(CommonCommand):
         super().__init__(names, help_text, detail_help_text, access=Role.TRUSTED.name)
 
     def start(self):
-        from apps.API_VK.APIs.yandex_weather import get_weather
 
         if self.vk_event.args:
             city = City.objects.filter(name__icontains=" ".join(self.vk_event.args))
@@ -29,7 +29,8 @@ class WeatherChange(CommonCommand):
         if not entity_yesterday.exists():
             return "Не нашёл вчерашней погоды для этого города."
         weather_yesterday = json.loads(entity_yesterday.first().value)
-        weather_today = get_weather(city)
+        yandexweather_api = YandexWeatherAPI(city)
+        weather_today = yandexweather_api.get_weather()
 
         part_yesterday = self.get_part(weather_yesterday)
         part_today = self.get_part(weather_today)

@@ -1,12 +1,16 @@
+import requests
 from bs4 import BeautifulSoup, NavigableString
 
 
-def parse_bash(quotes_count):
-    try:
-        import requests
-        r = requests.get('http://bash.im/random')
+class BashAPI:
+    def __init__(self, count):
+        self.count = count
+        self.URL = 'http://bash.im/random'
+
+    def parse(self):
+        r = requests.get(self.URL)
         bsop = BeautifulSoup(r.text, 'html.parser')
-        html_quotes = bsop.find('section', {'class': 'quotes'}).find_all('div', {'class': 'quote__body'})[:quotes_count]
+        html_quotes = bsop.find('section', {'class': 'quotes'}).find_all('div', {'class': 'quote__body'})[:self.count]
         bash_quotes = []
 
         for quote in html_quotes:
@@ -16,6 +20,3 @@ def parse_bash(quotes_count):
                     text_quotes.append(content.strip())
             bash_quotes.append("\n".join(text_quotes))
         return "\n——————————————————\n".join(bash_quotes)
-    except Exception as e:
-        print(e)
-        return "Ошибка"

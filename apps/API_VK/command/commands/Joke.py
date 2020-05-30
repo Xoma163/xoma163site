@@ -1,4 +1,4 @@
-from apps.API_VK.APIs.rzhunemogy_joke import get_joke
+from apps.API_VK.APIs.RzhunemoguAPI import RzhunemoguAPI
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import get_inline_keyboard
 
@@ -30,8 +30,8 @@ class Joke(CommonCommand):
         else:
             a_type = self.vk_event.args[0]
             self.check_number_arg_range(a_type, 1, 19, [9, 10, 17, 19])
-
-        msg = get_joke(a_type)
+        rzhunemogu_api = RzhunemoguAPI()
+        msg = rzhunemogu_api.get_joke(a_type)
         if self.vk_event.from_api:
             return msg
         else:

@@ -1,4 +1,4 @@
-from apps.API_VK.APIs.everypixel import get_image_quality
+from apps.API_VK.APIs.EveryPixelAPI import EveryPixelAPI
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import get_attachments_from_attachments_or_fwd
 
@@ -16,4 +16,7 @@ class EstimatePhoto(CommonCommand):
         if not images:
             return "Не нашёл картинки"
         image = images[0]
-        return f"Качество картинки - {get_image_quality(image['download_url'])}"
+
+        everypixel_api = EveryPixelAPI(image['download_url'])
+        image_quality = everypixel_api.get_image_quality()
+        return f"Качество картинки - {image_quality}"

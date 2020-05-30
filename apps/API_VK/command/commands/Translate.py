@@ -1,4 +1,4 @@
-from apps.API_VK.APIs.yandex_translate import get_translate
+from apps.API_VK.APIs.YandexTranslateAPI import YandexTranslateAPI
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import has_cyrillic
 
@@ -30,4 +30,5 @@ class Translate(CommonCommand):
             lang = 'ru-en'
         else:
             lang = 'en-ru'
-        return get_translate(lang, text)
+        yandextranslate_api = YandexTranslateAPI()
+        return yandextranslate_api.get_translate(lang, text)

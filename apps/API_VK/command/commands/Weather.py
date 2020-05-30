@@ -1,3 +1,4 @@
+from apps.API_VK.APIs.YandexWeatherAPI import YandexWeatherAPI
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.Consts import WEATHER_TRANSLATE, DAY_TRANSLATE
 from apps.service.models import City
@@ -12,7 +13,6 @@ class Weather(CommonCommand):
         super().__init__(names, help_text, detail_help_text, keyboard=keyboard)
 
     def start(self):
-        from apps.API_VK.APIs.yandex_weather import get_weather
 
         if self.vk_event.args:
             city = City.objects.filter(synonyms__icontains=self.vk_event.args[0])
@@ -25,8 +25,8 @@ class Weather(CommonCommand):
                 return "Не указан город в профиле. /город"
         if not (city.lat and city.lon):
             return "У города не указаны широта и долгота"
-
-        weather_data = get_weather(city)
+        yandexweather_api = YandexWeatherAPI(city)
+        weather_data = yandexweather_api.get_weather()
         weather_str = get_weather_str(city, weather_data)
         return weather_str
 

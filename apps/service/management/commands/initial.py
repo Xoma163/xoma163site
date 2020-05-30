@@ -3,8 +3,8 @@ from time import sleep
 from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand
 
-from apps.API_VK.APIs.timezonedb import get_timezone_by_coordinates
-from apps.API_VK.APIs.yandex_geo import get_city_info_by_name
+from apps.API_VK.APIs.TimezoneDBAPI import TimezoneDBAPI
+from apps.API_VK.APIs.YandexGeoAPI import YandexGeoAPI
 from apps.API_VK.command.Consts import Role
 from apps.API_VK.models import VkUser, APIUser
 from apps.service.models import City, TimeZone
@@ -375,6 +375,8 @@ class Command(BaseCommand):
 
     @staticmethod
     def init_cities_online():
+        timezonedb_api = TimezoneDBAPI()
+        yandexgeo_api = YandexGeoAPI()
 
         cities_list = ["Москва", "Санкт-Петербург", "Новосибирск", "Екатеринбург", "Нижний Новгород", "Казань",
                        "Самара", "Омск", "Челябинск", "Ростов-на-Дону", "Уфа", "Волгоград", "Пермь", "Красноярск",
@@ -400,14 +402,14 @@ class Command(BaseCommand):
                        "Евпатория", "Обнинск", "Новый Уренгой", "Каспийск", "Элиста", "Пушкино", "Жуковский", "Артём",
                        "Междуреченск", "Ленинск-Кузнецкий", "Сарапул", "Ессентуки", "Воткинск"]
         for city_name in cities_list:
-            city_info = get_city_info_by_name(city_name)
+            city_info = yandexgeo_api.get_city_info_by_name(city_name)
             if not city_info:
                 print(f"Warn: не смог добавить город {city_name}. Ошибка получения координат")
                 continue
             city_info['synonyms'] = city_info['name'].lower()
             # Увеличить задержку, если крашится получение таймзон
             sleep(0.5)
-            timezone_name = get_timezone_by_coordinates(city_info['lat'], city_info['lon'])
+            timezone_name = timezonedb_api.get_timezone_by_coordinates(city_info['lat'], city_info['lon'])
             if not timezone_name:
                 print(f"Warn: не смог добавить город {city_name}. Ошибка получения таймзоны")
 

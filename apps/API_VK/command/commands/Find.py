@@ -1,4 +1,4 @@
-from apps.API_VK.APIs.qwant import get_urls
+from apps.API_VK.APIs.QwantAPI import QwantAPI
 from apps.API_VK.command.CommonCommand import CommonCommand
 
 
@@ -16,11 +16,8 @@ class Find(CommonCommand):
         query = self.vk_event.original_args
         count = 5
 
-        urls = get_urls(query)
-
-        # Возможное решение, но возможно и нет
-        # for i, _ in enumerate(urls):
-        #     urls[i] = urls[i].split('?')[0]
+        qwant_api = QwantAPI()
+        urls = qwant_api.get_urls(query)
 
         if len(urls) == 0:
             return "Ничего не нашёл"

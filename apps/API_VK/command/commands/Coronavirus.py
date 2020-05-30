@@ -3,8 +3,8 @@ from threading import Lock
 
 import matplotlib.pyplot as plt
 
-from apps.API_VK.APIs.covid19api import get_by_country, get_detail_by_country
-from apps.API_VK.APIs.yandex_translate import get_translate
+from apps.API_VK.APIs.Covid19API import Covid19API
+from apps.API_VK.APIs.YandexTranslateAPI import YandexTranslateAPI
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import has_cyrillic
 
@@ -38,7 +38,8 @@ class Coronavirus(CommonCommand):
 
         if country != "Мир":
             if has_cyrillic(country):
-                country_transliterate = get_translate('en', country).replace(' ', '-')
+                yandextranslate_api = YandexTranslateAPI()
+                country_transliterate = yandextranslate_api.get_translate('en', country).replace(' ', '-')
             else:
                 country_transliterate = country
         else:
@@ -46,15 +47,15 @@ class Coronavirus(CommonCommand):
 
         if country.lower() in ["сша", "usa"]:
             country_transliterate = "united-states"
-
-        result = get_by_country(country_transliterate)
+        covid19_api = Covid19API(country_transliterate)
+        result = covid19_api.get_by_country()
         if result:
             msg = f"{country.capitalize()}\n\n{result}"
             if detail in ["Gist", "Graphic"]:
                 self.api = False
                 self.check_api()
                 if detail == "Gist":
-                    datas = get_detail_by_country(country_transliterate)
+                    datas = covid19_api.get_detail_by_country()
                     _, a = plt.subplots()
                     x = datas['Dates']
                     y1 = datas['Active']
@@ -67,14 +68,7 @@ class Coronavirus(CommonCommand):
                     a.bar(x, y3, bottom=y3_bottom, label="Выздоровевшие", color="green", width=1)
                     a.xaxis.set_visible(False)
                 elif detail == "Graphic":
-                    datas = get_detail_by_country(country_transliterate)
-
-                    # Возможно надо, яхз
-                    # max_len = max([len(x) for x in datas])
-                    # for i, _ in enumerate(datas):
-                    #     empty_list = [0] * (max_len - len(datas[i]))
-                    #     datas[i] = empty_list + datas[i]
-
+                    datas = covid19_api.get_detail_by_country()
                     plt.plot(datas['Recovered'], "bo-", label="Выздоровевшие", color="green")
                     plt.plot(datas['Active'], "bo-", label="Больные", color="#46aada")
                     plt.plot(datas['Deaths'], "bo-", label="Умершие", color="red")

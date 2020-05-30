@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-from apps.API_VK.APIs.youtube import get_youtube_channel_info
+from apps.API_VK.APIs.YoutubeInfo import YoutubeInfo
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import check_user_group
 from apps.API_VK.command.Consts import Role
@@ -63,17 +63,17 @@ class YouTube(CommonCommand):
             # Ограничение 3 подписки для нетрастед
             if not check_user_group(self.vk_event.sender, Role.TRUSTED.name) and user_subs_count >= MAX_USER_SUBS_COUNT:
                 return f"Максимальное число подписок - {MAX_USER_SUBS_COUNT}"
-
-            youtube_info = get_youtube_channel_info(channel_id)
+            youtube_info = YoutubeInfo(channel_id)
+            youtube_data = youtube_info.get_youtube_channel_info()
             yt_sub = YoutubeSubscribe(
                 author=self.vk_event.sender,
                 chat=self.vk_event.chat,
                 channel_id=channel_id,
-                title=youtube_info['title'],
-                date=youtube_info['last_video']['date']
+                title=youtube_data['title'],
+                date=youtube_data['last_video']['date']
             )
             yt_sub.save()
-            return f'Подписал на канал {youtube_info["title"]}'
+            return f'Подписал на канал {youtube_data["title"]}'
         elif action in ['удалить', 'отписаться', 'отписка']:
             self.check_args(2)
             channel_filter = self.vk_event.args[1:]

@@ -1,4 +1,4 @@
-from apps.API_VK.APIs.bash import parse_bash
+from apps.API_VK.APIs.BashAPI import BashAPI
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import get_inline_keyboard
 
@@ -18,7 +18,8 @@ class Bash(CommonCommand):
             self.parse_int()
             quotes_count = self.vk_event.args[0]
             self.check_number_arg_range(quotes_count, 1, MAX_QUOTES)
-        msg = parse_bash(quotes_count)
+        bash_api = BashAPI(quotes_count)
+        msg = bash_api.parse()
         if self.vk_event.from_api:
             return msg
         else:

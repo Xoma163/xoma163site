@@ -1,4 +1,4 @@
-from apps.API_VK.APIs.cbr import get_exchange_rates
+from apps.API_VK.APIs.CBRAPI import CBRAPI
 from apps.API_VK.command.CommonCommand import CommonCommand
 
 
@@ -11,9 +11,10 @@ class ExchangeRates(CommonCommand):
         super().__init__(names, help_text, detail_help_text)
 
     def start(self):
-        _filters_list = ["USD", "EUR", "NOK", "JPY", "GBP", "KZT", "UAH"]
+        filters_list = ["USD", "EUR", "NOK", "JPY", "GBP", "KZT", "UAH"]
 
-        ex_rates = get_exchange_rates(_filters_list)
+        cbr_api = CBRAPI(filters_list)
+        ex_rates = cbr_api.do()
 
         if self.vk_event.args:
             self.check_args(1)
