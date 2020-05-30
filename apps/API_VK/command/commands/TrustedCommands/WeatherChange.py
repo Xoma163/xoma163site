@@ -69,7 +69,8 @@ class WeatherChange(CommonCommand):
             return "Нет изменений в погоде"
         return difference
 
-    def get_part(self, weather):
+    @staticmethod
+    def get_part(weather):
         def get_part_for(_type='day'):
             if weather['now']['part_name'] == _type:
                 return weather['now']
