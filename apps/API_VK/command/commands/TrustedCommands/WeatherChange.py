@@ -85,7 +85,8 @@ class WeatherChange(CommonCommand):
             raise RuntimeWarning('Сейчас у меня нет информации о погоде на день/вечер')
         return part
 
-    def get_avg_temp(self, weather):
+    @staticmethod
+    def get_avg_temp(weather):
         if 'temp' in weather:
             return weather['temp']
         elif 'temp_min' in weather:
