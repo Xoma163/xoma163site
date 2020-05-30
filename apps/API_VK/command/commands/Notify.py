@@ -7,7 +7,7 @@ from dateutil import parser
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import localize_datetime, normalize_datetime, remove_tz, check_user_group
 from apps.API_VK.command.Consts import Role
-from apps.API_VK.command.Consts import week_translator
+from apps.API_VK.command.Consts import WEEK_TRANSLATOR
 from apps.service.models import Notify as NotifyModel
 
 
@@ -21,9 +21,9 @@ def get_time(arg1, arg2):
         exact_datetime_flag = False
         arg1 = (datetime.today().date() + timedelta(days=2)).strftime("%d.%m.%Y")
 
-    if arg1 in week_translator:
+    if arg1 in WEEK_TRANSLATOR:
         exact_datetime_flag = False
-        delta_days = week_translator[arg1] - datetime.today().isoweekday()
+        delta_days = WEEK_TRANSLATOR[arg1] - datetime.today().isoweekday()
         if delta_days <= 0:
             delta_days += 7
         arg1 = (datetime.today().date() + timedelta(days=delta_days)).strftime("%d.%m.%Y")

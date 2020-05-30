@@ -18,7 +18,7 @@ class Role(Enum):
         return value in cls._value2member_map_
 
 
-week_translator = {
+WEEK_TRANSLATOR = {
     'понедельник': 1, 'пн': 1,
     'вторник': 2, 'вт': 2,
     'среда': 3, 'ср': 3,
@@ -28,7 +28,7 @@ week_translator = {
     'воскресенье': 7, 'воскресение': 7, 'вс': 7,
 }
 
-on_off_translator = {
+ON_OFF_TRANSLATOR = {
     'вкл': True,
     'on': True,
     '1': True,
@@ -48,7 +48,34 @@ on_off_translator = {
     'отключи': False
 }
 
-true_false_translator = {
+TRUE_FALSE_TRANSLATOR = {
     True: 'вкл ✅',
     False: 'выкл ⛔'
+}
+
+WEATHER_TRANSLATE = {
+    'clear': 'Ясно ☀',
+    'partly-cloudy': 'Малооблачно ⛅',
+    'cloudy': 'Облачно с прояснениями 🌥',
+    'overcast': 'Пасмурно ☁',
+    'partly-cloudy-and-light-rain': 'Небольшой дождь 🌧',
+    'partly-cloudy-and-rain': 'Дождь 🌧',
+    'overcast-and-rain': 'Сильный дождь 🌧🌧',
+    'overcast-thunderstorms-with-rain': 'Сильный дождь, гроза 🌩',
+    'cloudy-and-light-rain': 'Небольшой дождь 🌧',
+    'overcast-and-light-rain': 'Небольшой дождь 🌧',
+    'cloudy-and-rain': 'Дождь 🌧',
+    'overcast-and-wet-snow': 'Дождь со снегом 🌨',
+    'partly-cloudy-and-light-snow': 'Небольшой снег 🌨',
+    'partly-cloudy-and-snow': 'Снег 🌨',
+    'overcast-and-snow': 'Снегопад 🌨',
+    'cloudy-and-light-snow': 'Небольшой снег 🌨',
+    'overcast-and-light-snow': 'Небольшой снег 🌨',
+    'cloudy-and-snow': 'Снег 🌨'}
+
+DAY_TRANSLATE = {
+    'night': 'ночь',
+    'morning': 'утро',
+    'day': 'день',
+    'evening': 'вечер',
 }

@@ -2,8 +2,8 @@ from django.contrib.auth.models import Group
 
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import check_user_group
+from apps.API_VK.command.Consts import ON_OFF_TRANSLATOR, TRUE_FALSE_TRANSLATOR
 from apps.API_VK.command.Consts import Role
-from apps.API_VK.command.Consts import on_off_translator, true_false_translator
 
 
 class Settings(CommonCommand):
@@ -20,8 +20,8 @@ class Settings(CommonCommand):
     def start(self):
         if self.vk_event.args:
             self.check_args(2)
-            if self.vk_event.args[1].lower() in on_off_translator:
-                value = on_off_translator[self.vk_event.args[1]]
+            if self.vk_event.args[1].lower() in ON_OFF_TRANSLATOR:
+                value = ON_OFF_TRANSLATOR[self.vk_event.args[1]]
             else:
                 return "Не понял, включить или выключить?"
             arg0 = self.vk_event.args[0].lower()
@@ -49,9 +49,9 @@ class Settings(CommonCommand):
             msg = "Настройки:\n"
             if self.vk_event.chat:
                 reaction = self.vk_event.chat.need_reaction
-                msg += f"Реагировать на неправильные команды - {true_false_translator[reaction]}\n"
+                msg += f"Реагировать на неправильные команды - {TRUE_FALSE_TRANSLATOR[reaction]}\n"
 
             if check_user_group(self.vk_event.sender, Role.TRUSTED.name):
                 minecraft_notify = check_user_group(self.vk_event.sender, Role.MINECRAFT_NOTIFY.name)
-                msg += f"Уведомления по майну - {true_false_translator[minecraft_notify]}\n"
+                msg += f"Уведомления по майну - {TRUE_FALSE_TRANSLATOR[minecraft_notify]}\n"
             return msg

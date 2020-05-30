@@ -15,7 +15,9 @@ class FeatureAdmin(admin.ModelAdmin):
     list_display = ('author', 'text',)
 
 
-admin.site.register(Service)
+@admin.register(Service)
+class ServiceAdmin(admin.ModelAdmin):
+    list_display = ('name', 'value', 'update_datetime')
 
 
 @admin.register(Counter)

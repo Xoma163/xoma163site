@@ -1,20 +1,15 @@
+import json
 from datetime import datetime
 
 import requests
 
+from apps.API_VK.command.CommonMethods import remove_tz
+from apps.API_VK.command.Consts import DAY_TRANSLATE
 from apps.service.models import Service
 from secrets.secrets import secrets
 
 
-def get_weather(city):
-    entity, created = Service.objects.get_or_create(name=f'weather_{city.name}')
-    if not created:
-        update_datetime = entity.update_datetime
-
-        delta_seconds = (datetime.utcnow() - update_datetime.replace(tzinfo=None)).seconds
-        if delta_seconds < 3600:
-            return entity.value
-
+def send_weather_request(city):
     TOKEN = secrets['yandex']['weather']
 
     URL = f"https://api.weather.yandex.ru/v1/informers"
@@ -28,86 +23,52 @@ def get_weather(city):
     if 'status' in response:
         if response['status'] == 403:
             return "На сегодня я исчерпал все запросы к Yandex Weather :("
-    WEATHER_TRANSLATE = {
-        'clear': 'Ясно ☀',
-        'partly-cloudy': 'Малооблачно ⛅',
-        'cloudy': 'Облачно с прояснениями 🌥',
-        'overcast': 'Пасмурно ☁',
-        'partly-cloudy-and-light-rain': 'Небольшой дождь 🌧',
-        'partly-cloudy-and-rain': 'Дождь 🌧',
-        'overcast-and-rain': 'Сильный дождь 🌧🌧',
-        'overcast-thunderstorms-with-rain': 'Сильный дождь, гроза 🌩',
-        'cloudy-and-light-rain': 'Небольшой дождь 🌧',
-        'overcast-and-light-rain': 'Небольшой дождь 🌧',
-        'cloudy-and-rain': 'Дождь 🌧',
-        'overcast-and-wet-snow': 'Дождь со снегом 🌨',
-        'partly-cloudy-and-light-snow': 'Небольшой снег 🌨',
-        'partly-cloudy-and-snow': 'Снег 🌨',
-        'overcast-and-snow': 'Снегопад 🌨',
-        'cloudy-and-light-snow': 'Небольшой снег 🌨',
-        'overcast-and-light-snow': 'Небольшой снег 🌨',
-        'cloudy-and-snow': 'Снег 🌨'}
-    DAY_TRANSLATE = {
-        'night': 'ночь',
-        'morning': 'утро',
-        'day': 'день',
-        'evening': 'вечер',
-    }
 
+    fact = response['fact']
     weather = {
         'now': {
-            'temp': response['fact']['temp'],
-            'temp_feels_like': response['fact']['feels_like'],
-            'condition': WEATHER_TRANSLATE[response['fact']['condition']],
-            'wind_speed': response['fact']['wind_speed'],
-            'wind_gust': response['fact']['wind_gust'],
-            'pressure': response['fact']['pressure_mm'],
-            'humidity': response['fact']['humidity'],
+            'temp': fact['temp'],
+            'temp_feels_like': fact['feels_like'],
+            'condition': fact['condition'],
+            'wind_speed': fact['wind_speed'],
+            'wind_gust': fact['wind_gust'],
+            'pressure': fact['pressure_mm'],
+            'humidity': fact['humidity'],
         },
-        'forecast': {}}
+        'forecast': []}
 
-    for i, _ in enumerate(response['forecast']['parts']):
-        weather['forecast'][i] = {
-            'part_name': DAY_TRANSLATE[response['forecast']['parts'][i]['part_name']],
-            'temp_min': response['forecast']['parts'][i]['temp_min'],
-            'temp_max': response['forecast']['parts'][i]['temp_max'],
-            'temp_feels_like': response['forecast']['parts'][i]['feels_like'],
-            'condition': WEATHER_TRANSLATE[response['forecast']['parts'][i]['condition']],
-            'wind_speed': response['forecast']['parts'][i]['wind_speed'],
-            'wind_gust': response['forecast']['parts'][i]['wind_gust'],
-            'pressure': response['forecast']['parts'][i]['pressure_mm'],
-            'humidity': response['forecast']['parts'][i]['humidity'],
-            'prec_mm': response['forecast']['parts'][i]['prec_mm'],
-            'prec_period': int(int(response['forecast']['parts'][i]['prec_period']) / 60),
-            'prec_prob': response['forecast']['parts'][i]['prec_prob'],
-        }
+    # Проставление part_name для времени сейчас
+    index = list(DAY_TRANSLATE.keys()).index(response['forecast']['parts'][0]['part_name'])
+    weather['now']['part_name'] = list(DAY_TRANSLATE.keys())[index - 1]
 
-    now = f"Погода в городе {city.name} сейчас:\n" \
-          f"{weather['now']['condition']}\n" \
-          f"Температура {weather['now']['temp']}°С(ощущается как {weather['now']['temp_feels_like']}°С)\n" \
-          f"Ветер {weather['now']['wind_speed']}м/c(порывы до {weather['now']['wind_gust']}м/c)\n" \
-          f"Давление  {weather['now']['pressure']}мм.рт.ст., влажность {weather['now']['humidity']}%"
+    for x in response['forecast']['parts']:
+        weather['forecast'].append({
+            'part_name': x['part_name'],
+            'temp_min': x['temp_min'],
+            'temp_max': x['temp_max'],
+            'temp_feels_like': x['feels_like'],
+            'condition': x['condition'],
+            'wind_speed': x['wind_speed'],
+            'wind_gust': x['wind_gust'],
+            'pressure': x['pressure_mm'],
+            'humidity': x['humidity'],
+            'prec_mm': x['prec_mm'],
+            'prec_period': int(int(x['prec_period']) / 60),
+            'prec_prob': x['prec_prob'],
+        })
+    return weather
 
-    forecast = ""
-    for i, _ in enumerate(weather['forecast']):
-        forecast += f"\n\n" \
-                    f"Прогноз на {weather['forecast'][i]['part_name']}:\n" \
-                    f"{weather['forecast'][i]['condition']}\n"
 
-        if weather['forecast'][i]['temp_min'] != weather['forecast'][i]['temp_max']:
-            forecast += f"Температура от {weather['forecast'][i]['temp_min']} до {weather['forecast'][i]['temp_max']}°С"
-        else:
-            forecast += f"Температура {weather['forecast'][i]['temp_max']}°С"
+def get_weather(city, user_cached=True):
+    entity, created = Service.objects.get_or_create(name=f'weather_{city.name}')
 
-        forecast += f"(ощущается как {weather['forecast'][i]['temp_feels_like']}°С)\n" \
-                    f"Ветер {weather['forecast'][i]['wind_speed']}м/c(порывы до {weather['forecast'][i]['wind_gust']}м/c)\n" \
-                    f"Давление {weather['forecast'][i]['pressure']} мм.рт.ст., влажность {weather['forecast'][i]['humidity']}%\n"
-        if weather['forecast'][i]['prec_mm'] != 0:
-            forecast += f"Осадки {weather['forecast'][i]['prec_mm']}мм " \
-                        f"на протяжении {weather['forecast'][i]['prec_period']} часов " \
-                        f"с вероятностью {weather['forecast'][i]['prec_prob']}%"
-        else:
-            forecast += "Без осадков"
-    entity.value = now + forecast
+    if user_cached and not created:
+        delta_seconds = (datetime.utcnow() - remove_tz(entity.update_datetime)).seconds
+        if delta_seconds < 3600:
+            weather_data = json.loads(entity.value)
+            return weather_data
+
+    weather_data = send_weather_request(city)
+    entity.value = json.dumps(weather_data)
     entity.save()
-    return entity.value
+    return weather_data
