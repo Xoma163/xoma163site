@@ -27,14 +27,14 @@ class Settings(CommonCommand):
             arg0 = self.vk_event.args[0].lower()
             if arg0 in ['реагировать', 'реагируй', 'реагирование']:
                 self.check_conversation()
-                self.check_sender(Role.CONFERENCE_ADMIN.name)
+                self.check_sender(Role.CONFERENCE_ADMIN)
                 self.vk_event.chat.need_reaction = value
                 self.vk_event.chat.save()
                 return "Сохранил настройку"
             if arg0 in ['майнкрафт', 'майн', 'minecraft', 'mine']:
-                self.check_sender(Role.TRUSTED.name)
+                self.check_sender(Role.TRUSTED)
 
-                group_minecraft_notify = Group.objects.get(name=Role.MINECRAFT_NOTIFY.name)
+                group_minecraft_notify = Group.objects.get(name=Role.MINECRAFT_NOTIFY)
                 if value:
                     self.vk_event.sender.groups.add(group_minecraft_notify)
                     self.vk_event.sender.save()
@@ -51,7 +51,7 @@ class Settings(CommonCommand):
                 reaction = self.vk_event.chat.need_reaction
                 msg += f"Реагировать на неправильные команды - {TRUE_FALSE_TRANSLATOR[reaction]}\n"
 
-            if check_user_group(self.vk_event.sender, Role.TRUSTED.name):
-                minecraft_notify = check_user_group(self.vk_event.sender, Role.MINECRAFT_NOTIFY.name)
+            if check_user_group(self.vk_event.sender, Role.TRUSTED):
+                minecraft_notify = check_user_group(self.vk_event.sender, Role.MINECRAFT_NOTIFY)
                 msg += f"Уведомления по майну - {TRUE_FALSE_TRANSLATOR[minecraft_notify]}\n"
             return msg

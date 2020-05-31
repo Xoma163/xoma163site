@@ -19,7 +19,7 @@ class Conference(CommonCommand):
         if self.vk_event.command in self.names:
             if self.vk_event.args:
                 try:
-                    self.check_sender(Role.CONFERENCE_ADMIN.name)
+                    self.check_sender(Role.CONFERENCE_ADMIN)
                     same_chats = VkChat.objects.filter(name=self.vk_event.original_args)
                     if len(same_chats) > 0:
                         return "Конфа с таким названием уже есть. Придумайте другое"

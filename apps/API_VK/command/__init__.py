@@ -46,11 +46,11 @@ def generate_help_text():
         if command.__class__.__module__.split('.')[-2] == 'Games':
             _list['games'].append(text['text'])
         else:
-            text_for = text['for'][0] if isinstance(text['for'], list) else text['for']
+            text_for = text['for'].name
             if text_for in _list:
                 _list[text_for].append(text['text'])
             else:
-                print(f"Warn: Ошибка в генерации клавиатуры. Ключ {text_for} не найден")
+                print(f"Warn: Ошибка в генерации help_text. Ключ {text_for} не найден")
 
     GROUPS_WITH_GAMES = GROUPS + ["games"]
     help_text_generated = {group: "" for group in GROUPS_WITH_GAMES}
@@ -93,13 +93,14 @@ def generate_keyboard():
             if isinstance(key, list):
                 for elem in key:
                     if 'for' in elem:
-                        keys[elem['for']].append(elem)
+                        keys[elem['for'].name].append(elem)
                     else:
-                        command_access = command.access[0] if isinstance(command.access, list) else command.access
+                        command_access = command.access.name
                         if command_access in keys:
                             keys[command_access].append(elem)
                         else:
-                            print(f"Warn: Ошибка в генерации клавиатуры. Ключ {command_access} не найден")
+                            print(
+                                f"Warn: Ошибка в генерации клавиатуры. Ключ {command_access} для команды {command.names[0]} не найден")
 
     buttons = {group: [] for group in GROUPS}
     for k in keys:

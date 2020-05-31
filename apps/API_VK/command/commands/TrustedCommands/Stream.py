@@ -9,7 +9,7 @@ class Stream(CommonCommand):
         help_text = "Стрим - ссылка на стрим"
         detail_help_text = "Стрим - ссылка на стрим\n" \
                            "Стрим [новая ссылка] - меняет ссылку на стрим. Требуются права модератора"
-        super().__init__(names, help_text, detail_help_text, access=Role.TRUSTED.name)
+        super().__init__(names, help_text, detail_help_text, access=Role.TRUSTED)
 
     def start(self):
         if self.vk_event.args is None:
@@ -20,6 +20,6 @@ class Stream(CommonCommand):
             else:
                 return {'msg': stream_link, 'attachments': stream_link}
         else:
-            self.check_sender(Role.MODERATOR.name)
+            self.check_sender(Role.MODERATOR)
             Service.objects.update_or_create(name="stream", defaults={'value': self.vk_event.args[0]})
             return "Ссылка изменена на " + self.vk_event.args[0]

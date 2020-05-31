@@ -8,7 +8,7 @@ class DeIssue(CommonCommand):
         names = ["деишю", "деишью", "хуишю", "хуишью"]
         help_text = "Ишью - добавляет проблему Петровича, которую нужно решить"
         detail_help_text = "Ишью (текст/пересланные сообщения) - добавляет проблему Петровича, которую нужно решить"
-        super().__init__(names, help_text, detail_help_text, api=False, access=Role.ADMIN.name)
+        super().__init__(names, help_text, detail_help_text, api=False, access=Role.ADMIN)
 
     def start(self):
         issue = Issue.objects.last()

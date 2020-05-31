@@ -48,8 +48,8 @@ class Meme(CommonCommand):
                 'name': " ".join(self.vk_event.args[1:]),
                 'type': attachment['type'],
                 'author': self.vk_event.sender,
-                'approved': check_user_group(self.vk_event.sender, Role.MODERATOR.name) or check_user_group(
-                    self.vk_event.sender, Role.TRUSTED.name)
+                'approved': check_user_group(self.vk_event.sender, Role.MODERATOR) or check_user_group(
+                    self.vk_event.sender, Role.TRUSTED)
             }
 
             if MemeModel.objects.filter(name=new_meme['name']).exists():
@@ -85,8 +85,8 @@ class Meme(CommonCommand):
             else:
                 return "Невозможно"
 
-            if (check_user_group(self.vk_event.sender, Role.MODERATOR.name) or
-                    check_user_group(self.vk_event.sender, Role.TRUSTED.name)):
+            if (check_user_group(self.vk_event.sender, Role.MODERATOR) or
+                    check_user_group(self.vk_event.sender, Role.TRUSTED)):
                 meme = self.get_meme(self.vk_event.args[1:])
                 meme.link = new_meme_link
                 meme.type = attachment['type']
@@ -107,7 +107,7 @@ class Meme(CommonCommand):
                 return "Обновил. Воспользоваться мемом можно после проверки модераторами."
         elif arg0 in ['удалить']:
             self.check_args(2)
-            if check_user_group(self.vk_event.sender, Role.MODERATOR.name):
+            if check_user_group(self.vk_event.sender, Role.MODERATOR):
                 try:
                     self.int_args = [1]
                     self.parse_int()
@@ -146,7 +146,7 @@ class Meme(CommonCommand):
             meme = self.get_random_meme()
             return self.prepare_meme_to_send(meme, print_name=True, send_keyboard=True)
         elif arg0 in ['подтвердить', 'принять', '+']:
-            self.check_sender(Role.MODERATOR.name)
+            self.check_sender(Role.MODERATOR)
             if len(self.vk_event.args) == 1:
                 meme = self.get_meme(approved=False)
                 meme_to_send = self.prepare_meme_to_send(meme)
@@ -170,7 +170,7 @@ class Meme(CommonCommand):
                 non_approved_meme.save()
                 return msg
         elif arg0 in ['отклонить', '-']:
-            self.check_sender(Role.MODERATOR.name)
+            self.check_sender(Role.MODERATOR)
             self.int_args = [1]
             self.parse_int()
             non_approved_meme = MemeModel.objects.filter(id=self.vk_event.args[1]).first()
@@ -191,7 +191,7 @@ class Meme(CommonCommand):
             non_approved_meme.delete()
             return msg
         elif arg0 in ['переименовать', 'правка']:
-            self.check_sender(Role.MODERATOR.name)
+            self.check_sender(Role.MODERATOR)
             self.int_args = [1]
             self.parse_int()
             renamed_meme = MemeModel.objects.filter(id=self.vk_event.args[1]).first()

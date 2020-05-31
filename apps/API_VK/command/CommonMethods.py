@@ -3,8 +3,10 @@ import re
 
 import pytz
 
-
 # Вероятность события в процентах
+from apps.API_VK.command.Consts import Role
+
+
 def random_probability(probability):
     if 1 > probability > 99:
         raise RuntimeError("Вероятность события должна быть от 1 до 99")
@@ -41,7 +43,7 @@ def has_cyrillic(text):
 
 # Проверить вхождение пользователя в группу
 def check_user_group(user, role):
-    group = user.groups.filter(name=role)
+    group = user.groups.filter(name=role.name)
     return group.exists()
 
 
@@ -186,12 +188,15 @@ def find_command_by_name(command_name):
 
 # Получает detail_help_text для команды
 def get_help_for_command(command):
+    result = ""
     if len(command.names) > 1:
-        command_names = f"Названия команды: {', '.join(command.names)}\n\n"
-    else:
-        command_names = ""
-
+        result += f"Названия команды: {', '.join(command.names)}\n"
+    if command.access != Role.USER:
+        result += f"Необходимый уровень прав - {command.access.value}\n"
+    if result:
+        result += '\n'
     if command.detail_help_text:
-        return command_names + command.detail_help_text
+        result += command.detail_help_text
     else:
-        return command_names + "У данной команды нет подробного описания"
+        result += "У данной команды нет подробного описания"
+    return result

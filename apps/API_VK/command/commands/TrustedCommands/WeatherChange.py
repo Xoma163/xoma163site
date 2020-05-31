@@ -12,7 +12,7 @@ class WeatherChange(CommonCommand):
         help_text = "Погодаизм - присылает изменения погоды по сравнению со вчерашним днём"
         detail_help_text = "Погодаизм [город=из профиля] - присылает изменения погоды по сравнению со вчерашним днём\n" \
                            "Обновление погоды происходит в 12 дня"
-        super().__init__(names, help_text, detail_help_text, access=Role.TRUSTED.name)
+        super().__init__(names, help_text, detail_help_text, access=Role.TRUSTED)
 
     def start(self):
 

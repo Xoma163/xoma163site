@@ -69,8 +69,8 @@ class Logs(CommonCommand):
         help_text = "Логи - логи бота или сервера"
         detail_help_text = "Логи [сервис=бот] [кол-во строк=50] - логи. \n" \
                            "Сервис - бот или сервер"
-        keyboard = {'for': Role.MODERATOR.name, 'text': 'Логи', 'color': 'blue', 'row': 1, 'col': 1}
-        super().__init__(names, help_text, detail_help_text, access=Role.MODERATOR.name, keyboard=keyboard)
+        keyboard = {'for': Role.MODERATOR, 'text': 'Логи', 'color': 'blue', 'row': 1, 'col': 1}
+        super().__init__(names, help_text, detail_help_text, access=Role.MODERATOR, keyboard=keyboard)
 
     def start(self):
         count = 50

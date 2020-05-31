@@ -30,7 +30,7 @@ class YesNo(CommonCommand):
 
         bad_words = get_bad_words()
 
-        if not check_user_group(self.vk_event.sender, Role.ADMIN.name):
+        if not check_user_group(self.vk_event.sender, Role.ADMIN):
             min_index_bad = len(self.vk_event.msg)
             max_index_bad = -1
             for word in bad_words:

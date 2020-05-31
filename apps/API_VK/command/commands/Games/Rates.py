@@ -26,7 +26,7 @@ class Rates(CommonCommand):
 
             gamers = RateModel.objects.filter(chat=self.vk_event.chat).order_by("date")
             if self.vk_event.args and self.vk_event.args[0] == 'f':
-                self.check_sender(Role.CONFERENCE_ADMIN.name)
+                self.check_sender(Role.CONFERENCE_ADMIN)
                 if len(gamers) <= 1:
                     return "Ну ты ваще обалдел? Хотя бы один игрок-то пусть будет"
             else:

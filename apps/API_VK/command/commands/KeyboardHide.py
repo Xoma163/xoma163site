@@ -4,7 +4,7 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 class KeyboardHide(CommonCommand):
 
     def __init__(self):
-        names = ["убери", "скрыть"]
+        names = ["скрыть", "убери"]
         help_text = "Скрыть - убирает клавиатуру"
         keyboard = {'text': 'Скрыть', 'color': 'gray', 'row': 3, 'col': 1}
 

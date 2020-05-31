@@ -143,7 +143,7 @@ class VkBotClass(threading.Thread):
 
         # Проверяем не остановлен ли бот, если так, то проверяем вводимая команда = старт?
         if not self.check_bot_working():
-            if not check_user_group(vk_event.sender, Role.ADMIN.name):
+            if not check_user_group(vk_event.sender, Role.ADMIN):
                 return
 
             if vk_event.command in ['старт']:

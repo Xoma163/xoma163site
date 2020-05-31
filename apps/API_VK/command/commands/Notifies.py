@@ -47,7 +47,7 @@ class Notifies(CommonCommand):
                 notifies = Notify.objects.filter(author=self.vk_event.sender).order_by("date")
                 if self.vk_event.chat:
                     try:
-                        self.check_sender(Role.CONFERENCE_ADMIN.name)
+                        self.check_sender(Role.CONFERENCE_ADMIN)
                         notifies = Notify.objects.filter(chat=self.vk_event.chat).order_by("date")
                     except RuntimeError:
                         notifies = notifies.filter(chat=self.vk_event.chat)

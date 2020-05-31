@@ -51,7 +51,7 @@ class Notify(CommonCommand):
     def start(self):
         if self.vk_event.sender.city is None:
             return "Не знаю ваш город. /город"
-        if not check_user_group(self.vk_event.sender, Role.TRUSTED.name) and \
+        if not check_user_group(self.vk_event.sender, Role.TRUSTED) and \
                 len(NotifyModel.objects.filter(author=self.vk_event.sender)) >= 5:
             return "Нельзя добавлять более 5 напоминаний"
         user_timezone = self.vk_event.sender.city.timezone.name

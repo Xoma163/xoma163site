@@ -8,7 +8,7 @@ class Linux(CommonCommand):
         names = ["линукс", "linux", "консоль", "терминал"]
         help_text = "Линукс - запускает любую команду на сервере"
         detail_help_text = "Линукс (команда) - запускает любую команду на сервере с уровнем прав server"
-        super().__init__(names, help_text, detail_help_text, access=Role.ADMIN.name, args=1)
+        super().__init__(names, help_text, detail_help_text, access=Role.ADMIN, args=1)
 
     def start(self):
         return do_the_linux_command(self.vk_event.original_args)

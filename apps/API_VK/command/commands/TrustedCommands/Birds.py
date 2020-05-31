@@ -13,8 +13,7 @@ class Birds(CommonCommand):
                     {'text': 'Синички 20', 'color': 'blue', 'row': 2, 'col': 2},
                     {'text': 'Синички 100', 'color': 'blue', 'row': 2, 'col': 3}]
 
-        super().__init__(names, help_text, detail_help_text, keyboard, int_args=[0], access=Role.TRUSTED.name,
-                         api=False)
+        super().__init__(names, help_text, detail_help_text, keyboard, int_args=[0], access=Role.TRUSTED, api=False)
 
     def start(self):
         self.vk_bot.set_activity(self.vk_event.peer_id)

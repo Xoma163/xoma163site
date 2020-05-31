@@ -9,7 +9,7 @@ class Restart(CommonCommand):
         help_text = "Рестарт - перезагружает бота или веб на сервере, либо сам сервер"
         detail_help_text = "Рестарт [сервис=бот] - перезагружает сервис\n" \
                            "Сервис - бот/веб/сервер"
-        super().__init__(names, help_text, detail_help_text, access=Role.ADMIN.name)
+        super().__init__(names, help_text, detail_help_text, access=Role.ADMIN)
 
     def start(self):
         module = "bot"

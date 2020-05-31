@@ -24,7 +24,7 @@ class Cat(CommonCommand):
 
     def start(self):
         if self.vk_event.args and self.vk_event.args[0].lower() in ['аватар']:
-            self.check_sender(Role.ADMIN.name)
+            self.check_sender(Role.ADMIN)
             cat = CatModel.objects.filter(to_send=True).order_by('?').first()
             cat.to_send = False
             cat.save()
@@ -42,7 +42,7 @@ class Cat(CommonCommand):
                 "keyboard": get_inline_keyboard(self.names[0])
             }
         else:
-            self.check_sender(Role.TRUSTED.name)
+            self.check_sender(Role.TRUSTED)
             new_urls = []
             for image in images:
                 new_url = self.add_cat(image)

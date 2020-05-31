@@ -41,7 +41,7 @@ class CommonCommand:
         self.help_text = help_text
         self.detail_help_text = detail_help_text
         self.keyboard = keyboard
-        self.access = access or Role.USER.name
+        self.access = access or Role.USER
         self.pm = pm
         self.conversation = conversation
         self.fwd = fwd
@@ -104,10 +104,10 @@ class CommonCommand:
                     print("Попытка доступа под админом не с моего id O_o")
             else:
                 return True
-        if role == Role.CONFERENCE_ADMIN.name:
+        if role.name == Role.CONFERENCE_ADMIN.name:
             if self.vk_event.chat.admin == self.vk_event.sender:
                 return True
-        error = f"Команда доступна только для пользователей с уровнем прав {getattr(Role, role).value}"
+        error = f"Команда доступна только для пользователей с уровнем прав {role.value}"
         raise RuntimeError(error)
 
     # Проверяет количество переданных аргументов

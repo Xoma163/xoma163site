@@ -151,7 +151,7 @@ class Roulette(CommonCommand):
                 vk_user_gamer.save()
                 return f"Передал игроку {vk_user_gamer.user} {points_transfer} {decl_of_num(points_transfer, ['очко', 'очка', 'очков'])}"
             if arg0 in ['выдать']:
-                self.check_sender(Role.ADMIN.name)
+                self.check_sender(Role.ADMIN)
                 self.check_conversation()
                 self.args = 3
                 self.int_args = [-1]

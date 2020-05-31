@@ -12,7 +12,7 @@ class WOL(CommonCommand):
         detail_help_text = "Пробуди - пробуждает ваше устройство\n" \
                            "Пробуди (название) - пробуждает ваше устройство\n" \
                            "Для того, чтобы я добавил ваше устройство в базу - сообщите админу данные устройства"
-        super().__init__(names, help_text, detail_help_text, access=Role.TRUSTED.name)
+        super().__init__(names, help_text, detail_help_text, access=Role.TRUSTED)
 
     def start(self):
         wol_data = WakeOnLanUserData.objects.filter(user=self.vk_event.sender)

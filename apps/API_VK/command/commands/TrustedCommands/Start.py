@@ -13,23 +13,23 @@ class Start(CommonCommand):
                            "Сервис - бот/синички/майнкрафт/террария\n" \
                            "Если майнкрафт, то может быть указана версия, 1.12.2 или 1.15.1"
 
-        keyboard = [{'for': Role.ADMIN.name, 'text': 'Старт', 'color': 'green', 'row': 1, 'col': 1},
-                    {'for': Role.ADMIN.name, 'text': 'Старт синички', 'color': 'green', 'row': 1, 'col': 3}]
-        super().__init__(names, help_text, detail_help_text, keyboard=keyboard, access=Role.TRUSTED.name)
+        keyboard = [{'for': Role.ADMIN, 'text': 'Старт', 'color': 'green', 'row': 1, 'col': 1},
+                    {'for': Role.ADMIN, 'text': 'Старт синички', 'color': 'green', 'row': 1, 'col': 3}]
+        super().__init__(names, help_text, detail_help_text, keyboard=keyboard, access=Role.TRUSTED)
 
     def start(self):
         module = "bot"
         if self.vk_event.args:
             module = self.vk_event.args[0].lower()
         if module in ["синички"]:
-            self.check_sender(Role.ADMIN.name)
+            self.check_sender(Role.ADMIN)
             if not cameraHandler.is_active():
                 cameraHandler.resume()
                 return "Стартуем синичек!"
             else:
                 return "Синички уже стартовали"
         elif module in ["майн", "майнкрафт", "mine", "minecraft"]:
-            self.check_sender(Role.MINECRAFT.name)
+            self.check_sender(Role.MINECRAFT)
             if len(self.vk_event.args) >= 2 and (
                     self.vk_event.args[1] == '1.12' or self.vk_event.args[1] == '1.12.2'):
                 self.check_command_time('minecraft_1.12.2', 90)
@@ -60,13 +60,13 @@ class Start(CommonCommand):
                 return message
             else:
                 return "Я не знаю такой версии"
-        elif module in ['террария', Role.TERRARIA.name]:
-            self.check_sender(Role.TERRARIA.name)
+        elif module in ['террария', 'terraria']:
+            self.check_sender(Role.TERRARIA)
             self.check_command_time('terraria', 10)
             do_the_linux_command('sudo systemctl start terraria')
             return "Стартуем террарию!"
         elif module in ['бот', 'bot']:
-            self.check_sender(Role.ADMIN.name)
+            self.check_sender(Role.ADMIN)
             self.vk_bot.BOT_CAN_WORK = True
             cameraHandler.resume()
             return "Стартуем!"

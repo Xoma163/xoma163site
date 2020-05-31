@@ -287,7 +287,7 @@ class Codenames(CommonCommand):
                     return "Сейчас зарегистрированы:\n" \
                            f"{get_str_players(self.players)}\n"
             elif arg0 in ['удалить']:
-                self.check_sender(Role.CONFERENCE_ADMIN.name)
+                self.check_sender(Role.CONFERENCE_ADMIN)
                 if self.session is None:
                     return "Нечего удалять"
                 else:

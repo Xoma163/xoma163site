@@ -7,7 +7,7 @@ from apps.service.models import Meme as MemeModel
 
 
 def get_memes_names(memes, sender):
-    if check_user_group(sender, Role.MODERATOR.name):
+    if check_user_group(sender, Role.MODERATOR):
         meme_names = [f"{meme.name} (id - {meme.id})" for meme in memes]
     else:
         meme_names = [meme.name for meme in memes]
