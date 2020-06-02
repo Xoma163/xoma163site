@@ -2,13 +2,14 @@ import json
 
 from django.core.management.base import BaseCommand
 
-from apps.API_VK.APIs.YandexWeatherAPI import YandexWeatherAPI
 from apps.service.models import City, Service
 
 
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        from apps.API_VK.APIs.YandexWeatherAPI import YandexWeatherAPI
+
         city_name = options['city'][0]
         city = City.objects.get(name__icontains=city_name)
         yandexweather_api = YandexWeatherAPI(city)
