@@ -25,7 +25,6 @@ from apps.API_VK.command.commands.VoiceRecognition import have_audio_message
 from apps.API_VK.models import VkUser, VkChat, VkBot
 from apps.service.views import append_command_to_statistics
 from secrets.secrets import secrets
-from xoma163site.settings import TEST_CHAT_ID
 
 logger = logging.getLogger('commands')
 
@@ -220,7 +219,7 @@ class VkBotClass(threading.Thread):
             command_access = command.access
             if isinstance(command_access, str):
                 command_access = [command_access]
-            if not all([access in user_groups for access in command_access]):
+            if not command_access.name in user_groups:
                 continue
 
             for name in command.names:
@@ -271,9 +270,9 @@ class VkBotClass(threading.Thread):
                     }
                     # Если я запустился из под дебага, реагируй только на меня и только в моей конфе
                     if self.DEVELOP_DEBUG:
-                        from_test_chat = vk_event['chat_id'] == TEST_CHAT_ID
+                        # from_test_chat = vk_event['chat_id'] == TEST_CHAT_ID
                         from_me = str(vk_event['user_id']) == secrets['vk']['admin_id']
-                        if not from_test_chat or not from_me:
+                        if not from_me:
                             continue
 
                     # Обработка вложенных сообщений в vk_event['fwd']. reply и fwd для вк это разные вещи.
