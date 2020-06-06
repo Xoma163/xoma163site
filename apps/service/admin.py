@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from apps.service.models import Statistic, Issue, Service, Counter, Cat, Meme, Notify, City, AudioList, LaterMessage, \
-    Donations, TimeZone, LaterMessageSession, YoutubeSubscribe, WakeOnLanUserData
+    Donations, TimeZone, LaterMessageSession, YoutubeSubscribe, WakeOnLanUserData, Horoscope
 
 
 @admin.register(Statistic)
@@ -88,3 +88,9 @@ class YoutubeSubscribeAdmin(admin.ModelAdmin):
 @admin.register(WakeOnLanUserData)
 class WakeOnLanUserDataAdmin(admin.ModelAdmin):
     list_display = ('name', 'ip', 'port', 'mac',)
+
+
+@admin.register(Horoscope)
+class HoroscopeAdmin(admin.ModelAdmin):
+    list_display = ('pk',)
+    filter_horizontal = ('memes',)

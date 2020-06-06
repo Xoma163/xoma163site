@@ -284,6 +284,13 @@ class YoutubeSubscribe(models.Model):
 class Horoscope(models.Model):
     memes = models.ManyToManyField(Meme)
 
+    class Meta:
+        verbose_name = "Гороскоп"
+        verbose_name_plural = "Гороскопы"
+
+    def __str__(self):
+        return str(self.pk)
+
 
 class WakeOnLanUserData(models.Model):
     user = models.ForeignKey(VkUser, verbose_name="Пользователь", on_delete=models.CASCADE, null=True)

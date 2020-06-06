@@ -21,7 +21,7 @@ zodiac_signs = {
 class Horoscope(CommonCommand):
     def __init__(self):
         names = ["гороскоп"]
-        help_text = "Гороскоп - мемный гороском"
+        help_text = "Гороскоп - мемный гороскоп"
         detail_help_text = "Гороскоп - пришлёт гороскоп на день для каждого знака зодиака\n" \
                            "Гороскоп (знак зодиака) - пришлёт гороскоп для знака зодиака"
         super().__init__(names, help_text, detail_help_text, api=False)
