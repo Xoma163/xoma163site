@@ -73,9 +73,9 @@ class Weather(CommonCommand):
         # Разница ощущаемой и по факту температур
         delta_feels_temp = avg_temp_today - part_today['temp_feels_like']
         if delta_feels_temp >= 5:
-            difference += f"Ощущаемая температура на {delta_feels_temp} градусов больше, чем вчера\n"
+            difference += f"Ощущаемая температура на {delta_feels_temp} градусов больше, чем реальная\n"
         elif delta_feels_temp <= -5:
-            difference += f"Ощущаемая температура на {-delta_feels_temp} градусов больше, чем вчера\n"
+            difference += f"Ощущаемая температура на {-delta_feels_temp} градусов больше, чем реальная\n"
 
         # Скорость ветра
         if part_today['wind_speed'] > 10:
