@@ -221,6 +221,9 @@ class Meme(CommonCommand):
         memes = MemeModel.objects.filter(approved=approved)
 
         flag_regex = False
+
+        filter_list = list(map(lambda x: x.lower(), filter_list))
+
         if filter_list:
             for _filter in filter_list:
                 if '*' in _filter:
