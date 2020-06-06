@@ -3,18 +3,18 @@ from apps.API_VK.command.commands.Meme import prepare_meme_to_send
 from apps.service.models import Horoscope as HoroscopeModel
 
 zodiac_signs = {
-    "овен": 0,
-    "телец": 1,
-    "близнецы": 2,
-    "рак": 3,
-    "лев": 4,
-    "дева": 5,
-    "весы": 6,
-    "скорпион": 7,
-    "стрелец": 8,
-    "козерог": 9,
-    "водолей": 10,
-    "рыбы": 11
+    "овен": 80,
+    "телец": 111,
+    "близнецы": 142,
+    "рак": 173,
+    "лев": 204,
+    "дева": 234,
+    "весы": 268,
+    "скорпион": 298,
+    "стрелец": 328,
+    "козерог": 358,
+    "водолей": 21,
+    "рыбы": 51,
 }
 
 
@@ -22,28 +22,56 @@ class Horoscope(CommonCommand):
     def __init__(self):
         names = ["гороскоп"]
         help_text = "Гороскоп - мемный гороскоп"
-        detail_help_text = "Гороскоп - пришлёт гороскоп на день для каждого знака зодиака\n" \
-                           "Гороскоп (знак зодиака) - пришлёт гороскоп для знака зодиака"
+        detail_help_text = "Гороскоп [знак зодиака = по др в профиле] - пришлёт мемный гороскоп на день для знака зодиака\n" \
+                           "Гороскоп все - пришлёт мемный гороскоп для всех знаков зодиака"
         super().__init__(names, help_text, detail_help_text, api=False)
 
     def start(self):
+
         if self.vk_event.args:
+            # Гороскоп для всех знаков
+            if self.vk_event.args[0] in "все":
+                horoscope = HoroscopeModel.objects.first()
+                for i, zodiac_sign in enumerate(zodiac_signs):
+                    meme = horoscope.memes.all()[i]
+                    prepared_meme = prepare_meme_to_send(self.vk_bot, self.vk_event, meme)
+                    prepared_meme['msg'] = zodiac_sign.capitalize()
+                    self.vk_bot.parse_and_send_msgs_thread(self.vk_event.peer_id, prepared_meme)
+                return
+
+            # Гороскоп для знака зодиака в аргументах
             try:
                 zodiac_sign = self.vk_event.args[0].lower()
                 zodiac_index = zodiac_signs[zodiac_sign]
             except KeyError:
                 return "Не знаю такого знака зодиака"
+            return self.get_horoscope_by_zodiac(zodiac_sign, zodiac_index)
 
-            horoscope = HoroscopeModel.objects.first()
-            meme = horoscope.memes.all()[zodiac_index]
-            prepared_meme = prepare_meme_to_send(self.vk_bot, self.vk_event, meme)
-            prepared_meme['msg'] = zodiac_sign.capitalize()
-            return prepared_meme
-
+        # Гороскоп по ДР из профиля
+        elif self.vk_event.sender.birthday:
+            zodiac_sign, zodiac_index = self.get_zodiac_of_date(self.vk_event.sender.birthday)
+            return self.get_horoscope_by_zodiac(zodiac_sign, zodiac_index)
         else:
-            horoscope = HoroscopeModel.objects.first()
-            for zodiac_sign in zodiac_signs:
-                meme = horoscope.memes.all()[zodiac_signs[zodiac_sign]]
-                prepared_meme = prepare_meme_to_send(self.vk_bot, self.vk_event, meme)
-                prepared_meme['msg'] = zodiac_sign.capitalize()
-                self.vk_bot.parse_and_send_msgs_thread(self.vk_event.peer_id, prepared_meme)
+            return "Не указана дата рождения в профиле, не могу прислать гороскоп((. \n" \
+                   "Укажи знак зодиака в аргументе: /гороскоп девы"
+
+    def get_horoscope_by_zodiac(self, zodiac_sign, zodiac_index):
+        horoscope = HoroscopeModel.objects.first()
+        meme = horoscope.memes.all()[zodiac_index]
+        prepared_meme = prepare_meme_to_send(self.vk_bot, self.vk_event, meme)
+        prepared_meme['msg'] = zodiac_sign.capitalize()
+        return prepared_meme
+
+    def get_zodiac_of_date(self, date):
+        day_number = int(date.strftime("%j"))
+        deltas = []
+        min_delta = 999
+        min_delta_index = 0
+        for i, zodiac in enumerate(zodiac_signs):
+            delta = day_number - zodiac_signs[zodiac]
+            if delta >= 0:
+                if delta < min_delta:
+                    min_delta = delta
+                    min_delta_index = i
+            deltas.append(day_number - zodiac_signs[zodiac])
+        return list(zodiac_signs.keys())[min_delta_index], min_delta_index
