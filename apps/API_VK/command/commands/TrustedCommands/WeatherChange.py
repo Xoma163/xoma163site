@@ -75,9 +75,9 @@ class WeatherChange(CommonCommand):
         def get_part_for(_type='day'):
             if weather['now']['part_name'] == _type:
                 return weather['now']
-            elif weather['forecast'][0] == _type:
+            elif weather['forecast'][0]['part_name'] == _type:
                 return weather['forecast'][0]
-            elif weather['forecast'][1] == _type:
+            elif weather['forecast'][1]['part_name'] == _type:
                 return weather['forecast'][1]
             return None
 
