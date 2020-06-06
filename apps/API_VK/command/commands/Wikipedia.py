@@ -47,7 +47,9 @@ class Wikipedia(CommonCommand):
             if len(search) == 0:
                 msg += "Результат поиска ничего не дал"
             else:
-                msg += "Я что-то нашёл, но так как такого кейса никогда не было, то я не знаю, что выводить, хд"
+                msg += "Я нашел возможные варианты:\n"
+                search = list(map(lambda x: f"- {x}", search))
+                msg += "\n".join(search)
             return msg
 
 # Если он серит в консоль, то
