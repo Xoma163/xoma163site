@@ -4,9 +4,9 @@ from apps.service.models import Issue as IssueModel
 
 class Issue(CommonCommand):
     def __init__(self):
-        names = ["ишю", "ишью"]
-        help_text = "Ишью - добавляет проблему Петровича, которую нужно решить"
-        detail_help_text = "Ишью (текст/пересланные сообщения) - добавляет проблему Петровича, которую нужно решить"
+        names = ["баг", "ошибка", "ишю", "ишью"]
+        help_text = "Баг - добавляет проблему Петровича, которую нужно решить"
+        detail_help_text = "Баг (текст/пересланные сообщения) - добавляет проблему Петровича, которую нужно решить"
         super().__init__(names, help_text, detail_help_text, api=False)
 
     def start(self):
