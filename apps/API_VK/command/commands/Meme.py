@@ -74,6 +74,14 @@ class Meme(CommonCommand):
                 return "Добавил. Воспользоваться мемом можно после проверки модераторами."
         elif arg0 in ['обновить']:
             self.check_args(2)
+            _id = None
+            if len(self.vk_event.args) == 2:
+                self.int_args = [1]
+                try:
+                    self.parse_int()
+                    _id = self.vk_event.args[1]
+                except RuntimeWarning:
+                    pass
             attachments = get_attachments_from_attachments_or_fwd(self.vk_event, ['audio', 'video', 'photo', 'doc'])
             if len(attachments) == 0:
                 return "Не нашёл вложений в сообщении или пересланном сообщении"
@@ -87,13 +95,13 @@ class Meme(CommonCommand):
 
             if (check_user_group(self.vk_event.sender, Role.MODERATOR) or
                     check_user_group(self.vk_event.sender, Role.TRUSTED)):
-                meme = self.get_meme(self.vk_event.args[1:])
+                meme = self.get_meme(self.vk_event.args[1:], _id=_id)
                 meme.link = new_meme_link
                 meme.type = attachment['type']
                 meme.save()
                 return f'Обновил мем "{meme.name}"'
             else:
-                meme = self.get_meme(self.vk_event.args[1:], self.vk_event.sender)
+                meme = self.get_meme(self.vk_event.args[1:], self.vk_event.sender, _id=_id)
                 meme.link = new_meme_link
                 meme.approved = False
                 meme.type = attachment['type']
@@ -159,7 +167,7 @@ class Meme(CommonCommand):
             else:
                 self.int_args = [1]
                 self.parse_int()
-                non_approved_meme = MemeModel.objects.filter(id=self.vk_event.args[1]).first()
+                non_approved_meme = self.get_meme(_id=self.vk_event.args[1])
                 if not non_approved_meme:
                     return "Не нашёл мема с таким id"
                 if non_approved_meme.approved:
@@ -176,7 +184,7 @@ class Meme(CommonCommand):
             self.check_sender(Role.MODERATOR)
             self.int_args = [1]
             self.parse_int()
-            non_approved_meme = MemeModel.objects.filter(id=self.vk_event.args[1]).first()
+            non_approved_meme = self.get_meme(_id=self.vk_event.args[1])
             if not non_approved_meme:
                 return "Не нашёл мема с таким id"
             if non_approved_meme.approved:
@@ -197,7 +205,7 @@ class Meme(CommonCommand):
             self.check_sender(Role.MODERATOR)
             self.int_args = [1]
             self.parse_int()
-            renamed_meme = MemeModel.objects.filter(id=self.vk_event.args[1]).first()
+            renamed_meme = self.get_meme(_id=self.vk_event.args[1])
             if not renamed_meme:
                 return "Не нашёл мема с таким id"
 
@@ -218,10 +226,7 @@ class Meme(CommonCommand):
             self.int_args = [1]
             self.parse_int()
             _id = self.vk_event.args[1]
-            memes = MemeModel.objects.filter(id=_id)
-            if not memes.exists():
-                return "Не нашёл мема с таким id"
-            meme = memes.first()
+            meme = self.get_meme(_id=_id)
             return self.prepare_meme_to_send(meme, True)
         else:
             meme = self.get_meme(self.vk_event.args)
@@ -230,21 +235,25 @@ class Meme(CommonCommand):
             return self.prepare_meme_to_send(meme)
 
     @staticmethod
-    def get_meme(filter_list=None, filter_user=None, approved=True):
+    def get_meme(filter_list=None, filter_user=None, approved=True, _id=None):
+        if filter_list is None:
+            filter_list = []
         memes = MemeModel.objects.filter(approved=approved)
-
         flag_regex = False
+        if id:
+            memes = memes.filter(id=_id)
+        else:
 
-        if filter_list:
-            filter_list = list(map(lambda x: x.lower(), filter_list))
-            for _filter in filter_list:
-                if '*' in _filter:
-                    _filter = _filter.replace('*', '.')
-                    regex_filter = fr'.*{_filter}.*'
-                    memes = memes.filter(name__iregex=regex_filter)
-                    flag_regex = True
-                else:
-                    memes = memes.filter(name__icontains=_filter)
+            if filter_list:
+                filter_list = list(map(lambda x: x.lower(), filter_list))
+                for _filter in filter_list:
+                    if '*' in _filter:
+                        _filter = _filter.replace('*', '.')
+                        regex_filter = fr'.*{_filter}.*'
+                        memes = memes.filter(name__iregex=regex_filter)
+                        flag_regex = True
+                    else:
+                        memes = memes.filter(name__icontains=_filter)
 
         if filter_user:
             memes = memes.filter(author=filter_user)
