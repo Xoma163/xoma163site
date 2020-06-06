@@ -148,7 +148,10 @@ class Meme(CommonCommand):
         elif arg0 in ['подтвердить', 'принять', '+']:
             self.check_sender(Role.MODERATOR)
             if len(self.vk_event.args) == 1:
-                meme = self.get_meme(approved=False)
+                try:
+                    meme = self.get_meme(approved=False)
+                except RuntimeWarning:
+                    return "Не нашёл мемов для подтверждения"
                 meme_to_send = self.prepare_meme_to_send(meme)
                 meme_to_send['msg'] = f"{meme.author}\n" \
                                       f"{meme.name} ({meme.id})"
@@ -210,6 +213,16 @@ class Meme(CommonCommand):
             renamed_meme.name = new_name
             renamed_meme.save()
             return user_msg
+        elif arg0 in ['id', 'ид']:
+            self.check_args(2)
+            self.int_args = [1]
+            self.parse_int()
+            _id = self.vk_event.args[1]
+            memes = MemeModel.objects.filter(id=_id)
+            if not memes.exists():
+                return "Не нашёл мема с таким id"
+            meme = memes.first()
+            return self.prepare_meme_to_send(meme, True)
         else:
             meme = self.get_meme(self.vk_event.args)
             meme.uses += 1
@@ -222,9 +235,8 @@ class Meme(CommonCommand):
 
         flag_regex = False
 
-        filter_list = list(map(lambda x: x.lower(), filter_list))
-
         if filter_list:
+            filter_list = list(map(lambda x: x.lower(), filter_list))
             for _filter in filter_list:
                 if '*' in _filter:
                     _filter = _filter.replace('*', '.')
