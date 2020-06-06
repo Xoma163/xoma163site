@@ -84,8 +84,9 @@ class Weather(CommonCommand):
             difference += f"Порывы скорости ветра до {part_today['wind_gust']}м/с\n"
 
         if not difference:
-            return "Нет изменений в погоде"
-        return difference
+            return f"Нет изменений в погоде в г.{city}"
+        return f"Изменения погоды для г.{city}:\n" \
+               f"{difference}"
 
     @staticmethod
     def get_part(weather):
@@ -113,7 +114,7 @@ class Weather(CommonCommand):
 
 def get_weather_str(city, weather_data):
     now = \
-        f"Погода в городе {city.name} сейчас:\n" \
+        f"Погода в г.{city.name} сейчас:\n" \
         f"{WEATHER_TRANSLATE[weather_data['now']['condition']]}\n" \
         f"Температура {weather_data['now']['temp']}°С(ощущается как {weather_data['now']['temp_feels_like']}°С)\n" \
         f"Ветер {weather_data['now']['wind_speed']}м/c(порывы до {weather_data['now']['wind_gust']}м/c)\n" \
