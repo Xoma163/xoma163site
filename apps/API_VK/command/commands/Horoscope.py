@@ -42,8 +42,8 @@ class Horoscope(CommonCommand):
             # Гороскоп для знака зодиака в аргументах
             try:
                 zodiac_sign = self.vk_event.args[0].lower()
-                zodiac_index = zodiac_signs[zodiac_sign]
-            except KeyError:
+                zodiac_index = list(zodiac_signs.keys()).index(zodiac_sign)
+            except ValueError:
                 return "Не знаю такого знака зодиака"
             return self.get_horoscope_by_zodiac(zodiac_sign, zodiac_index)
 
