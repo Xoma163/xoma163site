@@ -1,6 +1,6 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import get_inline_keyboard, get_attachments_from_attachments_or_fwd, \
-    check_user_group, get_one_chat_with_user
+    check_user_group, get_one_chat_with_user, tanimoto
 from apps.API_VK.command.Consts import Role
 from apps.service.models import Meme as MemeModel
 from xoma163site.settings import VK_URL, TEST_CHAT_ID
@@ -229,21 +229,32 @@ class Meme(CommonCommand):
             meme = self.get_meme(_id=_id)
             return self.prepare_meme_to_send(meme, True)
         else:
-            meme = self.get_meme(self.vk_event.args)
+            memes = self.get_meme(self.vk_event.args, use_tanimoto=True)
+            if isinstance(memes, list):
+                meme = memes[0]
+            else:
+                meme = memes
             meme.uses += 1
             meme.save()
-            return self.prepare_meme_to_send(meme)
+            prepared_meme = self.prepare_meme_to_send(meme)
+            if isinstance(memes, MemeModel):
+                return prepared_meme
+            else:
+                self.vk_bot.parse_and_send_msgs(self.vk_event.peer_id, prepared_meme)
+                msg = self.get_similar_memes_names(memes)
+                return msg
 
-    @staticmethod
-    def get_meme(filter_list=None, filter_user=None, approved=True, _id=None):
+    def get_meme(self, filter_list=None, filter_user=None, approved=True, _id=None, use_tanimoto=False):
+        """
+        :return: 1 мем. Если передан параметр use_tanimoto, то список мемов отсортированных по коэфф. Танимото
+        """
         if filter_list is None:
             filter_list = []
         memes = MemeModel.objects.filter(approved=approved)
         flag_regex = False
-        if id:
+        if _id:
             memes = memes.filter(id=_id)
         else:
-
             if filter_list:
                 filter_list = list(map(lambda x: x.lower(), filter_list))
                 for _filter in filter_list:
@@ -269,22 +280,42 @@ class Meme(CommonCommand):
                     return meme
                 if flag_regex and len(meme.name) == len(filters_str):
                     return meme
-            memes = memes[:10]
-            meme_names = [meme.name for meme in memes]
-            meme_names_str = ";\n".join(meme_names)
-
-            msg = f"Нашёл сразу {len(memes)}, уточните:\n\n" \
-                  f"{meme_names_str}" + '.'
-            if len(memes) > 10:
-                msg += f"\n..."
-            raise RuntimeWarning(msg)
+            if not use_tanimoto:
+                msg = self.get_similar_memes_names(memes)
+                raise RuntimeWarning(msg)
+            else:
+                filters_str = " ".join(filter_list)
+                return self.get_tanimoto_memes(memes, filters_str)
 
     @staticmethod
     def get_random_meme():
-        return MemeModel.objects.order_by('?').first()
+        return MemeModel.objects.filter(approved=True).order_by('?').first()
 
     def prepare_meme_to_send(self, meme, print_name=False, send_keyboard=False):
         return prepare_meme_to_send(self.vk_bot, self.vk_event, meme, print_name, send_keyboard, self.names[0])
+
+    @staticmethod
+    def get_tanimoto_memes(memes, query):
+        memes_list = []
+        for meme in memes:
+            tanimoto_coefficient = tanimoto(meme.name, query)
+            memes_list.append({'meme': meme, 'tanimoto': tanimoto_coefficient})
+        memes_list.sort(key=lambda x: x['tanimoto'], reverse=True)
+        memes_list = [meme['meme'] for meme in memes_list]
+        return memes_list
+
+    @staticmethod
+    def get_similar_memes_names(memes):
+        total_memes_count = len(memes)
+        memes = memes[:10]
+        meme_names = [meme.name for meme in memes]
+        meme_names_str = ";\n".join(meme_names)
+
+        msg = f"Нашёл сразу {total_memes_count}, уточните:\n\n" \
+              f"{meme_names_str}" + '.'
+        if total_memes_count > 10:
+            msg += f"\n..."
+        return msg
 
 
 def prepare_meme_to_send(vk_bot, vk_event, meme, print_name=False, send_keyboard=False, name=None):

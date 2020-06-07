@@ -18,7 +18,7 @@ from vk_api.utils import get_random_id
 from apps.API_VK.VkEvent import VkEvent
 from apps.API_VK.VkUserClass import VkUserClass
 from apps.API_VK.command import get_commands
-from apps.API_VK.command.CommonMethods import check_user_group, get_user_groups
+from apps.API_VK.command.CommonMethods import check_user_group, get_user_groups, tanimoto
 from apps.API_VK.command.Consts import Role
 from apps.API_VK.command.commands.City import add_city_to_db
 from apps.API_VK.command.commands.VoiceRecognition import have_audio_message
@@ -55,16 +55,6 @@ class VkBotClass(threading.Thread):
             return f"1970-{date_arr[1]}-{date_arr[0]}"
         else:
             return f"{date_arr[2]}-{date_arr[1]}-{date_arr[0]}"
-
-    @staticmethod
-    def tanimoto(s1, s2):
-        a, b, c = len(s1), len(s2), 0.0
-
-        for sym in s1:
-            if sym in s2:
-                c += 1
-
-        return c / (a + b - c)
 
     def need_a_response(self, vk_event, _have_audio_message, have_action):
         message = vk_event['message']['text']
@@ -220,20 +210,19 @@ class VkBotClass(threading.Thread):
             command_access = command.access
             if isinstance(command_access, str):
                 command_access = [command_access]
-            if not command_access.name in user_groups:
+            if command_access.name not in user_groups:
                 continue
 
             for name in command.names:
                 if name:
-                    tanimoto_current = self.tanimoto(vk_event.command, name)
+                    tanimoto_current = tanimoto(vk_event.command, name)
                     if tanimoto_current > tanimoto_max:
                         tanimoto_max = tanimoto_current
                         similar_command = name
 
         msg = f"Я не понял команды \"{vk_event.command}\"\n"
-        tanimoto_max = min(1, tanimoto_max)
         if tanimoto_max != 0:
-            msg += f"Возможно вы имели в виду команду \"{similar_command}\" с вероятностью {round(tanimoto_max * 100, 2)}%"
+            msg += f"Возможно вы имели в виду команду \"{similar_command}\""
 
         logger.debug(f"{{result: {msg}}}")
         if send:
@@ -304,8 +293,6 @@ class VkBotClass(threading.Thread):
                         vk_event['chat'] = self.get_chat_by_id(int(vk_event['peer_id']))
                         if vk_event['sender'] and vk_event['chat']:
                             self.add_group_to_user(vk_event['sender'], vk_event['chat'])
-                        else:
-                            self.send_message(vk_event['peer_id'], 'Непредвиденная ошибка. Сообщите разработчику')
                     else:
                         vk_event['chat'] = None
 
