@@ -84,8 +84,8 @@ class Weather(CommonCommand):
             difference += f"Порывы скорости ветра до {part_today['wind_gust']}м/с\n"
 
         if not difference:
-            return f"Нет изменений в погоде в г.{city}"
-        return f"Изменения погоды для г.{city}:\n" \
+            return f"Нет изменений погоды в г.{city}"
+        return f"Изменения погоды в г.{city}:\n" \
                f"{difference}"
 
     @staticmethod
