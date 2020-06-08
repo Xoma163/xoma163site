@@ -159,3 +159,25 @@ model.save()
 Создание сущности и её сохранение
 
 [Более подробно](https://docs.djangoproject.com/en/2.2/topics/db/models/)
+
+
+## Установка проекта
+
+### Клонирование и запуск автонастройки (создание окружение, установка зависимостей)
+- `git clone https://github.com/Xoma163/xoma163site.git`
+- `chmod +x setup.sh`
+- './setup.sh'
+
+### Работа с БД
+
+```postgresql
+CREATE ROLE <your_username> WITH PASSWORD <your_password>;
+CREATE DATABASE <your_database> WITH OWNER <your_username>;
+SET TIMEZONE="<your_timezone>";
+```
+
+### Настройка конфигов
+Внеси все свои данные по боту ВК и различным API в файл secrets/secrets.py
+
+### Запуск
+`systemctl start xoma163site`

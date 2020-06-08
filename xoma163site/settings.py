@@ -158,6 +158,13 @@ def sprint(text):
     sleep(0.0000000001)
 
 
+LOGS_DIR = os.path.join(BASE_DIR, 'logs')
+if not os.path.exists(LOGS_DIR):
+    os.makedirs(LOGS_DIR)
+
+DEBUG_FILE = os.path.join(LOGS_DIR, 'commands-debug.log')
+ERROR_FILE = os.path.join(LOGS_DIR, 'commands-error.log')
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -177,13 +184,13 @@ LOGGING = {
         'file-debug': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs', 'commands-debug.log'),
+            'filename': DEBUG_FILE,
             'formatter': 'commands',
         },
         'file-warn': {
             'level': 'WARNING',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs', 'commands-error.log'),
+            'filename': ERROR_FILE,
             'formatter': 'commands',
         },
     },

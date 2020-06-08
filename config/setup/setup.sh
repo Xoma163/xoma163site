@@ -1,8 +1,7 @@
 # Install python, python-venv and project requirements
 sudo apt -y update
-sudo apt -y upgrade
-sudo apt install -y python3.8 python3.8-venv python3-venv
-python3.8 -m venv venv
+sudo apt install -y python3.7 python3.7-venv python3-venv postgresql psycopg2 psycopg2-binary libpq-dev
+python3.7 -m venv venv
 source ./venv/bin/activate
 pip install -r requirements.txt
 
@@ -10,4 +9,4 @@ pip install -r requirements.txt
 sudo ln -s "$(pwd)/config/xoma163bot.service" /etc/systemd/system/
 sudo systemctl daemon-reload
 
-sudo apt install -y postgresql psycopg2-binary
+mv secrets/secrets_example.py secrets/secrets.py

@@ -7,7 +7,7 @@ from xoma163site.settings import BASE_DIR
 class VkUserClass:
     def __init__(self):
         super().__init__()
-        self.id = secrets['vk']['user']['id']
+        self.id = int(secrets['vk']['user']['id'])
         vk_session = vk_api.VkApi(secrets['vk']['user']['login'],
                                   secrets['vk']['user']['password'],
                                   auth_handler=self.auth_handler,

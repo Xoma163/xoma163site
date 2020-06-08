@@ -1,1 +1,2 @@
-config/setup/setup.sh
+find . -type f -iname "*.sh" -exec chmod +x {} \;
+./config/setup/setup.sh
