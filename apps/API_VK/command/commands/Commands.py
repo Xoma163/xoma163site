@@ -11,7 +11,7 @@ class Commands(CommonCommand):
 
     def start(self):
 
-        from apps.API_VK.command import HELP_TEXT, API_HELP_TEXT
+        from apps.API_VK.command.initial import HELP_TEXT, API_HELP_TEXT
 
         if self.vk_event.from_api:
             help_texts = API_HELP_TEXT

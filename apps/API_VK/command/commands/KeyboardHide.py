@@ -11,6 +11,6 @@ class KeyboardHide(CommonCommand):
         super().__init__(names, help_text, keyboard=keyboard, api=False)
 
     def start(self):
-        from apps.API_VK.command import EMPTY_KEYBOARD
+        from apps.API_VK.command.initial import EMPTY_KEYBOARD
 
         return {'keyboard': EMPTY_KEYBOARD}

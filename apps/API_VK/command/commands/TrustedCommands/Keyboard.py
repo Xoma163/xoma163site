@@ -15,7 +15,7 @@ class Keyboard(CommonCommand):
 
 
 def get_keyboard(sender):
-    from apps.API_VK.command import KEYBOARDS
+    from apps.API_VK.command.initial import KEYBOARDS
 
     buttons = []
 

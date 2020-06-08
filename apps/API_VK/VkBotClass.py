@@ -17,7 +17,6 @@ from vk_api.utils import get_random_id
 
 from apps.API_VK.VkEvent import VkEvent
 from apps.API_VK.VkUserClass import VkUserClass
-from apps.API_VK.command import get_commands
 from apps.API_VK.command.CommonMethods import check_user_group, get_user_groups, tanimoto
 from apps.API_VK.command.Consts import Role
 from apps.API_VK.command.commands.City import add_city_to_db
@@ -130,6 +129,7 @@ class VkBotClass(threading.Thread):
                     self.send_message(peer_id, **msg)
 
     def menu(self, vk_event, send=True):
+        from apps.API_VK.command.initial import get_commands
 
         # Проверяем не остановлен ли бот, если так, то проверяем вводимая команда = старт?
         if not self.check_bot_working():

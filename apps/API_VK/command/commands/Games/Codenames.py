@@ -477,7 +477,7 @@ class Codenames(CommonCommand):
 
     # Конец игры
     def game_over(self, winner, board):
-        from apps.API_VK.command import EMPTY_KEYBOARD
+        from apps.API_VK.command.initial import EMPTY_KEYBOARD
         keyboard = self.get_keyboard(board, for_captain=True, game_over=True)
         self.vk_bot.send_message(self.session.chat.chat_id,
                                  f'Игра закончена.\nПобеда {translator_commands[winner]} команды',
