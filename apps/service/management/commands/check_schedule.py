@@ -4,7 +4,8 @@
 # from django.core.management.base import BaseCommand
 #
 # from xoma163site.settings import BASE_DIR
-# from xoma163site.wsgi import vk_bot
+# from apps.API_VK.VkBotClass import VkBotClass
+# vk_bot = VkBotClass()
 #
 # timetable = {'1': {'START': '9:00', 'END': '9:35'},
 #              '2': {'START': '9:45', 'END': '11:20'},

@@ -4,8 +4,10 @@ import json
 from django.http import HttpResponse, JsonResponse
 
 from apps.API_VK.APIs.YandexGeoAPI import YandexGeoAPI
+from apps.API_VK.VkBotClass import VkBotClass
 from apps.API_VK.models import VkUser, Log, APIUser, APITempUser
-from xoma163site.wsgi import vk_bot
+
+vk_bot = VkBotClass()
 
 
 def send_json(message):

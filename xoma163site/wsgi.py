@@ -15,12 +15,4 @@ from django.core.wsgi import get_wsgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'xoma163site.settings')
 
 django.setup()
-
-from apps.birds.CameraHandler import CameraHandler
-
-cameraHandler = CameraHandler()
-
-from apps.API_VK.VkBotClass import VkBotClass
-
-vk_bot = VkBotClass()
 application = get_wsgi_application()

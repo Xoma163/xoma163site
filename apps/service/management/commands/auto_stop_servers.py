@@ -2,10 +2,12 @@ from datetime import datetime
 
 from django.core.management.base import BaseCommand
 
+from apps.API_VK.VkBotClass import VkBotClass
 from apps.API_VK.command.Consts import Role
 from apps.API_VK.models import VkUser
 from apps.service.models import Service
-from xoma163site.wsgi import vk_bot
+
+vk_bot = VkBotClass()
 
 
 def check_server_by_info(ip, port, version):

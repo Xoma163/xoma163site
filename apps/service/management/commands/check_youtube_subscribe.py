@@ -3,8 +3,10 @@ import time
 from django.core.management import BaseCommand
 
 from apps.API_VK.APIs.YoutubeInfo import YoutubeInfo
+from apps.API_VK.VkBotClass import VkBotClass
 from apps.service.models import YoutubeSubscribe
-from xoma163site.wsgi import vk_bot
+
+vk_bot = VkBotClass()
 
 
 class Command(BaseCommand):

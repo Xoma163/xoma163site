@@ -2,9 +2,11 @@ from datetime import datetime
 
 from django.core.management.base import BaseCommand
 
+from apps.API_VK.VkBotClass import VkBotClass
 from apps.API_VK.models import VkChat, VkUser
 from apps.games.models import Gamer
-from xoma163site.wsgi import vk_bot
+
+vk_bot = VkBotClass()
 
 
 class Command(BaseCommand):

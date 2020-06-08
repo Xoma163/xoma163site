@@ -2,7 +2,11 @@
 
 from django.core.management import BaseCommand
 
-from xoma163site.wsgi import cameraHandler, vk_bot
+from apps.API_VK.VkBotClass import VkBotClass
+from apps.birds.CameraHandler import CameraHandler
+
+cameraHandler = CameraHandler()
+vk_bot = VkBotClass()
 
 
 class Command(BaseCommand):

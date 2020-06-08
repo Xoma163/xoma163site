@@ -1,9 +1,11 @@
 from django.core.management.base import BaseCommand
 from django.db.models import Count
 
+from apps.API_VK.VkBotClass import VkBotClass
 from apps.API_VK.VkEvent import VkEvent
 from apps.games.models import Rate
-from xoma163site.wsgi import vk_bot
+
+vk_bot = VkBotClass()
 
 
 class Command(BaseCommand):

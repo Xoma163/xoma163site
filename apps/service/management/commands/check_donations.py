@@ -1,16 +1,17 @@
 import requests
 from django.core.management.base import BaseCommand
 
+from apps.API_VK.VkBotClass import VkBotClass
 from apps.API_VK.models import VkChat
 from apps.service.models import Service, Donations
 from secrets.secrets import secrets
-from xoma163site.wsgi import vk_bot
+
+vk_bot = VkBotClass()
 
 
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-
         URL = f"https://www.donationalerts.com/api/v1/alerts/donations"
         headers = {'Authorization': 'Bearer ' + secrets['donationalert']['access_token']}
         response = requests.get(URL, headers=headers).json()

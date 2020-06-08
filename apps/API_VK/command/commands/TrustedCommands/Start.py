@@ -2,7 +2,9 @@ from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.Consts import Role
 from apps.API_VK.command.DoTheLinuxComand import do_the_linux_command
 from apps.API_VK.models import VkUser
-from xoma163site.wsgi import cameraHandler
+from apps.birds.CameraHandler import CameraHandler
+
+cameraHandler = CameraHandler()
 
 
 class Start(CommonCommand):

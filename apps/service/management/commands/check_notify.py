@@ -4,9 +4,11 @@ from datetime import datetime, timedelta, date
 
 from django.core.management.base import BaseCommand
 
+from apps.API_VK.VkBotClass import VkBotClass
 from apps.API_VK.VkEvent import VkEvent
 from apps.service.models import Notify
-from xoma163site.wsgi import vk_bot
+
+vk_bot = VkBotClass()
 
 
 class Command(BaseCommand):

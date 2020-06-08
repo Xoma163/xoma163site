@@ -166,12 +166,12 @@ model.save()
 ### Клонирование и запуск автонастройки (создание окружение, установка зависимостей)
 - `git clone https://github.com/Xoma163/xoma163site.git`
 - `chmod +x setup.sh`
-- './setup.sh'
+- `./setup.sh`
 
 ### Работа с БД
 
 ```postgresql
-CREATE ROLE <your_username> WITH PASSWORD <your_password>;
+CREATE ROLE <your_username> WITH LOGIN ENCRYPTED PASSWORD '<your_password>'
 CREATE DATABASE <your_database> WITH OWNER <your_username>;
 SET TIMEZONE="<your_timezone>";
 ```
