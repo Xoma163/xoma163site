@@ -7,10 +7,10 @@ Restart=always
 RestartSec=5
 Nice=1
 SuccessExitStatus=0 1
-WorkingDirectory=/var/www/xoma163.site/
-ExecStart=/var/www/xoma163.site/venv/bin/uwsgi --ini /var/www/xoma163.site/config/uwsgi.ini
-ExecStop = /var/www/xoma163.site/venv/bin/uwsgi --stop /var/www/xoma163.site/config/xoma163site.pid
-#ExecStopPost=/bin/rm /var/www/xoma163.site/thread.lock
+WorkingDirectory=/var/www/xoma163site/
+ExecStart=/var/www/xoma163site/venv/bin/uwsgi --ini /var/www/xoma163site/config/uwsgi.ini
+ExecStop = /var/www/xoma163site/venv/bin/uwsgi --stop /var/www/xoma163site/config/xoma163site.pid
+#ExecStopPost=/bin/rm /var/www/xoma163site/thread.lock
 
 [Install]
 WantedBy=multi-user.target

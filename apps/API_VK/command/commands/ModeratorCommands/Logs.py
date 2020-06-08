@@ -20,7 +20,7 @@ def get_server_logs(command):
     if index_command != -1:
         output = output[index_command + len(command) + 1:]
     else:
-        start_command = "/var/www/xoma163.site/venv/bin/uwsgi --ini /var/www/xoma163.site/config/uwsgi.ini"
+        start_command = "/var/www/xoma163site/venv/bin/uwsgi --ini /var/www/xoma163site/config/uwsgi.ini"
         index_command = output.rfind(start_command)
         if index_command != -1:
             output = output[index_command + len(start_command) + 1:]

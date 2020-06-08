@@ -14,7 +14,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def init_groups():
-        groups = [{'name': x} for x in Role]
+        groups = [{'name': x.name} for x in Role]
         for group in groups:
             Group.objects.update_or_create(name=group['name'], defaults=group)
 

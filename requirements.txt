@@ -24,3 +24,5 @@ youtube_dl
 wakeonlan
 django-static-autocollect
 vk_api
+uwsgi
+django-cors-headers

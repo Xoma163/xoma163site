@@ -160,7 +160,7 @@ def sprint(text):
 
 LOGS_DIR = os.path.join(BASE_DIR, 'logs')
 if not os.path.exists(LOGS_DIR):
-    os.makedirs(LOGS_DIR)
+    os.mkdir(LOGS_DIR)
 
 DEBUG_FILE = os.path.join(LOGS_DIR, 'commands-debug.log')
 ERROR_FILE = os.path.join(LOGS_DIR, 'commands-error.log')

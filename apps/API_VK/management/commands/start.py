@@ -1,4 +1,4 @@
-#!/var/www/xoma163.site/venv/bin/python -u
+#!/var/www/xoma163site/venv/bin/python -u
 
 from django.core.management import BaseCommand
 
