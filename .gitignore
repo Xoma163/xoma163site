@@ -108,7 +108,6 @@ secrets/
 
 .docs/
 
-migrations
 static/files
 INFO.md
 .clocignore
