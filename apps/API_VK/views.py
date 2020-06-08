@@ -7,14 +7,14 @@ from apps.API_VK.APIs.YandexGeoAPI import YandexGeoAPI
 from apps.API_VK.VkBotClass import VkBotClass
 from apps.API_VK.models import VkUser, Log, APIUser, APITempUser
 
-vk_bot = VkBotClass()
-
 
 def send_json(message):
     return JsonResponse(message, json_dumps_params={'ensure_ascii': False})
 
 
 def where_is_me(request):
+    vk_bot = VkBotClass()
+
     from apps.API_VK.command.CommonMethods import localize_datetime
 
     log = Log()
@@ -100,6 +100,8 @@ def check_bool(val):
 
 
 def petrovich_api(request):
+    vk_bot = VkBotClass()
+
     def register(vk_id):
         vk_id = vk_id.replace('-', '').replace(' ', '')
         user_id = int(vk_id)
@@ -190,6 +192,8 @@ def petrovich_api(request):
 
 
 def chat_api(request):
+    vk_bot = VkBotClass()
+
     if 'Client-Id' not in request.headers:
         return send_json({'error': 'empty header "Client-Id"'})
     client_id = request.headers['Client-Id']
