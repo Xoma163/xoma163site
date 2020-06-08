@@ -1,7 +1,7 @@
 secrets = {
     'django': {
         # random 50 symbols
-        'SECRET_KEY': ''
+        'SECRET_KEY': 'SET RANDOM 50 SYMBOLS HERE. IMPORTANT'
     },
     # your database user
     'db': {

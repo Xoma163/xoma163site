@@ -371,6 +371,7 @@ class Command(BaseCommand):
         for city in cities:
             timezone_obj, _ = TimeZone.objects.get_or_create(name=city['timezone__name'])
             city['timezone'] = timezone_obj
+            del city['timezone__name']
             City.objects.update_or_create(name=city['name'], defaults=city)
 
     @staticmethod
