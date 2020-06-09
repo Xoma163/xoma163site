@@ -8,8 +8,8 @@
 
 ### 1. Подготовка БД
 
--  `su - postgres`
--  `psql`
+-   `su - postgres` 
+-   `psql` 
 
 ```postgresql
 CREATE ROLE '<your_username>' WITH LOGIN ENCRYPTED PASSWORD '<your_password>';
@@ -22,24 +22,24 @@ SET TIMEZONE='<your_timezone>';
 
 За основу можно и нужно взять secrets/secrets_example.py  
 
-`cp secrets/secrets_example.py secrets/secrets.py`  
+`cp secrets/secrets_example.py secrets/secrets.py` 
 
 В первую очередь нужно заполнить:
--  `django['secret_key']`
--  `db`
--  `vk['bot']`
+-   `django['secret_key']`
+-   `db`
+-   `vk['bot']`
 
 ### 3. Запуск автонастройки (создание окружение, установка зависимостей)
--  `chmod +x setup.sh`
--  `./setup.sh`
+-   `chmod +x setup.sh`
+-   `./setup.sh`
 
 Обрати внимание. Скрипт заменяет некоторые абсолютные пути на тот путь, откуда ты будешь запускать скрипт. Рекомендуется это делать из папки проекта
 
 ### 4. Указание своих данных в конфигах
--  в config/xoma163bot.service нужно указать пользователя от имени которого будет выполняться служба
--  в config/xoma163site.service нужно указать пользователя от имени которого будет выполняться служба
--  в config/xoma163site_nginx.conf нужно указать имя сервера, на которое будет реагировать nginx и порт.
+-   в config/xoma163bot.service нужно указать пользователя от имени которого будет выполняться служба 
+-   в config/xoma163site.service нужно указать пользователя от имени которого будет выполняться служба 
+-   в config/xoma163site_nginx.conf нужно указать имя сервера, на которое будет реагировать nginx и порт. 
 
 ### 5. Запуск
--  `systemctl start xoma163bot` - запуск бота
--  `systemctl start xoma163site` - запуск админки и сайта
+-   `systemctl start xoma163bot` - запуск бота
+-   `systemctl start xoma163site` - запуск админки и сайта
