@@ -10,17 +10,24 @@ pip install wheel
 pip install --upgrade --user travis pip setuptools wheel virtualenv
 pip install -r requirements.txt
 
+_pwd=$pwd
+
 # systemd
-sudo ln -s "$(pwd)/config/xoma163bot.service" /etc/systemd/system/
-sudo ln -s "$(pwd)/config/xoma163site.service" /etc/systemd/system/
+sudo ln -s "$_pwd/config/xoma163bot.service" /etc/systemd/system/
+sudo ln -s "$_pwd/config/xoma163site.service" /etc/systemd/system/
 sudo systemctl daemon-reload
 
 cp secrets/secrets_example.py secrets/secrets.py
 
 #web
-sudo ln -s "$(pwd)/config/xoma163site_nginx.conf" /etc/nginx/sites-available/
-sudo ln -s "$(pwd)/config/xoma163site_nginx.conf" /etc/nginx/sites-enabled/
+sudo ln -s "$_pwd/config/xoma163site_nginx.conf" /etc/nginx/sites-available/
+sudo ln -s "$_pwd/config/xoma163site_nginx.conf" /etc/nginx/sites-enabled/
 sudo systemctl restart nginx
 
 python manage.py migrate
 python manage.py initial
+
+old_path="/var/www/xoma163site/"
+sed -i "s#$old_path#$_pwd#g" ./service/xoma163bot_copy.service
+sed -i "s#$old_path#$_pwd#g" ./service/xoma163site.service
+sed -i "s#$old_path#$_pwd#g" ./service/xoma163site_nginx.conf
