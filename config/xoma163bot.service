@@ -1,5 +1,5 @@
 [Unit]
-Description=xoma163.bot
+Description=xoma163bot
 
 [Service]
 User=server
