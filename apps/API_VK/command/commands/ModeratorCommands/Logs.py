@@ -1,6 +1,7 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.Consts import Role
 from apps.API_VK.command.DoTheLinuxComand import do_the_linux_command
+from xoma163site.settings import BASE_DIR
 
 
 def remove_rows_if_find_word(old_str, word):
@@ -20,7 +21,7 @@ def get_server_logs(command):
     if index_command != -1:
         output = output[index_command + len(command) + 1:]
     else:
-        start_command = "/var/www/xoma163site/venv/bin/uwsgi --ini /var/www/xoma163site/config/uwsgi.ini"
+        start_command = f"{BASE_DIR}/venv/bin/uwsgi --ini {BASE_DIR}/config/uwsgi.ini"
         index_command = output.rfind(start_command)
         if index_command != -1:
             output = output[index_command + len(start_command) + 1:]

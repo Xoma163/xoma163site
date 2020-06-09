@@ -1,5 +1,3 @@
-#!/var/www/xoma163site/venv/bin/python -u
-
 from django.core.management import BaseCommand
 
 from apps.API_VK.VkBotClass import VkBotClass

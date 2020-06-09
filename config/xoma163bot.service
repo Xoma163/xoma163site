@@ -6,9 +6,7 @@ User=server
 Type=simple
 SuccessExitStatus=0 1
 WorkingDirectory=/var/www/xoma163site/
-ExecStart=/var/www/xoma163site/venv/bin/python -u /var/www/xoma163site/manage.py start
-ExecStop=/usr/bin/killall -s 9 xoma163bot
-#ExecStopPost=/bin/rm /var/www/xoma163site/thread.lock
+ExecStart=/var/www/xoma163site/venv/bin/python -u manage.py start
 
 [Install]
 WantedBy=multi-user.target

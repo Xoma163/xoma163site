@@ -171,14 +171,18 @@ CREATE DATABASE '<your_database>' WITH OWNER '<your_username>';
 SET TIMEZONE='<your_timezone>';
 ```
 
+### Настройка конфигов
+Внеси все свои данные по боту ВК и различным API в файл secrets/secrets.py
+В первую очередь:
+- django.secret_key
+- db
+- vk.bot
+
 ### Клонирование и запуск автонастройки (создание окружение, установка зависимостей)
 - `git clone https://github.com/Xoma163/xoma163site.git`
 - `chmod +x setup.sh`
 - `./setup.sh`
 
-
-### Настройка конфигов
-Внеси все свои данные по боту ВК и различным API в файл secrets/secrets.py
 
 ### Запуск
 - `systemctl start xoma163bot`

@@ -3,7 +3,7 @@ import json
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.Consts import Role
 from apps.API_VK.command.DoTheLinuxComand import do_the_linux_command
-from xoma163site.settings import MAIN_DOMAIN
+from xoma163site.settings import MAIN_DOMAIN, BASE_DIR
 
 
 class Status(CommonCommand):
@@ -26,7 +26,7 @@ class Status(CommonCommand):
 
 
 def get_minecraft_server_info(ip, port, v):
-    command = f"/var/www/xoma163site/venv/bin/mcstatus {ip}:{port} json"
+    command = f"{BASE_DIR}/venv/bin/mcstatus {ip}:{port} json"
     response = json.loads(do_the_linux_command(command))
     if not response['online']:
         result = f"Майн {v} - остановлен ⛔"

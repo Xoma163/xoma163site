@@ -177,7 +177,7 @@ def get_inline_keyboard(command_text, button_text="Ещё", args=None):
 
 # Ищет команду по имени
 def find_command_by_name(command_name):
-    from apps.API_VK.command import get_commands
+    from apps.API_VK.command.initial import get_commands
     commands = get_commands()
 
     for command in commands:

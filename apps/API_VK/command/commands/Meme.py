@@ -240,7 +240,6 @@ class Meme(CommonCommand):
             if isinstance(memes, MemeModel):
                 return prepared_meme
             else:
-                self.vk_bot.parse_and_send_msgs(self.vk_event.peer_id, prepared_meme)
                 msg = self.get_similar_memes_names(memes)
                 return [prepared_meme, msg]
 
