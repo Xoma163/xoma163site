@@ -4,9 +4,9 @@
 
 Этот проект бот ВКонтакте, созданный в первую очередь для личных целей, но так вышло, что и для развлечения.
 
-*  [Документация](https://vk.com/@igor_petrovich_ksta-instrukciya-po-ispolzovaniu) 
-*  [FAQ](./readme/faq.md)
-*  [API](./readme/api.md) 
-*  [Установка](./readme/setup.md)
+-   [Документация](https://vk.com/@igor_petrovich_ksta-instrukciya-po-ispolzovaniu) 
+-   [FAQ](./readme/faq.md)
+-   [API](./readme/api.md) 
+-   [Установка](./readme/setup.md)
 
 
