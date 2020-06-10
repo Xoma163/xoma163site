@@ -153,7 +153,7 @@ class Meme(CommonCommand):
         elif arg0 in ['р', 'рандом']:
             meme = self.get_random_meme()
             return self.prepare_meme_to_send(meme, print_name=True, send_keyboard=True)
-        elif arg0 in ['подтвердить', 'принять', '+']:
+        elif arg0 in ['подтвердить', 'принять', '+', 'аппрув', 'апрув']:
             self.check_sender(Role.MODERATOR)
             if len(self.vk_event.args) == 1:
                 try:
@@ -247,13 +247,14 @@ class Meme(CommonCommand):
         """
         :return: 1 мем. Если передан параметр use_tanimoto, то список мемов отсортированных по коэфф. Танимото
         """
-        if filter_list is None:
-            filter_list = []
-        memes = MemeModel.objects.filter(approved=approved)
-        flag_regex = False
+        memes = MemeModel.objects
         if _id:
             memes = memes.filter(id=_id)
         else:
+            if filter_list is None:
+                filter_list = []
+            memes = memes.filter(approved=approved)
+            flag_regex = False
             if filter_list:
                 filter_list = list(map(lambda x: x.lower(), filter_list))
                 for _filter in filter_list:

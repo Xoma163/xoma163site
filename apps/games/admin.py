@@ -4,9 +4,6 @@ from apps.games.models import Rate, Gamer, PetrovichUser, PetrovichGames, TicTac
     CodenamesSession, RouletteRate
 
 
-# RateDelete
-
-
 @admin.register(Gamer)
 class GamerAdmin(admin.ModelAdmin):
     list_display = ('user', 'points', 'tic_tac_toe_points', 'codenames_points', 'roulette_points')
