@@ -24,7 +24,7 @@ class Issue(CommonCommand):
                 fwd_user = self.vk_bot.get_user_by_id(fwd_user_id)
                 username = fwd_user.name + " " + fwd_user.surname
             else:
-                fwd_user_id = int(msgs[0]['from_id'])
+                fwd_user_id = int(msg['from_id'])
                 username = self.vk_bot.get_bot_by_id(fwd_user_id).name
             issue_text += f"{username}:\n{text}\n\n"
 
