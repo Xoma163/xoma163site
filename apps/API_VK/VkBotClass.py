@@ -189,7 +189,7 @@ class VkBotClass(threading.Thread):
                     self.parse_and_send_msgs(vk_event.peer_id, msg)
                 return msg
             except Exception as e:
-                msg = "Непредвиденная ошибка. Сообщите разработчику"
+                msg = "Непредвиденная ошибка. Сообщите разработчику в группе или команда /баг"
                 tb = traceback.format_exc()
                 print(tb)
                 logs = f"Exception: {str(e)}\n" \
