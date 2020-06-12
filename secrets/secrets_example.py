@@ -1,13 +1,13 @@
 secrets = {
     'django': {
         # random 50 symbols
-        'SECRET_KEY': 'SET RANDOM 50 SYMBOLS HERE. IMPORTANT'
+        'SECRET_KEY': '!!!!!!!! SET RANDOM 50 SYMBOLS HERE. IMPORTANT !!!!!!!!'
     },
     # your database user
     'db': {
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
+        'NAME': '<your_database>',
+        'USER': '<your_username>',
+        'PASSWORD': '<your_password>',
         'HOST': 'localhost',
         'PORT': '5432'
     },
@@ -15,8 +15,8 @@ secrets = {
     'vk': {
         'bot': {
             # long-poll token
-            'TOKEN': '',
-            'group_id': '',
+            'TOKEN': '<your_token>',
+            'group_id': '<your_group_id>',
             # mentions that the bot responds to
             'mentions': ["[club123|@short_group_name]",
                          "[club123|@club123]",
