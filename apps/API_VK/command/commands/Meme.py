@@ -285,7 +285,7 @@ class Meme(CommonCommand):
                 raise RuntimeWarning(msg)
             else:
                 filters_str = " ".join(filter_list)
-                return self.get_tanimoto_memes(memes, filters_str)
+                return get_tanimoto_memes(memes, filters_str)
 
     @staticmethod
     def get_random_meme():
@@ -293,16 +293,6 @@ class Meme(CommonCommand):
 
     def prepare_meme_to_send(self, meme, print_name=False, send_keyboard=False):
         return prepare_meme_to_send(self.vk_bot, self.vk_event, meme, print_name, send_keyboard, self.names[0])
-
-    @staticmethod
-    def get_tanimoto_memes(memes, query):
-        memes_list = []
-        for meme in memes:
-            tanimoto_coefficient = tanimoto(meme.name, query)
-            memes_list.append({'meme': meme, 'tanimoto': tanimoto_coefficient})
-        memes_list.sort(key=lambda x: x['tanimoto'], reverse=True)
-        memes_list = [meme['meme'] for meme in memes_list]
-        return memes_list
 
     @staticmethod
     def get_similar_memes_names(memes):
@@ -316,6 +306,16 @@ class Meme(CommonCommand):
         if total_memes_count > 10:
             msg += f"\n..."
         return msg
+
+
+def get_tanimoto_memes(memes, query):
+    memes_list = []
+    for meme in memes:
+        tanimoto_coefficient = tanimoto(meme.name, query)
+        memes_list.append({'meme': meme, 'tanimoto': tanimoto_coefficient})
+    memes_list.sort(key=lambda x: x['tanimoto'], reverse=True)
+    memes_list = [meme['meme'] for meme in memes_list]
+    return memes_list
 
 
 def prepare_meme_to_send(vk_bot, vk_event, meme, print_name=False, send_keyboard=False, name=None):

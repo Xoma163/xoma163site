@@ -3,6 +3,7 @@ from django.core.paginator import Paginator
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import check_user_group
 from apps.API_VK.command.Consts import Role
+from apps.API_VK.command.commands.Meme import get_tanimoto_memes
 from apps.service.models import Meme as MemeModel
 
 
@@ -59,6 +60,7 @@ class Memes(CommonCommand):
                 memes = memes.filter(name__icontains=arg)
             if len(memes) == 0:
                 return "Не нашёл мемов по заданному запросу"
+            memes = get_tanimoto_memes(memes, self.vk_event.original_args)
             memes_sliced = memes[:20]
             meme_names = get_memes_names(memes_sliced, self.vk_event.sender)
             meme_names_str = ";\n".join(meme_names)
