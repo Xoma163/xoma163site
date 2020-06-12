@@ -11,6 +11,10 @@ from apps.API_VK.command.CommonMethods import get_attachments_from_attachments_o
 MAX_DURATION = 20
 
 
+# Если прислано голосовое - распознаёт
+# Если переслано голосовое с командой - выполняет команду
+# Если переслано голосовое с текстом - распознаёт
+# Если переслано голосовое с неправильной командой - распознаёт
 def have_audio_message(vk_event):
     if isinstance(vk_event, VkEvent):
         all_attachments = vk_event.attachments or []
@@ -28,7 +32,7 @@ def have_audio_message(vk_event):
             for attachment in all_attachments:
                 if attachment['type'] == 'audio_message':
                     # Костыль, чтобы при пересланном сообщении он не выполнял никакие другие команды
-                    vk_event['message']['text'] = ''
+                    # vk_event['message']['text'] = ''
                     return True
     return False
 
@@ -40,7 +44,7 @@ class VoiceRecognition(CommonCommand):
         detail_help_text = "Распознай (Пересланное сообщение с голосовым сообщением) - распознаёт голосовое " \
                            "сообщение\n" \
                            "Если дан доступ к переписке, то распознает автоматически"
-        super().__init__(names, help_text, detail_help_text, api=False)
+        super().__init__(names, help_text, detail_help_text, api=False, priority=-100)
 
     def accept(self, vk_event):
         if have_audio_message(vk_event):
