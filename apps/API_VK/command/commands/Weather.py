@@ -64,7 +64,7 @@ class Weather(CommonCommand):
         avg_temp_today = self.get_avg_temp(part_today)
 
         # Изменение температуры на 5 градусов
-        delta_temp = avg_temp_yesterday - avg_temp_today
+        delta_temp = avg_temp_today - avg_temp_yesterday
         if delta_temp >= 5:
             difference += f"Температура на {delta_temp} градусов больше, чем вчера\n"
         elif delta_temp <= -5:
