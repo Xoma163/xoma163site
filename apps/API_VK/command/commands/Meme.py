@@ -34,154 +34,158 @@ class Meme(CommonCommand):
 
     def start(self):
         arg0 = self.vk_event.args[0].lower()
-        if arg0 in ['добавить']:
-            self.check_args(2)
-            attachments = get_attachments_from_attachments_or_fwd(self.vk_event, ['audio', 'video', 'photo', 'doc'])
-            if len(attachments) == 0:
-                return "Не нашёл вложений в сообщении или пересланном сообщении"
-            attachment = attachments[0]
+        menu = [
+            [['добавить'], self.menu_add],
+            [['обновить'], self.menu_refresh],
+            [['удалить'], self.menu_delete],
+            [['конфа'], self.menu_conference],
+            [['рандом', 'р'], self.menu_random],
+            [['подтвердить', 'принять', '+'], self.menu_confirm],
+            [['отклонить', 'отменить', '-'], self.menu_reject],
+            [['переименовать', 'правка'], self.menu_rename],
+            [['id', 'ид'], self.menu_id],
+            [['default'], self.menu_default]
+        ]
+        method = self.handle_menu(menu, arg0)
+        return method()
 
-            for i, _ in enumerate(self.vk_event.args):
-                self.vk_event.args[i] = self.vk_event.args[i].lower()
+    ### MENU ###
+    def menu_add(self):
+        self.check_args(2)
+        attachments = get_attachments_from_attachments_or_fwd(self.vk_event, ['audio', 'video', 'photo', 'doc'])
+        if len(attachments) == 0:
+            return "Не нашёл вложений в сообщении или пересланном сообщении"
+        attachment = attachments[0]
 
-            new_meme = {
-                'name': " ".join(self.vk_event.args[1:]),
-                'type': attachment['type'],
-                'author': self.vk_event.sender,
-                'approved': check_user_group(self.vk_event.sender, Role.MODERATOR) or check_user_group(
-                    self.vk_event.sender, Role.TRUSTED)
-            }
+        for i, _ in enumerate(self.vk_event.args):
+            self.vk_event.args[i] = self.vk_event.args[i].lower()
 
-            if MemeModel.objects.filter(name=new_meme['name']).exists():
-                return "Мем с таким названием уже есть в базе"
+        new_meme = {
+            'name': " ".join(self.vk_event.args[1:]),
+            'type': attachment['type'],
+            'author': self.vk_event.sender,
+            'approved': check_user_group(self.vk_event.sender, Role.MODERATOR) or check_user_group(
+                self.vk_event.sender, Role.TRUSTED)
+        }
 
-            if attachment['type'] == 'video' or attachment['type'] == 'audio':
-                new_meme['link'] = attachment['url']
-            elif attachment['type'] == 'photo' or attachment['type'] == 'doc':
-                new_meme['link'] = attachment['download_url']
-            else:
-                return "Невозможно"
+        if MemeModel.objects.filter(name=new_meme['name']).exists():
+            return "Мем с таким названием уже есть в базе"
 
-            new_meme_obj = MemeModel.objects.create(**new_meme)
-            if new_meme['approved']:
-                return "Добавил"
-            else:
-                meme_to_send = self.prepare_meme_to_send(new_meme_obj)
-                meme_to_send['msg'] = "Запрос на подтверждение мема:\n" \
-                                      f"{new_meme_obj.author}\n" \
-                                      f"{new_meme_obj.name} ({new_meme_obj.id})"
-                self.vk_bot.parse_and_send_msgs(self.vk_bot.get_group_id(TEST_CHAT_ID), meme_to_send)
-                return "Добавил. Воспользоваться мемом можно после проверки модераторами."
-        elif arg0 in ['обновить']:
-            self.check_args(2)
-            _id = None
-            if len(self.vk_event.args) == 2:
-                self.int_args = [1]
-                try:
-                    self.parse_int()
-                    _id = self.vk_event.args[1]
-                except RuntimeWarning:
-                    pass
-            attachments = get_attachments_from_attachments_or_fwd(self.vk_event, ['audio', 'video', 'photo', 'doc'])
-            if len(attachments) == 0:
-                return "Не нашёл вложений в сообщении или пересланном сообщении"
-            attachment = attachments[0]
-            if attachment['type'] == 'video' or attachment['type'] == 'audio':
-                new_meme_link = attachment['url']
-            elif attachment['type'] == 'photo' or attachment['type'] == 'doc':
-                new_meme_link = attachment['download_url']
-            else:
-                return "Невозможно"
+        if attachment['type'] == 'video' or attachment['type'] == 'audio':
+            new_meme['link'] = attachment['url']
+        elif attachment['type'] == 'photo' or attachment['type'] == 'doc':
+            new_meme['link'] = attachment['download_url']
+        else:
+            return "Невозможно"
 
-            if (check_user_group(self.vk_event.sender, Role.MODERATOR) or
-                    check_user_group(self.vk_event.sender, Role.TRUSTED)):
-                meme = self.get_meme(self.vk_event.args[1:], _id=_id)
-                meme.link = new_meme_link
-                meme.type = attachment['type']
-                meme.save()
-                return f'Обновил мем "{meme.name}"'
-            else:
-                meme = self.get_meme(self.vk_event.args[1:], self.vk_event.sender, _id=_id)
-                meme.link = new_meme_link
-                meme.approved = False
-                meme.type = attachment['type']
-                meme.save()
+        new_meme_obj = MemeModel.objects.create(**new_meme)
+        if new_meme['approved']:
+            return "Добавил"
+        else:
+            meme_to_send = self.prepare_meme_to_send(new_meme_obj)
+            meme_to_send['msg'] = "Запрос на подтверждение мема:\n" \
+                                  f"{new_meme_obj.author}\n" \
+                                  f"{new_meme_obj.name} ({new_meme_obj.id})"
+            self.vk_bot.parse_and_send_msgs(self.vk_bot.get_group_id(TEST_CHAT_ID), meme_to_send)
+            return "Добавил. Воспользоваться мемом можно после проверки модераторами."
 
-                meme_to_send = self.prepare_meme_to_send(meme)
-                meme_to_send['msg'] = "Запрос на обновление мема:\n" \
-                                      f"{meme.author}\n" \
-                                      f"{meme.name} ({meme.id})"
-                self.vk_bot.parse_and_send_msgs(self.vk_bot.get_group_id(TEST_CHAT_ID), meme_to_send)
-                return "Обновил. Воспользоваться мемом можно после проверки модераторами."
-        elif arg0 in ['удалить']:
-            self.check_args(2)
-            if check_user_group(self.vk_event.sender, Role.MODERATOR):
-                try:
-                    self.int_args = [1]
-                    self.parse_int()
-                    meme_id = self.vk_event.args[1]
-                    meme = MemeModel.objects.filter(id=meme_id).first()
-                    reason = " ".join(self.vk_event.args[2:])
-                    if reason:
-                        msg = f'Мем с названием "{meme.name}" удалён. Причина: {reason}'
-                    else:
-                        msg = f'Мем с названием "{meme.name}" удалён поскольку он не ' \
-                              f'соответствует правилам или был удалён автором.'
-                except RuntimeError:
-                    meme = self.get_meme(self.vk_event.args[1:])
-                    msg = f'Мем с названием "{meme.name}" удалён поскольку он не ' \
-                          f'соответствует правилам или был удалён автором.'
-                if meme.author != self.vk_event.sender:
-                    self.vk_bot.send_message(meme.author.user_id, msg)
-            else:
-                meme = self.get_meme(self.vk_event.args[1:], self.vk_event.sender)
-            meme_name = meme.name
-            meme.delete()
-            return f'Удалил мем "{meme_name}"'
-        elif arg0 in ['конфа']:
-            self.check_args(3)
-            chat = get_one_chat_with_user(self.vk_event.args[1], self.vk_event.sender.user_id)
-            if self.vk_event.chat == chat:
-                return "Зачем мне отправлять мем в эту же конфу?"
-            if self.vk_event.args[-1].lower() in ['рандом', 'р']:
-                meme = self.get_random_meme()
-            else:
-                meme = self.get_meme(self.vk_event.args[2:])
-            prepared_meme = self.prepare_meme_to_send(meme, print_name=True)
-            self.vk_bot.parse_and_send_msgs(chat.chat_id, prepared_meme)
-            return "Отправил"
-        elif arg0 in ['р', 'рандом']:
-            meme = self.get_random_meme()
-            return self.prepare_meme_to_send(meme, print_name=True, send_keyboard=True)
-        elif arg0 in ['подтвердить', 'принять', '+', 'аппрув', 'апрув']:
-            self.check_sender(Role.MODERATOR)
-            if len(self.vk_event.args) == 1:
-                try:
-                    meme = self.get_meme(approved=False)
-                except RuntimeWarning:
-                    return "Не нашёл мемов для подтверждения"
-                meme_to_send = self.prepare_meme_to_send(meme)
-                meme_to_send['msg'] = f"{meme.author}\n" \
-                                      f"{meme.name} ({meme.id})"
-                return meme_to_send
-            else:
+    def menu_refresh(self):
+        self.check_args(2)
+        _id = None
+        if len(self.vk_event.args) == 2:
+            self.int_args = [1]
+            try:
+                self.parse_int()
+                _id = self.vk_event.args[1]
+            except RuntimeWarning:
+                pass
+        attachments = get_attachments_from_attachments_or_fwd(self.vk_event, ['audio', 'video', 'photo', 'doc'])
+        if len(attachments) == 0:
+            return "Не нашёл вложений в сообщении или пересланном сообщении"
+        attachment = attachments[0]
+        if attachment['type'] == 'video' or attachment['type'] == 'audio':
+            new_meme_link = attachment['url']
+        elif attachment['type'] == 'photo' or attachment['type'] == 'doc':
+            new_meme_link = attachment['download_url']
+        else:
+            return "Невозможно"
+
+        if (check_user_group(self.vk_event.sender, Role.MODERATOR) or
+                check_user_group(self.vk_event.sender, Role.TRUSTED)):
+            meme = self.get_meme(self.vk_event.args[1:], _id=_id)
+            meme.link = new_meme_link
+            meme.type = attachment['type']
+            meme.save()
+            return f'Обновил мем "{meme.name}"'
+        else:
+            meme = self.get_meme(self.vk_event.args[1:], self.vk_event.sender, _id=_id)
+            meme.link = new_meme_link
+            meme.approved = False
+            meme.type = attachment['type']
+            meme.save()
+
+            meme_to_send = self.prepare_meme_to_send(meme)
+            meme_to_send['msg'] = "Запрос на обновление мема:\n" \
+                                  f"{meme.author}\n" \
+                                  f"{meme.name} ({meme.id})"
+            self.vk_bot.parse_and_send_msgs(self.vk_bot.get_group_id(TEST_CHAT_ID), meme_to_send)
+            return "Обновил. Воспользоваться мемом можно после проверки модераторами."
+
+    def menu_delete(self):
+        self.check_args(2)
+        if check_user_group(self.vk_event.sender, Role.MODERATOR):
+            try:
                 self.int_args = [1]
                 self.parse_int()
-                non_approved_meme = self.get_meme(_id=self.vk_event.args[1])
-                if not non_approved_meme:
-                    return "Не нашёл мема с таким id"
-                if non_approved_meme.approved:
-                    return "Мем уже подтверждён"
+                meme_id = self.vk_event.args[1]
+                meme = MemeModel.objects.filter(id=meme_id).first()
+                reason = " ".join(self.vk_event.args[2:])
+                if reason:
+                    msg = f'Мем с названием "{meme.name}" удалён. Причина: {reason}'
+                else:
+                    msg = f'Мем с названием "{meme.name}" удалён поскольку он не ' \
+                          f'соответствует правилам или был удалён автором.'
+            except RuntimeError:
+                meme = self.get_meme(self.vk_event.args[1:])
+                msg = f'Мем с названием "{meme.name}" удалён поскольку он не ' \
+                      f'соответствует правилам или был удалён автором.'
+            if meme.author != self.vk_event.sender:
+                self.vk_bot.send_message(meme.author.user_id, msg)
+        else:
+            meme = self.get_meme(self.vk_event.args[1:], self.vk_event.sender)
+        meme_name = meme.name
+        meme.delete()
+        return f'Удалил мем "{meme_name}"'
 
-                user_msg = f'Мем с названием "{non_approved_meme.name}" подтверждён.'
-                self.vk_bot.send_message(non_approved_meme.author.user_id, user_msg)
+    def menu_conference(self):
+        self.check_args(3)
+        chat = get_one_chat_with_user(self.vk_event.args[1], self.vk_event.sender.user_id)
+        if self.vk_event.chat == chat:
+            return "Зачем мне отправлять мем в эту же конфу?"
+        if self.vk_event.args[-1].lower() in ['рандом', 'р']:
+            meme = self.get_random_meme()
+        else:
+            meme = self.get_meme(self.vk_event.args[2:])
+        prepared_meme = self.prepare_meme_to_send(meme, print_name=True)
+        self.vk_bot.parse_and_send_msgs(chat.chat_id, prepared_meme)
+        return "Отправил"
 
-                msg = f'Мем "{non_approved_meme.name}" ({non_approved_meme.id}) подтверждён'
-                non_approved_meme.approved = True
-                non_approved_meme.save()
-                return msg
-        elif arg0 in ['отклонить', '-']:
-            self.check_sender(Role.MODERATOR)
+    def menu_random(self):
+        meme = self.get_random_meme()
+        return self.prepare_meme_to_send(meme, print_name=True, send_keyboard=True)
+
+    def menu_confirm(self):
+        self.check_sender(Role.MODERATOR)
+        if len(self.vk_event.args) == 1:
+            try:
+                meme = self.get_meme(approved=False)
+            except RuntimeWarning:
+                return "Не нашёл мемов для подтверждения"
+            meme_to_send = self.prepare_meme_to_send(meme)
+            meme_to_send['msg'] = f"{meme.author}\n" \
+                                  f"{meme.name} ({meme.id})"
+            return meme_to_send
+        else:
             self.int_args = [1]
             self.parse_int()
             non_approved_meme = self.get_meme(_id=self.vk_event.args[1])
@@ -190,58 +194,81 @@ class Meme(CommonCommand):
             if non_approved_meme.approved:
                 return "Мем уже подтверждён"
 
-            reason = None
-            if len(self.vk_event.args) > 2:
-                reason = " ".join(self.vk_event.args[2:])
-            user_msg = f'Мем с названием "{non_approved_meme.name}" отклонён.'
-            if reason:
-                user_msg += f"\nПричина: {reason}"
+            user_msg = f'Мем с названием "{non_approved_meme.name}" подтверждён.'
             self.vk_bot.send_message(non_approved_meme.author.user_id, user_msg)
 
-            msg = f'Мем "{non_approved_meme.name}" ({non_approved_meme.id}) отклонён'
-            non_approved_meme.delete()
+            msg = f'Мем "{non_approved_meme.name}" ({non_approved_meme.id}) подтверждён'
+            non_approved_meme.approved = True
+            non_approved_meme.save()
             return msg
-        elif arg0 in ['переименовать', 'правка']:
-            self.check_sender(Role.MODERATOR)
-            self.int_args = [1]
-            self.parse_int()
-            renamed_meme = self.get_meme(_id=self.vk_event.args[1])
-            if not renamed_meme:
-                return "Не нашёл мема с таким id"
 
-            new_name = None
-            if len(self.vk_event.args) > 2:
-                new_name = " ".join(self.vk_event.args[2:])
-            if MemeModel.objects.filter(name=new_name).exists():
-                return "Мем с таким названием уже есть"
-            user_msg = f'Мем с названием "{renamed_meme.name}" переименован.\n' \
-                       f'Новое название - "{new_name}"'
-            if renamed_meme.author != self.vk_event.sender:
-                self.vk_bot.send_message(renamed_meme.author.user_id, user_msg)
-            renamed_meme.name = new_name
-            renamed_meme.save()
-            return user_msg
-        elif arg0 in ['id', 'ид']:
-            self.check_args(2)
-            self.int_args = [1]
-            self.parse_int()
-            _id = self.vk_event.args[1]
-            meme = self.get_meme(_id=_id)
-            return self.prepare_meme_to_send(meme, True)
+    def menu_reject(self):
+        self.check_sender(Role.MODERATOR)
+        self.int_args = [1]
+        self.parse_int()
+        non_approved_meme = self.get_meme(_id=self.vk_event.args[1])
+        if not non_approved_meme:
+            return "Не нашёл мема с таким id"
+        if non_approved_meme.approved:
+            return "Мем уже подтверждён"
+
+        reason = None
+        if len(self.vk_event.args) > 2:
+            reason = " ".join(self.vk_event.args[2:])
+        user_msg = f'Мем с названием "{non_approved_meme.name}" отклонён.'
+        if reason:
+            user_msg += f"\nПричина: {reason}"
+        self.vk_bot.send_message(non_approved_meme.author.user_id, user_msg)
+
+        msg = f'Мем "{non_approved_meme.name}" ({non_approved_meme.id}) отклонён'
+        non_approved_meme.delete()
+        return msg
+
+    def menu_rename(self):
+        self.check_sender(Role.MODERATOR)
+        self.int_args = [1]
+        self.parse_int()
+        renamed_meme = self.get_meme(_id=self.vk_event.args[1])
+        if not renamed_meme:
+            return "Не нашёл мема с таким id"
+
+        new_name = None
+        if len(self.vk_event.args) > 2:
+            new_name = " ".join(self.vk_event.args[2:])
+        if MemeModel.objects.filter(name=new_name).exists():
+            return "Мем с таким названием уже есть"
+        user_msg = f'Мем с названием "{renamed_meme.name}" переименован.\n' \
+                   f'Новое название - "{new_name}"'
+        if renamed_meme.author != self.vk_event.sender:
+            self.vk_bot.send_message(renamed_meme.author.user_id, user_msg)
+        renamed_meme.name = new_name
+        renamed_meme.save()
+        return user_msg
+
+    def menu_id(self):
+        self.check_args(2)
+        self.int_args = [1]
+        self.parse_int()
+        _id = self.vk_event.args[1]
+        meme = self.get_meme(_id=_id)
+        return self.prepare_meme_to_send(meme, True)
+
+    def menu_default(self):
+        memes = self.get_meme(self.vk_event.args, use_tanimoto=True)
+        if isinstance(memes, list):
+            meme = memes[0]
         else:
-            memes = self.get_meme(self.vk_event.args, use_tanimoto=True)
-            if isinstance(memes, list):
-                meme = memes[0]
-            else:
-                meme = memes
-            meme.uses += 1
-            meme.save()
-            prepared_meme = self.prepare_meme_to_send(meme)
-            if isinstance(memes, MemeModel):
-                return prepared_meme
-            else:
-                msg = self.get_similar_memes_names(memes)
-                return [prepared_meme, msg]
+            meme = memes
+        meme.uses += 1
+        meme.save()
+        prepared_meme = self.prepare_meme_to_send(meme)
+        if isinstance(memes, MemeModel):
+            return prepared_meme
+        else:
+            msg = self.get_similar_memes_names(memes)
+            return [prepared_meme, msg]
+
+    ### END MENU ###
 
     def get_meme(self, filter_list=None, filter_user=None, approved=True, _id=None, use_tanimoto=False):
         """

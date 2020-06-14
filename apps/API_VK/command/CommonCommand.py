@@ -252,3 +252,16 @@ class CommonCommand:
 
         error = "Пришлите вложения"
         raise RuntimeError(error)
+
+    # example:
+    # [[[key1],[method1]],[[key2],[method2]]]
+    def handle_menu(self, menu, arg):
+        default_item = None
+        for item in menu:
+            if arg in item[0]:
+                return item[1]
+            if not default_item and 'default' in item[0]:
+                default_item = item[1]
+        if default_item:
+            return default_item
+        raise RuntimeWarning(f"{self.detail_help_text}")
