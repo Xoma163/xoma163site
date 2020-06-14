@@ -86,6 +86,8 @@ class YouTube(CommonCommand):
         elif action in ['конфа']:
             self.check_conversation()
             return self.get_subs(conversation=True)
+        else:
+            return "Не понял команды (добавить/удалить/подписки)"
 
     def get_sub(self, filters, for_delete=False):
         if self.vk_event.chat:

@@ -550,6 +550,19 @@ class VkBotClass(threading.Thread):
             raise RuntimeError("Ошибка загрузки аудиозаписи")
         return self.get_attachment_by_id('audio', vk_audio['owner_id'], vk_audio['id'])
 
+    def upload_video_by_link(self, link, name):
+        values = {
+            'name': name,
+            'is_private': True,
+            'link': link,
+        }
+
+        response = self.vk_user.vk.video.save(**values)
+        response2 = requests.post(response['upload_url']).json()
+        print(response2)
+
+        return f"video{response['owner_id']}_{response['video_id']}"
+
     def get_attachment_by_id(self, _type, group_id, _id):
         if group_id is None:
             group_id = f'-{self.group_id}'
