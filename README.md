@@ -8,5 +8,3 @@
 -   [FAQ](./readme/faq.md)
 -   [API](./readme/api.md) 
 -   [Установка](./readme/setup.md)
-
-
