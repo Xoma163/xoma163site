@@ -7,7 +7,7 @@ from apps.service.models import WakeOnLanUserData
 
 class WOL(CommonCommand):
     def __init__(self):
-        names = ["пробуди", 'wol', 'wakeonlan']
+        names = ["пробуди", "разбуди", 'wol', 'wakeonlan']
         help_text = "Пробуди - пробуждает ваше устройство"
         detail_help_text = "Пробуди - пробуждает ваше устройство\n" \
                            "Пробуди (название) - пробуждает ваше устройство\n" \
