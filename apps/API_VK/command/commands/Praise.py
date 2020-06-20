@@ -1,7 +1,7 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import random_event
+from apps.API_VK.command.Consts import BAD_ANSWERS
 from apps.API_VK.models import Words
-from apps.API_VK.static_texts import get_bad_answers
 
 gender_translator = {
     'м': 'm1',
@@ -55,7 +55,7 @@ def get_praise_or_scold(vk_bot, vk_event, _type):
 
         if "петрович" in recipient.lower():
             if _type == 'bad':
-                msg = random_event(get_bad_answers())
+                msg = random_event(BAD_ANSWERS)
             elif _type == 'good':
                 msg = "спс))"
             else:

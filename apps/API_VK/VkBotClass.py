@@ -141,7 +141,7 @@ class VkBotClass(threading.Thread):
                 # cameraHandler.resume()
                 msg = "Стартуем!"
                 self.send_message(vk_event.peer_id, msg)
-                logger.debug(f"{{result: {msg}}}")
+                logger.debug(f'{{result: "{msg}"}}')
                 return msg
             return
 
@@ -174,7 +174,7 @@ class VkBotClass(threading.Thread):
                     if send:
                         self.parse_and_send_msgs(vk_event.peer_id, result)
                     append_command_to_statistics(vk_event.command)
-                    logger.debug(f"{{result: {result}}}")
+                    logger.debug(f'{{result: "{result}"}}')
                     return result
             except RuntimeWarning as e:
                 msg = str(e)
@@ -191,7 +191,6 @@ class VkBotClass(threading.Thread):
             except Exception as e:
                 msg = "Непредвиденная ошибка. Сообщите разработчику в группе или команда /баг"
                 tb = traceback.format_exc()
-                print(tb)
                 logs = f"Exception: {str(e)}\n" \
                        f"Traceback:\n" \
                        f"{tb}"
@@ -224,7 +223,7 @@ class VkBotClass(threading.Thread):
         if tanimoto_max != 0:
             msg += f"Возможно вы имели в виду команду \"{similar_command}\""
 
-        logger.debug(f"{{result: {msg}}}")
+        logger.debug(f'{{result: "{msg}"}}')
         if send:
             self.send_message(vk_event.peer_id, msg)
         return msg
@@ -303,9 +302,9 @@ class VkBotClass(threading.Thread):
                     pass
 
             except Exception as e:
-                print('VkBot exception\n:', e)
-                logger.error('VkBot exception\n:' + str(e))
-                print(traceback.format_exc())
+                tb = traceback.format_exc()
+                logger.error(f'VkBot exception:\n'
+                             f'{tb}')
 
     def run(self):
         self.listen_longpoll()
@@ -579,4 +578,3 @@ class MyVkBotLongPoll(VkBotLongPoll):
                     yield event
             except Exception as e:
                 logger.error('Longpoll Error (VK):' + str(e))
-                print('Longpoll Error (VK):', e)

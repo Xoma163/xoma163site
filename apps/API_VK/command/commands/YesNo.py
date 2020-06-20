@@ -1,7 +1,6 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import check_user_group, random_event, get_random_int
-from apps.API_VK.command.Consts import Role
-from apps.API_VK.static_texts import get_bad_answers
+from apps.API_VK.command.Consts import Role, BAD_ANSWERS
 
 
 def get_bad_words():
@@ -58,9 +57,8 @@ class YesNo(CommonCommand):
                         if len_bad == -1:
                             len_bad = len(self.vk_event.msg)
 
-                bad_answers = get_bad_answers()
-                rand_int = get_random_int(len(bad_answers) - 1)
-                messages = [bad_answers[rand_int]]
+                rand_int = get_random_int(len(BAD_ANSWERS) - 1)
+                messages = [BAD_ANSWERS[rand_int]]
                 name = self.vk_event.sender.name
                 if self.vk_event.sender.gender == '1':
                     msg_self = "сама"

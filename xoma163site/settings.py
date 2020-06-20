@@ -178,6 +178,9 @@ LOGGING = {
         'commands': {
             'format': '%(levelname)-8s %(asctime)-25s %(message)s',
             # 'datefmt': '%d.%m.%Y %H:%M:%S'
+        },
+        'commands-console': {
+            'format': '%(levelname)-8s %(message)s',
         }
     },
     'handlers': {
@@ -193,10 +196,15 @@ LOGGING = {
             'filename': ERROR_FILE,
             'formatter': 'commands',
         },
+        'console-warn': {
+            'level': 'WARNING',
+            'class': 'logging.StreamHandler',
+            'formatter': 'commands-console',
+        }
     },
     'loggers': {
         'commands': {
-            'handlers': ['file-debug', 'file-warn'],
+            'handlers': ['file-debug', 'file-warn', 'console-warn'],
             'level': 'DEBUG',
             'propagate': True,
         },
