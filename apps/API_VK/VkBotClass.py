@@ -10,7 +10,7 @@ import requests
 import urllib3
 import vk_api
 from django.contrib.auth.models import Group
-from requests.exceptions import ReadTimeout
+from requests.exceptions import ReadTimeout, ConnectTimeout
 from vk_api import VkUpload
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.utils import get_random_id
@@ -508,6 +508,8 @@ class VkBotClass(threading.Thread):
             except RuntimeWarning:
                 continue
             except ReadTimeout:
+                continue
+            except ConnectTimeout:
                 continue
             # Если Content-Length > 50mb
             bytes_count = None
