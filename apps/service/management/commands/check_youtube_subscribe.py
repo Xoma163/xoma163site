@@ -27,7 +27,7 @@ class Command(BaseCommand):
                 msg = f"Новое видео на канале {yt_sub.title}\n"
                 video_attachment = vk_bot.upload_video_by_link(youtube_data['last_video']['link'],
                                                                youtube_data['last_video']['title'])
-                res = {'msg': msg, 'attachments': video_attachment}
+                res = {'msg': msg, 'attachments': [video_attachment, youtube_data['last_video']['link']]}
                 vk_bot.parse_and_send_msgs(peer_id, res)
                 yt_sub.date = youtube_data['last_video']['date']
                 yt_sub.save()
