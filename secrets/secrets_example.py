@@ -52,6 +52,9 @@ secrets = {
     },
     'timezonedb': {
         'api_key': ''
+    },
+    'ocr': {
+        'api_key': ''
     }
 
 }
