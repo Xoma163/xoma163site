@@ -58,7 +58,8 @@ INSTALLED_APPS = [
     'apps.birds',
     'apps.service',
     'apps.games',
-    'apps.web'
+    'apps.web',
+    'apps.db_logger'
 ]
 
 MIDDLEWARE = [
@@ -200,11 +201,15 @@ LOGGING = {
             'level': 'WARNING',
             'class': 'logging.StreamHandler',
             'formatter': 'commands-console',
-        }
+        },
+        'db_log': {
+            'level': 'DEBUG',
+            'class': 'apps.db_logger.db_log_handler.DatabaseLogHandler'
+        },
     },
     'loggers': {
         'commands': {
-            'handlers': ['file-debug', 'file-warn', 'console-warn'],
+            'handlers': ['file-debug', 'file-warn', 'console-warn', 'db_log'],
             'level': 'DEBUG',
             'propagate': True,
         },

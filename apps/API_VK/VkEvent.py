@@ -124,9 +124,9 @@ class VkEvent:
             return None
 
     def __init__(self, vk_event):
-        self.mentions = secrets['vk']['bot']['mentions']
+        mentions = secrets['vk']['bot']['mentions']
         if 'message' in vk_event:
-            text = self.delete_slash_and_mentions(vk_event['message'].get('text'), self.mentions)
+            text = self.delete_slash_and_mentions(vk_event['message'].get('text'), mentions)
             parsed = self.parse_msg(text)
             self.msg = parsed.get('msg')
             self.command = parsed.get('command')

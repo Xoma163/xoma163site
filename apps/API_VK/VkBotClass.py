@@ -141,7 +141,8 @@ class VkBotClass(threading.Thread):
                 # cameraHandler.resume()
                 msg = "Стартуем!"
                 self.send_message(vk_event.peer_id, msg)
-                logger.debug(f'{{result: "{msg}"}}')
+                log_result = {'result': msg}
+                logger.debug(log_result)
                 return msg
             return
 
@@ -164,7 +165,8 @@ class VkBotClass(threading.Thread):
                     f"original_args = {vk_event.original_args}\n"
             self.send_message(vk_event.peer_id, debug_message)
 
-        logger.debug(vk_event)
+        log_vk_event = {'vk_event': vk_event}
+        logger.debug(log_vk_event)
 
         commands = get_commands()
         for command in commands:
@@ -174,27 +176,32 @@ class VkBotClass(threading.Thread):
                     if send:
                         self.parse_and_send_msgs(vk_event.peer_id, result)
                     append_command_to_statistics(vk_event.command)
-                    logger.debug(f'{{result: "{result}"}}')
+                    log_result = {'result': result}
+                    logger.debug(log_result)
                     return result
             except RuntimeWarning as e:
                 msg = str(e)
-                logger.debug(f"{{RuntimeWarning: {msg}}}")
+                log_runtime_warning = {'result': msg}
+                logger.warning(log_runtime_warning)
+
                 if send:
                     self.parse_and_send_msgs(vk_event.peer_id, msg)
                 return msg
             except RuntimeError as e:
-                msg = str(e)
-                logger.warning(f"{{RuntimeError: {msg}}}")
+                exception = str(e)
+                log_runtime_error = {'exception': exception, 'result': exception}
+                logger.error(log_runtime_error)
                 if send:
-                    self.parse_and_send_msgs(vk_event.peer_id, msg)
-                return msg
+                    self.parse_and_send_msgs(vk_event.peer_id, exception)
+                return exception
             except Exception as e:
                 msg = "Непредвиденная ошибка. Сообщите разработчику в группе или команда /баг"
                 tb = traceback.format_exc()
-                logs = f"Exception: {str(e)}\n" \
-                       f"Traceback:\n" \
-                       f"{tb}"
-                logger.error(f"{{Exception: {logs}}}")
+                log_exception = {
+                    'exception': str(e),
+                    'result': msg
+                }
+                logger.error(log_exception, exc_info=tb)
                 if send:
                     self.parse_and_send_msgs(vk_event.peer_id, msg)
                 return msg
@@ -222,8 +229,8 @@ class VkBotClass(threading.Thread):
         msg = f"Я не понял команды \"{vk_event.command}\"\n"
         if tanimoto_max != 0:
             msg += f"Возможно вы имели в виду команду \"{similar_command}\""
-
-        logger.debug(f'{{result: "{msg}"}}')
+        logger_result = {'result': msg}
+        logger.debug(logger_result)
         if send:
             self.send_message(vk_event.peer_id, msg)
         return msg
@@ -303,8 +310,10 @@ class VkBotClass(threading.Thread):
 
             except Exception as e:
                 tb = traceback.format_exc()
-                logger.error(f'VkBot exception:\n'
-                             f'{tb}')
+                log_exception = {
+                    'exception': str(e),
+                }
+                logger.error(log_exception, exc_info=tb)
 
     def run(self):
         self.listen_longpoll()
@@ -577,4 +586,5 @@ class MyVkBotLongPoll(VkBotLongPoll):
                 for event in self.check():
                     yield event
             except Exception as e:
-                logger.error('Longpoll Error (VK):' + str(e))
+                error = {'exception': f'Longpoll Error (VK): {str(e)}'}
+                logger.error(error)
