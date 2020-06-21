@@ -1,7 +1,7 @@
 #!/bin/bash
 # install python, python-venv and project requirements
 sudo apt -y update
-sudo apt install -y python3.7 python3.7-venv python3-venv python3.7-dev python3-wheel postgresql libpq-dev ffmpeg nginx build-essential
+sudo apt install -y python3.7 python3.7-venv python3-venv python3.7-dev python3-wheel postgresql libpq-dev ffmpeg nginx build-essential python-opencv
 
 python3.7 -m venv venv
 set -e

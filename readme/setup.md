@@ -12,14 +12,14 @@ ToDo
 <your_group_id>
 
 ### 2. Подготовка БД
-
+-   `apt install postgresql`
 -   `su - postgres` 
 -   `psql` 
 
 ```postgresql
-CREATE ROLE '<your_username>' WITH LOGIN ENCRYPTED PASSWORD '<your_password>';
-CREATE DATABASE '<your_database>' WITH OWNER '<your_username>';
-SET TIMEZONE='<your_timezone>';
+CREATE ROLE <your_username> WITH LOGIN ENCRYPTED PASSWORD '<your_password>';
+CREATE DATABASE <your_database> WITH OWNER <your_username>;
+SET TIMEZONE=<your_timezone>;
 ```
 
 ### 3. Указание учётных данных

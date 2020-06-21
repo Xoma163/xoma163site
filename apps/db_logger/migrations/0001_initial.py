@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('API_VK', '0010_auto_20200523_1346'),
+        ('API_VK', '0001_initial'),
     ]
 
     operations = [
