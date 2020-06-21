@@ -1,6 +1,8 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.command.CommonMethods import draw_text_on_image
 from apps.API_VK.command.Consts import Role
 from apps.API_VK.command.DoTheLinuxComand import do_the_linux_command
+from apps.db_logger.models import Logger
 from xoma163site.settings import BASE_DIR
 
 
@@ -69,7 +71,7 @@ class Logs(CommonCommand):
         names = ["логи", "лог"]
         help_text = "Логи - логи бота или сервера"
         detail_help_text = "Логи [сервис=бот] [кол-во строк=50] - логи. \n" \
-                           "Сервис - бот или сервер"
+                           "Сервис - бот/сервер/бд"
         keyboard = {'for': Role.MODERATOR, 'text': 'Логи', 'color': 'blue', 'row': 1, 'col': 1}
         super().__init__(names, help_text, detail_help_text, access=Role.MODERATOR, keyboard=keyboard)
 
@@ -83,15 +85,46 @@ class Logs(CommonCommand):
             except ValueError:
                 pass
 
-        if self.vk_event.args:
             if self.vk_event.args[0].lower() in ['веб', 'web', 'сайт', 'site']:
                 command = f"systemctl status xoma163site -n{count}"
-                return get_server_logs(command)
+                res = get_server_logs(command)
+                img = draw_text_on_image(res)
+                att = self.vk_bot.upload_photos(img)
+                return {'attachments': att}
             elif self.vk_event.args[0].lower() in ['бот', 'bot']:
                 command = f"systemctl status xoma163bot -n{count}"
-                return get_bot_logs(command)
+                res = get_bot_logs(command)
+                img = draw_text_on_image(res)
+                att = self.vk_bot.upload_photos(img)
+                return {'attachments': att}
+                # return get_bot_logs(command)
+            elif self.vk_event.args[0].lower() in ['бд']:
+
+                log = Logger.objects.filter(traceback__isnull=False).first()
+                if not log:
+                    return "Не нашёл логов с ошибками"
+                formatted_traceback = ""
+                # for row in log.traceback.split('\n'):
+                #     for j, _ in enumerate(row):
+                #         if row[j] == ' ':
+                #             formatted_traceback += 'ᅠ'
+                #         else:
+                #             formatted_traceback += row[j:] + "\n"
+                #             break
+                # formatted_traceback = formatted_traceback.replace('ᅠᅠ', 'ᅠ')
+                formatted_traceback = log.traceback
+                msg = f"{log.create_datetime.strftime('%d.%m.%Y %H:%M:%S')}\n\n" \
+                      f"{log.exception}\n\n" \
+                      f"{log.traceback}"
+                img = draw_text_on_image(msg)
+                att = self.vk_bot.upload_photos(img)
+                return {'attachments': att}
+
             else:
                 return 'Нет такого модуля'
 
         command = f"systemctl status xoma163bot -n{count}"
-        return get_bot_logs(command)
+        res = get_bot_logs(command)
+        img = draw_text_on_image(res)
+        att = self.vk_bot.upload_photos(img)
+        return {'attachments': att}

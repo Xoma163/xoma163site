@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 import logging
 
 from django.contrib import admin
+from django.db import models
+from django.forms import Textarea
 from django.utils.html import format_html
 
 from apps.db_logger.config import DJANGO_DB_LOGGER_ADMIN_LIST_PER_PAGE
@@ -11,6 +13,10 @@ from apps.db_logger.models import Logger
 
 @admin.register(Logger)
 class LoggerAdmin(admin.ModelAdmin):
+    formfield_overrides = {
+        models.TextField: {'widget': Textarea(attrs={'rows': 15, 'cols': 150})},
+    }
+
     list_display = ('create_datetime_format', 'logger_name', 'colored_level', 'sender', 'chat', 'user_msg', 'exception')
     list_filter = ('level',
                    ('sender', admin.RelatedOnlyFieldListFilter),

@@ -1,10 +1,14 @@
+import io
 import json
+import os
 import re
 
 import pytz
-
 # Вероятность события в процентах
+from PIL import Image, ImageDraw, ImageFont
+
 from apps.API_VK.command.Consts import Role
+from xoma163site.settings import STATIC_ROOT
 
 
 def random_probability(probability):
@@ -209,3 +213,31 @@ def tanimoto(s1, s2):
         if sym in s2:
             c += 1
     return c / (a + b - c)
+
+
+def get_image_size_by_text(txt, font):
+    testImg = Image.new('RGB', (1, 1))
+    testDraw = ImageDraw.Draw(testImg)
+    return testDraw.textsize(txt, font)
+
+
+def draw_text_on_image(text):
+    """
+    :return: bytearray Image
+    """
+    fontsize = 16
+
+    colorText = "black"
+    colorBackground = "white"
+
+    font = ImageFont.truetype(os.path.join(STATIC_ROOT, 'fonts/consolas.ttf'), fontsize, encoding="unic")
+    width, height = get_image_size_by_text(text, font)
+    width += 10
+    height += 10
+    img = Image.new('RGB', (width + 20, height + 20), colorBackground)
+    d = ImageDraw.Draw(img)
+    d.text((10, 10), text, fill=colorText, font=font)
+
+    imgByteArr = io.BytesIO()
+    img.save(imgByteArr, format='PNG')
+    return imgByteArr

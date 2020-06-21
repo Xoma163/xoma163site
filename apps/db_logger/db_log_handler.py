@@ -29,11 +29,14 @@ class DatabaseLogHandler(logging.Handler):
                 Logger.objects.create(**kwargs)
             else:
                 last_log = Logger.objects.first()
-                kwargs.update(record.msg)
-                for kwarg in kwargs:
-                    setattr(last_log, kwarg, kwargs[kwarg])
-                last_log.level = record.levelno
-                last_log.save()
+                if not last_log.result:
+                    kwargs.update(record.msg)
+                    for kwarg in kwargs:
+                        setattr(last_log, kwarg, kwargs[kwarg])
+                    last_log.level = record.levelno
+                    last_log.save()
+                else:
+                    Logger.objects.create(**kwargs)
         else:
             kwargs['msg'] = record.msg
             Logger.objects.create(**kwargs)
