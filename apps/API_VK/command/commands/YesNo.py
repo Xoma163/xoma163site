@@ -26,6 +26,8 @@ class YesNo(CommonCommand):
     def start(self):
         if self.vk_event.msg.lower() in ['идиот?', 'ты идиот?']:
             return "Мне потанцевать нельзя?"
+        elif self.vk_event.msg.lower() in ['да?']:
+            return {'attachments': 'video162408856_456239566'}
 
         bad_words = get_bad_words()
 
