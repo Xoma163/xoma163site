@@ -45,64 +45,77 @@ class Weather(CommonCommand):
         entity_yesterday = Service.objects.filter(name=f'weatherchange_yesterday_{city.name}')
         if not entity_yesterday.exists():
             return "Не нашёл вчерашней погоды для этого города."
-        weather_yesterday = json.loads(entity_yesterday.first().value)
         yandexweather_api = YandexWeatherAPI(city)
+
+        weather_yesterday = json.loads(entity_yesterday.first().value)
         weather_today = yandexweather_api.get_weather()
+        parts_yesterday = self.get_parts(weather_yesterday)
+        parts_today = self.get_parts(weather_today)
+        common_parts = list(set(parts_yesterday) & set(parts_today))
+        # Сортировка на основе списка, чтобы выстроить последовательность правильно
+        common_parts = [x for _, x in sorted(zip(list(DAY_TRANSLATE.keys()), common_parts))]
 
-        part_yesterday = self.get_part(weather_yesterday)
-        part_today = self.get_part(weather_today)
+        difference_total = []
+        for part in common_parts:
+            yesterday_part = self.get_part_for_type(weather_yesterday, part)
+            today_part = self.get_part_for_type(weather_today, part)
+            difference_for_part = ""
 
-        difference = ""
+            # Если погода не ясная или не облачная
+            clear_weather_statuses = ['clear', 'partly-cloudy', 'cloudy', 'overcast']
+            if today_part['condition'] not in clear_weather_statuses:
+                weather_today_str = WEATHER_TRANSLATE[today_part['condition']].lower()
+                difference_for_part += f"Ожидается {weather_today_str}\n"
 
-        # Если погода не ясная или не облачная
-        clear_weather_statuses = ['clear', 'partly-cloudy', 'cloudy', 'overcast']
-        if part_today['condition'] not in clear_weather_statuses:
-            weather_today_str = WEATHER_TRANSLATE[part_today['condition']].lower()
-            difference += f"Ожидается {weather_today_str}\n"
+            avg_temp_yesterday = self.get_avg_temp(yesterday_part)
+            avg_temp_today = self.get_avg_temp(today_part)
 
-        avg_temp_yesterday = self.get_avg_temp(part_yesterday)
-        avg_temp_today = self.get_avg_temp(part_today)
+            # Изменение температуры на 5 градусов
+            delta_temp = avg_temp_today - avg_temp_yesterday
+            if delta_temp >= 5:
+                difference_for_part += f"Температура на {delta_temp} градусов больше, чем вчера\n"
+            elif delta_temp <= -5:
+                difference_for_part += f"Температура на {-delta_temp} градусов меньше, чем вчера\n"
 
-        # Изменение температуры на 5 градусов
-        delta_temp = avg_temp_today - avg_temp_yesterday
-        if delta_temp >= 5:
-            difference += f"Температура на {delta_temp} градусов больше, чем вчера\n"
-        elif delta_temp <= -5:
-            difference += f"Температура на {-delta_temp} градусов меньше, чем вчера\n"
+            # Разница ощущаемой и по факту температур
+            delta_feels_temp = avg_temp_today - today_part['temp_feels_like']
+            if delta_feels_temp >= 5:
+                difference_for_part += f"Ощущаемая температура на {delta_feels_temp} градусов больше, чем реальная\n"
+            elif delta_feels_temp <= -5:
+                difference_for_part += f"Ощущаемая температура на {-delta_feels_temp} градусов больше, чем реальная\n"
 
-        # Разница ощущаемой и по факту температур
-        delta_feels_temp = avg_temp_today - part_today['temp_feels_like']
-        if delta_feels_temp >= 5:
-            difference += f"Ощущаемая температура на {delta_feels_temp} градусов больше, чем реальная\n"
-        elif delta_feels_temp <= -5:
-            difference += f"Ощущаемая температура на {-delta_feels_temp} градусов больше, чем реальная\n"
+            # Скорость ветра
+            if today_part['wind_speed'] > 10:
+                difference_for_part += f"Скорость ветра {today_part['wind_speed']}м/с\n"
+            if today_part['wind_gust'] > 20:
+                difference_for_part += f"Порывы скорости ветра до {today_part['wind_gust']}м/с\n"
 
-        # Скорость ветра
-        if part_today['wind_speed'] > 10:
-            difference += f"Скорость ветра {part_today['wind_speed']}м/с\n"
-        if part_today['wind_gust'] > 10:
-            difference += f"Порывы скорости ветра до {part_today['wind_gust']}м/с\n"
-
-        if not difference:
+            if difference_for_part:
+                difference_total.append(f"Изменения на {DAY_TRANSLATE[part]}:\n"
+                                        f"{difference_for_part}")
+        if not difference_total:
             return f"Нет изменений погоды в г.{city}"
-        return f"Изменения погоды в г.{city}:\n" \
-               f"{difference}"
+        else:
+            difference_str = '\n\n'.join(difference_total)
+            return f"Изменения погоды в г.{city}:\n\n" \
+                   f"{difference_str}"
 
     @staticmethod
-    def get_part(weather):
-        def get_part_for(_type='day'):
-            if weather['now']['part_name'] == _type:
-                return weather['now']
-            elif weather['forecast'][0]['part_name'] == _type:
-                return weather['forecast'][0]
-            elif weather['forecast'][1]['part_name'] == _type:
-                return weather['forecast'][1]
-            return None
+    def get_part_for_type(weather, _type):
+        if weather['now']['part_name'] == _type:
+            return weather['now']
+        elif weather['forecast'][0]['part_name'] == _type:
+            return weather['forecast'][0]
+        elif weather['forecast'][1]['part_name'] == _type:
+            return weather['forecast'][1]
+        return None
 
-        part = get_part_for('day') or get_part_for('evening')
-        if not part:
-            raise RuntimeWarning('Сейчас у меня нет информации о погоде на день/вечер')
-        return part
+    @staticmethod
+    def get_parts(weather):
+        parts = [weather['now']['part_name']]
+        for x in weather['forecast']:
+            parts.append(x['part_name'])
+        return parts
 
     @staticmethod
     def get_avg_temp(weather):
