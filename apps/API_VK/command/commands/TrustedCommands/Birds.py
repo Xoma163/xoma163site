@@ -1,10 +1,7 @@
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.CommonMethods import get_inline_keyboard
 from apps.API_VK.command.Consts import Role
-from apps.birds.CameraHandler import CameraHandler
-
-cameraHandler = CameraHandler()
-
+from apps.API_VK.management.commands.start import cameraHandler
 
 class Birds(CommonCommand):
     def __init__(self):
