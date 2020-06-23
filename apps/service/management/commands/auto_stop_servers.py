@@ -3,6 +3,7 @@ from datetime import datetime
 from django.core.management.base import BaseCommand
 
 from apps.API_VK.VkBotClass import VkBotClass
+from apps.API_VK.command.CommonMethods import remove_tz
 from apps.API_VK.command.Consts import Role
 from apps.API_VK.models import VkUser
 from apps.service.models import Service
@@ -31,7 +32,7 @@ def stop_mine_by_version(online, no_players, version):
         # Если событие уже было создано, значит пора отрубать
         else:
             update_datetime = obj.update_datetime
-            delta_seconds = (datetime.utcnow() - update_datetime.replace(tzinfo=None)).seconds
+            delta_seconds = (datetime.utcnow() - remove_tz(update_datetime)).seconds
             if delta_seconds <= 1800 + 100:
                 obj.delete()
                 Service.objects.get_or_create(name=f"minecraft_{version}")

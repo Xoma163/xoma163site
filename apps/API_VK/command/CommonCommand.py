@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from apps.API_VK.command.CommonMethods import check_user_group, get_help_for_command
+from apps.API_VK.command.CommonMethods import check_user_group, get_help_for_command, remove_tz
 from apps.API_VK.command.Consts import Role
 from apps.service.models import Service
 from secrets.secrets import secrets
@@ -220,7 +220,7 @@ class CommonCommand:
         if created:
             return True
         update_datetime = entity.update_datetime
-        delta_seconds = (datetime.utcnow() - update_datetime.replace(tzinfo=None)).seconds
+        delta_seconds = (datetime.utcnow() - remove_tz(update_datetime)).seconds
         if delta_seconds < seconds:
             error = f"Нельзя часто вызывать данную команду. Осталось {seconds - delta_seconds} секунд"
             raise RuntimeError(error)
