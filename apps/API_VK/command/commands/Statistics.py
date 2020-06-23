@@ -1,14 +1,18 @@
+from django.db.models import Count
+
 from apps.API_VK.command.CommonCommand import CommonCommand
+from apps.API_VK.models import VkUser
 from apps.games.models import Gamer
 from apps.games.models import PetrovichUser
+from apps.service.models import Meme
 
 
 class Statistics(CommonCommand):
     def __init__(self):
         names = ["стата", "статистика"]
-        help_text = "Стата - статистика по победителям игр"
-        detail_help_text = "Стата [модуль=все] - статистика. Модули:\n" \
-                           "петрович, ставки, крестики, рулетка, коднеймс"
+        help_text = "Стата - статистика по победителям игр или по кол-ву созданных мемов"
+        detail_help_text = "Стата [модуль=все] - статистика по победителям игр или по кол-ву созданных мемов. Модули:\n" \
+                           "петрович, ставки, крестики, рулетка, коднеймс, мемы"
         super().__init__(names, help_text, detail_help_text, conversation=True)
 
     def start(self):
@@ -17,6 +21,7 @@ class Statistics(CommonCommand):
                            'крестики': self.get_tic_tac_toe,
                            'коднеймс': self.get_codenames,
                            'рулетка': self.get_roulettes,
+                           'мемы': self.get_memes
                            }
 
         if self.vk_event.args:
@@ -52,7 +57,7 @@ class Statistics(CommonCommand):
 
         msg = "Победители ставок:\n"
         for result in result_list:
-            msg += "%s - %s\n" % (result[0], result[1])
+            msg += f"{result[0]} - {result[1]}"
         return msg
 
     def get_tic_tac_toe(self):
@@ -64,7 +69,7 @@ class Statistics(CommonCommand):
 
         msg = "Победители крестиков-ноликов:\n"
         for result in result_list:
-            msg += "%s - %s\n" % (result[0], result[1])
+            msg += f"{result[0]} - {result[1]}"
 
         return msg
 
@@ -77,7 +82,7 @@ class Statistics(CommonCommand):
 
         msg = "Победители коднеймса:\n"
         for result in result_list:
-            msg += "%s - %s\n" % (result[0], result[1])
+            msg += f"{result[0]} - {result[1]}"
 
         return msg
 
@@ -90,6 +95,16 @@ class Statistics(CommonCommand):
 
         msg = "Очки рулетки:\n"
         for result in result_list:
-            msg += "%s - %s\n" % (result[0], result[1])
+            msg += f"{result[0]} - {result[1]}"
 
+        return msg
+
+    def get_memes(self):
+        users = VkUser.objects.filter(chats=self.vk_event.chat)
+
+        result_list = list(
+            Meme.objects.filter(author__in=users).values('author').annotate(total=Count('author')).order_by('-total'))
+        msg = "Созданных мемов:\n"
+        for result in result_list:
+            msg += f"{users.get(id=result['author'])} - {result['total']}\n"
         return msg
