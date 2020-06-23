@@ -16,13 +16,14 @@ class Statistics(CommonCommand):
         super().__init__(names, help_text, detail_help_text, conversation=True)
 
     def start(self):
-        args_translator = {'петрович': self.get_petrovich,
-                           'ставки': self.get_rates,
-                           'крестики': self.get_tic_tac_toe,
-                           'коднеймс': self.get_codenames,
-                           'рулетка': self.get_roulettes,
-                           'мемы': self.get_memes
-                           }
+        args_translator = {
+            'петрович': self.get_petrovich,
+            'ставки': self.get_rates,
+            'крестики': self.get_tic_tac_toe,
+            'коднеймс': self.get_codenames,
+            'рулетка': self.get_roulettes,
+            'мемы': self.get_memes
+        }
 
         if self.vk_event.args:
             arg = self.vk_event.args[0].lower()
@@ -32,7 +33,7 @@ class Statistics(CommonCommand):
             return args_translator[arg]()
         msg = ""
         for val in args_translator.values():
-            msg += f"{val()}\n"
+            msg += f"{val()}\n\n"
         return msg
 
     def get_petrovich(self):
@@ -40,63 +41,40 @@ class Statistics(CommonCommand):
             .filter(chat=self.vk_event.chat) \
             .filter(user__chats=self.vk_event.chat) \
             .order_by('-wins')
-        result_list = []
-        for player in players:
-            result_list.append([player, player.wins])
-
         msg = "Наши любимые Петровичи:\n"
-        for result in result_list:
-            msg += "%s - %s\n" % (result[0], result[1])
+        for player in players:
+            msg += "%s - %s\n" % (player, player.wins)
         return msg
 
     def get_rates(self):
         gamers = Gamer.objects.filter(user__chats=self.vk_event.chat).exclude(points=0).order_by('-points')
-        result_list = []
-        for gamer in gamers:
-            result_list.append([gamer, gamer.points])
-
         msg = "Победители ставок:\n"
-        for result in result_list:
-            msg += f"{result[0]} - {result[1]}"
+        for gamer in gamers:
+            msg += f"{gamer} - {gamer.points}\n"
         return msg
 
     def get_tic_tac_toe(self):
         gamers = Gamer.objects.filter(user__chats=self.vk_event.chat).exclude(tic_tac_toe_points=0).order_by(
             '-tic_tac_toe_points')
-        result_list = []
-        for gamer in gamers:
-            result_list.append([gamer, gamer.tic_tac_toe_points])
-
         msg = "Победители крестиков-ноликов:\n"
-        for result in result_list:
-            msg += f"{result[0]} - {result[1]}"
-
+        for gamer in gamers:
+            msg += f"{gamer} - {gamer.tic_tac_toe_points}\n"
         return msg
 
     def get_codenames(self):
         gamers = Gamer.objects.filter(user__chats=self.vk_event.chat).exclude(codenames_points=0).order_by(
             '-codenames_points')
-        result_list = []
-        for gamer in gamers:
-            result_list.append([gamer, gamer.codenames_points])
-
         msg = "Победители коднеймса:\n"
-        for result in result_list:
-            msg += f"{result[0]} - {result[1]}"
-
+        for gamer in gamers:
+            msg += f"{gamer} - {gamer.codenames_points}\n"
         return msg
 
     def get_roulettes(self):
         gamers = Gamer.objects.filter(user__chats=self.vk_event.chat).exclude(roulette_points=0).order_by(
             '-roulette_points')
-        result_list = []
-        for gamer in gamers:
-            result_list.append([gamer, gamer.roulette_points])
-
         msg = "Очки рулетки:\n"
-        for result in result_list:
-            msg += f"{result[0]} - {result[1]}"
-
+        for gamer in gamers:
+            msg += f"{gamer} - {gamer.roulette_points}\n"
         return msg
 
     def get_memes(self):
