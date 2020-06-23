@@ -94,10 +94,10 @@ class Weather(CommonCommand):
                 difference_total.append(f"Изменения на {DAY_TRANSLATE[part]}:\n"
                                         f"{difference_for_part}")
         if not difference_total:
-            return f"Нет изменений погоды в г.{city}"
+            return f"Нет изменений погоды в г. {city}"
         else:
             difference_str = '\n\n'.join(difference_total)
-            return f"Изменения погоды в г.{city}:\n\n" \
+            return f"Изменения погоды в г. {city}:\n\n" \
                    f"{difference_str}"
 
     @staticmethod
@@ -127,7 +127,7 @@ class Weather(CommonCommand):
 
 def get_weather_str(city, weather_data):
     now = \
-        f"Погода в г.{city.name} сейчас:\n" \
+        f"Погода в г. {city.name} сейчас:\n" \
         f"{WEATHER_TRANSLATE[weather_data['now']['condition']]}\n" \
         f"Температура {weather_data['now']['temp']}°С(ощущается как {weather_data['now']['temp_feels_like']}°С)\n" \
         f"Ветер {weather_data['now']['wind_speed']}м/c(порывы до {weather_data['now']['wind_gust']}м/c)\n" \
