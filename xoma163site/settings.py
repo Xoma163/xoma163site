@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from celery.schedules import crontab
+
 from secrets.secrets import secrets
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -219,3 +221,17 @@ LOGGING = {
 CORS_ORIGIN_ALLOW_ALL = True
 VK_URL = "https://vk.com/"
 TEST_CHAT_ID = 2
+
+# # CELERY_ACKS_LATE = True
+# # CELERY_PREFETCH_MULTIPLIER = 1
+# BROKER_URL = 'django://'
+#
+# CELERY_BEAT_SCHEDULE = {
+#     'test': {
+#         'task': 'apps.service.tasks.test',
+#         'schedule': crontab(minute='*/1')
+#     },
+# }
+# #
+# # CELERY_BROKER_URL = 'redis:///1'
+# # CELERY_RESULT_BACKEND = 'redis:///2'
