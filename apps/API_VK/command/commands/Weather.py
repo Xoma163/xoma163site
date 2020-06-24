@@ -51,9 +51,10 @@ class Weather(CommonCommand):
         weather_today = yandexweather_api.get_weather()
         parts_yesterday = self.get_parts(weather_yesterday)
         parts_today = self.get_parts(weather_today)
-        common_parts = list(set(parts_yesterday) & set(parts_today))
-        # Сортировка на основе списка, чтобы выстроить последовательность правильно
-        common_parts = [x for _, x in sorted(zip(list(DAY_TRANSLATE.keys()), common_parts))]
+        common_parts = []
+        for part in parts_yesterday:
+            if part in parts_today:
+                common_parts.append(part)
 
         difference_total = []
         for part in common_parts:
