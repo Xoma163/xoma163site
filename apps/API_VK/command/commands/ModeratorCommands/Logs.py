@@ -71,60 +71,61 @@ class Logs(CommonCommand):
         names = ["логи", "лог"]
         help_text = "Логи - логи бота или сервера"
         detail_help_text = "Логи [сервис=бот] [кол-во строк=50] - логи. \n" \
-                           "Сервис - бот/сервер/бд"
+                           "Сервис - бот/сервер. Макс 1000 строк.\n" \
+                           "Логи бд [кол-во записей = 1] - последний лог с трейсбеком.\n" \
+                           "Макс 5 записей"
         keyboard = {'for': Role.MODERATOR, 'text': 'Логи', 'color': 'blue', 'row': 1, 'col': 1}
         super().__init__(names, help_text, detail_help_text, access=Role.MODERATOR, keyboard=keyboard)
 
     def start(self):
-        count = 50
-
+        arg0 = None
         if self.vk_event.args:
-            try:
-                count = int(self.vk_event.args[-1])
-                del self.vk_event.args[-1]
-            except ValueError:
-                pass
+            arg0 = self.vk_event.args[0].lower()
+        menu = [
+            [['веб', 'web', 'сайт', 'site'], self.get_web_logs],
+            [['бот', 'bot'], self.get_bot_logs],
+            [['бд'], self.get_db_logs],
+            [['default'], self.get_bot_logs]
+        ]
+        method = self.handle_menu(menu, arg0)
+        return method()
 
-            if self.vk_event.args[0].lower() in ['веб', 'web', 'сайт', 'site']:
-                command = f"systemctl status xoma163site -n{count}"
-                res = get_server_logs(command)
-                img = draw_text_on_image(res)
-                att = self.vk_bot.upload_photos(img)
-                return {'attachments': att}
-            elif self.vk_event.args[0].lower() in ['бот', 'bot']:
-                command = f"systemctl status xoma163bot -n{count}"
-                res = get_bot_logs(command)
-                img = draw_text_on_image(res)
-                att = self.vk_bot.upload_photos(img)
-                return {'attachments': att}
-                # return get_bot_logs(command)
-            elif self.vk_event.args[0].lower() in ['бд']:
+    def get_web_logs(self):
+        count = self.get_count(50, 1000)
+        command = f"systemctl status xoma163site -n{count}"
+        res = get_server_logs(command)
+        img = draw_text_on_image(res)
+        att = self.vk_bot.upload_photos(img)
+        return {'attachments': att}
 
-                log = Logger.objects.filter(traceback__isnull=False).first()
-                if not log:
-                    return "Не нашёл логов с ошибками"
-                formatted_traceback = ""
-                # for row in log.traceback.split('\n'):
-                #     for j, _ in enumerate(row):
-                #         if row[j] == ' ':
-                #             formatted_traceback += 'ᅠ'
-                #         else:
-                #             formatted_traceback += row[j:] + "\n"
-                #             break
-                # formatted_traceback = formatted_traceback.replace('ᅠᅠ', 'ᅠ')
-                formatted_traceback = log.traceback
-                msg = f"{log.create_datetime.strftime('%d.%m.%Y %H:%M:%S')}\n\n" \
-                      f"{log.exception}\n\n" \
-                      f"{log.traceback}"
-                img = draw_text_on_image(msg)
-                att = self.vk_bot.upload_photos(img)
-                return {'attachments': att}
-
-            else:
-                return 'Нет такого модуля'
-
+    def get_bot_logs(self):
+        count = self.get_count(50, 1000)
         command = f"systemctl status xoma163bot -n{count}"
         res = get_bot_logs(command)
         img = draw_text_on_image(res)
         att = self.vk_bot.upload_photos(img)
         return {'attachments': att}
+
+    def get_db_logs(self):
+        count = self.get_count(1, 5)
+        logs = Logger.objects.filter(traceback__isnull=False)[:count]
+        if not logs:
+            return "Не нашёл логов с ошибками"
+        msg = ""
+        for log in logs:
+            msg += f"{log.create_datetime.strftime('%d.%m.%Y %H:%M:%S')}\n\n" \
+                   f"{log.exception}\n\n" \
+                   f"{log.traceback}\n\n" \
+                   f"---------------------------------------------------------------------------------------------------------\n\n"
+        img = draw_text_on_image(msg)
+        att = self.vk_bot.upload_photos(img)
+        return {'attachments': att}
+
+    def get_count(self, default, max_count):
+        if self.vk_event.args:
+            try:
+                count = int(self.vk_event.args[-1])
+                return min(count, max_count)
+            except ValueError:
+                pass
+        return default
