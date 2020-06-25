@@ -97,14 +97,14 @@ class CommonCommand:
     # Проверяет роль отправителя
     def check_sender(self, role):
         if check_user_group(self.vk_event.sender, role):
-            if role == Role.ADMIN.name:
+            if role == Role.ADMIN:
                 if self.vk_event.sender.user_id == secrets['vk']['admin_id']:
                     return True
                 else:
                     print("Попытка доступа под админом не с моего id O_o")
             else:
                 return True
-        if role.name == Role.CONFERENCE_ADMIN.name:
+        if role.name == Role.CONFERENCE_ADMIN:
             if self.vk_event.chat.admin == self.vk_event.sender:
                 return True
         error = f"Команда доступна только для пользователей с уровнем прав {role.value}"
