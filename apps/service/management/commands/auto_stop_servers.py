@@ -42,7 +42,7 @@ def stop_mine_by_version(online, no_players, version, amazon=False):
                 Service.objects.get_or_create(name=f"minecraft_{version}")
 
                 if amazon:
-                    stop_amazon_server(secrets['minecraft-amazon']['ip'], secrets['minecraft-amazon']['port'])
+                    stop_amazon_server(secrets['minecraft-amazon']['ip'])
                 else:
                     from apps.API_VK.command.DoTheLinuxComand import do_the_linux_command
                     do_the_linux_command(f'sudo systemctl stop minecraft_{version}')
