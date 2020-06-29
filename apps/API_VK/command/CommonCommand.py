@@ -104,7 +104,7 @@ class CommonCommand:
                     print("Попытка доступа под админом не с моего id O_o")
             else:
                 return True
-        if role.name == Role.CONFERENCE_ADMIN:
+        if role == Role.CONFERENCE_ADMIN:
             if self.vk_event.chat.admin == self.vk_event.sender:
                 return True
         error = f"Команда доступна только для пользователей с уровнем прав {role.value}"
