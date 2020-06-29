@@ -5,19 +5,23 @@ from django.core.management.base import BaseCommand
 from apps.API_VK.VkBotClass import VkBotClass
 from apps.API_VK.command.CommonMethods import remove_tz
 from apps.API_VK.command.Consts import Role
+from apps.API_VK.command.commands.TrustedCommands.Stop import stop_amazon_server
 from apps.API_VK.models import VkUser
 from apps.service.models import Service
+from secrets.secrets import secrets
 
 vk_bot = VkBotClass()
 
 
-def check_server_by_info(ip, port, version):
+# ToDo: Говнокодище пиздец
+
+def check_server_by_info(ip, port, version, amazon=False):
     from apps.API_VK.command.commands.TrustedCommands.Status import get_minecraft_server_info
     res = get_minecraft_server_info(ip, port, version)
-    stop_mine_by_version(res.find("запущен") != -1, res.find("Игроки") == -1, version)
+    stop_mine_by_version(res.find("запущен") != -1, res.find("Игроки") == -1, version, amazon)
 
 
-def stop_mine_by_version(online, no_players, version):
+def stop_mine_by_version(online, no_players, version, amazon=False):
     # Если сервак онлайн и нет игроков
     if online and no_players:
         obj, created = Service.objects.get_or_create(name=f'stop_minecraft_{version}')
@@ -37,8 +41,11 @@ def stop_mine_by_version(online, no_players, version):
                 obj.delete()
                 Service.objects.get_or_create(name=f"minecraft_{version}")
 
-                from apps.API_VK.command.DoTheLinuxComand import do_the_linux_command
-                do_the_linux_command(f'sudo systemctl stop minecraft_{version}')
+                if amazon:
+                    stop_amazon_server(secrets['minecraft-amazon']['ip'], secrets['minecraft-amazon']['port'])
+                else:
+                    from apps.API_VK.command.DoTheLinuxComand import do_the_linux_command
+                    do_the_linux_command(f'sudo systemctl stop minecraft_{version}')
 
                 message = f"Вырубаю майн {version}"
                 users_notify = VkUser.objects.filter(groups__name=Role.MINECRAFT_NOTIFY.name)
@@ -57,3 +64,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         check_server_by_info("localhost", "25565", "1.12.2")
         check_server_by_info("localhost", "25566", "1.15.1")
+        check_server_by_info(secrets['minecraft-amazon']['ip'], secrets['minecraft-amazon']['port'], "1.16.1",
+                             amazon=True)

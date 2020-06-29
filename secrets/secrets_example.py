@@ -55,6 +55,13 @@ secrets = {
     },
     'ocr': {
         'api_key': ''
+    },
+    'minecraft-amazon': {
+        'ip': '',
+        'port': '',
+        'rcon_port': '',
+        'start_url': '',
+        'stop_url': ''
     }
 
 }

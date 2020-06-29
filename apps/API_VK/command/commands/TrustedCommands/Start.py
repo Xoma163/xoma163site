@@ -1,8 +1,11 @@
+import requests
+
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.Consts import Role
 from apps.API_VK.command.DoTheLinuxComand import do_the_linux_command
 from apps.API_VK.models import VkUser
 from apps.birds.CameraHandler import CameraHandler
+from secrets.secrets import secrets
 
 cameraHandler = CameraHandler()
 
@@ -47,13 +50,26 @@ class Start(CommonCommand):
 
                 return message
             elif (len(self.vk_event.args) >= 2 and (
-                    self.vk_event.args[1] == '1.15.1' or self.vk_event.args[1] == '1.15')) or len(
-                self.vk_event.args) == 1:
+                    self.vk_event.args[1] == '1.15.1' or self.vk_event.args[1] == '1.15')):
                 self.check_command_time('minecraft_1.15.1', 30)
 
                 do_the_linux_command('sudo systemctl start minecraft_1.15.1')
 
                 message = "Стартуем майн 1.15.1"
+                users_notify = VkUser.objects.filter(groups__name=Role.MINECRAFT_NOTIFY.name) \
+                    .exclude(id=self.vk_event.sender.id)
+                users_chat_id_notify = [user.user_id for user in users_notify]
+                self.vk_bot.parse_and_send_msgs_thread(users_chat_id_notify,
+                                                       message + f"\nИнициатор - {self.vk_event.sender}")
+                return message
+            elif (len(self.vk_event.args) >= 2 and (
+                    self.vk_event.args[1] == '1.16.1' or self.vk_event.args[1] == '1.16')) or len(
+                self.vk_event.args) == 1:
+                self.check_command_time('minecraft_1.16.1', 30)
+
+                start_amazon_server()
+
+                message = "Стартуем сервер майна 1.16.1 "
                 users_notify = VkUser.objects.filter(groups__name=Role.MINECRAFT_NOTIFY.name) \
                     .exclude(id=self.vk_event.sender.id)
                 users_chat_id_notify = [user.user_id for user in users_notify]
@@ -74,3 +90,8 @@ class Start(CommonCommand):
             return "Стартуем!"
         else:
             return "Не найден такой модуль"
+
+
+def start_amazon_server():
+    URL = secrets['minecraft-amazon']['start_url']
+    requests.post(URL)

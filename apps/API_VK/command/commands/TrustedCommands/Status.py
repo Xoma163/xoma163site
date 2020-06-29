@@ -3,6 +3,7 @@ import json
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.Consts import Role
 from apps.API_VK.command.DoTheLinuxComand import do_the_linux_command
+from secrets.secrets import secrets
 from xoma163site.settings import MAIN_DOMAIN, BASE_DIR
 
 
@@ -14,12 +15,15 @@ class Status(CommonCommand):
         super().__init__(names, help_text, int_args=[0, 1], keyboard=keyboard, access=Role.TRUSTED)
 
     def start(self):
-        res_1_12 = get_minecraft_server_info("localhost", "25565", "1.12.2")
-        res_1_15_1 = get_minecraft_server_info("localhost", "25566", "1.15.1")
+        res_1_12 = get_minecraft_server_info(MAIN_DOMAIN, "25565", "1.12.2")
+        res_1_15_1 = get_minecraft_server_info(MAIN_DOMAIN, "25566", "1.15.1")
+        res_1_16_1 = get_minecraft_server_info(secrets['minecraft-amazon']['ip'], secrets['minecraft-amazon']['port'],
+                                               "1.16.1")
         terraria = get_terraria_server_info("7777")
 
         total_str = f"{res_1_12}\n\n" \
                     f"{res_1_15_1}\n\n" \
+                    f"{res_1_16_1}\n\n" \
                     f"{terraria}"
 
         return total_str
@@ -32,7 +36,7 @@ def get_minecraft_server_info(ip, port, v):
         result = f"Майн {v} - остановлен ⛔"
     else:
         players = " ".join(player['name'] for player in response['players'])
-        result = f"Майн {response['version']} - запущен ✅ ({response['player_count']}/{response['player_max']}) - {MAIN_DOMAIN}:{port}\n"
+        result = f"Майн {response['version']} - запущен ✅ ({response['player_count']}/{response['player_max']}) - {ip}:{port}\n"
         if len(players) > 0:
             result += f"Игроки: {players}"
     return result

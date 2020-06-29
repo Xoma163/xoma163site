@@ -26,3 +26,4 @@ vk_api
 uwsgi
 django-cors-headers
 celery
+mcrcon

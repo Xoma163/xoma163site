@@ -34,7 +34,7 @@ class Settings(CommonCommand):
             if arg0 in ['майнкрафт', 'майн', 'minecraft', 'mine']:
                 self.check_sender(Role.TRUSTED)
 
-                group_minecraft_notify = Group.objects.get(name=Role.MINECRAFT_NOTIFY)
+                group_minecraft_notify = Group.objects.get(name=Role.MINECRAFT_NOTIFY.name)
                 if value:
                     self.vk_event.sender.groups.add(group_minecraft_notify)
                     self.vk_event.sender.save()
