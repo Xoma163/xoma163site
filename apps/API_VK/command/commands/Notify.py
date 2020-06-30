@@ -30,7 +30,11 @@ def get_time(arg1, arg2):
 
     default_datetime = datetime.now().replace(hour=10, minute=0, second=0, microsecond=0)  # + timedelta(days=1)
     try:
-        return parser.parse(f"{arg1} {arg2}", default=default_datetime, dayfirst=True), 2, exact_datetime_flag
+        if arg1.count('.') == 1:
+            arg1 = f"{arg1}.{default_datetime.year}"
+        date_str = f"{arg1} {arg2}"
+
+        return parser.parse(date_str, default=default_datetime, dayfirst=True), 2, exact_datetime_flag
     except dateutil.parser._parser.ParserError:
         try:
             exact_datetime_flag = False
