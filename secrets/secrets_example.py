@@ -57,11 +57,15 @@ secrets = {
         'api_key': ''
     },
     'minecraft-amazon': {
-        'ip': '',
-        'port': '',
-        'rcon_port': '',
-        'start_url': '',
-        'stop_url': ''
+        '<your_version>': {
+            'ip': '',
+            'port': '',
+            'rcon_port': '',
+            'rcon_password': '',
+            'start_url': '',
+            'stop_url': '',
+            'status_url': ''
+        }
     }
 
 }
