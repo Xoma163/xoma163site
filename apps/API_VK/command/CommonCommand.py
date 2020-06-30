@@ -220,9 +220,9 @@ class CommonCommand:
         if created:
             return True
         update_datetime = entity.update_datetime
-        delta_seconds = (datetime.utcnow() - remove_tz(update_datetime)).seconds
-        if delta_seconds < seconds:
-            error = f"Нельзя часто вызывать данную команду. Осталось {seconds - delta_seconds} секунд"
+        delta_time = datetime.utcnow() - remove_tz(update_datetime)
+        if delta_time.seconds < seconds and delta_time.days == 0:
+            error = f"Нельзя часто вызывать данную команду. Осталось {seconds - delta_time.seconds} секунд"
             raise RuntimeError(error)
         entity.name = name
         entity.save()

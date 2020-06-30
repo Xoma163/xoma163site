@@ -64,10 +64,9 @@ class YandexWeatherAPI:
 
     def get_weather(self, use_cached=True):
         entity, created = Service.objects.get_or_create(name=f'weather_{self.city.name}')
-
         if use_cached and not created:
-            delta_seconds = (datetime.utcnow() - remove_tz(entity.update_datetime)).seconds
-            if delta_seconds < 3600:
+            delta_time = (datetime.utcnow() - remove_tz(entity.update_datetime))
+            if delta_time.seconds < 3600 and delta_time.days == 0:
                 weather_data = json.loads(entity.value)
                 return weather_data
 
