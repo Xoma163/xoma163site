@@ -1,11 +1,8 @@
-import requests
-
+from apps.API_VK.APIs.Minecraft import MinecraftAPI, get_minecraft_version_by_args
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.Consts import Role
 from apps.API_VK.command.DoTheLinuxComand import do_the_linux_command
-from apps.API_VK.models import VkUser
 from apps.birds.CameraHandler import CameraHandler
-from secrets.secrets import secrets
 
 cameraHandler = CameraHandler()
 
@@ -33,51 +30,24 @@ class Start(CommonCommand):
                 return "Стартуем синичек!"
             else:
                 return "Синички уже стартовали"
+
         elif module in ["майн", "майнкрафт", "mine", "minecraft"]:
             self.check_sender(Role.MINECRAFT)
-            if len(self.vk_event.args) >= 2 and (
-                    self.vk_event.args[1] == '1.12' or self.vk_event.args[1] == '1.12.2'):
-                self.check_command_time('minecraft_1.12.2', 90)
-
-                do_the_linux_command('sudo systemctl start minecraft_1.12.2')
-
-                message = "Стартуем майн 1.12!"
-                users_notify = VkUser.objects.filter(groups__name=Role.MINECRAFT_NOTIFY.name) \
-                    .exclude(id=self.vk_event.sender.id)
-                users_chat_id_notify = [user.user_id for user in users_notify]
-                self.vk_bot.parse_and_send_msgs_thread(users_chat_id_notify,
-                                                       message + f"\nИнициатор - {self.vk_event.sender}")
-
-                return message
-            elif (len(self.vk_event.args) >= 2 and (
-                    self.vk_event.args[1] == '1.15.1' or self.vk_event.args[1] == '1.15')):
-                self.check_command_time('minecraft_1.15.1', 30)
-
-                do_the_linux_command('sudo systemctl start minecraft_1.15.1')
-
-                message = "Стартуем майн 1.15.1"
-                users_notify = VkUser.objects.filter(groups__name=Role.MINECRAFT_NOTIFY.name) \
-                    .exclude(id=self.vk_event.sender.id)
-                users_chat_id_notify = [user.user_id for user in users_notify]
-                self.vk_bot.parse_and_send_msgs_thread(users_chat_id_notify,
-                                                       message + f"\nИнициатор - {self.vk_event.sender}")
-                return message
-            elif (len(self.vk_event.args) >= 2 and (
-                    self.vk_event.args[1] == '1.16.1' or self.vk_event.args[1] == '1.16')) or len(
-                self.vk_event.args) == 1:
-                self.check_command_time('minecraft_1.16.1', 30)
-
-                start_amazon_server()
-
-                message = "Стартуем сервер майна 1.16.1 "
-                users_notify = VkUser.objects.filter(groups__name=Role.MINECRAFT_NOTIFY.name) \
-                    .exclude(id=self.vk_event.sender.id)
-                users_chat_id_notify = [user.user_id for user in users_notify]
-                self.vk_bot.parse_and_send_msgs_thread(users_chat_id_notify,
-                                                       message + f"\nИнициатор - {self.vk_event.sender}")
-                return message
-            else:
+            minecraft_server = get_minecraft_version_by_args(self.vk_event.args)
+            if not minecraft_server:
                 return "Я не знаю такой версии"
+            version = minecraft_server['names'][0]
+            self.check_command_time(f'minecraft_{version}', minecraft_server['delay'])
+            minecraft_api = MinecraftAPI(
+                version,
+                vk_bot=self.vk_bot,
+                vk_event=self.vk_event,
+                amazon=minecraft_server['amazon'])
+            minecraft_api.start()
+
+            message = f"Стартуем майн {version}"
+            return message
+
         elif module in ['террария', 'terraria']:
             self.check_sender(Role.TERRARIA)
             self.check_command_time('terraria', 10)
@@ -92,6 +62,3 @@ class Start(CommonCommand):
             return "Не найден такой модуль"
 
 
-def start_amazon_server():
-    URL = secrets['minecraft-amazon']['start_url']
-    requests.post(URL)

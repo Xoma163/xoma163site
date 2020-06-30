@@ -1,15 +1,8 @@
-import time
-
-import requests
-from mcrcon import MCRcon
-
+from apps.API_VK.APIs.Minecraft import MinecraftAPI, get_minecraft_version_by_args
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.Consts import Role
 from apps.API_VK.command.DoTheLinuxComand import do_the_linux_command
-from apps.API_VK.models import VkUser
 from apps.birds.CameraHandler import CameraHandler
-from apps.service.models import Service
-from secrets.secrets import secrets
 
 cameraHandler = CameraHandler()
 
@@ -39,54 +32,20 @@ class Stop(CommonCommand):
                 return "Синички уже финишировали"
         elif module in ["майн", "майнкрафт", "mine", "minecraft"]:
             self.check_sender(Role.MINECRAFT)
-            if len(self.vk_event.args) >= 2 and (
-                    self.vk_event.args[1] == '1.12' or self.vk_event.args[1] == '1.12.2'):
-                self.check_command_time('minecraft_1.12', 90)
-
-                do_the_linux_command('sudo systemctl stop minecraft_1.12.2')
-                Service.objects.filter(name='stop_minecraft_1.12.2').delete()
-
-                message = "Финишируем майн 1.12!"
-                users_notify = VkUser.objects.filter(groups__name=Role.MINECRAFT_NOTIFY.name) \
-                    .exclude(id=self.vk_event.sender.id)
-                users_chat_id_notify = [user.user_id for user in users_notify]
-                self.vk_bot.parse_and_send_msgs_thread(users_chat_id_notify,
-                                                       message + f"\nИнициатор - {self.vk_event.sender}")
-
-                return message
-            elif (len(self.vk_event.args) >= 2 and (
-                    self.vk_event.args[1] == '1.15.1' or self.vk_event.args[1] == '1.15')):
-                self.check_command_time('minecraft_1.15.1', 30)
-
-                do_the_linux_command('sudo systemctl stop minecraft_1.15.1')
-                Service.objects.filter(name='stop_minecraft_1.15.1').delete()
-
-                message = "Финишируем майн 1.15.1"
-                users_notify = VkUser.objects.filter(groups__name=Role.MINECRAFT_NOTIFY.name) \
-                    .exclude(id=self.vk_event.sender.id)
-                users_chat_id_notify = [user.user_id for user in users_notify]
-                self.vk_bot.parse_and_send_msgs_thread(users_chat_id_notify,
-                                                       message + f"\nИнициатор - {self.vk_event.sender}")
-
-                return message
-            elif (len(self.vk_event.args) >= 2 and (
-                    self.vk_event.args[1] == '1.16.1' or self.vk_event.args[1] == '1.16')) or len(
-                self.vk_event.args) == 1:
-                self.check_command_time('minecraft_1.16.1', 30)
-
-                stop_amazon_server(secrets['minecraft-amazon']['ip'])
-                Service.objects.filter(name='stop_minecraft_1.16.1').delete()
-
-                message = "Финишируем сервер майна 1.16.1"
-                users_notify = VkUser.objects.filter(groups__name=Role.MINECRAFT_NOTIFY.name) \
-                    .exclude(id=self.vk_event.sender.id)
-                users_chat_id_notify = [user.user_id for user in users_notify]
-                self.vk_bot.parse_and_send_msgs_thread(users_chat_id_notify,
-                                                       message + f"\nИнициатор - {self.vk_event.sender}")
-
-                return message
-            else:
+            minecraft_server = get_minecraft_version_by_args(self.vk_event.args)
+            if not minecraft_server:
                 return "Я не знаю такой версии"
+            version = minecraft_server['names'][0]
+            self.check_command_time(f'minecraft_{version}', minecraft_server['delay'])
+            minecraft_api = MinecraftAPI(
+                version,
+                vk_bot=self.vk_bot,
+                vk_event=self.vk_event,
+                amazon=minecraft_server['amazon'])
+            minecraft_api.stop()
+
+            message = f"Финишируем майн {version}"
+            return message
         elif module in ['террария', 'terraria']:
             self.check_sender(Role.TERRARIA)
             self.check_command_time('terraria', 10)
@@ -99,28 +58,3 @@ class Stop(CommonCommand):
             return "Финишируем"
         else:
             return "Не найден такой модуль"
-
-
-def send_rcon(ip, command):
-    try:
-        with MCRcon(ip, secrets['minecraft-amazon']['rcon_password']) as mcr:
-            resp = mcr.command(command)
-            if resp:
-                return resp
-            else:
-                return False
-    except:
-        return False
-
-
-def stop_amazon_server(ip):
-    send_rcon(ip, '/stop')
-
-    while True:
-        server_is_offline = not send_rcon(ip, '/help')
-        if server_is_offline:
-            break
-        time.sleep(5)
-
-    URL = secrets['minecraft-amazon']['stop_url']
-    requests.post(URL)

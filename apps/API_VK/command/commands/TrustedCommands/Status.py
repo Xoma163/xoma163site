@@ -1,10 +1,8 @@
-import json
-
+from apps.API_VK.APIs.Minecraft import servers_minecraft
 from apps.API_VK.command.CommonCommand import CommonCommand
 from apps.API_VK.command.Consts import Role
 from apps.API_VK.command.DoTheLinuxComand import do_the_linux_command
-from secrets.secrets import secrets
-from xoma163site.settings import MAIN_DOMAIN, BASE_DIR
+from xoma163site.settings import MAIN_DOMAIN
 
 
 class Status(CommonCommand):
@@ -15,31 +13,18 @@ class Status(CommonCommand):
         super().__init__(names, help_text, int_args=[0, 1], keyboard=keyboard, access=Role.TRUSTED)
 
     def start(self):
-        res_1_12 = get_minecraft_server_info(MAIN_DOMAIN, "25565", "1.12.2")
-        res_1_15_1 = get_minecraft_server_info(MAIN_DOMAIN, "25566", "1.15.1")
-        res_1_16_1 = get_minecraft_server_info(secrets['minecraft-amazon']['ip'], secrets['minecraft-amazon']['port'],
-                                               "1.16.1")
+        minecraft_result = ""
+        for server in servers_minecraft:
+            server.get_server_info()
+            result = server.parse_server_info()
+            minecraft_result += f"{result}\n\n"
+
         terraria = get_terraria_server_info("7777")
 
-        total_str = f"{res_1_12}\n\n" \
-                    f"{res_1_15_1}\n\n" \
-                    f"{res_1_16_1}\n\n" \
+        total_str = f"{minecraft_result}" \
                     f"{terraria}"
 
         return total_str
-
-
-def get_minecraft_server_info(ip, port, v):
-    command = f"{BASE_DIR}/venv/bin/mcstatus {ip}:{port} json"
-    response = json.loads(do_the_linux_command(command))
-    if not response['online']:
-        result = f"Майн {v} - остановлен ⛔"
-    else:
-        players = " ".join(player['name'] for player in response['players'])
-        result = f"Майн {response['version']} - запущен ✅ ({response['player_count']}/{response['player_max']}) - {ip}:{port}\n"
-        if len(players) > 0:
-            result += f"Игроки: {players}"
-    return result
 
 
 def get_terraria_server_info(port):
