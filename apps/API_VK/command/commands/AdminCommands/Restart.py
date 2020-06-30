@@ -23,6 +23,6 @@ class Restart(CommonCommand):
             return 'Рестартим веб'
         elif module in ['сервер']:
             do_the_linux_command('sudo systemctl reboot -i')
-            return 'Рестартим веб'
+            return 'Рестартим сервер'
         else:
             return "Не найден такой модуль"
