@@ -51,13 +51,9 @@ class Weather(CommonCommand):
         weather_today = yandexweather_api.get_weather()
         parts_yesterday = self.get_parts(weather_yesterday)
         parts_today = self.get_parts(weather_today)
-        common_parts = []
-        for part in parts_yesterday:
-            if part in parts_today:
-                common_parts.append(part)
 
         difference_total = []
-        for part in common_parts:
+        for part in parts_today:
             yesterday_part = self.get_part_for_type(weather_yesterday, part)
             today_part = self.get_part_for_type(weather_today, part)
             difference_for_part = ""
@@ -68,28 +64,29 @@ class Weather(CommonCommand):
                 weather_today_str = WEATHER_TRANSLATE[today_part['condition']].lower()
                 difference_for_part += f"Ожидается {weather_today_str}\n"
 
-            avg_temp_yesterday = self.get_avg_temp(yesterday_part)
-            avg_temp_today = self.get_avg_temp(today_part)
+            if part in parts_yesterday:
+                avg_temp_yesterday = self.get_avg_temp(yesterday_part)
+                avg_temp_today = self.get_avg_temp(today_part)
 
-            # Изменение температуры на 5 градусов
-            delta_temp = avg_temp_today - avg_temp_yesterday
-            if delta_temp >= 5:
-                difference_for_part += f"Температура на {round(delta_temp)} градусов больше, чем вчера\n"
-            elif delta_temp <= -5:
-                difference_for_part += f"Температура на {round(-delta_temp)} градусов меньше, чем вчера\n"
+                # Изменение температуры на 5 градусов
+                delta_temp = avg_temp_today - avg_temp_yesterday
+                if delta_temp >= 5:
+                    difference_for_part += f"Температура на {round(delta_temp)} градусов больше, чем вчера\n"
+                elif delta_temp <= -5:
+                    difference_for_part += f"Температура на {round(-delta_temp)} градусов меньше, чем вчера\n"
 
-            # Разница ощущаемой и по факту температур
-            delta_feels_temp = today_part['temp_feels_like'] - avg_temp_today
-            if delta_feels_temp >= 5:
-                difference_for_part += f"Ощущаемая температура на {round(delta_feels_temp)} градусов больше, чем реальная\n"
-            elif delta_feels_temp <= -5:
-                difference_for_part += f"Ощущаемая температура на {round(-delta_feels_temp)} градусов меньше, чем реальная\n"
+                # Разница ощущаемой и по факту температур
+                delta_feels_temp = today_part['temp_feels_like'] - avg_temp_today
+                if delta_feels_temp >= 5:
+                    difference_for_part += f"Ощущаемая температура на {round(delta_feels_temp)} градусов больше, чем реальная\n"
+                elif delta_feels_temp <= -5:
+                    difference_for_part += f"Ощущаемая температура на {round(-delta_feels_temp)} градусов меньше, чем реальная\n"
 
-            # Скорость ветра
-            if today_part['wind_speed'] > 10:
-                difference_for_part += f"Скорость ветра {today_part['wind_speed']}м/с\n"
-            if today_part['wind_gust'] > 20:
-                difference_for_part += f"Порывы скорости ветра до {today_part['wind_gust']}м/с\n"
+                # Скорость ветра
+                if today_part['wind_speed'] > 10:
+                    difference_for_part += f"Скорость ветра {today_part['wind_speed']}м/с\n"
+                if today_part['wind_gust'] > 20:
+                    difference_for_part += f"Порывы скорости ветра до {today_part['wind_gust']}м/с\n"
 
             if difference_for_part:
                 difference_total.append(f"Изменения на {DAY_TRANSLATE[part]}:\n"
