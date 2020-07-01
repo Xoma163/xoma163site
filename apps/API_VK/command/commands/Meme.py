@@ -274,6 +274,7 @@ class Meme(CommonCommand):
         """
         :return: 1 мем. Если передан параметр use_tanimoto, то список мемов отсортированных по коэфф. Танимото
         """
+        flag_regex = False
         memes = MemeModel.objects
         if _id:
             memes = memes.filter(id=_id)
@@ -281,7 +282,6 @@ class Meme(CommonCommand):
             if filter_list is None:
                 filter_list = []
             memes = memes.filter(approved=approved)
-            flag_regex = False
             if filter_list:
                 filter_list = list(map(lambda x: x.lower(), filter_list))
                 for _filter in filter_list:
@@ -339,8 +339,8 @@ def get_tanimoto_memes(memes, query):
     memes_list = []
     for meme in memes:
         tanimoto_coefficient = tanimoto(meme.name, query)
-        memes_list.append({'meme': meme, 'tanimoto': tanimoto_coefficient})
-    memes_list.sort(key=lambda x: x['tanimoto'], reverse=True)
+        memes_list.append({'meme': meme, 'tanimoto': tanimoto_coefficient, 'contains_query': query in meme.name})
+    memes_list.sort(key=lambda x: (x['contains_query'], x['tanimoto']), reverse=True)
     memes_list = [meme['meme'] for meme in memes_list]
     return memes_list
 
