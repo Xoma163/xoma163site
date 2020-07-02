@@ -496,8 +496,7 @@ class VkBotClass(threading.Thread):
             if allowed_exts_url:
                 if file_like_object.split('.')[-1].lower() not in allowed_exts_url:
                     raise RuntimeWarning(f"Загрузка по URL доступна только для {' '.join(allowed_exts_url)}")
-            # ToDo: возможно timeout=2 это мало, а возможно нет. Хз
-            response = requests.get(file_like_object, stream=True, timeout=2)
+            response = requests.get(file_like_object, stream=True, timeout=3)
             obj = response.raw
         # path
         else:

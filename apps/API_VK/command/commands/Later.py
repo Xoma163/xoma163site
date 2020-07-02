@@ -49,7 +49,6 @@ class Discord(CommonCommand):
                     return "Не понял аргумента"
             else:
                 lms = LaterMessageSession()
-                # ToDo: В этих действиях по локализации dt есть вообще логика?
                 lms.date = localize_datetime(datetime.utcnow(), "UTC")
                 lms.author = self.vk_event.sender
                 lms.save()
@@ -78,7 +77,6 @@ class Discord(CommonCommand):
                         attachments = get_attachments_for_upload(self.vk_bot, lm_attachments)
                     msgs.append({'msg': msg, 'attachments': attachments})
 
-                    # ToDo: не факт, что это нужно
                     lm.delete()
                 lms.delete()
                 return msgs
