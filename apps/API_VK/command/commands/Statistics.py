@@ -16,27 +16,22 @@ class Statistics(CommonCommand):
         super().__init__(names, help_text, detail_help_text, conversation=True)
 
     def start(self):
-        args_translator = {
-            'петрович': self.get_petrovich,
-            'ставки': self.get_rates,
-            'крестики': self.get_tic_tac_toe,
-            'коднеймс': self.get_codenames,
-            'рулетка': self.get_roulettes,
-            'мемы': self.get_memes
-        }
+        if not self.vk_event.args:
+            return self.menu_all()
+        else:
+            arg0 = self.vk_event.args[0].lower()
+            menu = [
+                [['петрович'], self.menu_petrovich],
+                [['ставки'], self.menu_rates],
+                [['крестики'], self.menu_tic_tac_toe],
+                [['коднеймс'], self.menu_codenames],
+                [['рулетка'], self.menu_roulettes],
+                [['мемы'], self.menu_memes]
+            ]
+            method = self.handle_menu(menu, arg0)
+            return method()
 
-        if self.vk_event.args:
-            arg = self.vk_event.args[0].lower()
-
-            if arg not in args_translator:
-                return "Я не знаю такого блока"
-            return args_translator[arg]()
-        msg = ""
-        for val in args_translator.values():
-            msg += f"{val()}\n\n"
-        return msg
-
-    def get_petrovich(self):
+    def menu_petrovich(self):
         players = PetrovichUser.objects \
             .filter(chat=self.vk_event.chat) \
             .filter(user__chats=self.vk_event.chat) \
@@ -46,14 +41,14 @@ class Statistics(CommonCommand):
             msg += "%s - %s\n" % (player, player.wins)
         return msg
 
-    def get_rates(self):
+    def menu_rates(self):
         gamers = Gamer.objects.filter(user__chats=self.vk_event.chat).exclude(points=0).order_by('-points')
         msg = "Победители ставок:\n"
         for gamer in gamers:
             msg += f"{gamer} - {gamer.points}\n"
         return msg
 
-    def get_tic_tac_toe(self):
+    def menu_tic_tac_toe(self):
         gamers = Gamer.objects.filter(user__chats=self.vk_event.chat).exclude(tic_tac_toe_points=0).order_by(
             '-tic_tac_toe_points')
         msg = "Победители крестиков-ноликов:\n"
@@ -61,7 +56,7 @@ class Statistics(CommonCommand):
             msg += f"{gamer} - {gamer.tic_tac_toe_points}\n"
         return msg
 
-    def get_codenames(self):
+    def menu_codenames(self):
         gamers = Gamer.objects.filter(user__chats=self.vk_event.chat).exclude(codenames_points=0).order_by(
             '-codenames_points')
         msg = "Победители коднеймса:\n"
@@ -69,7 +64,7 @@ class Statistics(CommonCommand):
             msg += f"{gamer} - {gamer.codenames_points}\n"
         return msg
 
-    def get_roulettes(self):
+    def menu_roulettes(self):
         gamers = Gamer.objects.filter(user__chats=self.vk_event.chat).exclude(roulette_points=0).order_by(
             '-roulette_points')
         msg = "Очки рулетки:\n"
@@ -77,7 +72,7 @@ class Statistics(CommonCommand):
             msg += f"{gamer} - {gamer.roulette_points}\n"
         return msg
 
-    def get_memes(self):
+    def menu_memes(self):
         users = VkUser.objects.filter(chats=self.vk_event.chat)
 
         result_list = list(
@@ -85,4 +80,19 @@ class Statistics(CommonCommand):
         msg = "Созданных мемов:\n"
         for result in result_list:
             msg += f"{users.get(id=result['author'])} - {result['total']}\n"
+        return msg
+
+    def menu_all(self):
+
+        methods = [
+            self.menu_petrovich,
+            self.menu_rates,
+            self.menu_tic_tac_toe,
+            self.menu_codenames,
+            self.menu_roulettes,
+            self.menu_memes
+        ]
+        msg = ""
+        for val in methods:
+            msg += f"{val()}\n\n"
         return msg

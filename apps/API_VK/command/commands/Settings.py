@@ -6,6 +6,7 @@ from apps.API_VK.command.Consts import ON_OFF_TRANSLATOR, TRUE_FALSE_TRANSLATOR
 from apps.API_VK.command.Consts import Role
 
 
+# ToDo: menu
 class Settings(CommonCommand):
     def __init__(self):
         names = ["настройки", "настройка"]
@@ -14,7 +15,7 @@ class Settings(CommonCommand):
                            "Настройки реагировать (вкл/выкл) - определяет, будет ли бот реагировать на неправильные команды. " \
                            "Это сделано для того, чтобы в конфе с несколькими ботами не было ложных срабатываний\n\n" \
                            "Для доверенных:\n" \
-                           "Настройки реагировать (вкл/выкл) - определяет, будет ли бот присылать информацию о сервере майна."
+                           "Настройки майнкрафт (вкл/выкл) - определяет, будет ли бот присылать информацию о сервере майна."
         super().__init__(names, help_text, detail_help_text)
 
     def start(self):

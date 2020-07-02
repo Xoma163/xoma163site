@@ -39,44 +39,59 @@ class Notifies(CommonCommand):
     def start(self):
         if self.vk_event.sender.city is None:
             return "Не знаю ваш город. /город"
-        user_timezone = self.vk_event.sender.city.timezone.name
+        self.user_timezone = self.vk_event.sender.city.timezone.name
 
-        if self.vk_event.args:
-            if self.vk_event.args[0].lower() in ["удалить", "удали"]:
-                self.check_args(2)
-                notifies = Notify.objects.filter(author=self.vk_event.sender).order_by("date")
-                if self.vk_event.chat:
-                    try:
-                        self.check_sender(Role.CONFERENCE_ADMIN)
-                        notifies = Notify.objects.filter(chat=self.vk_event.chat).order_by("date")
-                    except RuntimeError:
-                        notifies = notifies.filter(chat=self.vk_event.chat)
-                filter_list = self.vk_event.args[1:]
-                for _filter in filter_list:
-                    notifies = notifies.filter(text_for_filter__icontains=_filter)
-
-                if len(notifies) == 0:
-                    return "Не нашёл напоминаний по такому тексту"
-                if len(notifies) > 1:
-                    notifies10 = notifies[:10]
-                    notifies_texts = [str(notify.author) + " " + notify.text_for_filter for notify in notifies10]
-                    notifies_texts_str = "\n".join(notifies_texts)
-                    return f"Нашёл сразу несколько. Уточните:\n" \
-                           f"{notifies_texts_str}"
-
-                notifies.delete()
-                return "Удалил"
-            elif self.vk_event.args[0].lower() in ["конфа", "беседе", "конфы", "беседы"]:
-                self.check_conversation()
-                notifies = Notify.objects.filter(chat=self.vk_event.chat)
-                return get_notifies_from_object(notifies, user_timezone, True)
-            else:
-                self.check_conversation()
-                user = self.vk_bot.get_user_by_name(self.vk_event.original_args, self.vk_event.chat)
-                notifies = Notify.objects.filter(author=user, chat=self.vk_event.chat)
-                return get_notifies_from_object(notifies, user_timezone, True)
+        if not self.vk_event.args:
+            return self.menu_notifications()
         else:
-            notifies = Notify.objects.filter(author=self.vk_event.sender).order_by("date")
-            if self.vk_event.chat:
+            arg0 = self.vk_event.args[0].lower()
+
+            menu = [
+                [["удалить", "удали"], self.menu_delete],
+                [["конфа", "беседе", "конфы", "беседы"], self.menu_conference],
+                [['default'], self.menu_get_for_user],
+            ]
+            method = self.handle_menu(menu, arg0)
+            return method()
+
+    def menu_delete(self):
+        self.check_args(2)
+        notifies = Notify.objects.filter(author=self.vk_event.sender).order_by("date")
+        if self.vk_event.chat:
+            try:
+                self.check_sender(Role.CONFERENCE_ADMIN)
+                notifies = Notify.objects.filter(chat=self.vk_event.chat).order_by("date")
+            except RuntimeError:
                 notifies = notifies.filter(chat=self.vk_event.chat)
-            return get_notifies_from_object(notifies, user_timezone)
+        filter_list = self.vk_event.args[1:]
+        for _filter in filter_list:
+            notifies = notifies.filter(text_for_filter__icontains=_filter)
+
+        if len(notifies) == 0:
+            return "Не нашёл напоминаний по такому тексту"
+        if len(notifies) > 1:
+            notifies10 = notifies[:10]
+            notifies_texts = [str(notify.author) + " " + notify.text_for_filter for notify in notifies10]
+            notifies_texts_str = "\n".join(notifies_texts)
+            return f"Нашёл сразу несколько. Уточните:\n" \
+                   f"{notifies_texts_str}"
+
+        notifies.delete()
+        return "Удалил"
+
+    def menu_conference(self):
+        self.check_conversation()
+        notifies = Notify.objects.filter(chat=self.vk_event.chat)
+        return get_notifies_from_object(notifies, self.user_timezone, True)
+
+    def menu_get_for_user(self):
+        self.check_conversation()
+        user = self.vk_bot.get_user_by_name(self.vk_event.original_args, self.vk_event.chat)
+        notifies = Notify.objects.filter(author=user, chat=self.vk_event.chat)
+        return get_notifies_from_object(notifies, self.user_timezone, True)
+
+    def menu_notifications(self):
+        notifies = Notify.objects.filter(author=self.vk_event.sender).order_by("date")
+        if self.vk_event.chat:
+            notifies = notifies.filter(chat=self.vk_event.chat)
+        return get_notifies_from_object(notifies, self.user_timezone)

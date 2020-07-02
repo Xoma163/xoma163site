@@ -20,41 +20,54 @@ class Stop(CommonCommand):
         super().__init__(names, help_text, detail_help_text, keyboard=keyboard, access=Role.TRUSTED)
 
     def start(self):
-        module = "bot"
         if self.vk_event.args:
-            module = self.vk_event.args[0].lower()
-        if module in ["синички"]:
-            self.check_sender(Role.ADMIN)
-            if cameraHandler.is_active():
-                cameraHandler.terminate()
-                return "Финишируем синичек"
-            else:
-                return "Синички уже финишировали"
-        elif module in ["майн", "майнкрафт", "mine", "minecraft"]:
-            self.check_sender(Role.MINECRAFT)
-            minecraft_server = get_minecraft_version_by_args(self.vk_event.args)
-            if not minecraft_server:
-                return "Я не знаю такой версии"
-            version = minecraft_server['names'][0]
-            self.check_command_time(f'minecraft_{version}', minecraft_server['delay'])
-            minecraft_api = MinecraftAPI(
-                version,
-                vk_bot=self.vk_bot,
-                vk_event=self.vk_event,
-                amazon=minecraft_server['amazon'])
-            minecraft_api.stop()
-
-            message = f"Финишируем майн {version}"
-            return message
-        elif module in ['террария', 'terraria']:
-            self.check_sender(Role.TERRARIA)
-            self.check_command_time('terraria', 10)
-            do_the_linux_command('sudo systemctl stop terraria')
-            return "Финишируем террарию!"
-        elif module in ['бот', 'bot']:
-            self.check_sender(Role.ADMIN)
-            self.vk_bot.BOT_CAN_WORK = False
-            cameraHandler.terminate()
-            return "Финишируем"
+            arg0 = self.vk_event.args[0].lower()
         else:
-            return "Не найден такой модуль"
+            arg0 = None
+
+        menu = [
+            [["синички"], self.menu_birds],
+            [["майн", "майнкрафт", "mine", "minecraft"], self.menu_minecraft],
+            [['террария', 'terraria'], self.menu_terraria],
+            [['бот', 'bot'], self.menu_bot],
+            [['default'], self.menu_bot]
+        ]
+        method = self.handle_menu(menu, arg0)
+        return method()
+
+    def menu_birds(self):
+        self.check_sender(Role.ADMIN)
+        if cameraHandler.is_active():
+            cameraHandler.terminate()
+            return "Финишируем синичек"
+        else:
+            return "Синички уже финишировали"
+
+    def menu_minecraft(self):
+        self.check_sender(Role.MINECRAFT)
+        minecraft_server = get_minecraft_version_by_args(self.vk_event.args[1])
+        if not minecraft_server:
+            return "Я не знаю такой версии"
+        version = minecraft_server['names'][0]
+        self.check_command_time(f'minecraft_{version}', minecraft_server['delay'])
+        minecraft_api = MinecraftAPI(
+            version,
+            vk_bot=self.vk_bot,
+            vk_event=self.vk_event,
+            amazon=minecraft_server['amazon'])
+        minecraft_api.stop()
+
+        message = f"Финишируем майн {version}"
+        return message
+
+    def menu_terraria(self):
+        self.check_sender(Role.TERRARIA)
+        self.check_command_time('terraria', 10)
+        do_the_linux_command('sudo systemctl stop terraria')
+        return "Финишируем террарию!"
+
+    def menu_bot(self):
+        self.check_sender(Role.ADMIN)
+        self.vk_bot.BOT_CAN_WORK = False
+        cameraHandler.terminate()
+        return "Финишируем"

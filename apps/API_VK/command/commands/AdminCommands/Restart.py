@@ -12,17 +12,30 @@ class Restart(CommonCommand):
         super().__init__(names, help_text, detail_help_text, access=Role.ADMIN)
 
     def start(self):
-        module = "bot"
         if self.vk_event.args:
-            module = self.vk_event.args[0].lower()
-        if module in ['бот']:
-            do_the_linux_command('sudo systemctl restart xoma163bot')
-            return 'Рестартим бота'
-        elif module in ['веб', 'сайт']:
-            do_the_linux_command('sudo systemctl restart xoma163site')
-            return 'Рестартим веб'
-        elif module in ['сервер']:
-            do_the_linux_command('sudo systemctl reboot -i')
-            return 'Рестартим сервер'
+            arg0 = self.vk_event.args[0].lower()
         else:
-            return "Не найден такой модуль"
+            arg0 = None
+        menu = [
+            [['бот'], self.menu_bot],
+            [['веб', 'сайт'], self.menu_web],
+            [['сервер'], self.menu_server],
+            [['default'], self.menu_bot]
+        ]
+        method = self.handle_menu(menu, arg0)
+        return method()
+
+    def menu_bot(self):
+        self.vk_bot.parse_and_send_msgs_thread(self.vk_event.peer_id, 'Рестартим бота')
+        do_the_linux_command('sudo systemctl restart xoma163bot')
+        return 'Рестартим бота'
+
+    @staticmethod
+    def menu_web():
+        do_the_linux_command('sudo systemctl restart xoma163site')
+        return 'Рестартим веб'
+
+    @staticmethod
+    def menu_server():
+        do_the_linux_command('sudo systemctl reboot -i')
+        return 'Рестартим сервер'
