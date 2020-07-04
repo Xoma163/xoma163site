@@ -16,6 +16,10 @@ class TgUser(models.Model):
     user_id = models.CharField(verbose_name='ID пользователя', max_length=20)
     vk_user = models.ForeignKey(VkUser, verbose_name="ВК Пользователь", on_delete=models.CASCADE, null=True)
 
+    class Meta:
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
+
     def is_active(self):
         return self.vk_user is not None
 
@@ -29,6 +33,10 @@ class TgTempUser(models.Model):
     tg_user = models.ForeignKey(TgUser, verbose_name="Тг юзер", on_delete=models.CASCADE, null=True, blank=True)
     code = models.CharField(verbose_name="Код подтверждения", default=random_digits, max_length=6)
     tries = models.IntegerField(verbose_name="Кол-во попыток", default=5)
+
+    class Meta:
+        verbose_name = "Временный пользователь"
+        verbose_name_plural = "Временные пользователи"
 
     def __str__(self):
         return str(self.vk_user)
