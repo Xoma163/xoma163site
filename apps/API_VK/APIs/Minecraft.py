@@ -152,6 +152,8 @@ class MinecraftAPI:
 
 
 def get_minecraft_version_by_args(args):
+    if args is None:
+        args = "1.16"
     minecraft_versions = [
         {'names': ['1.16.1', "1.16"], "delay": 30, "amazon": True},
         {'names': ['1.12.2', "1.12"], "delay": 90, "amazon": False},

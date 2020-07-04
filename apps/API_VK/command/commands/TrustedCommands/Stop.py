@@ -45,7 +45,10 @@ class Stop(CommonCommand):
 
     def menu_minecraft(self):
         self.check_sender(Role.MINECRAFT)
-        minecraft_server = get_minecraft_version_by_args(self.vk_event.args[1])
+        version = None
+        if len(self.vk_event.args) > 1:
+            version = self.vk_event.args[1]
+        minecraft_server = get_minecraft_version_by_args(version)
         if not minecraft_server:
             return "Я не знаю такой версии"
         version = minecraft_server['names'][0]
