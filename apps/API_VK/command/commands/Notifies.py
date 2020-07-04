@@ -34,7 +34,7 @@ class Notifies(CommonCommand):
                            "Напоминания конфа - выводит все напоминания по конфе\n" \
                            "Напоминания (имя, фамилия, логин/id, никнейм) - напоминания пользователя по конфе\n" \
                            "Админ конфы может удалять напоминания остальных участников"
-        super().__init__(names, help_text, detail_help_text)
+        super().__init__(names, help_text, detail_help_text, api=False)
 
     def start(self):
         if self.vk_event.sender.city is None:

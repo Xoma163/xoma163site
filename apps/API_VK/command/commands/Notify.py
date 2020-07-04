@@ -50,7 +50,7 @@ class Notify(CommonCommand):
         detail_help_text = "Напомни (дата/дата и время/день недели) (сообщение/команда) [Прикреплённые вложения] - добавляет " \
                            "напоминание\n" \
                            "Максимум можно добавить 5 напоминаний"
-        super().__init__(names, help_text, detail_help_text, args=2)
+        super().__init__(names, help_text, detail_help_text, args=2, api=False)
 
     def start(self):
         if self.vk_event.sender.city is None:

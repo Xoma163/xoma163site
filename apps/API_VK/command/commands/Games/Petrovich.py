@@ -17,7 +17,7 @@ class Petrovich(CommonCommand):
         detail_help_text = "Петрович - мини-игра, определяющая кто Петрович дня\n" \
                            "Петрович рег - регистрация в игре\n" \
                            "Петрович дерег - дерегистрация в игре"
-        super().__init__(names, help_text, detail_help_text, conversation=True)
+        super().__init__(names, help_text, detail_help_text, conversation=True, api=False)
 
     def start(self):
         if self.vk_event.args:

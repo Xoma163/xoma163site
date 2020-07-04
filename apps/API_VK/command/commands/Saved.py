@@ -6,7 +6,7 @@ class Saved(CommonCommand):
     def __init__(self):
         names = ["сохраненка", "перешли", "сохраненные"]
         help_text = "Сохранёнка (фотографии) - пересылает фотографии, чтобы их можно было сохранить в вк в сохранёнки"
-        super().__init__(names, help_text)
+        super().__init__(names, help_text, api=False)
 
     def start(self):
         attachments = get_attachments_from_attachments_or_fwd(self.vk_event, 'photo')

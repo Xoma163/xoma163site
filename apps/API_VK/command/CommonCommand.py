@@ -33,6 +33,7 @@ class CommonCommand:
                  int_args=None,
                  float_args=None,
                  api=None,
+                 tg=None,
                  attachments=False,
                  enabled=True,
                  priority=0,
@@ -49,6 +50,7 @@ class CommonCommand:
         self.int_args = int_args
         self.float_args = float_args
         self.api = api
+        self.tg = tg
         self.attachments = attachments
         self.enabled = enabled
         self.priority = priority

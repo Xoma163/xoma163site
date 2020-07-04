@@ -16,7 +16,7 @@ class Who(CommonCommand):
                            "Доступные роли: админ, админ конфы, доверенный, модератор, студент, майнкрафт, майнкрафт " \
                            "уведомления, террария, забанен. \n" \
                            "Чтобы узнать свои права существует команда /права"
-        super().__init__(names, help_text, detail_help_text, conversation=True, args=1)
+        super().__init__(names, help_text, detail_help_text, conversation=True, args=1, api=False)
 
     def start(self):
         arg = self.vk_event.original_args.lower()

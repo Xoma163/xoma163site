@@ -9,7 +9,7 @@ class DeBan(CommonCommand):
         names = ["разбан", "дебан"]
         help_text = "Разбан - разбан пользователя"
         detail_help_text = "Разбан (N) - разбан пользователя, где N - имя, фамилия, логин/id, никнейм"
-        super().__init__(names, help_text, detail_help_text, access=Role.ADMIN, args=1, api=False)
+        super().__init__(names, help_text, detail_help_text, access=Role.ADMIN, args=1)
 
     def start(self):
         user = self.vk_bot.get_user_by_name(self.vk_event.args, self.vk_event.chat)

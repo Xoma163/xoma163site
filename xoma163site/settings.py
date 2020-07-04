@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'static_autocollect',
 
     'apps.API_VK',
+    'apps.API_TG',
     'apps.birds',
     'apps.service',
     'apps.games',
