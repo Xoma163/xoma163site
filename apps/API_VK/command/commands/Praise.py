@@ -37,7 +37,8 @@ def add_phrase_before(recipient, word, field_name):
 
 
 def get_praise_or_scold(vk_bot, vk_event, _type):
-    vk_event.args[-1] = vk_event.args[-1].replace('-', '')
+    if vk_event.args:
+        vk_event.args[-1] = vk_event.args[-1].replace('-', '')
     if vk_event.original_args and vk_event.args[-1] in gender_translator:
         translator_key = vk_event.args[-1]
         del vk_event.args[-1]

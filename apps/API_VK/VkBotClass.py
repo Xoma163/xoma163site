@@ -522,7 +522,8 @@ class VkBotClass(threading.Thread):
             bytes_count = None
             if isinstance(image, io.BytesIO):
                 bytes_count = image.getbuffer().nbytes
-            elif isinstance(image, urllib3.response.HTTPResponse):
+            elif isinstance(image, urllib3.response.HTTPResponse) or isinstance(image,
+                                                                                requests.packages.urllib3.response.HTTPResponse):
                 bytes_count = image.headers.get('Content-Length')
             elif os.path.exists(image):
                 bytes_count = os.path.getsize(image)

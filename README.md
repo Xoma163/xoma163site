@@ -8,3 +8,7 @@
 -   [FAQ](./readme/faq.md)
 -   [API](./readme/api.md) 
 -   [Установка](./readme/setup.md)
+
+### Задеплоенные боты:
+-   [ВКонтакте](https://vk.com/igor_petrovich_ksta)
+-   [Telegram](http://t.me/igor_petrovich_ksta_bot)
