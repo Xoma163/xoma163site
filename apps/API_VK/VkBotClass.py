@@ -10,7 +10,7 @@ import requests
 import urllib3
 import vk_api
 from django.contrib.auth.models import Group
-from requests.exceptions import ReadTimeout, ConnectTimeout
+from requests.exceptions import ReadTimeout, ConnectTimeout, SSLError
 from vk_api import VkUpload
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.utils import get_random_id
@@ -496,7 +496,12 @@ class VkBotClass(threading.Thread):
             if allowed_exts_url:
                 if file_like_object.split('.')[-1].lower() not in allowed_exts_url:
                     raise RuntimeWarning(f"Загрузка по URL доступна только для {' '.join(allowed_exts_url)}")
-            response = requests.get(file_like_object, stream=True, timeout=3)
+            try:
+                response = requests.get(file_like_object, stream=True, timeout=3)
+            except SSLError:
+                raise RuntimeWarning(f"SSLError")
+            except requests.exceptions.ConnectionError:
+                raise RuntimeWarning(f"ConnectionError")
             obj = response.raw
         # path
         else:

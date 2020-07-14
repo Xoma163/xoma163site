@@ -74,11 +74,15 @@ class MinecraftAPI:
         if not self.check_amazon_server_status():
             return False
         self.send_rcon('/stop')
+        timeout = 15
+        time_start = time.time()
         while True:
             server_is_offline = not self.send_rcon('/help')
             if server_is_offline:
                 break
             time.sleep(5)
+            if time.time() - time_start > timeout:
+                break
 
         URL = secrets['minecraft-amazon'][self.version]['stop_url']
         requests.post(URL)
