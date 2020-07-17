@@ -499,9 +499,9 @@ class VkBotClass(threading.Thread):
             try:
                 response = requests.get(file_like_object, stream=True, timeout=3)
             except SSLError:
-                raise RuntimeWarning(f"SSLError")
+                raise RuntimeWarning("SSLError")
             except requests.exceptions.ConnectionError:
-                raise RuntimeWarning(f"ConnectionError")
+                raise RuntimeWarning("ConnectionError")
             obj = response.raw
         # path
         else:

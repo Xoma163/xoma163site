@@ -61,7 +61,7 @@ class Horoscope(CommonCommand):
         horoscope = HoroscopeModel.objects.first()
         meme = horoscope.memes.all()[zodiac_index]
         prepared_meme = prepare_meme_to_send(self.vk_bot, self.vk_event, meme)
-        prepared_meme['msg'] = zodiac_signs[zodiac_index].capitalize()
+        prepared_meme['msg'] = list(zodiac_signs.keys())[zodiac_index].capitalize()
         return prepared_meme
 
     @staticmethod

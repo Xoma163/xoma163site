@@ -19,12 +19,12 @@ class Command(BaseCommand):
         if debug:
             vk_bot.DEVELOP_DEBUG = True
             vk_bot.start()
-            tg_bot.start()
+            # tg_bot.start()
             print("BOTS STARTED")
         else:
             vk_bot.start()
             cameraHandler.start()
-            tg_bot.start()
+            # tg_bot.start()
             print("BOTS AND CAMERA HANDLER STARTED")
 
     def add_arguments(self, parser):
